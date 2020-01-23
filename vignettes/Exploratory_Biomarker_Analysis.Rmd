@@ -1,0 +1,172 @@
+---
+title: "Example workflow for exploratory biomarker analysis"
+author: "Malgorzata Nowicka"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exploratory_Biomarker}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+
+```{r setup_knitr, include = FALSE, cache = FALSE}
+### Packages to compile rmarkdown
+library(knitr)
+library(rmarkdown)
+### Packages for nice tables
+library(kableExtra)
+
+
+font_size <- 11
+cache <- 2
+
+
+knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center")
+
+
+
+
+```
+
+
+
+
+```{r library, results="hide"}
+
+### Packages for data manipulations
+library(tidyverse)
+library(plyr) # rbind.fill
+library(limma) # strsplit2
+
+### Packages for plotting
+library(cowplot)
+library(RColorBrewer) # brewer.pal
+library(ggbeeswarm)
+
+### Packages for survival analysis 
+library(gClinBiomarker)
+library(survival)
+library(survminer)
+library(forestplot)
+
+
+library(devtools)
+
+
+```
+
+
+```{r load_data}
+
+### For now I use GOYA data but this has to be replaced with a test data that can be made publically available 
+### This data should be loaded from data/
+
+
+data_goya <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/data_goya.RDS")
+data <- data_goya
+
+variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/variable_names.RDS")
+
+
+```
+
+
+```{r load_package}
+
+devtools::load_all()
+
+
+```
+
+
+
+
+# Barplot
+
+
+```{r barplot}
+
+
+x_var = "Cell_Of_Origin"
+y_var = "Ann_Arbor_Stage"
+
+
+## Default
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none")
+
+
+## Show total proportions
+
+show_total_proportions <- TRUE
+skip_levels <- "I"
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = skip_levels, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = show_total_proportions, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none")
+
+
+
+## Remove one x-level
+
+data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
+
+show_total_proportions <- TRUE
+skip_levels <- "I"
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = skip_levels, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = show_total_proportions, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none")
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

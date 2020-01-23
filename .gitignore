@@ -1,0 +1,23 @@
+# Blacklist all files and folders in same directory as the .gitignore file
+*
+
+# except these files 
+!.gitignore
+!.Rbuildignore
+!README.md
+!*.Rmd
+!*.R
+!Makefile
+!*.mk
+!*.sh
+!*.Rproj
+!DESCRIPTION
+!NAMESPACE
+
+
+# ... even if they are in subdirectories 
+!*/
+
+# Ignore all files having ._ or tmp in the name
+**/._*
+**/tmp*

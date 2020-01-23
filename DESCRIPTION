@@ -1,0 +1,17 @@
+Package: BiomarkerWrappers
+Title: Suite of functions for exploratory biomarker analysis
+Version: 0.0.0.1
+Authors@R: 
+    person(given = "Malgorzata",
+           family = "Nowicka",
+           role = c("aut", "cre"),
+           email = "malgorzata.nowicka@roche.com")
+Description: What the package does (one paragraph).
+License: What license it uses
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: knitr
