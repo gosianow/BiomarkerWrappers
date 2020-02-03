@@ -1,0 +1,308 @@
+
+
+
+
+#' KM plot
+#' 
+#' Generate a signle KM plot.
+#' 
+#' @param data Data frame.
+wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, break.time.by = NULL, max_tte = NULL, risk.table = TRUE, conf.int = FALSE, title.size = 12, legend.position = c(0.03, 0.03), legend.justification = c(0, 0), fontsize = 3.5, rel_heights = c(5, 1), background_grid_major = "none"){
+  
+  
+  stopifnot(is.data.frame(data))
+  
+  ## Time to event variable must be numeric
+  stopifnot(length(tte_var) == 1)
+  stopifnot(is.numeric(data[, tte_var]))
+  
+  ## Censor variable must be numeric and encode 1 for event and 0 for censor
+  stopifnot(length(censor_var) == 1)
+  stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1)))
+  
+  stopifnot(length(covariate_var) == 1)
+  stopifnot(is.factor(data[, covariate_var]))
+  
+  
+  ### Keep non-missing data
+  
+  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
+  
+  ### Some checks
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  xlab <- variable_names[tte_var]
+  
+  
+  
+  colors <- format_colors(levels = levels(data[, covariate_var]), colors = colors)
+  
+  
+  ### Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts. For the ggsurvplot function and in ggplot adjustment colors cannot have names. Otherwise, it does not work. 
+  
+  tbl <- table(data[, covariate_var])
+  
+  colors <- colors[tbl != 0]
+  
+  colors <- as.character(colors)
+  
+  ## Removed unused levels from the data too
+  
+  data[, covariate_var] <- factor(data[, covariate_var])
+  
+  
+  ### The default is to have about 10 breaks
+  
+  if(is.null(break.time.by)){
+    
+    max_tte_tmp <- max(data[, tte_var], na.rm = TRUE) / 10
+    
+    decimial_nr <- round(log10(max_tte_tmp))
+    
+    break.time.by <- round(max_tte_tmp / 10^decimial_nr) * 10^decimial_nr
+    
+  }
+  
+  
+  ### To make sure that no data is cut off the range of the plot, extend the x-axis
+  
+  if(is.null(max_tte)){
+    max_tte <- max(data[, tte_var], na.rm = TRUE)
+    max_tte <- ceiling(max_tte / break.time.by) * break.time.by
+  }else{
+    max_tte <- ceiling(max_tte / break.time.by) * break.time.by
+  }
+  
+  
+  
+  
+  ### Define the model formula
+  f <- as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
+  
+  ### Fit the model
+  fit <- survival::survfit(f, data)
+  
+  ## Fix a bug. Otherwise, it does not work!!! 
+  fit$call$formula <- f
+  
+  
+  ### Generate Kaplan-Meier plot
+  
+  ## palette must be a non-named vector. Otherwise, it does not work. For each subplot has to have unique values. If a level has zero counts, it is not plotted. Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts.
+  
+  ggpl <- survminer::ggsurvplot(fit, data = data, palette = colors, linetype = 1, conf.int = conf.int, risk.table = risk.table, ggtheme = theme_classic(), xlab = xlab, break.time.by = break.time.by, xlim = c(0, max_tte), fontsize = fontsize) 
+  
+  
+  ### Customize the plot
+  suppressMessages(ggpl_plot <- ggpl$plot +
+      labs(title = title, subtitle = subtitle, tag = tag) +
+      theme(plot.title = element_text(size = title.size, face = "bold"),
+        plot.subtitle = element_text(size = title.size),
+        legend.position = legend.position,
+        legend.justification = legend.justification,
+        legend.title = element_blank(), 
+        legend.background = element_rect(fill = NA),
+        plot.tag.position = "top",
+        plot.tag = element_text(size = title.size, face = "plain")) +
+      scale_color_manual(labels = levels(data[, covariate_var]), values = colors) +
+      scale_fill_manual(labels = levels(data[, covariate_var]), values = colors) +
+      coord_cartesian(xlim = c(0, max_tte)) +
+      background_grid(major = background_grid_major, minor = "none", size.major = 0.15))
+  
+  
+  if(risk.table){
+    
+    suppressMessages(ggpl_table <- ggpl$table +
+        theme(plot.title = element_text(size = title.size),
+          axis.title = element_blank(), 
+          axis.text.x = element_blank(),
+          axis.ticks = element_blank(), 
+          axis.line=element_blank()) +
+        scale_y_discrete(labels = rev(levels(data[, covariate_var]))) +
+        coord_cartesian(xlim = c(0, max_tte)))
+    
+    
+    ggpl_new <- cowplot::plot_grid(ggpl_plot, ggpl_table, ncol = 1, align = 'v', axis = 'l', rel_heights = rel_heights)
+    
+    
+  }else{
+    
+    ggpl_new <- ggpl_plot
+    
+  }
+  
+  
+  return(ggpl_new)
+  
+  
+}
+
+
+
+
+
+
+# data <- data_goya
+# tte_var <- "PFS"
+# censor_var <- "PFS_Censor"
+# covariate_var <- "FCGR3A_cat2"
+# 
+# strat1_var = "Treatment_Arm"
+# strat2_var = "Cell_Of_Origin2"
+# colors = NULL
+# variable_names = NULL
+# title = NULL
+# subtitle = NULL
+# tag = NULL
+# break.time.by = NULL
+# max_tte = NULL
+# risk.table = TRUE
+# conf.int = FALSE
+# title.size = 12
+# legend.position = c(0.03, 0.03)
+# legend.justification = c(0, 0)
+# fontsize = 3.5
+# rel_heights = c(5, 1)
+# background_grid_major = "none"
+# strat1_nrow = 1
+# strat1_ncol = NULL
+# strat2_nrow = NULL
+# strat2_ncol = 1
+
+
+
+
+
+
+#' KM plot
+#' 
+#' Generate KM plots for each subgroup defined by two stratification variables.
+#' 
+#' @param data Data frame.
+wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, break.time.by = NULL, max_tte = NULL, risk.table = TRUE, conf.int = FALSE, title.size = 12, legend.position = c(0.03, 0.03), legend.justification = c(0, 0), fontsize = 3.5, rel_heights = c(5, 1), background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+  
+  
+  if(!is.null(strat1_var)){
+    stopifnot(length(strat1_var) == 1)
+    stopifnot(is.factor(data[, strat1_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat1_dummy"] <- factor("strat1_dummy")
+    strat1_var <- "strat1_dummy"
+  }
+  
+  if(!is.null(strat2_var)){
+    stopifnot(length(strat2_var) == 1)
+    stopifnot(is.factor(data[, strat2_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat2_dummy"] <- factor("strat2_dummy")
+    strat2_var <- "strat2_dummy"
+  }
+  
+  ### Keep non-missing data
+  
+  data <- data[!is.na(data[, tte_var]) & !is.na(data[, censor_var]) & !is.na(data[, covariate_var]) & !is.na(data[, strat1_var]) & !is.na(data[, strat2_var]), ]
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  ### The default is to have about 10 breaks
+  
+  if(is.null(break.time.by)){
+    
+    max_tte_tmp <- max(data[, tte_var], na.rm = TRUE) / 10
+    
+    decimial_nr <- round(log10(max_tte_tmp))
+    
+    break.time.by <- round(max_tte_tmp / 10^decimial_nr) * 10^decimial_nr
+    
+  }
+  
+  
+  ### To make sure that no data is cut off the range of the plot, extend the x-axis
+  
+  if(is.null(max_tte)){
+    max_tte <- max(data[, tte_var], na.rm = TRUE)
+    max_tte <- ceiling(max_tte / break.time.by) * break.time.by
+  }else{
+    max_tte <- ceiling(max_tte / break.time.by) * break.time.by
+  }
+  
+  
+  strata1_levels <- levels(data[, strat1_var])
+  strata2_levels <- levels(data[, strat2_var])
+  
+  
+  ggpl <- lapply(1:length(strata2_levels), function(j){
+    # j = 1
+    
+    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
+    
+    if(nrow(data_strata2) == 0){
+      return(NULL)
+    }
+    
+    if(strat2_var == "strat2_dummy"){
+      tag <- NULL
+    }else{
+      tag <- strata2_levels[j]
+    }
+    
+    ggpl <- lapply(1:length(strata1_levels), function(i){
+      # i = 1
+      
+      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
+      
+      if(nrow(data_strata1) == 0){
+        return(NULL)
+      }
+      
+      
+      if(strat1_var == "strat1_dummy"){
+        subtitle <- NULL
+      }else{
+        subtitle <- strata1_levels[i]
+      }
+      
+      
+      ggpl <- wrapper_core_KM_plot(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, colors = colors, variable_names = variable_names, title = title, subtitle = subtitle, tag = tag, break.time.by = break.time.by, max_tte = max_tte, risk.table = risk.table, conf.int = conf.int, title.size = title.size, legend.position = legend.position, legend.justification = legend.justification, fontsize = fontsize, rel_heights = rel_heights, background_grid_major = background_grid_major)
+      
+      return(ggpl)
+      
+      
+    })
+    
+    
+    ggpl <- plot_grid(plotlist = ggpl, nrow = strat1_nrow, ncol = strat1_ncol)
+    
+    return(ggpl)
+    
+  })
+  
+  
+  ggpl <- plot_grid(plotlist = ggpl, nrow = strat2_nrow, ncol = strat2_ncol)
+  
+  
+  return(ggpl)
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

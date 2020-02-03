@@ -2,11 +2,11 @@
 title: "Example workflow for exploratory biomarker analysis"
 author: "Malgorzata Nowicka"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Exploratory_Biomarker}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+# output: rmarkdown::html_vignette
+# vignette: >
+#   %\VignetteIndexEntry{Exploratory_Biomarker}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
 ---
 
 
@@ -24,7 +24,7 @@ font_size <- 11
 cache <- 2
 
 
-knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = FALSE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center")
+knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center")
 
 
 
@@ -34,7 +34,7 @@ knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = FALSE, warni
 
 
 
-```{r library, results="hide"}
+```{r library, results="hide", cache = FALSE}
 
 ### Packages for data manipulations
 library(tidyverse)
@@ -56,7 +56,12 @@ library(forestplot)
 library(devtools)
 
 
+devtools::load_all()
+
+
 ```
+
+
 
 
 ```{r load_data}
@@ -74,12 +79,17 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 ```
 
 
-```{r load_package}
-
-devtools::load_all()
 
 
-```
+
+
+
+
+
+
+
+
+
 
 
 
@@ -90,8 +100,10 @@ devtools::load_all()
 ```{r barplot}
 
 
-x_var = "Cell_Of_Origin"
-y_var = "Ann_Arbor_Stage"
+data <- data_goya
+
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
 
 
 ## Default
@@ -100,6 +112,9 @@ wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, 
 
 
 ## Show total proportions
+
+x_var = "Cell_Of_Origin"
+y_var = "Ann_Arbor_Stage"
 
 show_total_proportions <- TRUE
 skip_levels <- "I"
@@ -123,9 +138,115 @@ wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, 
 ```
 
 
+```{r barplot_strat}
+
+
+data <- data_goya
+
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin2"
+
+strat1_var = NULL
+
+wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1)
 
 
 
+
+
+```
+
+
+# Box plot
+
+
+```{r Box_plot}
+
+
+data <- data_goya
+
+x_var <- "Cell_Of_Origin"
+y_var <- "FCGR3A"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none")
+
+
+
+```
+
+
+
+
+```{r Box_plot_strat}
+
+
+devtools::load_all()
+
+data <- data_goya
+
+x_var <- "BCL2_cat2"
+y_var <- "FCGR3A"
+
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin2"
+strat2_var = NULL
+
+
+wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1)
+
+
+
+
+```
+
+
+
+
+
+# KM plot
+
+
+```{r KM_plot}
+
+
+data <- data_goya
+
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+covariate_var <- "Ann_Arbor_Stage"
+
+
+wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, break.time.by = NULL, max_tte = NULL, risk.table = TRUE, conf.int = FALSE, title.size = 12, legend.position = c(0.03, 0.03), legend.justification = c(0, 0), fontsize = 3.5, rel_heights = c(5, 1), background_grid_major = "none")
+
+
+
+```
+
+
+
+
+```{r KM_plot_strat, fig.width=10, fig.height=10}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+covariate_var <- "FCGR3A_cat2"
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin2"
+  
+
+wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, break.time.by = NULL, max_tte = NULL, risk.table = TRUE, conf.int = FALSE, title.size = 12, legend.position = c(0.03, 0.03), legend.justification = c(0, 0), fontsize = 3.5, rel_heights = c(5, 1), background_grid_major = "none")
+
+
+
+```
 
 
 
