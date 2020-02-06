@@ -73,13 +73,13 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_na
   
   
   ### Define lables 
-  ggdata$Label <- paste0(round(ggdata$Proportion, 1), "% (", ggdata$Count, ")")
+  ggdata$Label <- paste0(ggdata$Count, " (", round(ggdata$Proportion, 1), "%)")
   
   
   
   ### Calculate marginal counts per Subgroup
   if(show_total_counts){
-    ggdata$Subgroup <- factor(ggdata$Subgroup, levels = levels(data[, x_var]), labels = paste0(levels(data[, x_var]), "\n(", rowSums(tbl), ")"))
+    ggdata$Subgroup <- factor(ggdata$Subgroup, levels = levels(data[, x_var]), labels = paste0(levels(data[, x_var]), "\n", rowSums(tbl)))
   }else{
     ggdata$Subgroup <- factor(ggdata$Subgroup, levels = levels(data[, x_var]))
   }

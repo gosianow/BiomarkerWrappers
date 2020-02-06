@@ -1,4 +1,5 @@
 Package: BiomarkerWrappers
+Type: Package
 Title: Suite of functions for exploratory biomarker analysis
 Version: 0.0.0.1
 Authors@R: 
@@ -7,11 +8,11 @@ Authors@R:
            role = c("aut", "cre"),
            email = "malgorzata.nowicka@roche.com")
 Description: What the package does (one paragraph).
-License: What license it uses
+biocViews: WorkflowStep
+License: Artistic
 Encoding: UTF-8
 LazyData: true
-Suggests: 
-    knitr,
-    rmarkdown,
-    testthat
+Depends: R (>= 3.6.2)
+Imports: tidyverse, plyr, cowplot, RColorBrewer, ggbeeswarm, survival, survminer, forestplot, utils, stats, knitr, kableExtra
+Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr

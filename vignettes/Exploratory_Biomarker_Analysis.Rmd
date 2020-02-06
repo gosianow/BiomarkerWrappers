@@ -2,11 +2,31 @@
 title: "Example workflow for exploratory biomarker analysis"
 author: "Malgorzata Nowicka"
 date: "`r Sys.Date()`"
-# output: rmarkdown::html_vignette
-# vignette: >
-#   %\VignetteIndexEntry{Exploratory_Biomarker}
-#   %\VignetteEngine{knitr::rmarkdown}
-#   %\VignetteEncoding{UTF-8}
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+header-includes:
+  - \renewcommand*{\familydefault}{\sfdefault}
+  - \usepackage{hyperref}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage[normalem]{ulem}
 ---
 
 
@@ -80,6 +100,43 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
+# Cox regression
+
+
+```{r cox_regression, results='asis'}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+covariate_vars <- c("Treatment_Arm", "IPI_Caterories", "Cell_Of_Origin", "FCGR3A")
+return_vars = NULL
+
+
+wrapper_res <- wrapper_core_cox_regression(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+
+  
+BiomarkerKable(wrapper_res, caption = "Changes", font_size = 6)
+
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+covariate_vars <- c("IPI_Caterories", "FCGR3A")
+return_vars = NULL
+
+strat1_var = "Cell_Of_Origin"
+strat2_var = "Treatment_Arm"
+
+
+wrapper_core_cox_regression_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = NULL, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+
+
+
+
+  
+```
 
 
 

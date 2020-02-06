@@ -28,7 +28,7 @@
 #' Generate a signle boxplot.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot <- function(data, x_var, y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none"){
+wrapper_core_box_plot <- function(data, x_var, y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none"){
   
   
   stopifnot(is.data.frame(data))
@@ -47,21 +47,44 @@ wrapper_core_box_plot <- function(data, x_var, y_var, colors = NULL, variable_na
   
   ### Keep non-missing data
   
-  data <- data[!is.na(data[, x_var]) & !is.na(data[, y_var]), ]
+  data <- data[complete.cases(data[, c(x_var, y_var)]), ]
   
   
   ### Calculate counts per subgroup
-  if(show_total_counts){
+  ### Calculate median per subgroup
+  if(show_total_counts || show_median){
     
-    tbl <- table(data[, x_var])
+    suffix <- "\n"
     
-    data[, x_var] <- factor(data[, x_var], levels = levels(data[, x_var]), labels = paste0(levels(data[, x_var]), "\n(", tbl, ")"))
+    if(show_total_counts){
+      
+      tbl <- table(data[, x_var])
+      
+      suffix <- paste0(suffix, tbl)
+      
+    }
+    
+    if(show_median){
+      
+      m <- aggregate(data[, y_var], list(data[, x_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+      
+      m <- round(m, 2)
+      
+      suffix <- paste0(suffix, " (", m, ")")
+      
+    }
+    
+    ## Update level names in data
+    
+    data[, x_var] <- factor(data[, x_var], labels = paste0(levels(data[, x_var]), suffix))
     
     ## Update names for colors
     
     names(colors) <- levels(data[, x_var])
     
   }
+  
+  
   
   
   xlab <- variable_names[x_var]
@@ -134,7 +157,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, colors = NULL, variable_na
 #' Generate box plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot_strat <- function(data, x_var, y_var, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+wrapper_core_box_plot_strat <- function(data, x_var, y_var, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   if(!is.null(strat1_var)){
@@ -157,8 +180,9 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, strat1_var = NULL, s
   
   ### Keep non-missing data
   
-  data <- data[!is.na(data[, x_var]) & !is.na(data[, y_var]) & !is.na(data[, strat1_var]) & !is.na(data[, strat2_var]), ]
+  data <- data[complete.cases(data[, c(x_var, y_var, strat1_var, strat2_var)]), ]
   
+
   if(is.null(ylim)){
     ylim <- range(data[, y_var])
   }
@@ -204,7 +228,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, strat1_var = NULL, s
       }
       
       
-      ggpl <- wrapper_core_box_plot(data = data_strata1, x_var = x_var, y_var = y_var, colors = colors, variable_names = variable_names, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, point_size = point_size, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major)
+      ggpl <- wrapper_core_box_plot(data = data_strata1, x_var = x_var, y_var = y_var, colors = colors, variable_names = variable_names, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major)
       
       
       return(ggpl)
