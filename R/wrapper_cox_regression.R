@@ -189,6 +189,10 @@ wrapper_core_cox_regression <- function(data, tte_var, censor_var, covariate_var
   if(!print_nevent){
     out$`Total events` <- NULL
     out$`Subgroup events` <- NULL
+  }else{
+    if(all(out$`Subgroup events` == "")){
+      out$`Subgroup events` <- NULL
+    }
   }
   
   if(!print_pvalues){
@@ -219,13 +223,15 @@ wrapper_core_cox_regression <- function(data, tte_var, censor_var, covariate_var
     caption <- paste0("Covariate effect on ", variable_names[tte_var], ". ", 
       "Cox regression model includes ", paste0(variable_names[covariate_vars], collapse = ", "), ".")
     
-    ## Remove all undescores from the caption because they are problematic when rendering to PDF
-    caption <- gsub("_", " ", caption)
-    
   }
   
+  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  caption <- gsub("_", " ", caption)
   
-  bout <- BiomarkerCoreCoxRegression(results = res, output = out, caption = caption)
+  
+  
+  
+  bout <- BcoreCoxRegression(results = res, output = out, caption = caption)
   
   
   return(bout)
@@ -318,8 +324,8 @@ wrapper_core_cox_regression_strat <- function(data, tte_var, censor_var, covaria
       
       wrapper_res <- wrapper_core_cox_regression(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
-      res <- BiomarkerResults(wrapper_res)
-      out <- BiomarkerOutput(wrapper_res)
+      res <- Bresults(wrapper_res)
+      out <- Boutput(wrapper_res)
       
       
       
@@ -330,12 +336,12 @@ wrapper_core_cox_regression_strat <- function(data, tte_var, censor_var, covaria
       # To res
       colnames(prefix_df) <- c(strat2_var, strat1_var)
       res <- cbind(prefix_df, res)
-      BiomarkerResults(wrapper_res) <- res
+      Bresults(wrapper_res) <- res
       
       # To out
       colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
       out <- cbind(prefix_df, out)
-      BiomarkerOutput(wrapper_res) <- out
+      Boutput(wrapper_res) <- out
       
       return(wrapper_res)
       
@@ -344,10 +350,10 @@ wrapper_core_cox_regression_strat <- function(data, tte_var, censor_var, covaria
     
     ### Merge the results
     
-    res <- plyr::rbind.fill(lapply(wrapper_res, BiomarkerResults))
-    out <- plyr::rbind.fill(lapply(wrapper_res, BiomarkerOutput))
+    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
     
-    wrapper_res <- BiomarkerCoreCoxRegression(results = res, output = out, caption = BiomarkerCaption(wrapper_res[[1]]))
+    wrapper_res <- BcoreCoxRegression(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -356,8 +362,8 @@ wrapper_core_cox_regression_strat <- function(data, tte_var, censor_var, covaria
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, BiomarkerResults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, BiomarkerOutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
   
   
   ### Remove dummy columns
@@ -372,7 +378,7 @@ wrapper_core_cox_regression_strat <- function(data, tte_var, censor_var, covaria
   }
   
   
-  wrapper_res <- BiomarkerCoreCoxRegression(results = res, output = out, caption = BiomarkerCaption(wrapper_res[[1]]))
+  wrapper_res <- BcoreCoxRegression(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
   
   return(wrapper_res)
   
@@ -384,6 +390,229 @@ wrapper_core_cox_regression_strat <- function(data, tte_var, censor_var, covaria
 
 
 
+
+
+
+
+
+
+wrapper_cox_regression_prognostic <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Checks
+  # --------------------------------------------------------------------------
+  
+  
+  ### Adjustment variables cannot include biomarker variables
+  stopifnot(length(intersect(biomarker_vars, adjustment_vars)) == 0)
+  
+  ### Model variables cannot include strata variables
+  stopifnot(length(intersect(c(biomarker_vars, adjustment_vars), c(strat1_var, strat2_var))) == 0)
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  wrapper_res <- lapply(1:length(biomarker_vars), function(i){
+    # i = 2
+    
+    covariate_vars <- c(biomarker_vars[i], adjustment_vars)
+    return_vars <- biomarker_vars[i]
+    
+    
+    wrapper_res <- wrapper_core_cox_regression_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    
+    
+    return(wrapper_res)
+    
+    
+  })
+  
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  ### Replace NAs with "" for columns that are missing for numerical biomarkers
+  
+  out$Effect[is.na(out$Effect)] <- ""
+  out$`Subgroup n`[is.na(out$`Subgroup n`)] <- ""
+  if("Subgroup events" %in% colnames(out)){
+    out$`Subgroup events`[is.na(out$`Subgroup events`)] <- ""
+  }
+  
+  
+  
+  ### Rename 'Covariate' column name to 'Biomarker'
+  
+  colnames(res)[colnames(res) == "covariate"] <- "biomarker"
+  colnames(out)[colnames(out) == "Covariate"] <- "Biomarker"
+  
+  
+  ### Generate caption
+  
+  
+  if(is.null(caption)){
+    
+    caption <- paste0("Biomarker effect on ", variable_names[tte_var], ". ")
+    
+    
+    if(is.null(adjustment_vars)){
+      
+      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes only the biomarker.")
+      
+    }else{
+      
+      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes the biomarker and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
+      
+    }
+    
+  }
+  
+  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  caption <- gsub("_", " ", caption)
+  
+  
+  wrapper_res <- BcoreCoxRegression(results = res, output = out, caption = caption)
+  
+  return(wrapper_res)
+  
+  
+}
+
+
+
+
+
+
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("FCGR2B_cat2", "FCGR3A_cat2")
+adjustment_vars <- "IPI_Caterories"
+
+strat2_var = "Cell_Of_Origin"
+
+variable_names = NULL
+caption = NULL
+print_nevent = FALSE
+print_pvalues = TRUE
+print_adjpvalues = TRUE
+
+
+
+
+
+wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Checks
+  # --------------------------------------------------------------------------
+  
+  
+  ### Adjustment variables cannot include treatment
+  stopifnot(length(intersect(treatment_var, adjustment_vars)) == 0)
+  
+  ### Model variables cannot include strata variables
+  stopifnot(length(intersect(c(treatment_var, adjustment_vars), c(biomarker_vars, strat2_var))) == 0)
+  
+  
+  vars_class <- sapply(data[, c(treatment_var, biomarker_vars)], class)
+  stopifnot(all(vars_class == "factor"))
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  
+  
+  wrapper_res <- lapply(1:length(biomarker_vars), function(i){
+    # i = 1
+    
+    covariate_vars <- c(treatment_var, adjustment_vars)
+    return_vars <- treatment_var
+    strat1_var <- biomarker_vars[i]
+    
+    wrapper_res <- wrapper_core_cox_regression_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    
+    
+    
+    ### Rename strata column name to 'Biomarker Subgroup'
+    
+    res <- Bresults(wrapper_res)
+    out <- Boutput(wrapper_res)
+    
+    colnames(res)[colnames(res) == biomarker_vars[i]] <- "biomarker_subgroup"
+    colnames(out)[colnames(out) == variable_names[biomarker_vars[i]]] <- "Biomarker Subgroup"
+    
+    ### Treatment is the same for all the biomarkers and biomarker info is missing. Thus, we replace covariate with biomarker name. Swap Biomarker Subgroup with Biomarker.
+    
+    res[, colnames(res) == "covariate"] <- biomarker_vars[i]
+    out[, colnames(out) == "Covariate"] <- variable_names[biomarker_vars[i]]
+    
+    colnames(res)[colnames(res) == "covariate"] <- "biomarker"
+    colnames(out)[colnames(out) == "Covariate"] <- "Biomarker"
+    
+    res <- dplyr::select(res, c(strat2_var, "biomarker", "biomarker_subgroup"), everything())
+    out <- dplyr::select(out, c(variable_names[strat2_var], "Biomarker", "Biomarker Subgroup"), everything())
+    
+    
+    Bresults(wrapper_res) <- res
+    Boutput(wrapper_res) <- out
+    
+    
+    return(wrapper_res)
+    
+    
+  })
+  
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  ### Change the name to Treatment Effect
+  
+  colnames(out)[colnames(out) == "Effect"] <- "Treatment Effect"
+  
+  
+  ### Generate caption
+  
+  
+  if(is.null(caption)){
+    
+    caption <- paste0("Treatment effect on ", variable_names[tte_var], ". ")
+    
+    
+    if(is.null(adjustment_vars)){
+      
+      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes only the treatment.")
+      
+    }else{
+      
+      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes the treatment and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
+      
+    }
+    
+  }
+  
+  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  caption <- gsub("_", " ", caption)
+  
+  
+  wrapper_res <- BcoreCoxRegression(results = res, output = out, caption = caption)
+  
+  return(wrapper_res)
+  
+  
+}
 
 
 

@@ -1,14 +1,14 @@
-#' @include class_BiomarkerClass.R
+#' @include class_Bclass.R
 NULL
 
 ###############################################################################
-### BiomarkerCoreCoxRegression class
+### BcoreCoxRegression class
 ###############################################################################
 
 
-#' @rdname BiomarkerClass-class
-BiomarkerCoreCoxRegression <- setClass("BiomarkerCoreCoxRegression", 
-  contains = "BiomarkerClass")
+#' @rdname Bclass-class
+BcoreCoxRegression <- setClass("BcoreCoxRegression", 
+  contains = "Bclass")
 
 
 # --------------------------------------------------------------------------
@@ -16,7 +16,7 @@ BiomarkerCoreCoxRegression <- setClass("BiomarkerCoreCoxRegression",
 # --------------------------------------------------------------------------
 
 
-setValidity("BiomarkerCoreCoxRegression", function(object){
+setValidity("BcoreCoxRegression", function(object){
   # It has to return TRUE when valid object!
   
   ### There can be more checks about the exact covariates in the data frames.
@@ -38,16 +38,16 @@ setValidity("BiomarkerCoreCoxRegression", function(object){
 ################################################################################
 
 
-#' @rdname BiomarkerClass-class
+#' @rdname Bclass-class
 #' @export
-setMethod("BiomarkerKable", "BiomarkerCoreCoxRegression", function(x, caption = NULL, font_size = 11, block_vars = NULL){
+setMethod("Bkable", "BcoreCoxRegression", function(x, caption = NULL, font_size = 11, block_vars = NULL){
   
   
-  res <- BiomarkerResults(x)
-  out <- BiomarkerOutput(x)
+  res <- Bresults(x)
+  out <- Boutput(x)
   
   if(is.null(caption)){
-    caption <- BiomarkerCaption(x)
+    caption <- Bcaption(x)
   }
   
   
@@ -61,23 +61,17 @@ setMethod("BiomarkerKable", "BiomarkerCoreCoxRegression", function(x, caption = 
   ## Define rows that should be colored
   # --------------------------------------------------------------------------
   
-  
-  ## Strata variables and the covariate description are appended at the beginning of the 'res' data.frame, before the 'levels' column.
-  
-  which_columns <- colnames(res)[1:(which(colnames(res) == "levels") - 1)]
-  
+  ### By default color per covariate/biomarker block
   if(is.null(block_vars)){
-    ### By default color per covariate block
-    block_vars <- which_columns[length(which_columns)]
+    
+    block_vars <- colnames(res)[which(colnames(res) %in% c("covariate", "biomarker"))]
     
   }
   
-  stopifnot(all(block_vars %in% which_columns))
   
   ## Identify every second changing character group
-  
-  
   which_row_spec <- indicate_blocks(d = res, block_vars = block_vars, return = "seq")
+  
   
   if(!is.null(which_row_spec)){
     kable <- kable %>% 
@@ -91,9 +85,9 @@ setMethod("BiomarkerKable", "BiomarkerCoreCoxRegression", function(x, caption = 
 
 
 
-setMethod("show", "BiomarkerCoreCoxRegression", function(object){
+setMethod("show", "BcoreCoxRegression", function(object){
   
-  print(BiomarkerKable(object))
+  print(Bkable(object))
   
 })
 
