@@ -90,6 +90,12 @@ setMethod("Bresults", "Bclass", function(x) x@results )
 
 #' @rdname Bclass-class
 #' @export
+setMethod("Bresults", "NULL", function(x) NULL )
+
+
+
+#' @rdname Bclass-class
+#' @export
 setGeneric("Bresults<-", function(x, value) standardGeneric("Bresults<-"))
 
 
@@ -117,6 +123,11 @@ setGeneric("Boutput", function(x, ...) standardGeneric("Boutput"))
 setMethod("Boutput", "Bclass", function(x) x@output )
 
 
+#' @rdname Bclass-class
+#' @export
+setMethod("Boutput", "NULL", function(x) NULL )
+
+
 
 #' @rdname Bclass-class
 #' @export
@@ -135,6 +146,9 @@ setMethod("Boutput<-", "Bclass", function(x, value){
 
 
 
+
+
+
 #' @rdname Bclass-class
 #' @export
 setGeneric("Bcaption", function(x, ...) standardGeneric("Bcaption"))
@@ -144,6 +158,10 @@ setGeneric("Bcaption", function(x, ...) standardGeneric("Bcaption"))
 #' @export
 setMethod("Bcaption", "Bclass", function(x) x@caption )
 
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bcaption", "NULL", function(x) NULL )
 
 
 #' @rdname Bclass-class

@@ -2,12 +2,13 @@
 NULL
 
 ###############################################################################
-### BcoreCoxRegression class
+### BclassTesting class
 ###############################################################################
 
 
 #' @rdname Bclass-class
-BcoreCoxRegression <- setClass("BcoreCoxRegression", 
+BclassTesting <- setClass("BclassTesting", 
+  slots = c(header = "numeric"),
   contains = "Bclass")
 
 
@@ -16,10 +17,10 @@ BcoreCoxRegression <- setClass("BcoreCoxRegression",
 # --------------------------------------------------------------------------
 
 
-setValidity("BcoreCoxRegression", function(object){
+setValidity("BclassTesting", function(object){
   # It has to return TRUE when valid object!
   
-  ### There can be more checks about the exact covariates in the data frames.
+  ### TODO There can be more checks about the exact covariates in the data frames.
   
   if(nrow(object@results) == nrow(object@output)){
     out <- TRUE
@@ -27,7 +28,48 @@ setValidity("BcoreCoxRegression", function(object){
     return(paste0("Different number of rows for 'results' and 'output'!"))
   }
   
+  if(sum(object@header) == ncol(object@output)){
+    out <- TRUE
+  }else{
+    return(paste0("Sum of values in 'header' must be equal to the number of columns in 'output'!"))
+  }
+  
   return(out)
+  
+})
+
+
+
+################################################################################
+### Accessor methods
+################################################################################
+
+
+#' @rdname Bclass-class
+#' @export
+setGeneric("Bheader", function(x, ...) standardGeneric("Bheader"))
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader", "Bclass", function(x) x@header )
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader", "NULL", function(x) NULL )
+
+
+#' @rdname Bclass-class
+#' @export
+setGeneric("Bheader<-", function(x, value) standardGeneric("Bheader<-"))
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader<-", "Bclass", function(x, value){
+  
+  BcoreCoxRegression(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
   
 })
 
@@ -40,11 +82,13 @@ setValidity("BcoreCoxRegression", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BcoreCoxRegression", function(x, caption = NULL, font_size = 11, block_vars = NULL){
+setMethod("Bkable", "BclassTesting", function(x, caption = NULL, font_size = 11, block_vars = NULL){
   
   
   res <- Bresults(x)
   out <- Boutput(x)
+  header <- Bheader(x)
+    
   
   if(is.null(caption)){
     caption <- Bcaption(x)
@@ -53,7 +97,8 @@ setMethod("Bkable", "BcoreCoxRegression", function(x, caption = NULL, font_size 
   
   kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = FALSE, font_size = font_size) %>% 
-    kableExtra::column_spec(which(colnames(out) %in% c("HR", "P-value", "Adj. P-value")), bold = TRUE) 
+    kableExtra::column_spec(which(colnames(out) %in% c("OR", "P-value", "Adj. P-value")), bold = TRUE) %>% 
+    add_header_above(header)
   
   
   
@@ -70,7 +115,7 @@ setMethod("Bkable", "BcoreCoxRegression", function(x, caption = NULL, font_size 
   
   
   ## Identify every second changing character group
-  which_row_spec <- indicate_blocks(d = res, block_vars = block_vars, return = "seq")
+  which_row_spec <- indicate_blocks(d = res, block_vars = block_vars, return = "block")
   
   
   if(!is.null(which_row_spec)){
@@ -85,7 +130,7 @@ setMethod("Bkable", "BcoreCoxRegression", function(x, caption = NULL, font_size 
 
 
 
-setMethod("show", "BcoreCoxRegression", function(object){
+setMethod("show", "BclassTesting", function(object){
   
   print(Bkable(object))
   

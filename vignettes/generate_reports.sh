@@ -13,6 +13,8 @@ Rscript -e "rmarkdown::render('vignettes/Exploratory_Biomarker_Analysis.Rmd', ou
 
 
 
+Rscript -e "rmarkdown::render('vignettes/Test_KM_plot_survminer.Rmd', output_format = 'html_document', output_dir = 'vignettes/')"
+
 
 
 
