@@ -1,4 +1,4 @@
-#' @include class_Bclass.R
+#' @include class_Bclass.R class_BclassCharacteristics.R
 NULL
 
 ###############################################################################
@@ -6,10 +6,9 @@ NULL
 ###############################################################################
 
 
-#' @rdname Bclass-class
+#' @rdname BclassTesting-class
 BclassTesting <- setClass("BclassTesting", 
-  slots = c(header = "numeric"),
-  contains = "Bclass")
+  contains = "BclassCharacteristics")
 
 
 # --------------------------------------------------------------------------
@@ -41,46 +40,11 @@ setValidity("BclassTesting", function(object){
 
 
 ################################################################################
-### Accessor methods
-################################################################################
-
-
-#' @rdname Bclass-class
-#' @export
-setGeneric("Bheader", function(x, ...) standardGeneric("Bheader"))
-
-
-#' @rdname Bclass-class
-#' @export
-setMethod("Bheader", "Bclass", function(x) x@header )
-
-
-#' @rdname Bclass-class
-#' @export
-setMethod("Bheader", "NULL", function(x) NULL )
-
-
-#' @rdname Bclass-class
-#' @export
-setGeneric("Bheader<-", function(x, value) standardGeneric("Bheader<-"))
-
-
-#' @rdname Bclass-class
-#' @export
-setMethod("Bheader<-", "Bclass", function(x, value){
-  
-  BcoreCoxRegression(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
-  
-})
-
-
-
-################################################################################
 ### Show method
 ################################################################################
 
 
-#' @rdname Bclass-class
+#' @rdname BclassTesting-class
 #' @export
 setMethod("Bkable", "BclassTesting", function(x, caption = NULL, font_size = 11, block_vars = NULL){
   

@@ -143,6 +143,7 @@ wrapper_core_fishers_test <- function(data, x_var, y_var, variable_names = NULL,
   
   
   header <- c(num_start_cols, nlevels(data[, x_var]), num_end_cols)
+  header <- as.integer(header)
   names(header) <- c(" ", variable_names[x_var], " ")
   
   

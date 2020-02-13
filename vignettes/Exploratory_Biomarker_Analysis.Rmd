@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output:
   pdf_document:
     toc: yes
-    toc_depth: '3'
+    toc_depth: 3
   html_document:
     toc: yes
     toc_depth: 3
@@ -101,11 +101,55 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
+# Characteristics
+
+
+```{r characteristics, results='asis'}
+
+
+data <- data_goya
+
+x_var <- "Treatment_Arm"
+y_var <- "Ann_Arbor_Stage"
+
+variable_names = NULL
+caption = NULL
+
+
+
+wrapper_core_characteristics_cat(data, x_var = x_var, y_var = y_var)
+
+
+x_var <- "Treatment_Arm"
+y_var <- "FCGR2B"
+
+variable_names = NULL
+caption = NULL
+
+
+
+wrapper_core_characteristics_num(data, x_var = x_var, y_var = y_var)
+
+
+data <- data_goya
+
+x_var <- "Treatment_Arm"
+y_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+
+
+wrapper_core_characteristics(data, x_var = x_var, y_vars = y_vars)
+  
+  
+  
+```
+
+
+
 
 # Fisher's test
 
 
-```{r barplot}
+```{r fishers_test, results='asis'}
 
 
 data <- data_goya
@@ -118,11 +162,11 @@ variable_names = NULL
 caption = NULL
 
 margin = 1
-
 print_pvalues = TRUE
 
 
-wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, variable_names = NULL, caption = NULL, margin = margin, print_pvalues = TRUE)
+
+wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, margin = margin)
 
 
 
@@ -130,7 +174,7 @@ x_var <- "Cell_Of_Origin2"
 y_var <- "FCGR2B_cat2"
 
 
-wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, variable_names = NULL, caption = NULL, margin = margin, print_pvalues = TRUE)
+wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, margin = margin)
 
 
 
@@ -138,7 +182,7 @@ y_var <- "Cell_Of_Origin2"
 x_var <- "FCGR2B_cat2"
 
 
-wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, variable_names = NULL, caption = NULL, margin = margin, print_pvalues = TRUE)
+wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, margin = margin)
 
 
 
@@ -160,7 +204,7 @@ censor_var <- "PFS_Censor"
 covariate_var <- "Ann_Arbor_Stage"
 
 
-wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, break.time.by = NULL, max_tte = NULL, risk.table = TRUE, conf.int = FALSE, title.size = 12, legend.position = c(0.03, 0.03), legend.justification = c(0, 0), fontsize = 3.5, rel_heights = c(5, 1), background_grid_major = "none")
+wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
 
 
 
@@ -181,11 +225,32 @@ strat1_var = "Treatment_Arm"
 strat2_var = "Cell_Of_Origin2"
   
 
-wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = NULL, variable_names = NULL, title = NULL, break.time.by = NULL, max_tte = NULL, risk.table = TRUE, conf.int = FALSE, title.size = 12, legend.position = c(0.03, 0.03), legend.justification = c(0, 0), fontsize = 3.5, rel_heights = c(5, 1), background_grid_major = "none")
+wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 
 ```
+
+
+
+```{r KM_plot_interaction}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+
+biomarker_var <- "FCGR3A_cat2"
+treatment_var = "Treatment_Arm"
+
+
+
+wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
+
+
+```
+
 
 
 
@@ -202,13 +267,12 @@ data <- data_goya
 tte_var <- "PFS"
 censor_var <- "PFS_Censor"
 covariate_vars <- c("Treatment_Arm", "IPI_Caterories", "Cell_Of_Origin", "FCGR3A")
-return_vars = NULL
 
 
-wrapper_res <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_res <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
 
   
-Bkable(wrapper_res, caption = "Changes", font_size = 10)
+Bkable(wrapper_res, caption = "Changes", font_size = 6)
 
 
 
@@ -216,13 +280,12 @@ data <- data_goya
 tte_var <- "PFS"
 censor_var <- "PFS_Censor"
 covariate_vars <- c("IPI_Caterories", "FCGR3A")
-return_vars = NULL
 
 strat1_var = "Cell_Of_Origin"
 strat2_var = "Treatment_Arm"
 
 
-wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = NULL, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 
@@ -233,13 +296,10 @@ censor_var <- "PFS_Censor"
 biomarker_vars <- c("FCGR2B_cat2", "FCGR3A", "FCGR3A_cat2")
 adjustment_vars <- "IPI_Caterories"
 
-
 strat1_var = "Treatment_Arm"
-strat2_var = NULL
 
 
-
-wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
 
 
 
@@ -256,7 +316,7 @@ adjustment_vars <- "IPI_Caterories"
 strat2_var = "Cell_Of_Origin"
 
 
-wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat2_var = strat2_var, variable_names = variable_names, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat2_var = strat2_var)
   
 
 
@@ -272,7 +332,7 @@ covariate_vars <- c("IPI_Caterories", "Cell_Of_Origin")
 
 
 
-wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
 
 
 
@@ -288,7 +348,7 @@ covariate_vars <- c("IPI_Caterories")
 strat1_var = "Cell_Of_Origin"
 strat2_var = NULL
 
-wrapper_core_cox_regression_interaction_strat(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_core_cox_regression_interaction_strat(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 
@@ -307,7 +367,7 @@ strat2_var = "Cell_Of_Origin"
 
 
 
-wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = NULL, strat2_var = strat2_var, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE)
+wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, strat2_var = strat2_var)
   
   
 
@@ -341,7 +401,7 @@ y_var = "Resp_Lugano"
 
 ## Default
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none")
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 ## Show total proportions
@@ -352,7 +412,7 @@ y_var = "Ann_Arbor_Stage"
 show_total_proportions <- TRUE
 skip_levels <- "I"
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = skip_levels, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = show_total_proportions, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none")
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, skip_levels = skip_levels)
 
 
 
@@ -363,7 +423,7 @@ data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
 show_total_proportions <- TRUE
 skip_levels <- "I"
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = skip_levels, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = show_total_proportions, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none")
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, skip_levels = skip_levels, show_total_proportions = show_total_proportions)
 
 
 
@@ -384,7 +444,7 @@ strat2_var = "Cell_Of_Origin2"
 
 strat1_var = NULL
 
-wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1)
+wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 
@@ -405,7 +465,7 @@ x_var <- "Cell_Of_Origin"
 y_var <- "FCGR3A"
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none")
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 
@@ -417,8 +477,6 @@ wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, colors = NULL, 
 ```{r Box_plot_strat}
 
 
-devtools::load_all()
-
 data <- data_goya
 
 x_var <- "BCL2_cat2"
@@ -427,10 +485,9 @@ y_var <- "FCGR3A"
 
 strat1_var = "Treatment_Arm"
 strat2_var = "Cell_Of_Origin2"
-strat2_var = NULL
 
 
-wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1)
+wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 

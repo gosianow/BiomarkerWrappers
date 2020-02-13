@@ -438,6 +438,10 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
+  # --------------------------------------------------------------------------
+  # Generate the results
+  # --------------------------------------------------------------------------
+  
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
     # i = 2
     

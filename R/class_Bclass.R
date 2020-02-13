@@ -1,9 +1,16 @@
 
+###############################################################################
+### Set class unions
+###############################################################################
+
+### To allow caption = NULL
+setClassUnion("characterNULL", c("character", "NULL"))
 
 
 ###############################################################################
 ### Bclass class which is a virtual class
 ###############################################################################
+
 
 #' Bclass object
 #' 
@@ -23,7 +30,7 @@
 #' Inheriting classes:
 #' 
 #' \itemize{
-#' \item \code{BcoreCoxRegression}
+#' \item \code{BclassRegression}
 #' }
 #' 
 #' 
@@ -38,7 +45,7 @@
 Bclass <- setClass("Bclass", 
   slots = c(results = "data.frame", 
     output = "data.frame",
-    caption = "character"))
+    caption = "characterNULL"))
 
 
 
@@ -103,7 +110,7 @@ setGeneric("Bresults<-", function(x, value) standardGeneric("Bresults<-"))
 #' @export
 setMethod("Bresults<-", "Bclass", function(x, value){
   
-  BcoreCoxRegression(results = value, output = Boutput(x), caption = Bcaption(x))
+  BclassRegression(results = value, output = Boutput(x), caption = Bcaption(x))
   
 })
 
@@ -138,7 +145,7 @@ setGeneric("Boutput<-", function(x, value) standardGeneric("Boutput<-"))
 #' @export
 setMethod("Boutput<-", "Bclass", function(x, value){
   
-  BcoreCoxRegression(results = Bresults(x), output = value, caption = Bcaption(x))
+  BclassRegression(results = Bresults(x), output = value, caption = Bcaption(x))
   
 })
 
@@ -173,7 +180,7 @@ setGeneric("Bcaption<-", function(x, value) standardGeneric("Bcaption<-"))
 #' @export
 setMethod("Bcaption<-", "Bclass", function(x, value){
   
-  BcoreCoxRegression(results = Bresults(x), output = Boutput(x), caption = value)
+  BclassRegression(results = Bresults(x), output = Boutput(x), caption = value)
   
 })
 

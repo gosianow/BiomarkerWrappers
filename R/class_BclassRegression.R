@@ -71,7 +71,7 @@ setMethod("Bkable", "BclassRegression", function(x, caption = NULL, font_size = 
   
   
   ## Identify every second changing character group
-  which_row_spec <- indicate_blocks(d = res, block_vars = block_vars, return = "seq")
+  which_row_spec <- indicate_blocks(d = res, block_vars = block_vars, return = "block")
   
   
   if(!is.null(which_row_spec)){

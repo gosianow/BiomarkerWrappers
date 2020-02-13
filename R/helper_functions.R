@@ -86,6 +86,9 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
 
 indicate_blocks <- function(d, block_vars, return = "block"){
   
+  stopifnot(length(return) == 1)
+  stopifnot(return %in% c("block", "line", "empty"))
+  
   
   all_data <- apply(d[, block_vars, drop = FALSE], 1, paste, collapse = ".")
   
@@ -105,7 +108,6 @@ indicate_blocks <- function(d, block_vars, return = "block"){
     }else{
       out <- NULL
     }
-    
     
     
   }else if(return == "line"){
@@ -244,18 +246,48 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
   
   output_names <- gsub(pattern, "", colnames(counts))
   
-  
   stopifnot(all(dim(counts) == dim(props)))
   
+  
   output <- lapply(1:nrow(counts), function(i){
+    # i = 1
+
+    out <- paste0(ifelse(is.na(counts[i, ]), "", counts[i, ]), ifelse(is.na(props[i, ]), "", paste0(" (", round(props[i, ], digits), "%)")))
     
-    paste0(counts[i, ], " (", round(props[i, ], digits), "%)")
+    # Remove white spaces from the beginning and the end of a string
+    
+    out <- stringr::str_trim(out, side = "both")
+    
+    return(out)
     
   })
   
   output <- data.frame(do.call("rbind", output), stringsAsFactors = FALSE)
   
   colnames(output) <- output_names
+  
+  return(output)
+  
+}
+
+
+
+format_summ <- function(summ, digits = 2){
+  
+  
+  output <- lapply(1:nrow(summ), function(i){
+    # i = 1
+    
+    out <- ifelse(is.na(summ[i, ]), "", formatC(round(summ[i, ], digits), format = "f", digits = digits, drop0trailing = TRUE))
+    
+
+    return(out)
+    
+  })
+  
+  output <- data.frame(do.call("rbind", output), stringsAsFactors = FALSE)
+  
+  colnames(output) <- colnames(summ)
   
   return(output)
   
