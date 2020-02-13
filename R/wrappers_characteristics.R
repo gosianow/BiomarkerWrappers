@@ -104,16 +104,14 @@ wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names 
   # --------------------------------------------------------------------------
   
   
-  if(is.null(caption)){
+  if(!is.null(caption)){
     
-    caption <- paste0("Characteristics.")
+    ## Remove all undescores from the caption because they are problematic when rendering to PDF
+    caption <- gsub("_", " ", caption)
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
-  caption <- gsub("_", " ", caption)
-  
-  
+
   
   bout <- BclassCharacteristics(results = res, output = out, caption = caption, header = header)
   
@@ -225,14 +223,12 @@ wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names 
   # --------------------------------------------------------------------------
   
   
-  if(is.null(caption)){
+  if(!is.null(caption)){
     
-    caption <- paste0("Characteristics.")
+    ## Remove all undescores from the caption because they are problematic when rendering to PDF
+    caption <- gsub("_", " ", caption)
     
   }
-  
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
-  caption <- gsub("_", " ", caption)
   
   
   
@@ -319,14 +315,12 @@ wrapper_core_characteristics <- function(data, x_var, y_vars, variable_names = N
   # --------------------------------------------------------------------------
   
   
-  if(is.null(caption)){
+  if(!is.null(caption)){
     
-    caption <- paste0("Characteristics.")
+    ## Remove all undescores from the caption because they are problematic when rendering to PDF
+    caption <- gsub("_", " ", caption)
     
   }
-  
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
-  caption <- gsub("_", " ", caption)
   
   
   header <- Bheader(wrapper_res[[1]])

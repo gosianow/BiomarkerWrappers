@@ -1,22 +1,14 @@
 #' @include class_Bclass.R 
 NULL
 
-###############################################################################
-### Set class unions
-###############################################################################
-
-### To allow header = NULL
-setClassUnion("integerNULL", c("integer", "NULL"))
-
 
 ###############################################################################
 ### BclassCharacteristics class
 ###############################################################################
 
 
-#' @rdname BclassCharacteristics-class
+#' @rdname Bclass-class
 BclassCharacteristics <- setClass("BclassCharacteristics", 
-  slots = c(header = "integerNULL"),
   contains = "Bclass")
 
 
@@ -30,59 +22,11 @@ setValidity("BclassCharacteristics", function(object){
   
   ### TODO There can be more checks about the exact covariates in the data frames.
   
-  if(nrow(object@results) == nrow(object@output)){
-    out <- TRUE
-  }else{
-    return(paste0("Different number of rows for 'results' and 'output'!"))
-  }
-  
-  if(!is.null(object@header)){
-    if(sum(object@header) == ncol(object@output)){
-      out <- TRUE
-    }else{
-      return(paste0("Sum of values in 'header' must be equal to the number of columns in 'output'!"))
-    }
-  }
-  
+  out <- TRUE
   
   return(out)
   
 })
-
-
-################################################################################
-### Accessor methods
-################################################################################
-
-
-#' @rdname BclassCharacteristics-class
-#' @export
-setGeneric("Bheader", function(x, ...) standardGeneric("Bheader"))
-
-
-#' @rdname BclassCharacteristics-class
-#' @export
-setMethod("Bheader", "BclassCharacteristics", function(x) x@header )
-
-
-#' @rdname BclassCharacteristics-class
-#' @export
-setMethod("Bheader", "NULL", function(x) NULL )
-
-
-#' @rdname BclassCharacteristics-class
-#' @export
-setGeneric("Bheader<-", function(x, value) standardGeneric("Bheader<-"))
-
-
-#' @rdname BclassCharacteristics-class
-#' @export
-setMethod("Bheader<-", "BclassCharacteristics", function(x, value){
-  
-  BclassRegression(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
-  
-})
-
 
 
 
@@ -93,7 +37,7 @@ setMethod("Bheader<-", "BclassCharacteristics", function(x, value){
 ################################################################################
 
 
-#' @rdname BclassCharacteristics-class
+#' @rdname Bclass-class
 #' @export
 setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = 11){
   
@@ -131,7 +75,7 @@ setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header 
   if(!is.null(which_row_spec)){
     kable <- kable %>% 
       kableExtra::row_spec(which_row_spec, bold = TRUE, background = "#F0F8FF") %>% 
-      kableExtra::row_spec(which_row_spec_isna, background = "#fafcff")
+      kableExtra::row_spec(which_row_spec_isna, background = "#fafcff", color = "#666666")
   }
   
   

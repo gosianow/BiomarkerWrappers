@@ -236,7 +236,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   
   
-  bout <- BclassRegression(results = res, output = out, caption = caption)
+  bout <- BclassTesting(results = res, output = out, caption = caption)
   
   
   return(bout)
@@ -364,7 +364,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
     res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
     
-    wrapper_res <- BclassRegression(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -398,7 +398,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   }
   
   
-  wrapper_res <- BclassRegression(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
   
   return(wrapper_res)
   
@@ -512,7 +512,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   caption <- gsub("_", " ", caption)
   
   
-  wrapper_res <- BclassRegression(results = res, output = out, caption = caption)
+  wrapper_res <- BclassTesting(results = res, output = out, caption = caption)
   
   return(wrapper_res)
   
@@ -661,7 +661,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
   caption <- gsub("_", " ", caption)
   
   
-  wrapper_res <- BclassRegression(results = res, output = out, caption = caption)
+  wrapper_res <- BclassTesting(results = res, output = out, caption = caption)
   
   return(wrapper_res)
   
@@ -936,7 +936,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   
   
-  bout <- BclassRegression(results = res, output = out, caption = caption)
+  bout <- BclassTesting(results = res, output = out, caption = caption)
   
   
   return(bout)
@@ -1042,7 +1042,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
     res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
     
-    wrapper_res <- BclassRegression(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -1073,7 +1073,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
   }
   
   
-  wrapper_res <- BclassRegression(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
   
   return(wrapper_res)
   
@@ -1185,7 +1185,7 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   caption <- gsub("_", " ", caption)
   
   
-  wrapper_res <- BclassRegression(results = res, output = out, caption = caption)
+  wrapper_res <- BclassTesting(results = res, output = out, caption = caption)
   
   return(wrapper_res)
   

@@ -1,4 +1,4 @@
-#' @include class_Bclass.R class_BclassCharacteristics.R
+#' @include class_Bclass.R
 NULL
 
 ###############################################################################
@@ -6,9 +6,9 @@ NULL
 ###############################################################################
 
 
-#' @rdname BclassTesting-class
+#' @rdname Bclass-class
 BclassTesting <- setClass("BclassTesting", 
-  contains = "BclassCharacteristics")
+  contains = "Bclass")
 
 
 # --------------------------------------------------------------------------
@@ -21,17 +21,7 @@ setValidity("BclassTesting", function(object){
   
   ### TODO There can be more checks about the exact covariates in the data frames.
   
-  if(nrow(object@results) == nrow(object@output)){
-    out <- TRUE
-  }else{
-    return(paste0("Different number of rows for 'results' and 'output'!"))
-  }
-  
-  if(sum(object@header) == ncol(object@output)){
-    out <- TRUE
-  }else{
-    return(paste0("Sum of values in 'header' must be equal to the number of columns in 'output'!"))
-  }
+  out <- TRUE
   
   return(out)
   
@@ -44,24 +34,27 @@ setValidity("BclassTesting", function(object){
 ################################################################################
 
 
-#' @rdname BclassTesting-class
+#' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BclassTesting", function(x, caption = NULL, font_size = 11, block_vars = NULL){
+setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, font_size = 11, block_vars = NULL){
   
   
   res <- Bresults(x)
   out <- Boutput(x)
-  header <- Bheader(x)
-    
+  
   
   if(is.null(caption)){
     caption <- Bcaption(x)
   }
   
+  if(is.null(header)){
+    header <- Bheader(x)
+  }
+  
   
   kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = FALSE, font_size = font_size) %>% 
-    kableExtra::column_spec(which(colnames(out) %in% c("OR", "P-value", "Adj. P-value")), bold = TRUE) %>% 
+    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "P-value", "Adj. P-value")), bold = TRUE) %>% 
     add_header_above(header)
   
   
@@ -73,7 +66,7 @@ setMethod("Bkable", "BclassTesting", function(x, caption = NULL, font_size = 11,
   ### By default color per covariate/biomarker block
   if(is.null(block_vars)){
     
-    block_vars <- colnames(res)[which(colnames(res) %in% c("covariate", "biomarker"))]
+    block_vars <- colnames(res)[which(colnames(res) %in% c("covariate", "biomarker", "covariate1"))]
     
   }
   

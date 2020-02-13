@@ -6,6 +6,9 @@
 ### To allow caption = NULL
 setClassUnion("characterNULL", c("character", "NULL"))
 
+### To allow header = NULL
+setClassUnion("integerNULL", c("integer", "NULL"))
+
 
 ###############################################################################
 ### Bclass class which is a virtual class
@@ -24,13 +27,14 @@ setClassUnion("characterNULL", c("character", "NULL"))
 #' \item \code{Bresults(x)}: Get a data frame with results. 
 #' \item \code{Boutput(x)}: Get a data frame with output that is dispalyed with kable.
 #' \item \code{Bcaption(x)}: Get a string with caption that is displayed with kable.
+#' \item \code{Bheader(x)}: Get a vector with header that is displayed with kable.
 #' \item \code{Bkable(x)}: Display output with kable.
 #' }
 #' 
 #' Inheriting classes:
 #' 
 #' \itemize{
-#' \item \code{BclassRegression}
+#' \item \code{Bclass}
 #' }
 #' 
 #' 
@@ -40,12 +44,18 @@ setClassUnion("characterNULL", c("character", "NULL"))
 #' @slot results Data frame with results.
 #' @slot output Data frame with output that is dispalyed with kable.
 #' @slot caption String with caption that is displayed in the table.
+#' @slot header Names integer vector with header that is displayed in the table.
 #'   
 #' @author Malgorzata Nowicka
 Bclass <- setClass("Bclass", 
   slots = c(results = "data.frame", 
     output = "data.frame",
-    caption = "characterNULL"))
+    caption = "characterNULL",
+    header = "integerNULL"),
+  prototype = list(results = data.frame(), 
+    output = data.frame(),
+    caption = NULL,
+    header = NULL))
 
 
 
@@ -61,6 +71,14 @@ setValidity("Bclass", function(object){
     out <- TRUE
   }else{
     return(paste0("Different number of rows for 'results' and 'output'!"))
+  }
+  
+  if(!is.null(object@header)){
+    if(sum(object@header) == ncol(object@output)){
+      out <- TRUE
+    }else{
+      return(paste0("Sum of values in 'header' must be equal to the number of columns in 'output'!"))
+    }
   }
   
   return(out)
@@ -83,6 +101,9 @@ setGeneric("Bkable", function(x, ...) standardGeneric("Bkable"))
 ################################################################################
 ### Accessor methods
 ################################################################################
+
+
+### results
 
 
 #' @rdname Bclass-class
@@ -110,14 +131,14 @@ setGeneric("Bresults<-", function(x, value) standardGeneric("Bresults<-"))
 #' @export
 setMethod("Bresults<-", "Bclass", function(x, value){
   
-  BclassRegression(results = value, output = Boutput(x), caption = Bcaption(x))
+  Bclass(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
   
 })
 
 
 
 
-
+### output
 
 
 #' @rdname Bclass-class
@@ -145,7 +166,7 @@ setGeneric("Boutput<-", function(x, value) standardGeneric("Boutput<-"))
 #' @export
 setMethod("Boutput<-", "Bclass", function(x, value){
   
-  BclassRegression(results = Bresults(x), output = value, caption = Bcaption(x))
+  Bclass(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
   
 })
 
@@ -153,7 +174,7 @@ setMethod("Boutput<-", "Bclass", function(x, value){
 
 
 
-
+### caption
 
 
 #' @rdname Bclass-class
@@ -180,12 +201,41 @@ setGeneric("Bcaption<-", function(x, value) standardGeneric("Bcaption<-"))
 #' @export
 setMethod("Bcaption<-", "Bclass", function(x, value){
   
-  BclassRegression(results = Bresults(x), output = Boutput(x), caption = value)
+  Bclass(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
   
 })
 
 
+### header
 
+
+#' @rdname Bclass-class
+#' @export
+setGeneric("Bheader", function(x, ...) standardGeneric("Bheader"))
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader", "Bclass", function(x) x@header )
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader", "NULL", function(x) NULL )
+
+
+#' @rdname Bclass-class
+#' @export
+setGeneric("Bheader<-", function(x, value) standardGeneric("Bheader<-"))
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader<-", "Bclass", function(x, value){
+  
+  Bclass(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  
+})
 
 
 
