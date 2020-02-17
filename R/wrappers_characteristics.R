@@ -4,8 +4,9 @@
 
 # data <- data_goya
 # 
-# x_var <- "Treatment_Arm"
-# y_var <- "Ann_Arbor_Stage"
+# strat_var <- "Treatment_Arm"
+# strat_var <- NULL
+# covariate_var <- "Ann_Arbor_Stage"
 # 
 # variable_names = NULL
 # caption = NULL
@@ -16,21 +17,32 @@
 #' Table with distribution summary for a categorical covariate
 #' 
 #' @param data Data frame.
-wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names = NULL, caption = NULL){
+wrapper_core_characteristics_cat <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
   stopifnot(is.data.frame(data))
+  stopifnot(nrow(data) > 0)
   
-  stopifnot(length(x_var) == 1)
-  stopifnot(is.factor(data[, x_var]))
-  stopifnot(nlevels(data[, x_var]) >= 2)
+  ### Keep only those variables that are used for the analysis
+  data <- data[, c(covariate_var, strat_var), drop = FALSE]
   
-  stopifnot(length(y_var) == 1)
-  stopifnot(is.factor(data[, y_var]))
-  stopifnot(nlevels(data[, y_var]) >= 2)
+  stopifnot(length(covariate_var) == 1)
+  stopifnot(is.factor(data[, covariate_var]))
+  
+  stopifnot(length(out_colname) == 1)
+  
+  if(!is.null(strat_var)){
+    stopifnot(length(strat_var) == 1)
+    stopifnot(is.factor(data[, strat_var]))
+  }else{
+    ### Add dummy variable to data
+    stopifnot(!"strat_dummy" %in% colnames(data))
+    data[, "strat_dummy"] <- factor(out_colname)
+    strat_var <- "strat_dummy"
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -39,14 +51,14 @@ wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names 
   # Calculate counts and proportions
   # --------------------------------------------------------------------------
   
-  tbl <- table(data[, y_var], data[, x_var])
+  tbl <- table(data[, covariate_var], data[, strat_var])
   
   prop <- prop.table(tbl, margin = 2) * 100
   
-  tbl_isna <- table(is.na(data[, y_var]), data[, x_var])
+  tbl_isna <- table(factor(is.na(data[, covariate_var]), levels = c(FALSE, TRUE)), data[, strat_var])
   
-  empty_row <- matrix(NA, nrow = 1, ncol = nlevels(data[, x_var]))
-  colnames(empty_row) <- levels(data[, x_var])
+  empty_row <- matrix(NA, nrow = 1, ncol = nlevels(data[, strat_var]))
+  colnames(empty_row) <- levels(data[, strat_var])
   
   
   # --------------------------------------------------------------------------
@@ -60,23 +72,25 @@ wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names 
   countm <- rbind.fill.matrix(empty_row, tbl_isna, countdf)
   colnames(countm) <- paste0("counts_", colnames(countm))
   
+  stopifnot(ncol(countm) == ncol(tbl_isna))
+  
   propm <- rbind.fill.matrix(empty_row, empty_row, empty_row, propdf)
   colnames(propm) <- paste0("proportions_", colnames(propm))
   
+  stopifnot(ncol(propm) == ncol(tbl_isna))
   
-  res <- data.frame(category = c(y_var, "Total (non-NA)", "NAs", rownames(tbl)),
+  
+  res <- data.frame(covariate = c(covariate_var, "Total (non-NA)", "NAs", rownames(tbl)),
     countm,
     propm,
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
-  
-  
   
   
   # --------------------------------------------------------------------------
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Category = c(variable_names[y_var], "Total (non-NA)", "NAs", rownames(tbl)), 
+  out <- data.frame(Covariate = c(variable_names[covariate_var], "Total (non-NA)", "NAs", rownames(tbl)), 
     
     format_counts_and_props(counts = countm, props = propm),
     
@@ -91,12 +105,19 @@ wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names 
   # Prepare 'header' data frame
   # --------------------------------------------------------------------------
   
-  num_start_cols <- 1
+  ### Do not display header when strat_var = NULL 
+  
+  if(strat_var == "strat_dummy"){
+    header <- NULL
+  }else{
+    num_start_cols <- 1
+    
+    header <- c(num_start_cols, nlevels(data[, strat_var]))
+    header <- as.integer(header)
+    names(header) <- c(" ", variable_names[strat_var])
+  }
   
   
-  header <- c(num_start_cols, nlevels(data[, x_var]))
-  header <- as.integer(header)
-  names(header) <- c(" ", variable_names[x_var])
   
   
   # --------------------------------------------------------------------------
@@ -111,7 +132,7 @@ wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names 
     
   }
   
-
+  
   
   bout <- BclassCharacteristics(results = res, output = out, caption = caption, header = header)
   
@@ -126,31 +147,44 @@ wrapper_core_characteristics_cat <- function(data, x_var, y_var, variable_names 
 
 # data <- data_goya
 # 
-# x_var <- "Treatment_Arm"
-# y_var <- "FCGR2B"
+# strat_var <- "Treatment_Arm"
+# strat_var <- NULL
+# covariate_var <- "FCGR2B"
 # 
 # variable_names = NULL
 # caption = NULL
-
+# out_colname = "Value"
 
 
 #' Table with distribution summary for a numerical covariate
 #' 
 #' @param data Data frame.
-wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names = NULL, caption = NULL){
+wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
   stopifnot(is.data.frame(data))
+  stopifnot(nrow(data) > 0)
   
-  stopifnot(length(x_var) == 1)
-  stopifnot(is.factor(data[, x_var]))
-  stopifnot(nlevels(data[, x_var]) >= 2)
+  ### Keep only those variables that are used for the analysis
+  data <- data[, c(covariate_var, strat_var), drop = FALSE]
   
-  stopifnot(length(y_var) == 1)
-  stopifnot(is.numeric(data[, y_var]))
+  stopifnot(length(covariate_var) == 1)
+  stopifnot(is.numeric(data[, covariate_var]))
+  
+  stopifnot(length(out_colname) == 1)
+  
+  if(!is.null(strat_var)){
+    stopifnot(length(strat_var) == 1)
+    stopifnot(is.factor(data[, strat_var]))
+  }else{
+    ### Add dummy variable to data
+    stopifnot(!"strat_dummy" %in% colnames(data))
+    data[, "strat_dummy"] <- factor(out_colname)
+    strat_var <- "strat_dummy"
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -159,21 +193,21 @@ wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names 
   # Calculate summary statistics
   # --------------------------------------------------------------------------
   
-  tbl_isna <- table(is.na(data[, y_var]), data[, x_var])
+  tbl_isna <- table(factor(is.na(data[, covariate_var]), levels = c(FALSE, TRUE)), data[, strat_var])
   
-  empty_row <- matrix(NA, nrow = 1, ncol = nlevels(data[, x_var]))
-  colnames(empty_row) <- levels(data[, x_var])
+  empty_row <- matrix(NA, nrow = 1, ncol = nlevels(data[, strat_var]))
+  colnames(empty_row) <- levels(data[, strat_var])
   
   
-  Median = aggregate(data[, y_var], list(subgroup = data[, x_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-  Mean = aggregate(data[, y_var], list(subgroup = data[, x_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  Median = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
   
-  Min = aggregate(data[, y_var], list(subgroup = data[, x_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
-  Max = aggregate(data[, y_var], list(subgroup = data[, x_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+  Min = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
   
   summdf <- t(data.frame(Median, Mean, Min, Max))
-  colnames(summdf) <- levels(data[, x_var])
+  colnames(summdf) <- levels(data[, strat_var])
   
   
   # --------------------------------------------------------------------------
@@ -183,8 +217,10 @@ wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names 
   
   summm <- rbind.fill.matrix(empty_row, tbl_isna, summdf)
   
+  stopifnot(ncol(summm) == ncol(tbl_isna))
   
-  res <- data.frame(category = c(y_var, "Total (non-NA)", "NAs", rownames(summdf)),
+  
+  res <- data.frame(covariate = c(covariate_var, "Total (non-NA)", "NAs", rownames(summdf)),
     summm,
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -195,7 +231,7 @@ wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names 
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Category = c(variable_names[y_var], "Total (non-NA)", "NAs", rownames(summdf)), 
+  out <- data.frame(Covariate = c(variable_names[covariate_var], "Total (non-NA)", "NAs", rownames(summdf)), 
     
     format_summ(summ = summm),
     
@@ -210,13 +246,17 @@ wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names 
   # Prepare 'header' data frame
   # --------------------------------------------------------------------------
   
-  num_start_cols <- 1
+  ### Do not display header when strat_var = NULL 
   
-  
-  header <- c(num_start_cols, nlevels(data[, x_var]))
-  header <- as.integer(header)
-  names(header) <- c(" ", variable_names[x_var])
-  
+  if(strat_var == "strat_dummy"){
+    header <- NULL
+  }else{
+    num_start_cols <- 1
+    
+    header <- c(num_start_cols, nlevels(data[, strat_var]))
+    header <- as.integer(header)
+    names(header) <- c(" ", variable_names[strat_var])
+  }
   
   # --------------------------------------------------------------------------
   ### Generate caption
@@ -244,33 +284,48 @@ wrapper_core_characteristics_num <- function(data, x_var, y_var, variable_names 
 
 # data <- data_goya
 # 
-# x_var <- "Treatment_Arm"
-# y_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+# strat_var <- "Treatment_Arm"
+# covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
 # 
 # variable_names = NULL
 # caption = NULL
+# out_colname = "Value"
 
 
 
 #' Table with distribution summary for categorical and numerical covariates
 #' 
 #' @param data Data frame.
-wrapper_core_characteristics <- function(data, x_var, y_vars, variable_names = NULL, caption = NULL){
+wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
   stopifnot(is.data.frame(data))
+  stopifnot(nrow(data) > 0)
   
-  stopifnot(length(x_var) == 1)
-  stopifnot(is.factor(data[, x_var]))
-  stopifnot(nlevels(data[, x_var]) >= 2)
+  ### Keep only those variables that are used for the analysis
+  data <- data[, c(covariate_vars, strat_var), drop = FALSE]
   
-  stopifnot(length(y_vars) >= 1)
   
-  vars_class <- sapply(data[, y_vars], class)
+  stopifnot(length(covariate_vars) >= 1)
+  
+  vars_class <- sapply(data[, covariate_vars], class)
   stopifnot(all(vars_class %in% c("factor", "numeric", "integer")))
+  
+  stopifnot(length(out_colname) == 1)
+  
+  
+  if(!is.null(strat_var)){
+    stopifnot(length(strat_var) == 1)
+    stopifnot(is.factor(data[, strat_var]))
+  }else{
+    ### Add dummy variable to data
+    stopifnot(!"strat_dummy" %in% colnames(data))
+    data[, "strat_dummy"] <- factor(out_colname)
+    strat_var <- "strat_dummy"
+  }
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -281,19 +336,19 @@ wrapper_core_characteristics <- function(data, x_var, y_vars, variable_names = N
   # --------------------------------------------------------------------------
   
   
-  wrapper_res <- lapply(1:length(y_vars), function(i){
+  wrapper_res <- lapply(1:length(covariate_vars), function(i){
     # i = 1
     
-    y_var <- y_vars[i]
+    covariate_var <- covariate_vars[i]
     
     
-    if(class(data[, y_var]) == "factor"){
+    if(class(data[, covariate_var]) == "factor"){
       
-      wrapper_res <- wrapper_core_characteristics_cat(data = data, x_var = x_var, y_var = y_var, variable_names = variable_names, caption = caption)
+      wrapper_res <- wrapper_core_characteristics_cat(data = data, covariate_var = covariate_var, strat_var = strat_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
       
     }else{
       
-      wrapper_res <- wrapper_core_characteristics_num(data = data, x_var = x_var, y_var = y_var, variable_names = variable_names, caption = caption)
+      wrapper_res <- wrapper_core_characteristics_num(data = data, covariate_var = covariate_var, strat_var = strat_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
       
     }
     
@@ -333,6 +388,159 @@ wrapper_core_characteristics <- function(data, x_var, y_vars, variable_names = N
   
   
 }
+
+
+
+# data <- data_goya
+# 
+# bep_vars <- "BEP_RNAseq"
+# covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+# 
+# treatment_var <- "Treatment_Arm"
+# 
+# bep_vars = NULL
+# treatment_var = NULL
+# 
+# 
+# variable_names = NULL
+# caption = "Bla"
+# 
+# itt_name = "ITT"
+
+
+
+#' Table with distribution summary for a list of covariates for ITT and BEP
+#' 
+#' @param data Data frame.
+#' @param bep_vars Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).
+wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT"){
+  
+  
+  # --------------------------------------------------------------------------
+  # Check about input data and some preprocessing
+  # --------------------------------------------------------------------------
+  
+  
+  ### Keep only those variables that are used for the analysis
+  data <- data[, c(covariate_vars, bep_vars, treatment_var), drop = FALSE]
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+
+  # --------------------------------------------------------------------------
+  # Calculate characteristics for ITT
+  # --------------------------------------------------------------------------
+  
+  
+  characteristics_itt <- wrapper_core_characteristics(data = data, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = itt_name)
+  
+  
+  if(!is.null(treatment_var)){
+    
+    data$population_dummy <- factor(itt_name)
+    
+    ### Calculate population-treatment interaction
+    data$population_treatment_interaction <- interaction(data$population_dummy, data[, treatment_var], drop = FALSE, lex.order = TRUE, sep = " : ")
+    
+    
+    characteristics_itt_treatment <- wrapper_core_characteristics(data = data, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL)
+    
+    
+    res <- cbind(Bresults(characteristics_itt), Bresults(characteristics_itt_treatment)[, -1, drop = FALSE])
+    out <- cbind(Boutput(characteristics_itt), Boutput(characteristics_itt_treatment)[, -1, drop = FALSE])
+    
+    characteristics_itt <- BclassCharacteristics(results = res, output = out)
+    
+  }
+  
+  
+  # --------------------------------------------------------------------------
+  # Calculate characteristics for BEPs
+  # --------------------------------------------------------------------------
+  
+  
+  if(!is.null(bep_vars)){
+    
+    characteristics_beps <- lapply(1:length(bep_vars), function(i){
+      # i = 1
+      
+      data_bep <- data[data[, bep_vars[i]] %in% TRUE, , drop = FALSE]
+      
+      if(nrow(data_bep) == 0){
+        return(NULL)
+      }
+      
+      
+      characteristics_bep <- wrapper_core_characteristics(data = data_bep, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = variable_names[bep_vars[i]])
+      
+      
+      if(!is.null(treatment_var)){
+        
+        data_bep$population_dummy <- factor(variable_names[bep_vars[i]])
+        
+        ### Calculate population-treatment interaction
+        data_bep$population_treatment_interaction <- interaction(data_bep$population_dummy, data_bep[, treatment_var], drop = FALSE, lex.order = TRUE, sep = " : ")
+        
+        
+        characteristics_bep_treatment <- wrapper_core_characteristics(data = data_bep, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL)
+        
+        
+        res <- cbind(Bresults(characteristics_bep), Bresults(characteristics_bep_treatment)[, -1, drop = FALSE])
+        out <- cbind(Boutput(characteristics_bep), Boutput(characteristics_bep_treatment)[, -1, drop = FALSE])
+        
+        characteristics_bep <- BclassCharacteristics(results = res, output = out)
+        
+      }
+      
+      
+      characteristics_bep <- BclassCharacteristics(results = Bresults(characteristics_bep)[, -1, drop = FALSE], output = Boutput(characteristics_bep)[, -1, drop = FALSE])
+      
+      return(characteristics_bep)
+      
+    })
+    
+    
+    res <- cbind(Bresults(characteristics_itt), do.call("cbind", lapply(characteristics_beps, Bresults)))
+    out <- cbind(Boutput(characteristics_itt), do.call("cbind", lapply(characteristics_beps, Boutput)))
+    
+    characteristics_itt <- BclassCharacteristics(results = res, output = out)
+    
+    
+  }
+  
+  
+  Bcaption(characteristics_itt) <- caption
+  
+  
+  return(characteristics_itt)
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

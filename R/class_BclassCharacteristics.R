@@ -29,6 +29,67 @@ setValidity("BclassCharacteristics", function(object){
 })
 
 
+################################################################################
+### Replacing methods
+################################################################################
+
+### results
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bresults<-", "BclassCharacteristics", function(x, value){
+  
+  BclassCharacteristics(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
+  
+})
+
+
+
+
+### output
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Boutput<-", "BclassCharacteristics", function(x, value){
+  
+  BclassCharacteristics(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
+  
+})
+
+
+
+
+
+### caption
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bcaption<-", "BclassCharacteristics", function(x, value){
+  
+  BclassCharacteristics(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
+  
+})
+
+
+### header
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader<-", "BclassCharacteristics", function(x, value){
+  
+  BclassCharacteristics(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  
+})
+
+
+
 
 
 

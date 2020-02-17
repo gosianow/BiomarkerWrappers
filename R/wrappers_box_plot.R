@@ -54,25 +54,31 @@ wrapper_core_box_plot <- function(data, x_var, y_var, colors = NULL, variable_na
   ### Calculate median per subgroup
   if(show_total_counts || show_median){
     
-    suffix <- "\n"
+    
+    
+    suffix_total_counts <- NULL
     
     if(show_total_counts){
       
       tbl <- table(data[, x_var])
       
-      suffix <- paste0(suffix, tbl)
+      suffix_total_counts <- as.numeric(tbl)
       
     }
     
+    suffix_median <- NULL
+    
     if(show_median){
       
-      m <- aggregate(data[, y_var], list(data[, x_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+      Median <- aggregate(data[, y_var], list(data[, x_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
       
-      m <- round(m, 2)
-      
-      suffix <- paste0(suffix, " (", m, ")")
+      suffix_median <- round(Median, 2)
       
     }
+    
+    
+    suffix <- paste0("\n(", paste(suffix_total_counts, suffix_median, sep = "; "), ")")
+    
     
     ## Update level names in data
     

@@ -27,6 +27,53 @@ setValidity("BclassTesting", function(object){
   
 })
 
+################################################################################
+### Replacing methods
+################################################################################
+
+### results
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bresults<-", "BclassTesting", function(x, value){
+  
+  BclassTesting(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
+  
+})
+
+### output
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Boutput<-", "BclassTesting", function(x, value){
+  
+  BclassTesting(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
+  
+})
+
+
+### caption
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bcaption<-", "BclassTesting", function(x, value){
+  
+  BclassTesting(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
+  
+})
+
+
+### header
+
+#' @rdname Bclass-class
+#' @export
+setMethod("Bheader<-", "BclassTesting", function(x, value){
+  
+  BclassTesting(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  
+})
+
 
 
 ################################################################################
@@ -54,7 +101,7 @@ setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
   
   kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = FALSE, font_size = font_size) %>% 
-    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "P-value", "Adj. P-value")), bold = TRUE) %>% 
+    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "FC", "P-value", "Adj. P-value")), bold = TRUE) %>% 
     add_header_above(header)
   
   

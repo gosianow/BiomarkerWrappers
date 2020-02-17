@@ -4,80 +4,112 @@
 
 # data <- data_goya
 # 
-# col_var <- "Cell_Of_Origin"
-# row_var <- "Ann_Arbor_Stage"
-# 
-# # col_var <- "Cell_Of_Origin2"
-# # row_var <- "FCGR2B_cat2"
+# col_var <- "Cell_Of_Origin2"
+# row_var <- "FCGR2B"
 # 
 # variable_names = NULL
 # caption = NULL
 # 
-# margin = 1
-# 
 # print_pvalues = TRUE
-# print_adjpvalues = TRUE
+# 
+# method = "kruskal"
 
 
-
-
-#' Fisher's test
+#' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' @param data Data frame.
-wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, print_pvalues = TRUE){
+wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal", variable_names = NULL, caption = NULL, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
+  stopifnot(method %in% c("kruskal", "wilcox"))
+  
+  
   stopifnot(is.data.frame(data))
+  stopifnot(nrow(data) > 0)
+  
+  ### Keep only those variables that are used for the analysis
+  data <- data[, c(col_var, row_var), drop = FALSE]
+  
   
   stopifnot(length(col_var) == 1)
   stopifnot(is.factor(data[, col_var]))
   stopifnot(nlevels(data[, col_var]) >= 2)
   
+  if(method == "wilcox"){
+    stopifnot(nlevels(data[, col_var]) == 2)
+  }
+  
+  
+  
   stopifnot(length(row_var) == 1)
-  stopifnot(is.factor(data[, row_var]))
-  stopifnot(nlevels(data[, row_var]) >= 2)
+  stopifnot(is.numeric(data[, row_var]) || is.integer(data[, row_var]))
+  
+  ### Keep non-missing data
+  
+  data <- data[complete.cases(data[, c(col_var, row_var)]), ]
+  
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
   # --------------------------------------------------------------------------
-  # Calculate counts and proportions and do testing
+  # Calculate summary statistics and do testing
   # --------------------------------------------------------------------------
   
-  tbl <- table(data[, row_var], data[, col_var])
+  N = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = length, drop = FALSE)[, 2]
   
-  prop <- prop.table(tbl, margin = margin) * 100
+  Median = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  
+  Min = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
   
-  if(sum(margin.table(tbl, margin = 1) > 1) >= 2 && sum(margin.table(tbl, margin = 2) > 1) >= 2){
-    ## Pearson’s Chi-squared test: get difference of proportions of succeses and CI for difference
-    ## Success category is defined by the first column
-    # test_res <- prop.test(tbl)
+  summdf <- t(data.frame(N, Median, Mean, Min, Max))
+  colnames(summdf) <- levels(data[, col_var])
+  
+  
+  
+  tbl <- table(data[, col_var])
+  
+  if(sum(tbl > 1) >= 2){
     
-    ## Fisher's exact test: get odds rations and CI for OR
     test_res <- NULL
-    try(test_res <- fisher.test(tbl), silent = TRUE)
-    if(is.null(test_res)){
-      test_res <- fisher.test(tbl, simulate.p.value = TRUE)
+    
+    if(method == "wilcox"){
+      ## Wilcoxon Rank-Sum test
+      levels_col_var <- levels(data[, col_var])
+      
+      try(test_res <- wilcox.test(x = data[data[, col_var] == levels_col_var[1], row_var], 
+        y = data[data[, col_var] == levels_col_var[2], row_var]), silent = TRUE)
+      
+    }else if(method == "kruskal"){
+      ## Kruskal–Wallis H test
+      
+      try(test_res <- kruskal.test(x = data[, row_var], g = data[, col_var]), silent = TRUE)
+      
     }
+    
     
     if(is.null(test_res)){
       pvalue <- NA
-      or <- NA
+      fc <- NA
     }else{
       pvalue <- test_res$p.value
-      or <- test_res$estimate
-      if(is.null(or)){
-        or <- NA
+      if(length(tbl) == 2 && sum(tbl > 1) >= 2){
+        fc <- Median[2]/Median[1]
+      }else{
+        fc <- NA
       }
     }
     
+    
   }else{
     pvalue <- NA
-    or <- NA
+    fc <- NA
   }
   
   
@@ -86,18 +118,12 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   # Prepare 'res' data frame
   # --------------------------------------------------------------------------
   
-  countdf <- as.data.frame.matrix(tbl)
-  colnames(countdf) <- paste0("counts_", colnames(countdf))
-  
-  propdf <- as.data.frame.matrix(prop)
-  colnames(propdf) <- paste0("proportions_", colnames(propdf))
-  
   
   res <- data.frame(covariate = row_var,
-    subgroup = rownames(tbl),
-    countdf, propdf,
-    or = c(or, rep(NA, nrow(tbl) - 1)),
-    pvalue = c(pvalue, rep(NA, nrow(tbl) - 1)), 
+    statistic = rownames(summdf),
+    summdf,
+    fc = c(fc, rep(NA, nrow(summdf) - 1)),
+    pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
   
@@ -108,13 +134,16 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   # --------------------------------------------------------------------------
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
-    Subgroup = res$subgroup, 
+    Statistic = res$statistic, 
     
-    format_counts_and_props(counts = countdf, props = propdf),
+    format_summ(summ = summdf),
     
-    OR = format_or(res$or, digits = 2),
+    FC = format_or(res$fc, digits = 2),
+    
     `P-value` = format_pvalues(res$pvalue), 
+    
     check.names = FALSE, stringsAsFactors = FALSE)
+  
   
   
   stopifnot(all(sapply(out, class) == "character"))
@@ -124,9 +153,9 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
     out$`P-value` <- NULL
   }
   
-  ### If all OR are empty, do not display that column.
-  if(all(out$OR == "")){
-    out$OR <- NULL
+  ### If all FC are empty, do not display that column.
+  if(all(out$FC == "")){
+    out$FC <- NULL
   }
   
   
@@ -139,7 +168,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   # --------------------------------------------------------------------------
   
   num_start_cols <- 2
-  num_end_cols <- sum(c("OR", "P-value") %in% colnames(out))
+  num_end_cols <- sum(c("FC", "P-value") %in% colnames(out))
   
   
   header <- c(num_start_cols, nlevels(data[, col_var]), num_end_cols)
@@ -154,7 +183,12 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   if(is.null(caption)){
     
-    caption <- paste0("Fisher's exact test.")
+    if(method == "wilcox"){
+      caption <- paste0("Wilcoxon Rank-Sum test.")
+    }else if(method == "kruskal"){
+      caption <- paste0("Kruskal–Wallis H test.")
+    }
+    
     
   }
   

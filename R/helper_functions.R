@@ -2,40 +2,16 @@
 
 
 
-### Recalculate medians per subgroup
 
 
-# covariates_tte_bm_tmp <- covariates_tte_bm_cat2
-
-# strata_levels <- levels(data_sub[, covariate_strata1])
-
-
-
-# for(i in 1:length(covariates_tte_bm_tmp)){
-
-#   for(j in 1:length(strata_levels)){
-#     # i = 1; j = 1
-
-
-#     indx_sub <- which(data_sub[, covariate_strata1] == strata_levels[j])
-
-#     bm_num <- gsub("_cat2", "", covariates_tte_bm_tmp[i])
-
-#     median_expr <- median(data_sub[indx_sub, bm_num])
-
-#     data_sub[indx_sub, covariates_tte_bm_tmp[i]] <- ifelse(data_sub[indx_sub, bm_num] > median_expr, ">MEDIAN", "<=MEDIAN")
-
-
-#   }
-
-
-# }
 
 
 # x <- data$FCGR1A
 
 
 cut_core_quartiles <- function(x, labels = c("(0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+  
+  stopifnot(length(labels) == 4)
   
   out <- ggplot2::cut_number(x, n = 4)
   
@@ -47,6 +23,8 @@ cut_core_quartiles <- function(x, labels = c("(0%, 25%]", "(25%, 50%]", "(50%, 7
 
 
 cut_core_median <- function(x, labels = c("<=MEDIAN", ">MEDIAN")){
+  
+  stopifnot(length(labels) == 2)
   
   out <- ggplot2::cut_number(x, n = 2)
   
@@ -60,6 +38,7 @@ cut_core_median <- function(x, labels = c("<=MEDIAN", ">MEDIAN")){
 cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
   
   stopifnot(length(probs) == 1)
+  stopifnot(length(labels) == 2)
   
   if(is.null(cutoff)){
     cutoff <- quantile(x, probs = probs, na.rm = TRUE)
@@ -74,6 +53,73 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
 }
 
 
+
+cut_core_quartiles_strat <- function(x, strata, labels = c("(0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+  
+  stopifnot(is.factor(strata))
+  
+  strata_levels <- levels(strata)
+  
+  out <- factor(rep(NA, length(x)), levels = labels)
+  
+  for(i in 1:length(strata_levels)){
+    # i = 1
+    
+    indx_sub <- which(strata == strata_levels[i])
+
+    out[indx_sub] <- cut_core_quartiles(x[indx_sub], labels = labels)
+    
+  }
+  
+  return(out)
+  
+}
+
+
+
+cut_core_median_strat <- function(x, strata, labels = c("<=MEDIAN", ">MEDIAN")){
+  
+  stopifnot(is.factor(strata))
+  
+  strata_levels <- levels(strata)
+  
+  out <- factor(rep(NA, length(x)), levels = labels)
+  
+  for(i in 1:length(strata_levels)){
+    # i = 1
+    
+    indx_sub <- which(strata == strata_levels[i])
+    
+    out[indx_sub] <- cut_core_median(x[indx_sub], labels = labels)
+    
+  }
+  
+  return(out)
+  
+}
+
+
+
+cut_core_2groups_strat <- function(x, strata, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
+  
+  stopifnot(is.factor(strata))
+  
+  strata_levels <- levels(strata)
+  
+  out <- factor(rep(NA, length(x)), levels = labels)
+  
+  for(i in 1:length(strata_levels)){
+    # i = 1
+    
+    indx_sub <- which(strata == strata_levels[i])
+    
+    out[indx_sub] <- cut_core_2groups(x[indx_sub], probs = probs, cutoff = cutoff, labels = labels) 
+    
+  }
+  
+  return(out)
+  
+}
 
 
 
@@ -156,6 +202,9 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE){
   # asterisk <- TRUE
   # x <- c(0.2, 0.05, 0.034534, 1.366332e-05, 1.366332e-04, NA)
   
+  if(sum(is.na(x)) == length(x)){
+    return(rep("", length(x)))
+  }
   
   min_pval <- 1/10^digits
   

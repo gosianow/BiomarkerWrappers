@@ -96,7 +96,62 @@ data <- data_goya
 variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/variable_names.RDS")
 
 
+Bclass()
+
+
+
 ```
+
+
+
+
+# Complex barplot
+
+
+```{r complex_barplot, fig.width = 10}
+
+
+data <- data_goya
+x_var <- "Cell_Of_Origin"
+y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+
+colors = NULL
+
+skip_levels = NULL
+show_proportions = TRUE
+show_total_proportions = TRUE
+
+ylim = NULL
+
+method = "facet"
+
+
+wrapper_core_bar_plot_yvars(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+
+
+
+data <- data_goya
+x_var <- "Cell_Of_Origin"
+y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+
+colors = NULL
+
+skip_levels = "<=MEDIAN"
+show_proportions = TRUE
+show_total_proportions = TRUE
+
+ylim = NULL
+
+method = "dodge"
+
+
+wrapper_core_bar_plot_yvars(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+
+
+
+
+```
+
 
 
 
@@ -109,40 +164,113 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 data <- data_goya
 
-x_var <- "Treatment_Arm"
-y_var <- "Ann_Arbor_Stage"
-
-variable_names = NULL
-caption = NULL
+covariate_var <- "Ann_Arbor_Stage"
 
 
+wrapper_core_characteristics_cat(data, covariate_var = covariate_var)
 
-wrapper_core_characteristics_cat(data, x_var = x_var, y_var = y_var)
-
-
-x_var <- "Treatment_Arm"
-y_var <- "FCGR2B"
-
-variable_names = NULL
-caption = NULL
-
-
-
-wrapper_core_characteristics_num(data, x_var = x_var, y_var = y_var)
 
 
 data <- data_goya
 
-x_var <- "Treatment_Arm"
-y_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+strat_var <- "Treatment_Arm"
+covariate_var <- "Ann_Arbor_Stage"
 
 
-wrapper_core_characteristics(data, x_var = x_var, y_vars = y_vars)
+wrapper_core_characteristics_cat(data, strat_var = strat_var, covariate_var = covariate_var)
+
+
+data <- data_goya
+
+strat_var <- "FCGR2B_cat4"
+covariate_var <- "Ann_Arbor_Stage"
+
+
+wrapper_core_characteristics_cat(data, strat_var = strat_var, covariate_var = covariate_var)
+
+
+data <- data_goya
+
+covariate_var <- "FCGR2B"
+
+wrapper_core_characteristics_num(data, covariate_var = covariate_var)
+
+
+
+data <- data_goya
+
+strat_var <- "Treatment_Arm"
+covariate_var <- "FCGR2B"
+
+
+
+wrapper_core_characteristics_num(data, strat_var = strat_var, covariate_var = covariate_var)
+
+
+
+data <- data_goya
+
+strat_var <- "Treatment_Arm"
+covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+
+
+wrapper_core_characteristics(data, strat_var = strat_var, covariate_vars = covariate_vars)
   
   
+
+
+data <- data_goya
+
+covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+
+
+wrapper_characteristics_bep(data, covariate_vars = covariate_vars)
+  
+
+
+bep_vars <- "BEP_RNAseq"
+covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+
+treatment_var <- "Treatment_Arm"
+
+variable_names = NULL
+caption = NULL
+
+itt_name = "ITT"
+
+wrapper_characteristics_bep(data, covariate_vars = covariate_vars, bep_vars = bep_vars, treatment_var = treatment_var, variable_names = NULL, caption = NULL, itt_name = "ITT")
+
+
   
 ```
 
+
+
+# Kruskal–Wallis H test
+
+
+```{r kruskal_test, results='asis'}
+
+
+data <- data_goya
+
+col_var <- "Cell_Of_Origin2"
+row_var <- "FCGR2B"
+
+variable_names = NULL
+caption = NULL
+
+print_pvalues = TRUE
+
+method = "kruskal"
+
+
+wrapper_core_kruskal_test(data, col_var, row_var, method = "kruskal", variable_names = NULL, caption = NULL, print_pvalues = TRUE)
+
+
+
+
+```
 
 
 
@@ -154,8 +282,8 @@ wrapper_core_characteristics(data, x_var = x_var, y_vars = y_vars)
 
 data <- data_goya
 
-x_var <- "Cell_Of_Origin"
-y_var <- "Ann_Arbor_Stage"
+col_var <- "Cell_Of_Origin"
+row_var <- "Ann_Arbor_Stage"
 
 
 variable_names = NULL
@@ -166,23 +294,28 @@ print_pvalues = TRUE
 
 
 
-wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, margin = margin)
+wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
 
 
 
-x_var <- "Cell_Of_Origin2"
-y_var <- "FCGR2B_cat2"
+col_var <- "Cell_Of_Origin2"
+row_var <- "FCGR2B_cat2"
 
 
-wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, margin = margin)
+wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
 
 
 
-y_var <- "Cell_Of_Origin2"
-x_var <- "FCGR2B_cat2"
+data <- data_goya
+
+col_var <- "Cell_Of_Origin"
+row_var <- "FCGR2B_cat2"
+margin = 1
+
+data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
 
 
-wrapper_core_fishers_test(data, x_var = x_var, y_var = y_var, margin = margin)
+wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
 
 
 
@@ -404,6 +537,19 @@ y_var = "Resp_Lugano"
 wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
 
 
+data <- data_goya
+
+x_var = "FCGR3A_cat2"
+y_var = "ORR_Lugano"
+
+
+## Default
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+
+
 ## Show total proportions
 
 x_var = "Cell_Of_Origin"
@@ -451,6 +597,14 @@ wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 
 
 ```
+
+
+
+
+
+
+
+
 
 
 # Box plot
