@@ -335,6 +335,8 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
       
       wrapper_res <- wrapper_core_cox_regression_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
+      
+      
       res <- Bresults(wrapper_res)
       out <- Boutput(wrapper_res)
       
@@ -473,13 +475,13 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   
   
   ### Replace NAs with "" for columns that are missing for numerical biomarkers
+  missing_columns <- c("Effect", "Subgroup n", "Subgroup events")
   
-  out$Effect[is.na(out$Effect)] <- ""
-  out$`Subgroup n`[is.na(out$`Subgroup n`)] <- ""
-  if("Subgroup events" %in% colnames(out)){
-    out$`Subgroup events`[is.na(out$`Subgroup events`)] <- ""
+  for(i in 1:length(missing_columns)){
+    if(missing_columns[i] %in% colnames(out)){
+      out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
+    }
   }
-  
   
   
   ### Rename 'Covariate' column name to 'Biomarker'

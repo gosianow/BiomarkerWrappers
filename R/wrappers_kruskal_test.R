@@ -4,8 +4,8 @@
 
 # data <- data_goya
 # 
-# col_var <- "Cell_Of_Origin2"
-# row_var <- "FCGR2B"
+# cat_var <- "Cell_Of_Origin2"
+# num_var <- "FCGR2B"
 # 
 # variable_names = NULL
 # caption = NULL
@@ -17,8 +17,12 @@
 
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
+#' Returns a table where stratification subgroups are in columns and distribution summary statistics for the numerical variable are in rows. 
+#' 
 #' @param data Data frame.
-wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal", variable_names = NULL, caption = NULL, print_pvalues = TRUE){
+#' @param num_var Name of a numerical variable.
+#' @param cat_var Name of a categorical variable. That variable must be a factor with at least two levels.
+wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -26,30 +30,31 @@ wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal"
   
   stopifnot(method %in% c("kruskal", "wilcox"))
   
+  stopifnot(length(display_statistics) >= 1)
+  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max"))
   
   stopifnot(is.data.frame(data))
   stopifnot(nrow(data) > 0)
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(col_var, row_var), drop = FALSE]
+  data <- data[, c(cat_var, num_var), drop = FALSE]
   
   
-  stopifnot(length(col_var) == 1)
-  stopifnot(is.factor(data[, col_var]))
-  stopifnot(nlevels(data[, col_var]) >= 2)
+  stopifnot(length(cat_var) == 1)
+  stopifnot(is.factor(data[, cat_var]))
+  stopifnot(nlevels(data[, cat_var]) >= 2)
   
   if(method == "wilcox"){
-    stopifnot(nlevels(data[, col_var]) == 2)
+    stopifnot(nlevels(data[, cat_var]) == 2)
   }
   
   
-  
-  stopifnot(length(row_var) == 1)
-  stopifnot(is.numeric(data[, row_var]) || is.integer(data[, row_var]))
+  stopifnot(length(num_var) == 1)
+  stopifnot(is.numeric(data[, num_var]) || is.integer(data[, num_var]))
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(col_var, row_var)]), ]
+  data <- data[complete.cases(data[, c(cat_var, num_var)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -59,21 +64,23 @@ wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal"
   # Calculate summary statistics and do testing
   # --------------------------------------------------------------------------
   
-  N = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = length, drop = FALSE)[, 2]
+  N = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
   
-  Median = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-  Mean = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  Median = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
   
-  Min = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
-  Max = aggregate(data[, row_var], list(subgroup = data[, col_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
-  
-  
-  summdf <- t(data.frame(N, Median, Mean, Min, Max))
-  colnames(summdf) <- levels(data[, col_var])
+  Min = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
   
+  summdf <- data.frame(N, Median, Mean, Min, Max)
+  summdf <- summdf[, display_statistics, drop = FALSE]
+  summdf <- t(summdf)
+  colnames(summdf) <- levels(data[, cat_var])
   
-  tbl <- table(data[, col_var])
+  
+  
+  tbl <- table(data[, cat_var])
   
   if(sum(tbl > 1) >= 2){
     
@@ -81,15 +88,15 @@ wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal"
     
     if(method == "wilcox"){
       ## Wilcoxon Rank-Sum test
-      levels_col_var <- levels(data[, col_var])
+      levels_cat_var <- levels(data[, cat_var])
       
-      try(test_res <- wilcox.test(x = data[data[, col_var] == levels_col_var[1], row_var], 
-        y = data[data[, col_var] == levels_col_var[2], row_var]), silent = TRUE)
+      try(test_res <- wilcox.test(x = data[data[, cat_var] == levels_cat_var[1], num_var], 
+        y = data[data[, cat_var] == levels_cat_var[2], num_var]), silent = TRUE)
       
     }else if(method == "kruskal"){
       ## Kruskal–Wallis H test
       
-      try(test_res <- kruskal.test(x = data[, row_var], g = data[, col_var]), silent = TRUE)
+      try(test_res <- kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
       
     }
     
@@ -119,7 +126,7 @@ wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal"
   # --------------------------------------------------------------------------
   
   
-  res <- data.frame(covariate = row_var,
+  res <- data.frame(covariate = num_var,
     statistic = rownames(summdf),
     summdf,
     fc = c(fc, rep(NA, nrow(summdf) - 1)),
@@ -171,9 +178,9 @@ wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal"
   num_end_cols <- sum(c("FC", "P-value") %in% colnames(out))
   
   
-  header <- c(num_start_cols, nlevels(data[, col_var]), num_end_cols)
+  header <- c(num_start_cols, ncol(summdf), num_end_cols)
   header <- as.integer(header)
-  names(header) <- c(" ", variable_names[col_var], " ")
+  names(header) <- c(" ", variable_names[cat_var], " ")
   
   
   # --------------------------------------------------------------------------
@@ -204,6 +211,682 @@ wrapper_core_kruskal_test <- function(data, col_var, row_var, method = "kruskal"
   
   
 }
+
+
+
+# data <- data_goya
+# 
+# cat_var <- "Cell_Of_Origin2"
+# num_var <- "FCGR2B"
+# 
+# variable_names = NULL
+# caption = NULL
+# 
+# print_pvalues = TRUE
+# 
+# method = "kruskal"
+# display_statistics = c("N", "Median")
+
+
+#' @inheritParams wrapper_core_kruskal_test_col_cat
+#' 
+#' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
+#' 
+#' Returns a table where stratification subgroups are in rows and distribution summary statistics for the numerical variable are in columns. 
+wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE){
+  
+  # --------------------------------------------------------------------------
+  # Check about input data and some preprocessing
+  # --------------------------------------------------------------------------
+  
+  stopifnot(method %in% c("kruskal", "wilcox"))
+  
+  stopifnot(length(display_statistics) >= 1)
+  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max"))
+  
+  
+  stopifnot(is.data.frame(data))
+  stopifnot(nrow(data) > 0)
+  
+  ### Keep only those variables that are used for the analysis
+  data <- data[, c(num_var, cat_var), drop = FALSE]
+  
+  
+  stopifnot(length(cat_var) == 1)
+  stopifnot(is.factor(data[, cat_var]))
+  stopifnot(nlevels(data[, cat_var]) >= 2)
+  
+  if(method == "wilcox"){
+    stopifnot(nlevels(data[, cat_var]) == 2)
+  }
+  
+  
+  stopifnot(length(num_var) == 1)
+  stopifnot(is.numeric(data[, num_var]) || is.integer(data[, num_var]))
+  
+  
+  ### Keep non-missing data
+  
+  data <- data[complete.cases(data[, c(num_var, cat_var)]), ]
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  # --------------------------------------------------------------------------
+  # Calculate summary statistics and do testing
+  # --------------------------------------------------------------------------
+  
+  
+  N = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
+  
+  Median = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  
+  Min = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+  
+  
+  summdf <- data.frame(N, Median, Mean, Min, Max)
+  summdf <- summdf[, display_statistics, drop = FALSE]
+  rownames(summdf) <- levels(data[, cat_var])
+  
+  
+  
+  tbl <- table(data[, cat_var])
+  
+  if(sum(tbl > 1) >= 2){
+    
+    test_res <- NULL
+    
+    if(method == "wilcox"){
+      ## Wilcoxon Rank-Sum test
+      levels_num_var <- levels(data[, cat_var])
+      
+      try(test_res <- wilcox.test(x = data[data[, cat_var] == levels_num_var[1], num_var], 
+        y = data[data[, cat_var] == levels_num_var[2], num_var]), silent = TRUE)
+      
+    }else if(method == "kruskal"){
+      ## Kruskal–Wallis H test
+      
+      try(test_res <- kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
+      
+    }
+    
+    
+    if(is.null(test_res)){
+      pvalue <- NA
+      fc <- NA
+    }else{
+      pvalue <- test_res$p.value
+      if(length(tbl) == 2 && sum(tbl > 1) >= 2){
+        fc <- Median[2]/Median[1]
+      }else{
+        fc <- NA
+      }
+    }
+    
+    
+  }else{
+    pvalue <- NA
+    fc <- NA
+  }
+  
+  
+  
+  # --------------------------------------------------------------------------
+  # Prepare 'res' data frame
+  # --------------------------------------------------------------------------
+  
+  
+  res <- data.frame(covariate = cat_var,
+    subgroup = rownames(summdf),
+    summdf,
+    fc = c(fc, rep(NA, nrow(summdf) - 1)),
+    pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
+    stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+  
+  
+  
+  
+  # --------------------------------------------------------------------------
+  # Prepare 'out' data frame
+  # --------------------------------------------------------------------------
+  
+  out <- data.frame(Covariate = variable_names[res$covariate], 
+    Subgroup = res$subgroup, 
+    
+    format_summ(summ = summdf, per = "col"),
+    
+    FC = format_or(res$fc, digits = 2),
+    
+    `P-value` = format_pvalues(res$pvalue), 
+    
+    check.names = FALSE, stringsAsFactors = FALSE)
+  
+  
+  
+  stopifnot(all(sapply(out, class) == "character"))
+  
+  
+  if(!print_pvalues){
+    out$`P-value` <- NULL
+  }
+  
+  ### If all FC are empty, do not display that column.
+  if(all(out$FC == "")){
+    out$FC <- NULL
+  }
+  
+  
+  ### Set repeating Covariate names to empty
+  out$Covariate[indicate_blocks(out, block_vars = "Covariate", return = "empty")] <- ""
+  
+  
+  # --------------------------------------------------------------------------
+  # Prepare 'header' data frame
+  # --------------------------------------------------------------------------
+  
+  num_start_cols <- 2
+  num_end_cols <- sum(c("FC", "P-value") %in% colnames(out))
+  
+  
+  header <- c(num_start_cols, ncol(summdf), num_end_cols)
+  header <- as.integer(header)
+  names(header) <- c(" ", variable_names[num_var], " ")
+  
+  
+  # --------------------------------------------------------------------------
+  ### Generate caption
+  # --------------------------------------------------------------------------
+  
+  
+  if(is.null(caption)){
+    
+    if(method == "wilcox"){
+      caption <- paste0("Wilcoxon Rank-Sum test.")
+    }else if(method == "kruskal"){
+      caption <- paste0("Kruskal–Wallis H test.")
+    }
+    
+    
+  }
+  
+  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  caption <- gsub("_", " ", caption)
+  
+  
+  
+  bout <- BclassTesting(results = res, output = out, caption = caption, header = header)
+  
+  
+  return(bout)
+  
+  
+}
+
+
+
+
+
+# data <- data_goya
+# 
+# cat_var <- "Cell_Of_Origin2"
+# num_var <- "FCGR2B"
+# 
+# strat1_var = "Treatment_Arm"
+# strat2_var = NULL
+# 
+# variable_names = NULL
+# caption = NULL
+# 
+# print_pvalues = TRUE
+# print_adjpvalues = TRUE
+# 
+# method = "kruskal"
+# display_statistics = c("N", "Median")
+
+
+
+#' @inheritParams wrapper_core_kruskal_test_col_cat
+#' 
+#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the second stratification variable.
+wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Check on strat vars
+  # --------------------------------------------------------------------------
+  
+  if(!is.null(strat1_var)){
+    stopifnot(length(strat1_var) == 1)
+    stopifnot(is.factor(data[, strat1_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat1_dummy"] <- factor("strat1_dummy")
+    strat1_var <- "strat1_dummy"
+  }
+  
+  if(!is.null(strat2_var)){
+    stopifnot(length(strat2_var) == 1)
+    stopifnot(is.factor(data[, strat2_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat2_dummy"] <- factor("strat2_dummy")
+    strat2_var <- "strat2_dummy"
+  }
+  
+  ### Strata cannot include cat_vars
+  stopifnot(length(intersect(c(strat1_var, strat2_var), cat_var)) == 0)
+  
+  
+  ### Keep non-missing data
+  data <- data[complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  # --------------------------------------------------------------------------
+  # Calculations within strata
+  # --------------------------------------------------------------------------
+  
+  strata1_levels <- levels(data[, strat1_var])
+  strata2_levels <- levels(data[, strat2_var])
+  
+  
+  wrapper_res <- lapply(1:length(strata2_levels), function(j){
+    # j = 1
+    
+    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
+    
+    if(nrow(data_strata2) == 0){
+      return(NULL)
+    }
+    
+    
+    wrapper_res <- lapply(1:length(strata1_levels), function(i){
+      # i = 1
+      
+      # print(paste(j, i))
+      
+      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
+      
+      if(nrow(data_strata1) == 0){
+        return(NULL)
+      }
+      
+      
+      wrapper_res <- wrapper_core_kruskal_test_col_cat(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, print_pvalues = print_pvalues)
+      
+      
+      res <- Bresults(wrapper_res)
+      out <- Boutput(wrapper_res)
+      
+      ## Add info about the strata to the data frames
+      
+      prefix_df <- data.frame(strata2 = rep(strata2_levels[j], nrow(res)), strata1 = rep(strata1_levels[i], nrow(res)), stringsAsFactors = FALSE)
+      
+      # To res
+      colnames(prefix_df) <- c(strat2_var, strat1_var)
+      res <- cbind(prefix_df, res)
+      
+      # To out
+      colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
+      out <- cbind(prefix_df, out)
+      
+      ## Update header by adding 2 corresponding to the two strat variables to the first position
+      hdr <- Bheader(wrapper_res)
+      hdr[1] <- hdr[1] + 2
+      
+      wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(caption), header = hdr)
+      
+      return(wrapper_res)
+      
+    })
+    
+    
+    ### Merge the results
+    
+    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+    
+    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = Bheader(wrapper_res[[1]]))
+    
+    return(wrapper_res)
+    
+  })
+  
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  
+  ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
+  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  
+  if("Adj. P-value" %in% colnames(out)){
+    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+  }
+  
+  
+  ### Set repeating Strata names to empty
+  out[out$Covariate == "", variable_names[strat1_var]] <- ""
+  out[out$Covariate == "", variable_names[strat2_var]] <- ""
+  
+  ### Remove dummy columns
+  
+  hdr_shift <- 0
+  
+  if(strat2_var == "strat2_dummy"){
+    res$strat2_dummy <- NULL
+    out$`strat2 dummy` <- NULL
+    hdr_shift <- hdr_shift + 1
+  }
+  if(strat1_var == "strat1_dummy"){
+    res$strat1_dummy <- NULL
+    out$`strat1 dummy` <- NULL
+    hdr_shift <- hdr_shift + 1
+  }
+  
+  ## Update header by adding 2 corresponding to the two strat variables to the first position
+  hdr <- Bheader(wrapper_res[[1]])
+  hdr[1] <- hdr[1] - hdr_shift
+  
+  
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = hdr)
+  
+  
+  return(wrapper_res)
+  
+  
+}
+
+
+
+#' @inheritParams wrapper_core_kruskal_test_col_num
+#' 
+#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the second stratification variable.
+wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Check on strat vars
+  # --------------------------------------------------------------------------
+  
+  if(!is.null(strat1_var)){
+    stopifnot(length(strat1_var) == 1)
+    stopifnot(is.factor(data[, strat1_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat1_dummy"] <- factor("strat1_dummy")
+    strat1_var <- "strat1_dummy"
+  }
+  
+  if(!is.null(strat2_var)){
+    stopifnot(length(strat2_var) == 1)
+    stopifnot(is.factor(data[, strat2_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat2_dummy"] <- factor("strat2_dummy")
+    strat2_var <- "strat2_dummy"
+  }
+  
+  ### Strata cannot include cat_vars
+  stopifnot(length(intersect(c(strat1_var, strat2_var), cat_var)) == 0)
+  
+  
+  ### Keep non-missing data
+  data <- data[complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  # --------------------------------------------------------------------------
+  # Calculations within strata
+  # --------------------------------------------------------------------------
+  
+  strata1_levels <- levels(data[, strat1_var])
+  strata2_levels <- levels(data[, strat2_var])
+  
+  
+  wrapper_res <- lapply(1:length(strata2_levels), function(j){
+    # j = 1
+    
+    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
+    
+    if(nrow(data_strata2) == 0){
+      return(NULL)
+    }
+    
+    
+    wrapper_res <- lapply(1:length(strata1_levels), function(i){
+      # i = 1
+      
+      # print(paste(j, i))
+      
+      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
+      
+      if(nrow(data_strata1) == 0){
+        return(NULL)
+      }
+      
+      
+      wrapper_res <- wrapper_core_kruskal_test_col_num(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, print_pvalues = print_pvalues)
+      
+      
+      res <- Bresults(wrapper_res)
+      out <- Boutput(wrapper_res)
+      
+      ## Add info about the strata to the data frames
+      
+      prefix_df <- data.frame(strata2 = rep(strata2_levels[j], nrow(res)), strata1 = rep(strata1_levels[i], nrow(res)), stringsAsFactors = FALSE)
+      
+      # To res
+      colnames(prefix_df) <- c(strat2_var, strat1_var)
+      res <- cbind(prefix_df, res)
+      
+      # To out
+      colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
+      out <- cbind(prefix_df, out)
+      
+      ## Update header by adding 2 corresponding to the two strat variables to the first position
+      hdr <- Bheader(wrapper_res)
+      hdr[1] <- hdr[1] + 2
+      
+      wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(caption), header = hdr)
+      
+      return(wrapper_res)
+      
+    })
+    
+    
+    ### Merge the results
+    
+    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+    
+    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = Bheader(wrapper_res[[1]]))
+    
+    return(wrapper_res)
+    
+  })
+  
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  
+  ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
+  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  
+  if("Adj. P-value" %in% colnames(out)){
+    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+  }
+  
+  
+  ### Set repeating Strata names to empty
+  out[out$Covariate == "", variable_names[strat1_var]] <- ""
+  out[out$Covariate == "", variable_names[strat2_var]] <- ""
+  
+  ### Remove dummy columns
+  
+  hdr_shift <- 0
+  
+  if(strat2_var == "strat2_dummy"){
+    res$strat2_dummy <- NULL
+    out$`strat2 dummy` <- NULL
+    hdr_shift <- hdr_shift + 1
+  }
+  if(strat1_var == "strat1_dummy"){
+    res$strat1_dummy <- NULL
+    out$`strat1 dummy` <- NULL
+    hdr_shift <- hdr_shift + 1
+  }
+  
+  ## Update header by adding 2 corresponding to the two strat variables to the first position
+  hdr <- Bheader(wrapper_res[[1]])
+  hdr[1] <- hdr[1] - hdr_shift
+  
+  
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = hdr)
+  
+  
+  return(wrapper_res)
+  
+  
+}
+
+
+
+# data <- data_goya
+# 
+# cat_vars <- "Cell_Of_Origin2"
+# num_vars <- c("FCGR2B", "FCGR2A")
+# 
+# strat1_var = "Treatment_Arm"
+# strat2_var = NULL
+# 
+# variable_names = NULL
+# caption = NULL
+# 
+# print_pvalues = TRUE
+# print_adjpvalues = TRUE
+# 
+# method = "kruskal"
+# display_statistics = c("N", "Median")
+
+
+#' @inheritParams wrapper_core_kruskal_test_col_cat_strat
+#' 
+#' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
+#' 
+#' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
+#' @param cat_vars Vector with names of categorical variables. If it has length > 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
+wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Checks
+  # --------------------------------------------------------------------------
+  
+  
+  stopifnot(length(num_vars) >= 1)
+  stopifnot(length(cat_vars) >= 1)
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  # --------------------------------------------------------------------------
+  # Generate the results
+  # --------------------------------------------------------------------------
+  
+  
+  if(length(cat_vars) > 1){
+    
+    stopifnot(length(num_vars) == 1)
+    
+    wrapper_res <- lapply(1:length(cat_vars), function(i){
+      # i = 1
+      
+      num_var <- num_vars
+      cat_var <- cat_vars[i]
+      
+      wrapper_res <- wrapper_core_kruskal_test_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      
+      return(wrapper_res)
+      
+    })
+    
+    
+  }else{
+    
+    
+    wrapper_res <- lapply(1:length(num_vars), function(i){
+      # i = 1
+      
+      num_var <- num_vars[i]
+      cat_var <- cat_vars
+      
+      wrapper_res <- wrapper_core_kruskal_test_col_cat_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      
+      return(wrapper_res)
+      
+    })
+    
+  }
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  
+  ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
+  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  
+  if("Adj. P-value" %in% colnames(out)){
+    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+  }
+  
+  
+  ### Replace NAs with "" for FC
+  missing_columns <- c("FC")
+  
+  for(i in 1:length(missing_columns)){
+    if(missing_columns[i] %in% colnames(out)){
+      out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
+    }
+  }
+  
+  
+  
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = Bheader(wrapper_res[[1]]))
+  
+  
+  return(wrapper_res)
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -66,7 +66,7 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("(0%, 25%]", "(25%, 5
     # i = 1
     
     indx_sub <- which(strata == strata_levels[i])
-
+    
     out[indx_sub] <- cut_core_quartiles(x[indx_sub], labels = labels)
     
   }
@@ -300,7 +300,7 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
   
   output <- lapply(1:nrow(counts), function(i){
     # i = 1
-
+    
     out <- paste0(ifelse(is.na(counts[i, ]), "", counts[i, ]), ifelse(is.na(props[i, ]), "", paste0(" (", round(props[i, ], digits), "%)")))
     
     # Remove white spaces from the beginning and the end of a string
@@ -320,21 +320,43 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
 }
 
 
-
-format_summ <- function(summ, digits = 2){
+#' Format summary statistics such as N, mean, median, min, max
+#' 
+#' @param summ Data frame.
+format_summ <- function(summ, per = "row", digits = 2){
   
+  stopifnot(per %in% c("row", "col"))
   
-  output <- lapply(1:nrow(summ), function(i){
-    # i = 1
+  if(per == "row"){
     
-    out <- ifelse(is.na(summ[i, ]), "", formatC(round(summ[i, ], digits), format = "f", digits = digits, drop0trailing = TRUE))
+    output <- lapply(1:nrow(summ), function(i){
+      # i = 1
+      
+      out <- ifelse(is.na(summ[i, ]), "", formatC(round(summ[i, ], digits), format = "f", digits = digits, drop0trailing = TRUE))
+      
+      
+      return(out)
+      
+    })
     
-
-    return(out)
+    output <- data.frame(do.call("rbind", output), stringsAsFactors = FALSE)
     
-  })
+  }else{
+    
+    output <- lapply(1:ncol(summ), function(i){
+      # i = 1
+      
+      out <- ifelse(is.na(summ[, i]), "", formatC(round(summ[, i], digits), format = "f", digits = digits, drop0trailing = TRUE))
+      
+      
+      return(out)
+      
+    })
+    
+    output <- data.frame(do.call("cbind", output), stringsAsFactors = FALSE)
+    
+  }
   
-  output <- data.frame(do.call("rbind", output), stringsAsFactors = FALSE)
   
   colnames(output) <- colnames(summ)
   

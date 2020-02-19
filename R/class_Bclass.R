@@ -7,7 +7,7 @@
 setClassUnion("characterNULL", c("character", "NULL"))
 
 ### To allow header = NULL
-setClassUnion("integerNULL", c("integer", "NULL"))
+setClassUnion("integernumericNULL", c("integer", "numeric", "NULL"))
 
 
 ###############################################################################
@@ -51,7 +51,7 @@ Bclass <- setClass("Bclass",
   slots = c(results = "data.frame", 
     output = "data.frame",
     caption = "characterNULL",
-    header = "integerNULL"),
+    header = "integernumericNULL"),
   prototype = list(results = data.frame(), 
     output = data.frame(),
     caption = NULL,
