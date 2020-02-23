@@ -103,20 +103,20 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     
     if(is.null(test_res)){
       pvalue <- NA
-      fc <- NA
+      change <- NA
     }else{
       pvalue <- test_res$p.value
       if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-        fc <- Median[2]/Median[1]
+        change <- Median[2] - Median[1]
       }else{
-        fc <- NA
+        change <- NA
       }
     }
     
     
   }else{
     pvalue <- NA
-    fc <- NA
+    change <- NA
   }
   
   
@@ -129,7 +129,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   res <- data.frame(covariate = num_var,
     statistic = rownames(summdf),
     summdf,
-    fc = c(fc, rep(NA, nrow(summdf) - 1)),
+    change = c(change, rep(NA, nrow(summdf) - 1)),
     pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -145,7 +145,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     
     format_summ(summ = summdf),
     
-    FC = format_or(res$fc, digits = 2),
+    Change = format_or(res$change, digits = 2),
     
     `P-value` = format_pvalues(res$pvalue), 
     
@@ -160,9 +160,9 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     out$`P-value` <- NULL
   }
   
-  ### If all FC are empty, do not display that column.
-  if(all(out$FC == "") && !force_empty_cols){
-    out$FC <- NULL
+  ### If all Change are empty, do not display that column.
+  if(all(out$Change == "") && !force_empty_cols){
+    out$Change <- NULL
   }
   
   
@@ -175,7 +175,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   # --------------------------------------------------------------------------
   
   num_start_cols <- 2
-  num_end_cols <- sum(c("FC", "P-value") %in% colnames(out))
+  num_end_cols <- sum(c("Change", "P-value") %in% colnames(out))
   
   
   header <- c(num_start_cols, ncol(summdf), num_end_cols)
@@ -316,20 +316,20 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     
     if(is.null(test_res)){
       pvalue <- NA
-      fc <- NA
+      change <- NA
     }else{
       pvalue <- test_res$p.value
       if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-        fc <- Median[2]/Median[1]
+        change <- Median[2] - Median[1]
       }else{
-        fc <- NA
+        change <- NA
       }
     }
     
     
   }else{
     pvalue <- NA
-    fc <- NA
+    change <- NA
   }
   
   
@@ -342,7 +342,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   res <- data.frame(covariate = cat_var,
     subgroup = rownames(summdf),
     summdf,
-    fc = c(fc, rep(NA, nrow(summdf) - 1)),
+    change = c(change, rep(NA, nrow(summdf) - 1)),
     pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -358,7 +358,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     
     format_summ(summ = summdf, per = "col"),
     
-    FC = format_or(res$fc, digits = 2),
+    Change = format_or(res$change, digits = 2),
     
     `P-value` = format_pvalues(res$pvalue), 
     
@@ -373,9 +373,9 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     out$`P-value` <- NULL
   }
   
-  ### If all FC are empty, do not display that column.
-  if(all(out$FC == "") && !force_empty_cols){
-    out$FC <- NULL
+  ### If all Change are empty, do not display that column.
+  if(all(out$Change == "") && !force_empty_cols){
+    out$Change <- NULL
   }
   
   
@@ -388,7 +388,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   # --------------------------------------------------------------------------
   
   num_start_cols <- 2
-  num_end_cols <- sum(c("FC", "P-value") %in% colnames(out))
+  num_end_cols <- sum(c("Change", "P-value") %in% colnames(out))
   
   
   header <- c(num_start_cols, ncol(summdf), num_end_cols)
@@ -855,13 +855,13 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   
   hdr <- Bheader(wrapper_res[[1]])
   
-  ### Replace NAs with "" for FC
-  missing_columns <- c("FC")
+  ### Replace NAs with "" for Change
+  missing_columns <- c("Change")
   
   for(i in 1:length(missing_columns)){
     if(missing_columns[i] %in% colnames(out)){
       out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
-      ### If all FC are empty, do not display that column.
+      ### If all Change are empty, do not display that column.
       if(all(out[, missing_columns[i]] == "") && !force_empty_cols){
         out[, missing_columns[i]] <- NULL
         ### Update header
