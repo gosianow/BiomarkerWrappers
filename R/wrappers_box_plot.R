@@ -2,23 +2,92 @@
 
 
 
-# data <- data_goya
-# data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
+
+
+
+
+# ggplot(mtcars, aes(factor(cyl), fill = factor(vs))) +
+#   geom_bar(position = position_dodge2(preserve = "single"))
 # 
-# cat_var <- "Cell_Of_Origin"
-# num_var <- "FCGR3A"
+# 
+# ggplot(mtcars, aes(factor(cyl), fill = factor(vs))) +
+#   geom_bar(position = position_dodge(preserve = "single", width = 1), width = 0.9)
+
+
+
+# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
+#   geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single"))
+# 
+# 
+# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
+#   geom_boxplot(outlier.color = NA, position = position_dodge(preserve = "single", width = 0.9))
+# 
+# 
+# 
+# 
+# ### Points and boxplots are not aligned!
+# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
+#   geom_boxplot(outlier.color = NA, position = position_dodge(preserve = "single", width = 0.9)) +
+#   geom_jitter(shape = 21, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.9))
+# 
+# 
+# ### This works
+# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
+#   geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single")) +
+#   geom_jitter(shape = 21, position = position_jitterdodge(jitter.width = 0.25))
+# 
+# 
+# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
+#   geom_boxplot(outlier.color = NA, position = position_dodge(preserve = "total"))
+# 
+# 
+# 
+# # https://github.com/tidyverse/ggplot2/issues/2712
+# # I didn't expect that one needs to pass different positions to the two geoms for them to line up, but I guess it makes sense to always use dodge2 for geoms that have width and dodge for geoms that don't.
+# 
+# ggplot(mtcars, aes(factor(gear), mpg, fill = factor(am))) +
+#   geom_boxplot(position = position_dodge2(0.75, preserve = 'single')) +
+#   geom_point(position = position_dodge(0.75, preserve = 'total'))
+# 
+# 
+# ### The points are not centered when the width is different than 0.75 
+# ggplot(mtcars, aes(factor(gear), mpg, fill = factor(am))) +
+#   geom_boxplot(position = position_dodge2(0.9, preserve = 'single')) +
+#   geom_point(position = position_dodge(0.9, preserve = 'total'))
+# 
+# 
+# ggplot(mtcars, aes(factor(gear), mpg, fill = factor(am))) +
+#   geom_boxplot(position = position_dodge2(0.5, preserve = 'single')) +
+#   geom_point(position = position_dodge(0.5, preserve = 'total'))
+
+
+# Additionally, ggplot2 doesn't know you want to give the labels the same virtual width as the bars. So tell it. You can't nudge and dodge text, so instead adjust the y position.
+
+### Based on that we use:
+# geom_boxplot with position_dodge2(preserve = "single", width = 0.75) 
+# geom_jitter with position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75)
+# geom_text with position_dodge(preserve = "total", width = 0.75)
+
+
+
+
 # colors = NULL
 # variable_names = NULL
+# xlab = NULL
+# ylab = NULL
 # title = NULL
 # subtitle = NULL
 # tag = NULL
 # show_total_counts = TRUE
-# point_size = 1.5
+# show_median = TRUE
+# point_size = 1
+# point_shape = 1
 # title.size = 12
 # ylim = NULL
 # axis.text.x.angle = 0
 # axis.text.x.vjust = 0
 # axis.text.x.hjust = 0.5
+# geom_text_size = 3.5
 # background_grid_major = "none"
 
 
@@ -28,81 +97,112 @@
 #' Generate a signle boxplot.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot <- function(data, cat_var, num_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none"){
+wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none"){
   
   
   stopifnot(is.data.frame(data))
   
-  stopifnot(length(cat_var) == 1)
-  stopifnot(is.factor(data[, cat_var]))
+  stopifnot(length(x_var) == 1)
+  stopifnot(is.factor(data[, x_var]))
   
-  stopifnot(length(num_var) == 1)
-  stopifnot(is.numeric(data[, num_var]))
+  stopifnot(length(y_var) == 1)
+  stopifnot(is.numeric(data[, y_var]))
+  
+  if(!is.null(fill_var)){
+    stopifnot(length(fill_var) == 1)
+    stopifnot(is.factor(data[, fill_var]))
+  }
   
   
-  colors <- format_colors(levels = levels(data[, cat_var]), colors = colors)
+  if(!is.null(fill_var)){
+    colors <- format_colors(levels = levels(data[, fill_var]), colors = colors)
+  }else{
+    if(length(colors) == 1){
+      colors <- rep(colors, nlevels(data[, x_var]))
+      names(colors) <- levels(data[, x_var])
+    }else{
+      colors <- format_colors(levels = levels(data[, x_var]), colors = colors)
+    }
+  }
+  
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
   ### Keep non-missing data
+  data <- data[complete.cases(data[, c(x_var, y_var, fill_var)]), ]
   
-  data <- data[complete.cases(data[, c(cat_var, num_var)]), ]
   
-  
+  # --------------------------------------------------------------------------
   ### Calculate counts per subgroup
   ### Calculate median per subgroup
-  if(show_total_counts || show_median){
-    
-    
-    
-    suffix_total_counts <- NULL
-    
-    if(show_total_counts){
-      
-      tbl <- table(data[, cat_var])
-      
-      suffix_total_counts <- as.numeric(tbl)
-      
-    }
-    
-    suffix_median <- NULL
-    
-    if(show_median){
-      
-      Median <- aggregate(data[, num_var], list(data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-      
-      suffix_median <- round(Median, 2)
-      
-    }
-    
-    
-    suffix <- paste0("\n(", paste(suffix_total_counts, suffix_median, sep = "; "), ")")
-    
-    
-    ## Update level names in data
-    
-    data[, cat_var] <- factor(data[, cat_var], labels = paste0(levels(data[, cat_var]), suffix))
-    
-    ## Update names for colors
-    
-    names(colors) <- levels(data[, cat_var])
-    
+  # --------------------------------------------------------------------------
+  
+  
+  N <- aggregate(data[, y_var], lapply(c(x_var, fill_var), function(x) data[, x]), FUN = length, drop = FALSE)
+  colnames(N) <- c(x_var, fill_var, "N")
+  
+  Median <- aggregate(data[, y_var], lapply(c(x_var, fill_var), function(x) data[, x]), FUN = median, na.rm = TRUE, drop = FALSE)
+  colnames(Median) <- c(x_var, fill_var, "Median")
+  
+  
+  ggdata_summ <- N %>% 
+    left_join(Median, by = c(x_var, fill_var))
+  
+  
+  ggdata_summ[, x_var] <- factor(ggdata_summ[, x_var], levels = levels(data[, x_var]))
+  
+  if(!is.null(fill_var)){
+    ggdata_summ[, fill_var] <- factor(ggdata_summ[, fill_var], levels = levels(data[, fill_var]))
   }
   
   
+  ### Prepare label
+  if(show_total_counts){
+    if(show_median){
+      ggdata_summ$Label <- paste0("(", paste(ggdata_summ$N, round(ggdata_summ$Median, 2), sep = ", "), ")")
+    }else{
+      ggdata_summ$Label <- paste0("(", paste(ggdata_summ$N, sep = ", "), ")")
+    }
+    
+  }else{
+    if(show_median){
+      ggdata_summ$Label <- paste0("(", paste(round(ggdata_summ$Median, 2), sep = ", "), ")")
+    }else{
+      ggdata_summ$Label <- NULL
+    }
+  }
   
   
-  xlab <- variable_names[cat_var]
-  ylab <- variable_names[num_var]
+  ### Remove NA cases so they are not displayed as label
+  ggdata_summ <- ggdata_summ[!is.na(ggdata_summ$N), ]
   
   
+  
+  # --------------------------------------------------------------------------
   ### Make the plot
+  # --------------------------------------------------------------------------
+  
+  if(is.null(xlab)){
+    xlab <- variable_names[x_var]
+  }
+  if(is.null(ylab)){
+    ylab <- variable_names[y_var]
+  }
   
   
-  ggpl <- ggplot(data, aes_string(x = cat_var, y = num_var)) +
-    geom_boxplot(aes_string(fill = cat_var), outlier.color = NA) +
-    geom_quasirandom(width = 0.25, size = point_size, shape = 1) +
+  if(!is.null(fill_var)){
+    ggpl <- ggplot(data, aes_string(x = x_var, y = y_var, fill = fill_var)) +
+      geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single", width = 0.75)) +
+      geom_jitter(size = point_size, shape = point_shape, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75))
+  }else{
+    ggpl <- ggplot(data, aes_string(x = x_var, y = y_var)) +
+      geom_boxplot(aes_string(fill = x_var), outlier.color = NA) +
+      geom_jitter(size = point_size, shape = point_shape, width = 0.25)
+  }
+  
+  
+  ggpl <- ggpl +
     labs(title = title, subtitle = subtitle, tag = tag) + 
     ylab(ylab) +
     xlab(xlab) +
@@ -110,7 +210,8 @@ wrapper_core_box_plot <- function(data, cat_var, num_var, colors = NULL, variabl
     theme(plot.title = element_text(size = title.size, face = "bold"),
       plot.subtitle = element_text(size = title.size),
       axis.text.x = element_text(angle = axis.text.x.angle, vjust = axis.text.x.vjust, hjust = axis.text.x.hjust),
-      legend.position = "none",
+      legend.position = ifelse(is.null(fill_var), "none", "right"),
+      legend.title = element_blank(),
       plot.tag.position = "top",
       plot.tag = element_text(size = title.size, face = "plain")) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
@@ -120,42 +221,50 @@ wrapper_core_box_plot <- function(data, cat_var, num_var, colors = NULL, variabl
   
   
   
-  return(ggpl)
+  if(show_total_counts || show_median){
+    
+    ### Calculate the place at the bottom where labels should be placed
+    if(!is.null(ylim)){
+      ymin <- ylim[1]
+    }else{
+      ymin <- min(data[, y_var], na.rm = TRUE)  
+    }
+    
+    ### The default expand is 5% of the range, so let's nudge by 2.5%
+    ### Calculate the nudge
+    if(!is.null(ylim)){
+      yrange <- range(ylim)
+    }else{
+      yrange <- range(data[, y_var], na.rm = TRUE)  
+    }
+    yrange <- yrange[2] - yrange[1]
+    ynudge <- yrange * 0.025
+    
+    
+    
+    if(!is.null(fill_var)){
+      
+      ggpl <- ggpl +
+        geom_text(data = ggdata_summ, aes_string(x = x_var, y = ymin - ynudge, group = fill_var, label = "Label"), size = geom_text_size, vjust = 1, position = position_dodge(preserve = "total", width = 0.75))
+      
+      
+    }else{
+      
+      ggpl <- ggpl +
+        geom_text(data = ggdata_summ, aes_string(x = x_var, y = ymin - ynudge, label = "Label"), size = geom_text_size, vjust = 1)
+      
+    }
+    
+    
+  }
   
+  
+  return(ggpl)
   
 }
 
 
 
-# data <- data_goya
-# 
-# cat_var <- "BCL2_cat2"
-# num_var <- "FCGR3A"
-# 
-# 
-# strat1_var = "Treatment_Arm"
-# strat2_var = "Cell_Of_Origin2"
-# strat2_var = NULL
-# 
-# colors = NULL
-# variable_names = NULL
-# title = NULL
-# subtitle = NULL
-# tag = NULL
-# show_total_counts = TRUE
-# point_size = 1.5
-# title.size = 12
-# ylim = NULL
-# axis.text.x.angle = 0
-# axis.text.x.vjust = 0
-# axis.text.x.hjust = 0.5
-# background_grid_major = "none"
-# 
-# 
-# strat1_nrow = 1
-# strat1_ncol = NULL
-# strat2_nrow = NULL
-# strat2_ncol = 1
 
 
 #' Boxplot
@@ -163,7 +272,7 @@ wrapper_core_box_plot <- function(data, cat_var, num_var, colors = NULL, variabl
 #' Generate box plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot_strat <- function(data, cat_var, num_var, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1.5, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, geom = "quasirandom", point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   if(!is.null(strat1_var)){
@@ -186,11 +295,11 @@ wrapper_core_box_plot_strat <- function(data, cat_var, num_var, strat1_var = NUL
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(cat_var, num_var, strat1_var, strat2_var)]), ]
+  data <- data[complete.cases(data[, c(x_var, y_var, fill_var, strat1_var, strat2_var)]), ]
   
-
+  
   if(is.null(ylim)){
-    ylim <- range(data[, num_var])
+    ylim <- range(data[, y_var])
   }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -234,7 +343,7 @@ wrapper_core_box_plot_strat <- function(data, cat_var, num_var, strat1_var = NUL
       }
       
       
-      ggpl <- wrapper_core_box_plot(data = data_strata1, cat_var = cat_var, num_var = num_var, colors = colors, variable_names = variable_names, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major)
+      ggpl <- wrapper_core_box_plot(data = data_strata1, x_var = x_var, y_var = y_var, fill_var = fill_var, colors = colors, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, point_shape = point_shape, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major)
       
       
       return(ggpl)
@@ -257,6 +366,101 @@ wrapper_core_box_plot_strat <- function(data, cat_var, num_var, strat1_var = NUL
   
   
 }
+
+
+
+
+
+
+
+
+# colors = NULL
+# variable_names = NULL
+# xlab = NULL
+# ylab = NULL
+# title = NULL
+# subtitle = NULL
+# tag = NULL
+# show_total_counts = TRUE
+# show_median = TRUE
+# point_size = 1
+# point_shape = 1
+# title.size = 12
+# ylim = NULL
+# axis.text.x.angle = 0
+# axis.text.x.vjust = 0
+# axis.text.x.hjust = 0.5
+# geom_text_size = 3.5
+# background_grid_major = "none"
+
+
+
+
+#' Boxplot
+#' 
+#' Generate a signle boxplot.
+#' 
+#' @param data Data frame.
+wrapper_core_box_plot_yvars <- function(data, fill_var, y_vars, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none"){
+  
+  
+  stopifnot(is.data.frame(data))
+  
+  stopifnot(length(fill_var) == 1)
+  stopifnot(is.factor(data[, fill_var]))
+  
+  stopifnot(length(y_vars) >= 1)
+  stopifnot(all(sapply(data[, y_vars], class) == "numeric"))
+  
+  
+  colors <- format_colors(levels = levels(data[, fill_var]), colors = colors)
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  if(is.null(xlab)){
+    xlab <- ""
+  }
+  if(is.null(ylab)){
+    ylab <- ""
+  }
+  
+  # --------------------------------------------------------------------------
+  # Gather the data from y_vars
+  # --------------------------------------------------------------------------
+  
+  data_gather <- gather(data[, c(fill_var, y_vars), drop = FALSE], key = "key", value = "value", -1)
+  
+  data_gather[, "key"] <- factor(data_gather[, "key"], levels = y_vars, labels = variable_names[y_vars])
+  
+  
+  ggpl <- wrapper_core_box_plot(data = data_gather, x_var = "key", y_var = "value", fill_var = fill_var, colors = colors, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, point_shape = point_shape, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, geom_text_size = geom_text_size, background_grid_major = background_grid_major)
+  
+  
+  return(ggpl)
+  
+  
+}
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
 
 
 

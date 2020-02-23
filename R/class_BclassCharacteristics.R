@@ -100,7 +100,7 @@ setMethod("Bheader<-", "BclassCharacteristics", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = 11){
+setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = FALSE){
   
   
   res <- Bresults(x)
@@ -115,10 +115,20 @@ setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header 
     header <- Bheader(x)
   }
   
+  ### Use the globally defined font_size
+  if(is.null(font_size)){
+    font_size <- getOption("Bkable_font_size", default = 11)
+  }
+  
   
   kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
-    kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = FALSE, font_size = font_size) %>% 
-    add_header_above(header)
+    kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = full_width, font_size = font_size) 
+  
+  
+  if(!is.null(header)){
+    kable <- kable %>% 
+      add_header_above(header)
+  }
   
   
   
@@ -133,11 +143,10 @@ setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header 
   which_row_spec_isna <- which(out[, 1] %in% c("Total (non-NA)", "NAs"))
   
   
-  if(!is.null(which_row_spec)){
-    kable <- kable %>% 
-      kableExtra::row_spec(which_row_spec, bold = TRUE, background = "#F0F8FF") %>% 
-      kableExtra::row_spec(which_row_spec_isna, background = "#fafcff", color = "#666666")
-  }
+  kable <- kable %>% 
+    kableExtra::row_spec(which_row_spec, bold = TRUE, background = "#d7ecff") %>% 
+    kableExtra::row_spec(which_row_spec_isna, background = "#f0f8ff", color = "#666666")
+  
   
   
   return(kable)

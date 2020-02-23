@@ -1,7 +1,5 @@
 
 
-
-
 # data <- data_goya
 # x_var <- "Cell_Of_Origin"
 # y_var <- "Ann_Arbor_Stage"
@@ -30,7 +28,7 @@
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
-wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none"){
+wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_names = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, geom_text_vjust = 0.5, background_grid_major = "none"){
   
   
   # --------------------------------------------------------------------------
@@ -48,6 +46,10 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_na
   keep_levels <- setdiff(levels(data[, y_var]), skip_levels)
   stopifnot(length(keep_levels) > 0)
   
+  ### min must be zero
+  if(!is.null(ylim)){
+    ylim[1] <- 0
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -96,6 +98,8 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_na
   sum_count_total <- aggregate(ggdata[, "Count"], list(Subgroup = ggdata[, "Subgroup"]), FUN = sum, na.rm = TRUE, drop = FALSE)
   colnames(sum_count_total)[2] <- "Count_Total"
   
+  ## For zero counts, there is NA. Let's fix it to zero
+  sum_count_total[is.na(sum_count_total[, 2]), 2] <- 0
   
   
   ### Skip unwanted levels
@@ -157,13 +161,24 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_na
       plot.tag = element_text(size = title.size, face = "plain")) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_fill_manual(values = colors, drop = FALSE) +
-    coord_cartesian(ylim = ylim)
+    coord_cartesian(ylim = ylim) 
+  # scale_y_continuous(expand = expand_scale(mult = 0.05, add = 0))
+  
+  
+  ### The default expand is 5% of the range, so let's nudge by 2.5%
+  ### Calculate the place at the bottom where labels should be placed
+  if(!is.null(ylim)){
+    ymax <- max(ylim)
+  }else{
+    ymax <- max(ggdata_total$Proportion, na.rm = TRUE)  
+  }
+  ynudge <- ymax * 0.025
   
   
   if(show_total_counts){
     
     ggpl <- ggpl +
-      geom_text(data = ggdata_total, aes(x = Subgroup, y = 0, label = Label_Total), size = geom_text_size, nudge_y = -1, vjust = 1)
+      geom_text(data = ggdata_total, aes(x = Subgroup, y = 0, label = Label_Total), size = geom_text_size, nudge_y = -ynudge, vjust = 0.5) #  nudge_y = 0, vjust = 1.5
     
   }
   
@@ -180,7 +195,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, colors = NULL, variable_na
   if(show_total_proportions){
     
     ggpl <- ggpl +
-      geom_text(data = ggdata_total, aes(x = Subgroup, y = Proportion + 1, label = Label), size = geom_text_size, nudge_y = 1)
+      geom_text(data = ggdata_total, aes(x = Subgroup, y = Proportion , label = Label), size = geom_text_size, nudge_y = ynudge, vjust = 0.5) #  nudge_y = 0, vjust = -0.5
     
     
   }
@@ -466,7 +481,7 @@ wrapper_core_bar_plot_yvars <- function(data, x_var, y_vars, y_value = NULL, col
     left_join(sum_count, by = c("Subgroup", "y_var")) %>% 
     left_join(sum_prop, by = c("Subgroup", "y_var"))
   
-
+  
   
   ggdata_total$Subgroup <- factor(ggdata_total$Subgroup, levels = levels(ggdata$Subgroup))
   

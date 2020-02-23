@@ -83,7 +83,7 @@ setMethod("Bheader<-", "BclassTesting", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, font_size = 11, block_vars = NULL){
+setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, block_vars = NULL, font_size = NULL, full_width = NULL){
   
   
   res <- Bresults(x)
@@ -98,11 +98,26 @@ setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
     header <- Bheader(x)
   }
   
+  if(is.null(font_size)){
+    font_size <- getOption("Bkable_font_size", default = 11)
+  }
   
+  if(is.null(full_width)){
+    full_width <- getOption("Bkable_full_width", default = TRUE)
+  }
+
+
   kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
-    kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = FALSE, font_size = font_size) %>% 
-    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "FC", "P-value", "Adj. P-value")), bold = TRUE) %>% 
-    add_header_above(header)
+    kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = full_width, font_size = font_size) %>% 
+    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "FC", "P-value", "Adj. P-value")), bold = TRUE) 
+  
+  
+  if(!is.null(header)){
+    kable <- kable %>% 
+      add_header_above(header)
+  }
+  
+  
   
   
   
@@ -118,14 +133,19 @@ setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
   }
   
   
-  ## Identify every second changing character group
+  
+  ## If more than one covariate/biomarker, identify every second changing character group
   which_row_spec <- indicate_blocks(d = res, block_vars = block_vars, return = "block")
   
-  
-  if(!is.null(which_row_spec)){
-    kable <- kable %>% 
-      kableExtra::row_spec(which_row_spec, background = "#F2F4F4")
+  if(is.null(which_row_spec)){
+    ## If one covariate/biomarker, make all rows colored
+    which_row_spec <- as.numeric(1:nrow(res))
   }
+  
+  
+  kable <- kable %>% 
+    kableExtra::row_spec(which_row_spec, background = "#F2F4F4")
+  
   
   
   return(kable)

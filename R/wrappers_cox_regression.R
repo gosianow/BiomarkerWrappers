@@ -77,11 +77,11 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
+
   # --------------------------------------------------------------------------
   ### Parce the regression summary
-  # --------------------------------------------------------------------------
-  
   ## Generate data frame with coefficient names and levels and information about reference groups
+  # --------------------------------------------------------------------------
   
   coef_info <- lapply(1:length(covariate_vars), function(i){
     # i = 1
@@ -117,6 +117,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
       
     }
     
+    
   })
   
   coef_info <- plyr::rbind.fill(coef_info)
@@ -129,8 +130,8 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   ## Append results from regression
   # --------------------------------------------------------------------------
   
-  conf.int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95")], stringsAsFactors = FALSE)
-  colnames(conf.int) <- c("coefficient", "HR", "CI95_lower", "CI95_upper")
+  conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
+  colnames(conf_int) <- c("coefficient", "HR", "CI95_lower", "CI95_upper")
   
   coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
   colnames(coefficients) <- c("coefficient", "pvalue")
@@ -139,7 +140,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   coef_info$nevent <- regression_summ$nevent
   
   coef_info <- coef_info %>% 
-    left_join(conf.int, by = "coefficient") %>% 
+    left_join(conf_int, by = "coefficient") %>% 
     left_join(coefficients, by = "coefficient")
   
   
@@ -307,6 +308,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
   
   
   strata1_levels <- levels(data[, strat1_var])
@@ -586,6 +588,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     return_vars <- treatment_var
     strat1_var <- biomarker_vars[i]
     
+    
     wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
@@ -761,12 +764,12 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   ## Generate data frame with coefficient names and levels and information about reference groups
   
-  if(class(interaction1_var) %in% c("numeric", "integer") && class(interaction2_var) %in% c("numeric", "integer")){
+  if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
     
     out <- data.frame(covariate1 = interaction1_var, levels1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, levels2 = "", reference2 = "", reference2_indx = 0, 
       stringsAsFactors = FALSE)
     
-  }else if(class(interaction1_var) %in% c("numeric", "integer") && class(interaction2_var) %in% c("factor")){
+  }else if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("factor")){
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
     ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
@@ -783,7 +786,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
     out <- data.frame(covariate1 = interaction1_var, levels1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, levels2 = levels(data[, interaction2_var]), reference2 = names(reference_indx), reference2_indx = as.numeric(reference_indx),
       stringsAsFactors = FALSE)
     
-  }else if(class(interaction1_var) %in% c("factor") && class(interaction2_var) %in% c("numeric", "integer")){
+  }else if(class(data[, interaction1_var]) %in% c("factor") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
     ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
@@ -840,8 +843,8 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   ## Append results from regression
   # --------------------------------------------------------------------------
   
-  conf.int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95")], stringsAsFactors = FALSE)
-  colnames(conf.int) <- c("coefficient", "HR", "CI95_lower", "CI95_upper")
+  conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
+  colnames(conf_int) <- c("coefficient", "HR", "CI95_lower", "CI95_upper")
   
   coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
   colnames(coefficients) <- c("coefficient", "pvalue")
@@ -850,7 +853,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   coef_info$nevent <- regression_summ$nevent
   
   coef_info <- coef_info %>% 
-    left_join(conf.int, by = "coefficient") %>% 
+    left_join(conf_int, by = "coefficient") %>% 
     left_join(coefficients, by = "coefficient")
   
   

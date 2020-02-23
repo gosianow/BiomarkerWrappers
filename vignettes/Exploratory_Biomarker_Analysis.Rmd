@@ -44,6 +44,13 @@ font_size <- 11
 cache <- 0
 
 
+### Set global options for Bkable
+
+## Set global option for font_size for Bkable in this document 
+options(Bkable_font_size = font_size)
+options(Bkable_full_width = TRUE)
+
+
 knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center")
 
 
@@ -583,10 +590,26 @@ data <- data_goya
 x_var = "FCGR3A_cat2"
 y_var = "Resp_Lugano"
 
+show_total_proportions <- TRUE
 
 ## Default
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, geom_text_size = 3.5)
+
+
+
+data <- data_goya
+
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
+skip_levels <- "CMR"
+show_total_proportions <- TRUE
+
+## Default
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, geom_text_size = 3.5, skip_levels = skip_levels, ylim = NULL)
+
+
 
 
 data <- data_goya
@@ -673,6 +696,15 @@ num_var <- "FCGR3A"
 
 wrapper_core_box_plot(data = data, cat_var = cat_var, num_var = num_var)
 
+
+
+data <- data_goya
+data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
+cat_var <- "Cell_Of_Origin"
+num_var <- "FCGR3A"
+
+
+wrapper_core_box_plot(data = data, cat_var = cat_var, num_var = num_var)
 
 
 ```

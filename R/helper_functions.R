@@ -1,5 +1,47 @@
 
 
+#' Read gmt file and return a list of genes
+wrapper_read_gmt <- function(filename){
+  x <- GSEABase::getGmt(filename)
+  x <- GSEABase::geneIds(x)
+  return(x)
+}
+
+
+#' Write a list of genes into a gmt file
+wrapper_write_gmt <- function(x, filename){
+  
+  gsc <- GSEABase::GeneSetCollection(lapply(1:length(x), function(i){
+    # i = 1
+    GSEABase::GeneSet(setName = names(x[i]), geneIds = x[[i]])
+    
+  }))
+  
+  GSEABase::toGmt(gsc, filename)
+  
+  invisible(NULL)
+  
+}
+
+
+
+
+
+
+
+
+
+
+wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
+  
+  indx <- 1:length(plotlist)
+  indx_split <- split(indx, ceiling(seq_along(indx) / nsplit))
+  
+  for(i in 1:length(indx_split)){
+    print(plot_grid(plotlist = plotlist[indx_split[[i]]], ncol = ncol, nrow = nrow))
+  }
+  
+}
 
 
 
@@ -195,7 +237,7 @@ indicate_blocks <- function(d, block_vars, return = "block"){
 #' 
 #' @param x Vector of p-values to be formatted.
 #' @param digits Number of digits after decimial to display.
-#' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05.
+#' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
 format_pvalues <- function(x, digits = 4, asterisk = TRUE){
   
   # digits = 4
@@ -215,7 +257,8 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE){
   
   if(asterisk){
     
-    pval_asterisk <- ifelse(x < 0.001, " ***", ifelse(x < 0.01, " **", ifelse(x < 0.05, " *", "")))
+    pval_asterisk <- ifelse(x < 0.001, " ***", ifelse(x < 0.01, " **", ifelse(x < 0.05, " *", ifelse(x < 0.1, " .", ""))))
+    
     pval_asterisk[is.na(pval_asterisk)] <- ""
     
     output <- paste0(output, pval_asterisk)

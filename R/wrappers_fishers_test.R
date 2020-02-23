@@ -24,7 +24,7 @@
 #' Fisher's test
 #' 
 #' @param data Data frame.
-wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, print_pvalues = TRUE){
+wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -124,8 +124,9 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
     out$`P-value` <- NULL
   }
   
+  
   ### If all OR are empty, do not display that column.
-  if(all(out$OR == "")){
+  if(all(out$OR == "") && !force_empty_cols){
     out$OR <- NULL
   }
   
@@ -175,6 +176,266 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
 
 
 
+# col_var
+# row_var
+# strat1_var = NULL
+# strat2_var = NULL
+# variable_names = NULL
+# caption = NULL
+# margin = 1
+# print_pvalues = TRUE
+# print_adjpvalues = TRUE
+
+
+
+
+#' @inheritParams wrapper_core_fishers_test
+#' 
+#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the second stratification variable.
+wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Check on strat vars
+  # --------------------------------------------------------------------------
+  
+  if(!is.null(strat1_var)){
+    stopifnot(length(strat1_var) == 1)
+    stopifnot(is.factor(data[, strat1_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat1_dummy"] <- factor("strat1_dummy")
+    strat1_var <- "strat1_dummy"
+  }
+  
+  if(!is.null(strat2_var)){
+    stopifnot(length(strat2_var) == 1)
+    stopifnot(is.factor(data[, strat2_var]))
+  }else{
+    ### Add dummy variable to data
+    data[, "strat2_dummy"] <- factor("strat2_dummy")
+    strat2_var <- "strat2_dummy"
+  }
+  
+  ### Strata cannot include col_var, row_var
+  stopifnot(length(intersect(c(strat1_var, strat2_var), c(col_var, row_var))) == 0)
+  
+  
+  ### Keep non-missing data
+  all_vars <- c(col_var, row_var, strat1_var, strat2_var)
+  data <- data[complete.cases(data[, all_vars]), all_vars, drop = FALSE]
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  # --------------------------------------------------------------------------
+  # Calculations within strata
+  # --------------------------------------------------------------------------
+  
+  strata1_levels <- levels(data[, strat1_var])
+  strata2_levels <- levels(data[, strat2_var])
+  
+  
+  wrapper_res <- lapply(1:length(strata2_levels), function(j){
+    # j = 1
+    
+    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
+    
+    if(nrow(data_strata2) == 0){
+      return(NULL)
+    }
+    
+    
+    wrapper_res <- lapply(1:length(strata1_levels), function(i){
+      # i = 1
+      
+      # print(paste(j, i))
+      
+      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
+      
+      if(nrow(data_strata1) == 0){
+        return(NULL)
+      }
+      
+      
+      wrapper_res <- wrapper_core_fishers_test(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      
+      
+      res <- Bresults(wrapper_res)
+      out <- Boutput(wrapper_res)
+      
+      ## Add info about the strata to the data frames
+      
+      prefix_df <- data.frame(strata2 = rep(strata2_levels[j], nrow(res)), strata1 = rep(strata1_levels[i], nrow(res)), stringsAsFactors = FALSE)
+      
+      # To res
+      colnames(prefix_df) <- c(strat2_var, strat1_var)
+      res <- cbind(prefix_df, res)
+      
+      # To out
+      colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
+      out <- cbind(prefix_df, out)
+      
+      ## Update header by adding 2 corresponding to the two strat variables to the first position
+      hdr <- Bheader(wrapper_res)
+      hdr[1] <- hdr[1] + 2
+      
+      wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res), header = hdr)
+      
+      return(wrapper_res)
+      
+    })
+    
+    
+    ### Merge the results
+    
+    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+    
+    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = Bheader(wrapper_res[[1]]))
+    
+    return(wrapper_res)
+    
+  })
+  
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  
+  ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
+  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  
+  if("Adj. P-value" %in% colnames(out)){
+    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+  }
+  
+  
+  ### Set repeating Strata names to empty
+  out[out$Covariate == "", variable_names[strat1_var]] <- ""
+  out[out$Covariate == "", variable_names[strat2_var]] <- ""
+  
+  ### Remove dummy columns
+  
+  hdr_shift <- 0
+  
+  if(strat2_var == "strat2_dummy"){
+    res$strat2_dummy <- NULL
+    out$`strat2 dummy` <- NULL
+    hdr_shift <- hdr_shift + 1
+  }
+  if(strat1_var == "strat1_dummy"){
+    res$strat1_dummy <- NULL
+    out$`strat1 dummy` <- NULL
+    hdr_shift <- hdr_shift + 1
+  }
+  
+  ## Update header by adding 2 corresponding to the two strat variables to the first position
+  hdr <- Bheader(wrapper_res[[1]])
+  hdr[1] <- hdr[1] - hdr_shift
+  
+  
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = hdr)
+  
+  
+  return(wrapper_res)
+  
+  
+}
+
+
+
+
+
+
+# strat1_var = NULL
+# strat2_var = NULL
+# variable_names = NULL
+# caption = NULL
+# margin = 1
+# force_empty_cols = FALSE
+# print_pvalues = TRUE
+# print_adjpvalues = TRUE
+
+
+#' @inheritParams wrapper_core_fishers_test_strat
+#' 
+#' Fisher's test
+#' 
+#' @param row_vars Vector with names of categorical variables.
+wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Checks
+  # --------------------------------------------------------------------------
+  
+  
+  stopifnot(length(col_var) == 1)
+  stopifnot(length(row_vars) >= 1)
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  # --------------------------------------------------------------------------
+  # Generate the results
+  # --------------------------------------------------------------------------
+  
+  
+  wrapper_res <- lapply(1:length(row_vars), function(i){
+    # i = 1
+    
+    row_var <- row_vars[i]
+    
+    wrapper_res <- wrapper_core_fishers_test_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    
+    return(wrapper_res)
+    
+  })
+  
+  
+  ### Merge the results
+  
+  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  
+  
+  ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
+  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  
+  if("Adj. P-value" %in% colnames(out)){
+    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+  }
+  
+  
+  hdr <- Bheader(wrapper_res[[1]])
+  
+  ### Replace NAs with "" for OR
+  missing_columns <- c("OR")
+  
+  for(i in 1:length(missing_columns)){
+    if(missing_columns[i] %in% colnames(out)){
+      out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
+      ### If all FC are empty, do not display that column.
+      if(all(out[, missing_columns[i]] == "") && !force_empty_cols){
+        out[, missing_columns[i]] <- NULL
+        ### Update header
+        hdr[length(hdr)] <- hdr[length(hdr)] - 1
+      }
+    }
+  }
+  
+  
+  
+  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = hdr)
+  
+  
+  return(wrapper_res)
+  
+}
 
 
 
