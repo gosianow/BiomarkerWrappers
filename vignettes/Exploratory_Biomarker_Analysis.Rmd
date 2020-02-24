@@ -105,6 +105,96 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
+
+
+
+
+# Box plot
+
+
+```{r Box_plot}
+
+
+data <- data_goya
+
+x_var <- "Cell_Of_Origin"
+y_var <- "FCGR3A"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+
+data <- data_goya
+data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
+x_var <- "Cell_Of_Origin"
+y_var <- "FCGR3A"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+
+
+
+data <- data_goya
+
+x_var <- "Cell_Of_Origin"
+y_var <- "FCGR3A"
+facet_var <- "Treatment_Arm"
+fill_var = NULL
+color_var = "ORR_Lugano"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_var = color_var, fill_var = fill_var)
+
+
+
+data <- data_goya
+
+x_var <- "Treatment_Arm"
+y_var <- "FCGR3A"
+facet_var <- NULL
+fill_var = "Cell_Of_Origin"
+color_var = "ORR_Lugano"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_var = color_var, fill_var = fill_var)
+
+
+
+
+
+
+```
+
+
+
+
+```{r Box_plot_strat}
+
+
+data <- data_goya
+
+x_var <- "BCL2_cat2"
+y_var <- "FCGR3A"
+
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin2"
+
+
+wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
+
+
+
+
+```
+
+
+
+
+
 # Complex boxplot
 
 
@@ -114,20 +204,42 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 data <- data_goya
-x_var <- "Cell_Of_Origin"
-y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+
+x_var = NULL
+facet_var = NULL
+fill_var = NULL
+color_var = NULL
+
+
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var)
 
 
 
-colors = NULL
-skip_levels = NULL
-show_proportions = TRUE
-show_total_proportions = TRUE
-ylim = NULL
-method = "facet"
+data <- data_goya
+y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+
+x_var = "Cell_Of_Origin"
+facet_var = NULL
+fill_var = NULL
+color_var = NULL
 
 
-wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var)
+
+
+
+data <- data_goya
+y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+
+x_var = NULL
+facet_var = NULL
+fill_var = "Cell_Of_Origin"
+color_var = NULL
+
+
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var)
+
 
 
 
@@ -715,59 +827,6 @@ wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 
 
 
-
-
-
-
-# Box plot
-
-
-```{r Box_plot}
-
-
-data <- data_goya
-
-x_var <- "Cell_Of_Origin"
-y_var <- "FCGR3A"
-
-
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
-
-
-
-data <- data_goya
-data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
-x_var <- "Cell_Of_Origin"
-y_var <- "FCGR3A"
-
-
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
-
-
-```
-
-
-
-
-```{r Box_plot_strat}
-
-
-data <- data_goya
-
-x_var <- "BCL2_cat2"
-y_var <- "FCGR3A"
-
-
-strat1_var = "Treatment_Arm"
-strat2_var = "Cell_Of_Origin2"
-
-
-wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
-
-
-
-
-```
 
 
 

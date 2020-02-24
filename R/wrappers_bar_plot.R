@@ -1,7 +1,7 @@
 
 
 
-# colors = NULL
+# colors_bar = NULL
 # variable_names = NULL
 # title = NULL
 # subtitle = NULL
@@ -29,7 +29,7 @@
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
-wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, geom_text_vjust = 0.5, background_grid_major = "none", method = "facet", strip.text.size = NULL){
+wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_bar = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, geom_text_vjust = 0.5, background_grid_major = "none", method = "facet", strip.text.size = NULL){
   
   
   # --------------------------------------------------------------------------
@@ -211,7 +211,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors =
   
   if(method == "facet"){
     
-    colors <- format_colors(levels = levels(data[, y_var]), colors = colors)
+    colors_bar <- format_colors(levels = levels(data[, y_var]), colors = colors_bar)
     
     
     if(is.null(xlab)){
@@ -237,7 +237,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors =
         strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip.text.size)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-      scale_fill_manual(values = colors, drop = FALSE) +
+      scale_fill_manual(values = colors_bar, drop = FALSE) +
       coord_cartesian(ylim = ylim)
     
     
@@ -284,7 +284,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors =
     # ggplot2 doesn't know you want to give the labels the same virtual width as the bars. So tell it. You can't nudge and dodge text, so instead adjust the y position.
     
     
-    colors <- format_colors(levels = levels(data[, x_var]), colors = colors)
+    colors_bar <- format_colors(levels = levels(data[, x_var]), colors = colors_bar)
     
     if(is.null(xlab)){
       xlab <- variable_names[facet_var]
@@ -309,7 +309,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors =
         strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip.text.size)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-      scale_fill_manual(values = colors, drop = FALSE) +
+      scale_fill_manual(values = colors_bar, drop = FALSE) +
       coord_cartesian(ylim = ylim)
     
     
@@ -361,7 +361,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors =
 #' Generate bar plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
-wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none", method = "facet", strip.text.size = NULL, strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, strat1_var = NULL, strat2_var = NULL, colors_bar = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none", method = "facet", strip.text.size = NULL, strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   if(!is.null(strat1_var)){
@@ -425,7 +425,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, st
         subtitle <- strata1_levels[i]
       }
       
-      ggpl <- wrapper_core_bar_plot(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, colors = colors, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, skip_levels = skip_levels, show_total_counts = show_total_counts, show_proportions = show_proportions, show_total_proportions = show_total_proportions, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, geom_text_size = geom_text_size, geom_text_vjust = geom_text_vjust, background_grid_major = background_grid_major, method = method, strip.text.size = strip.text.size)
+      ggpl <- wrapper_core_bar_plot(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, colors_bar = colors_bar, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, skip_levels = skip_levels, show_total_counts = show_total_counts, show_proportions = show_proportions, show_total_proportions = show_total_proportions, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, geom_text_size = geom_text_size, geom_text_vjust = geom_text_vjust, background_grid_major = background_grid_major, method = method, strip.text.size = strip.text.size)
       
       
       return(ggpl)
@@ -456,7 +456,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, st
 
 # strat1_var = NULL
 # strat2_var = NULL
-# colors = NULL
+# colors_bar = NULL
 # variable_names = NULL
 # xlab = NULL
 # ylab = NULL
@@ -492,7 +492,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, st
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
-wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none", method = "facet", strip.text.size = NULL, strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, strat1_var = NULL, strat2_var = NULL, colors_bar = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, skip_levels = NULL, show_total_counts = TRUE, show_proportions = TRUE, show_total_proportions = FALSE, title.size = 12, ylim = c(0, 100), axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3, geom_text_vjust = 0.5, background_grid_major = "none", method = "facet", strip.text.size = NULL, strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   stopifnot(is.data.frame(data))
@@ -528,7 +528,7 @@ wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, strat1_var = 
   facet_var <- "name"
   
   
-  ggpl <- wrapper_core_bar_plot_strat(data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var = strat1_var, strat2_var = strat2_var, colors = colors, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, skip_levels = skip_levels, show_total_counts = show_total_counts, show_proportions = show_proportions, show_total_proportions = show_total_proportions, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, geom_text_size = geom_text_size, geom_text_vjust = geom_text_vjust, background_grid_major = background_grid_major, method = method, strip.text.size = strip.text.size, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
+  ggpl <- wrapper_core_bar_plot_strat(data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var = strat1_var, strat2_var = strat2_var, colors_bar = colors_bar, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, skip_levels = skip_levels, show_total_counts = show_total_counts, show_proportions = show_proportions, show_total_proportions = show_total_proportions, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, geom_text_size = geom_text_size, geom_text_vjust = geom_text_vjust, background_grid_major = background_grid_major, method = method, strip.text.size = strip.text.size, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   return(ggpl)
   

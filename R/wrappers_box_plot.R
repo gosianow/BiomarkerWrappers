@@ -71,7 +71,8 @@
 
 
 
-# colors = NULL
+# colors_box = NULL
+# colors_point = NULL
 # variable_names = NULL
 # xlab = NULL
 # ylab = NULL
@@ -89,7 +90,7 @@
 # axis.text.x.hjust = 0.5
 # geom_text_size = 3.5
 # background_grid_major = "none"
-
+# strip.text.size = NULL
 
 
 #' Boxplot
@@ -97,16 +98,29 @@
 #' Generate a signle boxplot.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none"){
+wrapper_core_box_plot <- function(data, x_var, y_var, facet_var = NULL, fill_var = NULL, color_var = NULL, colors_box = NULL, colors_point = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none", strip.text.size = NULL){
   
   
   stopifnot(is.data.frame(data))
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
   
   stopifnot(length(x_var) == 1)
   stopifnot(is.factor(data[, x_var]))
   
   stopifnot(length(y_var) == 1)
   stopifnot(is.numeric(data[, y_var]))
+  
+  if(!is.null(facet_var)){
+    stopifnot(length(facet_var) == 1)
+    stopifnot(is.factor(data[, facet_var]))
+  }
+  
+  if(!is.null(color_var)){
+    stopifnot(length(color_var) == 1)
+    stopifnot(is.factor(data[, color_var]))
+  }
   
   if(!is.null(fill_var)){
     stopifnot(length(fill_var) == 1)
@@ -115,22 +129,27 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   
   
   if(!is.null(fill_var)){
-    colors <- format_colors(levels = levels(data[, fill_var]), colors = colors)
+    colors_box <- format_colors(levels = levels(data[, fill_var]), colors = colors_box)
+    legend_name_fill <- variable_names[fill_var]
   }else{
-    if(length(colors) == 1){
-      colors <- rep(colors, nlevels(data[, x_var]))
-      names(colors) <- levels(data[, x_var])
+    if(length(colors_box) == 1){
+      colors_box <- rep(colors_box, nlevels(data[, x_var]))
+      names(colors_box) <- levels(data[, x_var])
     }else{
-      colors <- format_colors(levels = levels(data[, x_var]), colors = colors)
+      colors_box <- format_colors(levels = levels(data[, x_var]), colors = colors_box)
     }
+    legend_name_fill <- NULL
   }
   
   
-  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  if(!is.null(color_var)){
+    colors_point <- format_colors(levels = levels(data[, color_var]), colors = colors_point)
+    legend_name_color <- variable_names[color_var]
+  }
   
   
   ### Keep non-missing data
-  data <- data[complete.cases(data[, c(x_var, y_var, fill_var)]), ]
+  data <- data[complete.cases(data[, c(x_var, y_var, facet_var, fill_var)]), ]
   
   
   # data_expand <- expand.grid(lapply(data[, c(x_var, fill_var)], levels))
@@ -144,22 +163,26 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   # --------------------------------------------------------------------------
   
   
-  N <- aggregate(data[, y_var], lapply(c(x_var, fill_var), function(x) data[, x]), FUN = length, drop = FALSE)
-  colnames(N) <- c(x_var, fill_var, "N")
+  N <- aggregate(data[, y_var], lapply(c(x_var, facet_var, fill_var), function(x) data[, x]), FUN = length, drop = FALSE)
+  colnames(N) <- c(x_var, facet_var, fill_var, "N")
   
   
-  Median <- aggregate(data[, y_var], lapply(c(x_var, fill_var), function(x) data[, x]), FUN = median, na.rm = TRUE, drop = FALSE)
-  colnames(Median) <- c(x_var, fill_var, "Median")
+  Median <- aggregate(data[, y_var], lapply(c(x_var, facet_var, fill_var), function(x) data[, x]), FUN = median, na.rm = TRUE, drop = FALSE)
+  colnames(Median) <- c(x_var, facet_var, fill_var, "Median")
   
   
   ggdata_summ <- N %>% 
-    left_join(Median, by = c(x_var, fill_var))
+    left_join(Median, by = c(x_var, facet_var, fill_var))
   
   
   ggdata_summ[, x_var] <- factor(ggdata_summ[, x_var], levels = levels(data[, x_var]))
   
+  
   if(!is.null(fill_var)){
     ggdata_summ[, fill_var] <- factor(ggdata_summ[, fill_var], levels = levels(data[, fill_var]))
+  }
+  if(!is.null(facet_var)){
+    ggdata_summ[, facet_var] <- factor(ggdata_summ[, facet_var], levels = levels(data[, facet_var]))
   }
   
   
@@ -200,14 +223,36 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   if(!is.null(fill_var)){
     
     ggpl <- ggplot(data, aes_string(x = x_var, y = y_var, fill = fill_var)) +
-      geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single", width = 0.75)) +
-      geom_jitter(size = point_size, shape = point_shape, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75))
+      geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single", width = 0.75))
+    
+    
+    if(!is.null(color_var)){
+      ## The group determines dodging 
+      ggpl <- ggpl +
+        geom_jitter(aes_string(color = color_var, group = fill_var), size = point_size, shape = point_shape, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75)) +
+        scale_color_manual(name = legend_name_color, values = colors_point, drop = FALSE) 
+      
+    }else{
+      ggpl <- ggpl +
+        geom_jitter(size = point_size, shape = point_shape, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75))
+      
+    }
+    
     
   }else{
     
     ggpl <- ggplot(data, aes_string(x = x_var, y = y_var)) +
-      geom_boxplot(aes_string(fill = x_var), outlier.color = NA) +
-      geom_jitter(size = point_size, shape = point_shape, width = 0.25)
+      geom_boxplot(aes_string(fill = x_var), outlier.color = NA, show.legend = FALSE)
+    
+    if(!is.null(color_var)){
+      ggpl <- ggpl +
+        geom_jitter(aes_string(color = color_var), size = point_size, shape = point_shape, width = 0.25) +
+        scale_color_manual(name = legend_name_color, values = colors_point, drop = FALSE) 
+    }else{
+      ggpl <- ggpl +
+        geom_jitter(size = point_size, shape = point_shape, width = 0.25)
+    }
+    
     
   }
   
@@ -220,15 +265,24 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
     theme(plot.title = element_text(size = title.size, face = "bold"),
       plot.subtitle = element_text(size = title.size),
       axis.text.x = element_text(angle = axis.text.x.angle, vjust = axis.text.x.vjust, hjust = axis.text.x.hjust),
-      legend.position = ifelse(is.null(fill_var), "none", "right"),
-      legend.title = element_blank(),
       plot.tag.position = "top",
-      plot.tag = element_text(size = title.size, face = "plain")) +
+      plot.tag = element_text(size = title.size, face = "plain"),
+      strip.background = element_rect(colour = "white", fill = "white"),
+      strip.text = element_text(size = strip.text.size)) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-    scale_fill_manual(values = colors, drop = FALSE) +
+    scale_fill_manual(name = legend_name_fill, values = colors_box, drop = FALSE) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
   
+  
+  if(!is.null(facet_var)){
+    
+    ggpl <- ggpl +
+      facet_wrap(as.formula(paste("~", facet_var))) +
+      theme(axis.line = element_blank()) +
+      panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE)
+    
+  }
   
   
   if(show_total_counts || show_median){
@@ -251,7 +305,6 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
     ynudge <- yrange * 0.025
     
     
-    
     if(!is.null(fill_var)){
       
       ggpl <- ggpl +
@@ -269,8 +322,6 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   }
   
   
-  
-  
   return(ggpl)
   
 }
@@ -284,7 +335,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
 #' Generate box plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, strat1_var = NULL, strat2_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, geom = "quasirandom", point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+wrapper_core_box_plot_strat <- function(data, x_var, y_var, facet_var = NULL, fill_var = NULL, color_var = NULL, colors_box = NULL, colors_point = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strip.text.size = NULL, strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   if(!is.null(strat1_var)){
@@ -355,7 +406,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, str
       }
       
       
-      ggpl <- wrapper_core_box_plot(data = data_strata1, x_var = x_var, y_var = y_var, fill_var = fill_var, colors = colors, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, point_shape = point_shape, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major)
+      ggpl <- wrapper_core_box_plot(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, color_var = color_var, fill_var = fill_var, colors_box = colors_box, colors_point = colors_point, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, point_shape = point_shape, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major, strip.text.size = strip.text.size)
       
       
       return(ggpl)
@@ -384,9 +435,14 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, str
 
 
 
-
-
-# colors = NULL
+# x_var = NULL
+# facet_var = NULL
+# fill_var = NULL
+# color_var = NULL
+# colors_box = NULL
+# colors_point = NULL
+# strat1_var = NULL
+# strat2_var = NULL
 # variable_names = NULL
 # xlab = NULL
 # ylab = NULL
@@ -402,8 +458,13 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, str
 # axis.text.x.angle = 0
 # axis.text.x.vjust = 0
 # axis.text.x.hjust = 0.5
-# geom_text_size = 3.5
 # background_grid_major = "none"
+# strip.text.size = NULL
+# strat1_nrow = 1
+# strat1_ncol = NULL
+# strat2_nrow = NULL
+# strat2_ncol = 1
+
 
 
 
@@ -413,39 +474,43 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, str
 #' Generate a signle boxplot.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot_yvars <- function(data, x_var, y_vars, fill_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none"){
+wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, facet_var = NULL, fill_var = NULL, color_var = NULL, colors_box = NULL, colors_point = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, background_grid_major = "none", strip.text.size = NULL, strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   stopifnot(is.data.frame(data))
   
-  stopifnot(length(fill_var) == 1)
-  stopifnot(is.factor(data[, fill_var]))
-  
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "numeric"))
   
+  stopifnot(is.null(x_var) || is.null(facet_var))
   
-  colors <- format_colors(levels = levels(data[, fill_var]), colors = colors)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  if(is.null(xlab)){
-    xlab <- ""
-  }
-  if(is.null(ylab)){
-    ylab <- ""
-  }
+  
+  data <- data[, c(y_vars, x_var, facet_var, fill_var, color_var), drop = FALSE]
+  
   
   # --------------------------------------------------------------------------
-  # Gather the data from y_vars
+  # pivot_longer the data from y_vars
   # --------------------------------------------------------------------------
   
-  data_gather <- gather(data[, c(fill_var, y_vars), drop = FALSE], key = "key", value = "value", -1)
+  data_longer <- tidyr::pivot_longer(data, y_vars) %>% 
+    as.data.frame()
   
-  data_gather[, "key"] <- factor(data_gather[, "key"], levels = y_vars, labels = variable_names[y_vars])
+  data_longer[, "name"] <- factor(data_longer[, "name"], levels = y_vars, labels = variable_names[y_vars])
+  
+  y_var <- "value"
+  
+  if(is.null(x_var)){
+    x_var <- "name"
+  }else if(is.null(facet_var)){
+    facet_var <- "name"
+  }
   
   
-  ggpl <- wrapper_core_box_plot(data = data_gather, x_var = "key", y_var = "value", fill_var = fill_var, colors = colors, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, point_shape = point_shape, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, geom_text_size = geom_text_size, background_grid_major = background_grid_major)
+  ggpl <- wrapper_core_box_plot_strat(data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var, colors_box = colors_box, colors_point = colors_point, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, show_total_counts = show_total_counts, show_median = show_median, point_size = point_size, point_shape = point_shape, title.size = title.size, ylim = ylim, axis.text.x.angle = axis.text.x.angle, axis.text.x.vjust = axis.text.x.vjust, axis.text.x.hjust = axis.text.x.hjust, background_grid_major = background_grid_major, strip.text.size = strip.text.size, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
+  
   
   
   return(ggpl)
@@ -456,14 +521,14 @@ wrapper_core_box_plot_yvars <- function(data, x_var, y_vars, fill_var = NULL, co
 
 
 
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
 
 
 
