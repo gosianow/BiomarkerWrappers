@@ -103,20 +103,20 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     
     if(is.null(test_res)){
       pvalue <- NA
-      change <- NA
+      difference <- NA
     }else{
       pvalue <- test_res$p.value
       if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-        change <- Median[2] - Median[1]
+        difference <- Median[2] - Median[1]
       }else{
-        change <- NA
+        difference <- NA
       }
     }
     
     
   }else{
     pvalue <- NA
-    change <- NA
+    difference <- NA
   }
   
   
@@ -129,7 +129,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   res <- data.frame(covariate = num_var,
     statistic = rownames(summdf),
     summdf,
-    change = c(change, rep(NA, nrow(summdf) - 1)),
+    difference = c(difference, rep(NA, nrow(summdf) - 1)),
     pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -145,7 +145,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     
     format_summ(summ = summdf),
     
-    Change = format_or(res$change, digits = 2),
+    Difference = format_difference(res$difference, digits = 2),
     
     `P-value` = format_pvalues(res$pvalue), 
     
@@ -160,9 +160,9 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     out$`P-value` <- NULL
   }
   
-  ### If all Change are empty, do not display that column.
-  if(all(out$Change == "") && !force_empty_cols){
-    out$Change <- NULL
+  ### If all Difference are empty, do not display that column.
+  if(all(out$Difference == "") && !force_empty_cols){
+    out$Difference <- NULL
   }
   
   
@@ -175,7 +175,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   # --------------------------------------------------------------------------
   
   num_start_cols <- 2
-  num_end_cols <- sum(c("Change", "P-value") %in% colnames(out))
+  num_end_cols <- sum(c("Difference", "P-value") %in% colnames(out))
   
   
   header <- c(num_start_cols, ncol(summdf), num_end_cols)
@@ -316,20 +316,20 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     
     if(is.null(test_res)){
       pvalue <- NA
-      change <- NA
+      difference <- NA
     }else{
       pvalue <- test_res$p.value
       if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-        change <- Median[2] - Median[1]
+        difference <- Median[2] - Median[1]
       }else{
-        change <- NA
+        difference <- NA
       }
     }
     
     
   }else{
     pvalue <- NA
-    change <- NA
+    difference <- NA
   }
   
   
@@ -342,7 +342,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   res <- data.frame(covariate = cat_var,
     subgroup = rownames(summdf),
     summdf,
-    change = c(change, rep(NA, nrow(summdf) - 1)),
+    difference = c(difference, rep(NA, nrow(summdf) - 1)),
     pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -358,7 +358,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     
     format_summ(summ = summdf, per = "col"),
     
-    Change = format_or(res$change, digits = 2),
+    Difference = format_difference(res$difference, digits = 2),
     
     `P-value` = format_pvalues(res$pvalue), 
     
@@ -373,9 +373,9 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     out$`P-value` <- NULL
   }
   
-  ### If all Change are empty, do not display that column.
-  if(all(out$Change == "") && !force_empty_cols){
-    out$Change <- NULL
+  ### If all Difference are empty, do not display that column.
+  if(all(out$Difference == "") && !force_empty_cols){
+    out$Difference <- NULL
   }
   
   
@@ -388,7 +388,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   # --------------------------------------------------------------------------
   
   num_start_cols <- 2
-  num_end_cols <- sum(c("Change", "P-value") %in% colnames(out))
+  num_end_cols <- sum(c("Difference", "P-value") %in% colnames(out))
   
   
   header <- c(num_start_cols, ncol(summdf), num_end_cols)
@@ -855,13 +855,13 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   
   hdr <- Bheader(wrapper_res[[1]])
   
-  ### Replace NAs with "" for Change
-  missing_columns <- c("Change")
+  ### Replace NAs with "" for Difference
+  missing_columns <- c("Difference")
   
   for(i in 1:length(missing_columns)){
     if(missing_columns[i] %in% colnames(out)){
       out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
-      ### If all Change are empty, do not display that column.
+      ### If all Difference are empty, do not display that column.
       if(all(out[, missing_columns[i]] == "") && !force_empty_cols){
         out[, missing_columns[i]] <- NULL
         ### Update header

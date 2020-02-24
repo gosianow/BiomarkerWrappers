@@ -133,6 +133,11 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   data <- data[complete.cases(data[, c(x_var, y_var, fill_var)]), ]
   
   
+  # data_expand <- expand.grid(lapply(data[, c(x_var, fill_var)], levels))
+  # data_expand[, y_var] <- NA
+  # data <- rbind.fill(data, data_expand)
+  
+  
   # --------------------------------------------------------------------------
   ### Calculate counts per subgroup
   ### Calculate median per subgroup
@@ -141,6 +146,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   
   N <- aggregate(data[, y_var], lapply(c(x_var, fill_var), function(x) data[, x]), FUN = length, drop = FALSE)
   colnames(N) <- c(x_var, fill_var, "N")
+  
   
   Median <- aggregate(data[, y_var], lapply(c(x_var, fill_var), function(x) data[, x]), FUN = median, na.rm = TRUE, drop = FALSE)
   colnames(Median) <- c(x_var, fill_var, "Median")
@@ -192,13 +198,17 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
   
   
   if(!is.null(fill_var)){
+    
     ggpl <- ggplot(data, aes_string(x = x_var, y = y_var, fill = fill_var)) +
       geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single", width = 0.75)) +
       geom_jitter(size = point_size, shape = point_shape, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75))
+    
   }else{
+    
     ggpl <- ggplot(data, aes_string(x = x_var, y = y_var)) +
       geom_boxplot(aes_string(fill = x_var), outlier.color = NA) +
       geom_jitter(size = point_size, shape = point_shape, width = 0.25)
+    
   }
   
   
@@ -245,7 +255,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
     if(!is.null(fill_var)){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_summ, aes_string(x = x_var, y = ymin - ynudge, group = fill_var, label = "Label"), size = geom_text_size, vjust = 1, position = position_dodge(preserve = "total", width = 0.75))
+        geom_text(data = ggdata_summ, aes_string(x = x_var, y = ymin - ynudge, group = fill_var, label = "Label"), size = geom_text_size, vjust = 1, position = position_dodge(preserve = "total", width = 0.9))
       
       
     }else{
@@ -257,6 +267,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, fill_var = NULL, colors = 
     
     
   }
+  
+  
   
   
   return(ggpl)
@@ -401,7 +413,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, fill_var = NULL, str
 #' Generate a signle boxplot.
 #' 
 #' @param data Data frame.
-wrapper_core_box_plot_yvars <- function(data, fill_var, y_vars, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none"){
+wrapper_core_box_plot_yvars <- function(data, x_var, y_vars, fill_var = NULL, colors = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, show_total_counts = TRUE, show_median = TRUE, point_size = 1, point_shape = 1, title.size = 12, ylim = NULL, axis.text.x.angle = 0, axis.text.x.vjust = 0, axis.text.x.hjust = 0.5, geom_text_size = 3.5, background_grid_major = "none"){
   
   
   stopifnot(is.data.frame(data))

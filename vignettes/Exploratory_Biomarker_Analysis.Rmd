@@ -105,6 +105,93 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
+# Complex boxplot
+
+
+
+
+```{r complex_boxplot, fig.width = 10}
+
+
+data <- data_goya
+x_var <- "Cell_Of_Origin"
+y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+
+
+
+colors = NULL
+skip_levels = NULL
+show_proportions = TRUE
+show_total_proportions = TRUE
+ylim = NULL
+method = "facet"
+
+
+wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+
+
+
+```
+
+
+
+
+
+
+
+
+
+# Complex barplot
+
+
+```{r complex_barplot, fig.width = 10}
+
+
+data <- data_goya
+x_var <- "Cell_Of_Origin"
+y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+
+
+
+colors = NULL
+skip_levels = NULL
+show_proportions = TRUE
+show_total_proportions = TRUE
+ylim = NULL
+method = "facet"
+
+
+wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+
+
+
+data <- data_goya
+x_var <- "Cell_Of_Origin"
+y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+
+colors = NULL
+
+skip_levels = "<=MEDIAN"
+show_proportions = TRUE
+show_total_proportions = TRUE
+
+ylim = NULL
+
+method = "dodge"
+
+
+wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+
+
+
+
+```
+
+
+
+
+
+
 # Kruskal–Wallis H test
 
 
@@ -177,56 +264,6 @@ wrapper_kruskal_test(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = N
   
 
 ```
-
-
-
-# Complex barplot
-
-
-```{r complex_barplot, fig.width = 10}
-
-
-data <- data_goya
-x_var <- "Cell_Of_Origin"
-y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
-
-colors = NULL
-
-skip_levels = NULL
-show_proportions = TRUE
-show_total_proportions = TRUE
-
-ylim = NULL
-
-method = "facet"
-
-
-wrapper_core_bar_plot_yvars(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
-
-
-
-data <- data_goya
-x_var <- "Cell_Of_Origin"
-y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
-
-colors = NULL
-
-skip_levels = "<=MEDIAN"
-show_proportions = TRUE
-show_total_proportions = TRUE
-
-ylim = NULL
-
-method = "dodge"
-
-
-wrapper_core_bar_plot_yvars(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
-
-
-
-
-```
-
 
 
 
@@ -690,21 +727,21 @@ wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 
 data <- data_goya
 
-cat_var <- "Cell_Of_Origin"
-num_var <- "FCGR3A"
+x_var <- "Cell_Of_Origin"
+y_var <- "FCGR3A"
 
 
-wrapper_core_box_plot(data = data, cat_var = cat_var, num_var = num_var)
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 
 data <- data_goya
 data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
-cat_var <- "Cell_Of_Origin"
-num_var <- "FCGR3A"
+x_var <- "Cell_Of_Origin"
+y_var <- "FCGR3A"
 
 
-wrapper_core_box_plot(data = data, cat_var = cat_var, num_var = num_var)
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 ```
@@ -717,7 +754,7 @@ wrapper_core_box_plot(data = data, cat_var = cat_var, num_var = num_var)
 
 data <- data_goya
 
-cat_var <- "BCL2_cat2"
+x_var <- "BCL2_cat2"
 y_var <- "FCGR3A"
 
 
@@ -725,7 +762,7 @@ strat1_var = "Treatment_Arm"
 strat2_var = "Cell_Of_Origin2"
 
 
-wrapper_core_box_plot_strat(data = data, cat_var = cat_var, num_var = num_var, strat1_var = strat1_var, strat2_var = strat2_var)
+wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 

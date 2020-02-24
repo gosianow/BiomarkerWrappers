@@ -1,5 +1,13 @@
 
 
+
+length_nonNA <- function(x){
+  sum(!is.na(x))
+}
+
+
+
+
 #' Read gmt file and return a list of genes
 wrapper_read_gmt <- function(filename){
   x <- GSEABase::getGmt(filename)
@@ -293,6 +301,23 @@ format_or <- function(x, digits = 2){
   
 }
 
+
+#' Format difference 
+#' 
+#' @param x Vector of levels.
+#' @param digits Number of decimal places.
+format_difference <- function(x, digits = 2){
+  
+  if(sum(is.na(x)) == length(x)){
+    return(rep("", length(x)))
+  }
+  
+  output <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
+  output[is.na(x)] <- ""
+  
+  return(output)
+  
+}
 
 
 
