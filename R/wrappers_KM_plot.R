@@ -12,6 +12,11 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, color
   
   stopifnot(is.data.frame(data))
   
+  ### Keep non-missing data
+  
+  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
+
+  
   ## Time to event variable must be numeric
   stopifnot(length(tte_var) == 1)
   stopifnot(is.numeric(data[, tte_var]))
@@ -24,9 +29,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, color
   stopifnot(is.factor(data[, covariate_var]))
   
   
-  ### Keep non-missing data
-  
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
+
   
   ### Some checks
   
@@ -98,12 +101,12 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, color
         plot.subtitle = element_text(size = title.size),
         legend.position = legend.position,
         legend.justification = legend.justification,
-        legend.title = element_blank(), 
+        # legend.title = element_blank(), 
         legend.background = element_rect(fill = NA),
         plot.tag.position = "top",
         plot.tag = element_text(size = title.size, face = "plain")) +
-      scale_color_manual(labels = levels(data[, covariate_var]), values = colors) +
-      scale_fill_manual(labels = levels(data[, covariate_var]), values = colors) +
+      scale_color_manual(name = variable_names[covariate_var], labels = levels(data[, covariate_var]), values = colors) +
+      scale_fill_manual(name = variable_names[covariate_var], labels = levels(data[, covariate_var]), values = colors) +
       coord_cartesian(xlim = c(0, max_tte)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.15))
   

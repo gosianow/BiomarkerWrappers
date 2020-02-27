@@ -1,6 +1,31 @@
 
 
 
+duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
+  
+  if(is.factor(x)){
+    x <- as.character(x)
+  }
+
+  ### Make the NAs to count as unique
+  if(na.rm){
+    x[is.na(x)] <- paste0("X...NA...", 1:sum(is.na(x)))
+  }
+  
+  ifduplicated <- duplicated(x, fromLast = FALSE) | duplicated(x, fromLast = TRUE)
+  
+  if(value){
+    out <- x[ifduplicated]
+  }else{
+    out <- ifduplicated
+  }
+  
+  return(out)
+  
+}
+
+
+
 length_nonNA <- function(x){
   sum(!is.na(x))
 }
@@ -40,6 +65,7 @@ wrapper_write_gmt <- function(x, filename){
 
 
 
+
 wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
   
   indx <- 1:length(plotlist)
@@ -49,6 +75,8 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
     print(plot_grid(plotlist = plotlist[indx_split[[i]]], ncol = ncol, nrow = nrow))
   }
   
+  invisible(NULL)
+
 }
 
 

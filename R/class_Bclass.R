@@ -97,6 +97,10 @@ setValidity("Bclass", function(object){
 setGeneric("Bkable", function(x, ...) standardGeneric("Bkable"))
 
 
+#' @rdname Bclass-class
+#' @export
+setGeneric("Bforest", function(x, ...) standardGeneric("Bforest"))
+
 
 ################################################################################
 ### Accessor methods

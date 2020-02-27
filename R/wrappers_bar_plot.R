@@ -212,6 +212,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
   if(method == "facet"){
     
     colors_bar <- format_colors(levels = levels(data[, y_var]), colors = colors_bar)
+    legend_name_fill <- variable_names[y_var]
     
     
     if(is.null(xlab)){
@@ -231,13 +232,13 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
       theme(plot.title = element_text(size = title.size, face = "bold"),
         plot.subtitle = element_text(size = title.size),
         axis.text.x = element_text(angle = axis.text.x.angle, vjust = axis.text.x.vjust, hjust = axis.text.x.hjust),
-        legend.title = element_blank(),
+        # legend.title = element_blank(),
         plot.tag.position = "top",
         plot.tag = element_text(size = title.size, face = "plain"),
         strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip.text.size)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-      scale_fill_manual(values = colors_bar, drop = FALSE) +
+      scale_fill_manual(name = legend_name_fill, values = colors_bar, drop = FALSE) +
       coord_cartesian(ylim = ylim)
     
     
@@ -283,8 +284,9 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
     
     # ggplot2 doesn't know you want to give the labels the same virtual width as the bars. So tell it. You can't nudge and dodge text, so instead adjust the y position.
     
-    
     colors_bar <- format_colors(levels = levels(data[, x_var]), colors = colors_bar)
+    legend_name_fill <- variable_names[x_var]
+    
     
     if(is.null(xlab)){
       xlab <- variable_names[facet_var]
@@ -303,13 +305,13 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
       theme(plot.title = element_text(size = title.size, face = "bold"),
         plot.subtitle = element_text(size = title.size),
         axis.text.x = element_text(angle = axis.text.x.angle, vjust = axis.text.x.vjust, hjust = axis.text.x.hjust),
-        legend.title = element_blank(),
+        # legend.title = element_blank(),
         plot.tag.position = "top",
         plot.tag = element_text(size = title.size, face = "plain"),
         strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip.text.size)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-      scale_fill_manual(values = colors_bar, drop = FALSE) +
+      scale_fill_manual(name = legend_name_fill, values = colors_bar, drop = FALSE) +
       coord_cartesian(ylim = ylim)
     
     
