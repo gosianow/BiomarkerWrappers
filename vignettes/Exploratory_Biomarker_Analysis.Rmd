@@ -32,7 +32,8 @@ header-includes:
 
 
 
-```{r setup_knitr, include = FALSE, cache = FALSE}
+```{r setup_knitr, include = TRUE, cache = FALSE}
+
 ### Packages to compile rmarkdown
 library(knitr)
 library(rmarkdown)
@@ -44,9 +45,8 @@ font_size <- 11
 cache <- 0
 
 
-### Set global options for Bkable
+### Set global option for font_size for Bkable in this document 
 
-## Set global option for font_size for Bkable in this document 
 options(Bkable_font_size = font_size)
 options(Bkable_full_width = TRUE)
 
@@ -105,6 +105,47 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
+# Point plot
+
+
+
+```{r Point_plot}
+
+
+data <- data_goya
+
+x_var <- "FCGR2A"
+y_var <- "FCGR3A"
+
+
+wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+data <- data_goya
+
+x_var <- "FCGR2A"
+y_var <- "FCGR3A"
+facet_var <- "Treatment_Arm"
+color_point_var <- "Cell_Of_Origin"
+
+
+wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var)
+
+
+
+data <- data_goya
+
+x_var <- "FCGR2A"
+y_var <- "FCGR3A"
+facet_var <- "Treatment_Arm"
+strat1_var <- "Cell_Of_Origin"
+
+
+wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
+
+
+
+```
 
 
 

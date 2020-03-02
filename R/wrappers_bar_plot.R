@@ -212,7 +212,8 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
   if(method == "facet"){
     
     colors_bar <- format_colors(levels = levels(data[, y_var]), colors = colors_bar)
-    legend_name_fill <- variable_names[y_var]
+    legend_title_fill <- variable_names[y_var]
+    legend_title_fill <- NULL
     
     
     if(is.null(xlab)){
@@ -238,7 +239,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
         strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip.text.size)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-      scale_fill_manual(name = legend_name_fill, values = colors_bar, drop = FALSE) +
+      scale_fill_manual(name = legend_title_fill, values = colors_bar, drop = FALSE) +
       coord_cartesian(ylim = ylim)
     
     
@@ -285,7 +286,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
     # ggplot2 doesn't know you want to give the labels the same virtual width as the bars. So tell it. You can't nudge and dodge text, so instead adjust the y position.
     
     colors_bar <- format_colors(levels = levels(data[, x_var]), colors = colors_bar)
-    legend_name_fill <- variable_names[x_var]
+    legend_title_fill <- variable_names[x_var]
     
     
     if(is.null(xlab)){
@@ -311,7 +312,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, colors_b
         strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip.text.size)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
-      scale_fill_manual(name = legend_name_fill, values = colors_bar, drop = FALSE) +
+      scale_fill_manual(name = legend_title_fill, values = colors_bar, drop = FALSE) +
       coord_cartesian(ylim = ylim)
     
     

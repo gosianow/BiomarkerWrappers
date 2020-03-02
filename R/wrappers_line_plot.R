@@ -4,19 +4,18 @@
 
 
 
-# color_point_var = NULL
-# facet_var = NULL
-# 
-# 
-# colors_point = NULL
+
+# colors_line = NULL
 # variable_names = NULL
 # xlab = NULL
 # ylab = NULL
 # title = NULL
 # subtitle = NULL
 # tag = NULL
-# legend_title_colors_point = NULL
+# legend_title_colors_line = NULL
 # facet_label_both = TRUE
+# line_size = 1
+# line_type = 1
 # point_size = 1.5
 # point_shape = 1
 # point_alpha = 1
@@ -35,30 +34,31 @@
 
 
 
-#' Scatterplot
+#' Line plot
 #' 
-#' Generate a signle scatter.
+#' Generate a signle line plot.
 #' 
 #' @param data Data frame.
-wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, colors_point = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, legend_title_colors_point = NULL, facet_label_both = TRUE, point_size = 1.5, point_shape = 1, point_alpha = 1, title_size = 12, strip_text_size = NULL, strip_position = "top", facet_scales = "fixed", xlim = NULL, ylim = NULL, background_grid_major = "none"){
+wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var = NULL, facet_var = NULL, colors_line = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, legend_title_colors_line = NULL, facet_label_both = TRUE, line_size = 1, line_type = 1, point_size = 1.5, point_shape = 1, point_alpha = 1, title_size = 12, strip_text_size = NULL, strip_position = "top", facet_scales = "fixed", xlim = NULL, ylim = NULL, background_grid_major = "none"){
   
   
   # -------------------------------------------------------------------------
   # Checks about data
   # -------------------------------------------------------------------------
   
-  
   stopifnot(is.data.frame(data))
   
   stopifnot(length(x_var) == 1)
-  stopifnot(is.numeric(data[, x_var]))
   
   stopifnot(length(y_var) == 1)
   stopifnot(is.numeric(data[, y_var]))
   
-  if(!is.null(color_point_var)){
-    stopifnot(length(color_point_var) == 1)
-    stopifnot(is.factor(data[, color_point_var]))
+  stopifnot(length(group_var) == 1)
+  # stopifnot(is.factor(data[, group_var]) || is.character(data[, group_var]))
+  
+  if(!is.null(color_line_var)){
+    stopifnot(length(color_line_var) == 1)
+    stopifnot(is.factor(data[, color_line_var]))
   }
   
   if(!is.null(facet_var)){
@@ -69,7 +69,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   
   ### Keep non-missing data
   
-  ## We do not exclude the missing values in color_point_var
+  ## We do not exclude the missing values in color_line_var
   data <- data[complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -79,20 +79,20 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   # Colors
   # -------------------------------------------------------------------------
   
-  if(is.null(color_point_var)){
+  if(is.null(color_line_var)){
     
     ### Create a dummy variable 
-    stopifnot(!"color_point_dummy" %in% colnames(data))
-    data[, "color_point_dummy"] <- factor("color_point_dummy")
-    color_point_var <- "color_point_dummy"
+    stopifnot(!"color_line_dummy" %in% colnames(data))
+    data[, "color_line_dummy"] <- factor("color_line_dummy")
+    color_line_var <- "color_line_dummy"
     
-    if(is.null(colors_point)){
-      colors_point <- "darkgrey"
+    if(is.null(colors_line)){
+      colors_line <- "darkgrey"
     }else{
-      colors_point <- colors_point[1]
+      colors_line <- colors_line[1]
     }
   }else{
-    colors_point <- format_colors(levels = levels(data[, color_point_var]), colors = colors_point)
+    colors_line <- format_colors(levels = levels(data[, color_line_var]), colors = colors_line)
   }
   
   
@@ -107,8 +107,8 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   if(is.null(ylab)){
     ylab <- variable_names[y_var]
   }
-  if(is.null(legend_title_colors_point)){
-    legend_title_colors_point <- variable_names[color_point_var]
+  if(is.null(legend_title_colors_line)){
+    legend_title_colors_line <- variable_names[color_line_var]
   }
   
   
@@ -117,27 +117,29 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   # Make the plot
   # -------------------------------------------------------------------------
   
-  legend_show_colors_point <- color_point_var != "color_point_dummy"
+  legend_show_colors_line <- color_line_var != "color_line_dummy"
   
   
   
-  ggpl <- ggplot(data, aes_string(x = x_var, y = y_var)) 
+  ggpl <- ggplot(data, aes_string(x = x_var, y = y_var, group = group_var)) +
+    geom_line(aes_string(color = color_line_var), linetype = line_type, size = line_size, show.legend = legend_show_colors_line) +
+    scale_color_manual(name = legend_title_colors_line, values = colors_line, drop = FALSE, na.value = "grey")
   
   
   if(point_shape %in% 21:25){
     
     ggpl <- ggpl +
-      geom_point(aes_string(fill = color_point_var), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_point) +
-      scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey")
+      geom_point(aes_string(fill = color_line_var), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) +
+      scale_fill_manual(name = legend_title_colors_line, values = colors_line, drop = FALSE, na.value = "grey")
     
     
   }else{
     
     ggpl <- ggpl +
-      geom_point(aes_string(color = color_point_var), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_point) +
-      scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey")
+      geom_point(aes_string(color = color_line_var), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) 
     
   }
+  
   
   ggpl <- ggpl +
     labs(title = title, subtitle = subtitle, tag = tag) + 
@@ -184,13 +186,16 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
 
 
 
-#' Scatterplot
+
+
+
+
+#' Line plot
 #' 
-#' Generate scatter plots for each subgroup defined by two stratification variables.
+#' Generate line plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
-wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, strat1_var = NULL, strat2_var = NULL, colors_point = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, legend_title_colors_point = NULL, facet_label_both = TRUE, point_size = 1.5, point_shape = 1, point_alpha = 1, title_size = 12, strip_text_size = NULL, strip_position = "top", facet_scales = "fixed", xlim = NULL, ylim = NULL, background_grid_major = "none", strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1
-){
+wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, facet_var = NULL, strat1_var = NULL, strat2_var = NULL, colors_line = NULL, variable_names = NULL, xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, legend_title_colors_line = NULL, facet_label_both = TRUE, line_size = 1, line_type = 1, point_size = 1.5, point_shape = 1, point_alpha = 1, title_size = 12, strip_text_size = NULL, strip_position = "top", facet_scales = "fixed", xlim = NULL, ylim = NULL, background_grid_major = "none", strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
   if(!is.null(strat1_var)){
@@ -227,7 +232,9 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
   
   if(strat_scales == "fixed" || strat_scales == "free_y"){
     if(is.null(xlim)){
-      xlim <- range(data[, x_var])
+      if(!is.factor(data[, x_var])){
+        xlim <- range(data[, x_var])
+      }
     }
   }
   if(strat_scales == "fixed" || strat_scales == "free_x"){
@@ -287,7 +294,7 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
       }
       
       
-      ggpl <- wrapper_core_point_plot(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, facet_var = facet_var, colors_point = colors_point, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, legend_title_colors_point = legend_title_colors_point, facet_label_both = facet_label_both, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, title_size = title_size, strip_text_size = strip_text_size, strip_position = strip_position, facet_scales = facet_scales, xlim = xlim, ylim = ylim, background_grid_major = background_grid_major)
+      ggpl <- wrapper_core_line_plot(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, facet_var = facet_var, colors_line = colors_line, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, legend_title_colors_line = legend_title_colors_line, facet_label_both = facet_label_both, line_size = line_size, line_type = line_type, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, title_size = title_size, strip_text_size = strip_text_size, strip_position = strip_position, facet_scales = facet_scales, xlim = xlim, ylim = ylim, background_grid_major = background_grid_major)
       
       
       return(ggpl)

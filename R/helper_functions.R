@@ -1,6 +1,9 @@
 
 
 
+
+
+
 duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
   
   if(is.factor(x)){

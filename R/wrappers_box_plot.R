@@ -1,76 +1,5 @@
 
 
-
-
-
-
-
-
-# ggplot(mtcars, aes(factor(cyl), fill = factor(vs))) +
-#   geom_bar(position = position_dodge2(preserve = "single"))
-# 
-# 
-# ggplot(mtcars, aes(factor(cyl), fill = factor(vs))) +
-#   geom_bar(position = position_dodge(preserve = "single", width = 1), width = 0.9)
-
-
-
-# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
-#   geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single"))
-# 
-# 
-# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
-#   geom_boxplot(outlier.color = NA, position = position_dodge(preserve = "single", width = 0.9))
-# 
-# 
-# 
-# 
-# ### Points and boxplots are not aligned!
-# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
-#   geom_boxplot(outlier.color = NA, position = position_dodge(preserve = "single", width = 0.9)) +
-#   geom_jitter(shape = 21, position = position_jitterdodge(jitter.width = 0.25, dodge.width = 0.9))
-# 
-# 
-# ### This works
-# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
-#   geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single")) +
-#   geom_jitter(shape = 21, position = position_jitterdodge(jitter.width = 0.25))
-# 
-# 
-# ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(vs))) +
-#   geom_boxplot(outlier.color = NA, position = position_dodge(preserve = "total"))
-# 
-# 
-# 
-# # https://github.com/tidyverse/ggplot2/issues/2712
-# # I didn't expect that one needs to pass different positions to the two geoms for them to line up, but I guess it makes sense to always use dodge2 for geoms that have width and dodge for geoms that don't.
-# 
-# ggplot(mtcars, aes(factor(gear), mpg, fill = factor(am))) +
-#   geom_boxplot(position = position_dodge2(0.75, preserve = 'single')) +
-#   geom_point(position = position_dodge(0.75, preserve = 'total'))
-# 
-# 
-# ### The points are not centered when the width is different than 0.75 
-# ggplot(mtcars, aes(factor(gear), mpg, fill = factor(am))) +
-#   geom_boxplot(position = position_dodge2(0.9, preserve = 'single')) +
-#   geom_point(position = position_dodge(0.9, preserve = 'total'))
-# 
-# 
-# ggplot(mtcars, aes(factor(gear), mpg, fill = factor(am))) +
-#   geom_boxplot(position = position_dodge2(0.5, preserve = 'single')) +
-#   geom_point(position = position_dodge(0.5, preserve = 'total'))
-
-
-# Additionally, ggplot2 doesn't know you want to give the labels the same virtual width as the bars. So tell it. You can't nudge and dodge text, so instead adjust the y position.
-
-### Based on that we use:
-# geom_boxplot with position_dodge2(preserve = "single", width = 0.75) 
-# geom_jitter with position_jitterdodge(jitter.width = 0.25, dodge.width = 0.75)
-# geom_text with position_dodge(preserve = "total", width = 0.75)
-
-
-
-
 # colors_box = NULL
 # colors_point = NULL
 # variable_names = NULL
@@ -266,9 +195,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, facet_var = NULL, fill_var
       plot.subtitle = element_text(size = title.size),
       axis.text.x = element_text(angle = axis.text.x.angle, vjust = axis.text.x.vjust, hjust = axis.text.x.hjust),
       plot.tag.position = "top",
-      plot.tag = element_text(size = title.size, face = "plain"),
-      strip.background = element_rect(colour = "white", fill = "white"),
-      strip.text = element_text(size = strip.text.size)) +
+      plot.tag = element_text(size = title.size, face = "plain")) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_fill_manual(name = legend_name_fill, values = colors_box, drop = FALSE) +
     scale_x_discrete(drop = FALSE) +
@@ -279,7 +206,9 @@ wrapper_core_box_plot <- function(data, x_var, y_var, facet_var = NULL, fill_var
     
     ggpl <- ggpl +
       facet_wrap(as.formula(paste("~", facet_var))) +
-      theme(axis.line = element_blank()) +
+      theme(strip.background = element_rect(colour = "white", fill = "white"),
+      strip.text = element_text(size = strip.text.size),
+        axis.line = element_blank()) +
       panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE)
     
   }
