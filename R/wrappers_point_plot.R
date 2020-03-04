@@ -93,7 +93,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
     color_point_var <- "color_point_dummy"
     
     if(is.null(colors_point)){
-      colors_point <- "darkgrey"
+      colors_point <- "black"
     }else{
       colors_point <- colors_point[1]
     }
@@ -258,16 +258,7 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
   
   strata1_levels <- levels(data[, strat1_var])
   strata2_levels <- levels(data[, strat2_var])
-  
-  legend_positions <- rep(legend_position, length(strata1_levels))
-  if(less_legends){
-    if(!is.null(strat1_nrow)){
-      strat1_ncol <- ceiling(length(strata1_levels) / strat1_nrow)
-    }
-    indx_keep <- seq(strat1_ncol, length(strata1_levels), by = strat1_ncol)
-    legend_positions[-indx_keep] <- "none"
-  }
-  
+
   
   ggpl <- lapply(1:length(strata2_levels), function(j){
     # j = 1
@@ -310,7 +301,6 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
         }
       }
       
-      legend_position <- legend_positions[i]
       
       ggpl <- wrapper_core_point_plot(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, facet_var = facet_var, 
         colors_point = colors_point, 
@@ -327,6 +317,21 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
       
     })
     
+    if(less_legends && legend_position == "right"){
+      
+      # Extract the legend from one of the plots
+      legend <- get_legend(
+        # Create some space to the left of the legend
+        ggpl[[1]] + theme(legend.box.margin = margin(0, 0, 0, 12))
+      )
+      
+      # Remove legends in the plots
+      ggpl <- lapply(ggpl, function(x) x + theme(legend.position = "none"))
+      
+      # Append the legend panel 
+      ggpl[["legend"]] <- legend
+      
+    }
     
     ggpl <- plot_grid(plotlist = ggpl, nrow = strat1_nrow, ncol = strat1_ncol)
     

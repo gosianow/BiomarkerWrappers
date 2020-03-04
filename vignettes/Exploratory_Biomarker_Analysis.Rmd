@@ -3,15 +3,15 @@ title: "Example workflow for exploratory biomarker analysis"
 author: "Malgorzata Nowicka"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    toc: yes
-    toc_depth: 3
   html_document:
     toc: yes
     toc_depth: 3
     toc_float:
       collapsed: no
       smooth_scroll: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 3
 header-includes:
   - \renewcommand*{\familydefault}{\sfdefault}
   - \usepackage{hyperref}
@@ -249,9 +249,6 @@ facet_var <- "Treatment_Arm"
   
 
 wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var)
-
-
-
 
 
 
@@ -926,6 +923,11 @@ wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = tr
 
 
 
+```{r}
+
+sessionInfo()
+
+```
 
 
 
