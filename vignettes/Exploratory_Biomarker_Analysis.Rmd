@@ -105,43 +105,156 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
-# Point plot
 
 
-
-```{r Point_plot}
-
-
-data <- data_goya
-
-x_var <- "FCGR2A"
-y_var <- "FCGR3A"
+# Barplot
 
 
-wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
+```{r barplot}
 
 
 data <- data_goya
 
-x_var <- "FCGR2A"
-y_var <- "FCGR3A"
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
+
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+
+
+data <- data_goya
+
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
 facet_var <- "Treatment_Arm"
-color_point_var <- "Cell_Of_Origin"
+  
+  
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var)
 
 
-wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var)
+
 
 
 
 data <- data_goya
 
-x_var <- "FCGR2A"
-y_var <- "FCGR3A"
-facet_var <- "Treatment_Arm"
-strat1_var <- "Cell_Of_Origin"
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
+skip_levels <- "CMR"
+show_total_proportions <- TRUE
+
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, skip_levels = skip_levels)
 
 
-wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
+
+```
+
+
+```{r barplot_strat}
+
+
+data <- data_goya
+
+x_var = "FCGR3A_cat2"
+y_var = "Resp_Lugano"
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin2"
+
+
+wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
+
+
+
+
+
+```
+
+
+# Complex barplot
+
+
+```{r Complex_barplot}
+
+
+data <- data_goya
+
+x_var <- "Cell_Of_Origin2"
+y_vars <- c("FCGR1A_cat2", "FCGR2B_cat2", "FCGR2C_cat2")
+
+
+
+wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, values_to = "Gene expression")
+
+
+
+
+data <- data_goya
+
+x_var <- "Cell_Of_Origin"
+y_vars <- c("FCGR1A_cat2", "FCGR2B_cat2", "FCGR2C_cat2")
+
+skip_levels <- "<=MEDIAN"
+method <- "dodge"
+
+
+wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, skip_levels = skip_levels, method = method, values_to = "Gene expression", names_to = "Gene")
+
+
+
+
+
+```
+
+
+
+
+
+
+# Complex boxplot
+
+
+
+
+```{r complex_boxplot, fig.width = 10}
+
+
+data <- data_goya
+y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+
+
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars)
+
+
+
+
+data <- data_goya
+y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+
+x_var = "Cell_Of_Origin"
+facet_var = NULL
+dodge_var = NULL
+color_point_var = NULL
+
+
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var, color_point_var = color_point_var)
+
+
+
+data <- data_goya
+y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+
+x_var = NULL
+facet_var = NULL
+dodge_var = "Cell_Of_Origin"
+color_point_var = NULL
+
+
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var, color_point_var = color_point_var)
+
 
 
 
@@ -183,11 +296,12 @@ data <- data_goya
 x_var <- "Cell_Of_Origin"
 y_var <- "FCGR3A"
 facet_var <- "Treatment_Arm"
-fill_var = NULL
-color_var = "ORR_Lugano"
+dodge_var = NULL
+color_point_var = "ORR_Lugano"
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_var = color_var, fill_var = fill_var)
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var, dodge_var = dodge_var)
+
 
 
 
@@ -196,11 +310,11 @@ data <- data_goya
 x_var <- "Treatment_Arm"
 y_var <- "FCGR3A"
 facet_var <- NULL
-fill_var = "Cell_Of_Origin"
-color_var = "ORR_Lugano"
+dodge_var = "Cell_Of_Origin"
+color_point_var = "ORR_Lugano"
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_var = color_var, fill_var = fill_var)
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var, dodge_var = dodge_var)
 
 
 
@@ -236,51 +350,44 @@ wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 
 
 
-# Complex boxplot
+
+# Point plot
 
 
 
-
-```{r complex_boxplot, fig.width = 10}
-
-
-data <- data_goya
-y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
-
-x_var = NULL
-facet_var = NULL
-fill_var = NULL
-color_var = NULL
-
-
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var)
-
+```{r Point_plot}
 
 
 data <- data_goya
-y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
 
-x_var = "Cell_Of_Origin"
-facet_var = NULL
-fill_var = NULL
-color_var = NULL
+x_var <- "FCGR2A"
+y_var <- "FCGR3A"
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var)
+wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+data <- data_goya
+
+x_var <- "FCGR2A"
+y_var <- "FCGR3A"
+facet_var <- "Treatment_Arm"
+color_point_var <- "Cell_Of_Origin"
+
+
+wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var)
 
 
 
 data <- data_goya
-y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
 
-x_var = NULL
-facet_var = NULL
-fill_var = "Cell_Of_Origin"
-color_var = NULL
+x_var <- "FCGR2A"
+y_var <- "FCGR3A"
+facet_var <- "Treatment_Arm"
+strat1_var <- "Cell_Of_Origin"
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, fill_var = fill_var, color_var = color_var)
-
+wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
 
 
 
@@ -763,105 +870,6 @@ wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = tr
 
 
 
-
-
-
-
-
-
-# Barplot
-
-
-```{r barplot}
-
-
-data <- data_goya
-
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
-
-show_total_proportions <- TRUE
-
-## Default
-
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, geom_text_size = 3.5)
-
-
-
-data <- data_goya
-
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
-skip_levels <- "CMR"
-show_total_proportions <- TRUE
-
-## Default
-
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, geom_text_size = 3.5, skip_levels = skip_levels, ylim = NULL)
-
-
-
-
-data <- data_goya
-
-x_var = "FCGR3A_cat2"
-y_var = "ORR_Lugano"
-
-
-## Default
-
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
-
-
-
-
-## Show total proportions
-
-x_var = "Cell_Of_Origin"
-y_var = "Ann_Arbor_Stage"
-
-show_total_proportions <- TRUE
-skip_levels <- "I"
-
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, skip_levels = skip_levels)
-
-
-
-## Remove one x-level
-
-data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
-
-show_total_proportions <- TRUE
-skip_levels <- "I"
-
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, skip_levels = skip_levels, show_total_proportions = show_total_proportions)
-
-
-
-
-```
-
-
-```{r barplot_strat}
-
-
-data <- data_goya
-
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
-
-strat1_var = "Treatment_Arm"
-strat2_var = "Cell_Of_Origin2"
-
-strat1_var = NULL
-
-wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
-
-
-
-
-
-```
 
 
 

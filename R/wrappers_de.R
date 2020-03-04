@@ -112,12 +112,12 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", top
     rownames(res) <- NULL
     
     out <- res %>% 
-      mutate_at(lfc_prefix, format_or) %>% 
+      mutate_at(lfc_prefix, format_difference) %>% 
       mutate_at(pval_prefix, format_pvalues) %>% 
       mutate_at(adjp_prefix, format_pvalues)
     
     if(!is.null(stats_prefixes)){
-      out <- mutate_at(out, stats_prefixes, format_or)
+      out <- mutate_at(out, stats_prefixes, format_difference)
     }
     
   }
