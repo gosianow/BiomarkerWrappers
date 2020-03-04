@@ -18,7 +18,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
   colors_line = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, 
-  legend_title_colors_line = NULL, facet_label_both = TRUE, 
+  legend_title_colors_line = NULL, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, 
   point_size = 1.5, point_shape = 1, point_alpha = 1, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
@@ -132,7 +132,8 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
     theme(plot.title = element_text(size = title_size, face = "bold"),
       plot.subtitle = element_text(size = title_size),
       plot.tag.position = "top",
-      plot.tag = element_text(size = title_size, face = "plain")) +
+      plot.tag = element_text(size = title_size, face = "plain"),
+      legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   
@@ -182,12 +183,12 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
   colors_line = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors_line = NULL, facet_label_both = TRUE, 
+  legend_title_colors_line = NULL, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, 
   point_size = 1.5, point_shape = 1, point_alpha = 1, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none", 
-  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
   
   if(!is.null(strat1_var)){
@@ -229,6 +230,7 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
       }
     }
   }
+  
   if(strat_scales == "fixed" || strat_scales == "free_x"){
     if(is.null(ylim)){
       ylim <- range(data[, y_var])
@@ -239,9 +241,17 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
   # Lapply to make the stratified plots
   # -------------------------------------------------------------------------
   
-  
   strata1_levels <- levels(data[, strat1_var])
   strata2_levels <- levels(data[, strat2_var])
+  
+  legend_positions <- rep(legend_position, length(strata1_levels))
+  if(less_legends){
+    if(!is.null(strat1_nrow)){
+      strat1_ncol <- ceiling(length(strata1_levels) / strat1_nrow)
+    }
+    indx_keep <- seq(strat1_ncol, length(strata1_levels), by = strat1_ncol)
+    legend_positions[-indx_keep] <- "none"
+  }
   
   
   ggpl <- lapply(1:length(strata2_levels), function(j){
@@ -253,7 +263,7 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
       return(NULL)
     }
     
-    
+    ### Tag
     if(strat2_var == "strat2_dummy"){
       tag <- NULL
     }else{
@@ -274,7 +284,7 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
         return(NULL)
       }
       
-      
+      ### Subtitle
       if(strat1_var == "strat1_dummy"){
         subtitle <- NULL
       }else{
@@ -285,8 +295,17 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
         }
       }
       
+      legend_position <- legend_positions[i]
       
-      ggpl <- wrapper_core_line_plot(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, facet_var = facet_var, colors_line = colors_line, variable_names = variable_names, xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, legend_title_colors_line = legend_title_colors_line, facet_label_both = facet_label_both, line_size = line_size, line_type = line_type, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim, background_grid_major = background_grid_major)
+      ggpl <- wrapper_core_line_plot(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, facet_var = facet_var, 
+        colors_line = colors_line, 
+        variable_names = variable_names, 
+        xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, 
+        legend_title_colors_line = legend_title_colors_line, legend_position = legend_position, facet_label_both = facet_label_both, 
+        line_size = line_size, line_type = line_type, 
+        point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, 
+        title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim,
+        background_grid_major = background_grid_major)
       
       
       return(ggpl)

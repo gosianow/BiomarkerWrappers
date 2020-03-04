@@ -27,7 +27,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, 
-  legend_title_colors_bar = NULL, facet_label_both = TRUE, 
+  legend_title_colors_bar = NULL, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = TRUE, 
   label_size = 3.5, label_vjust = 0.5, 
@@ -379,7 +379,8 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
       plot.subtitle = element_text(size = title_size),
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       plot.tag.position = "top",
-      plot.tag = element_text(size = title_size, face = "plain")) +
+      plot.tag = element_text(size = title_size, face = "plain"),
+      legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
@@ -421,14 +422,14 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors_bar = NULL, facet_label_both = TRUE, 
+  legend_title_colors_bar = NULL, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = TRUE, 
   label_size = 3.5, label_vjust = 0.5, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none",
-  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
   
   if(!is.null(strat1_var)){
@@ -473,9 +474,18 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
   # Lapply to make the stratified plots
   # -------------------------------------------------------------------------
   
-  
   strata1_levels <- levels(data[, strat1_var])
   strata2_levels <- levels(data[, strat2_var])
+  
+  
+  legend_positions <- rep(legend_position, length(strata1_levels))
+  if(less_legends){
+    if(!is.null(strat1_nrow)){
+      strat1_ncol <- ceiling(length(strata1_levels) / strat1_nrow)
+    }
+    indx_keep <- seq(strat1_ncol, length(strata1_levels), by = strat1_ncol)
+    legend_positions[-indx_keep] <- "none"
+  }
   
   
   ggpl <- lapply(1:length(strata2_levels), function(j){
@@ -520,12 +530,13 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
         }
       }
       
+      legend_position <- legend_positions[i]
       
       ggpl <- wrapper_core_bar_plot(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, 
         colors_bar = colors_bar, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, 
-        legend_title_colors_bar = legend_title_colors_bar, facet_label_both = facet_label_both, 
+        legend_title_colors_bar = legend_title_colors_bar, legend_position = legend_position, facet_label_both = facet_label_both, 
         skip_levels = skip_levels, method = method, 
         show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
         label_size = label_size, label_vjust = label_vjust, 
@@ -570,14 +581,14 @@ wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars,
   colors_bar = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors_bar = NULL, facet_label_both = TRUE, 
+  legend_title_colors_bar = NULL, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = TRUE, 
   label_size = 3.5, label_vjust = 0.5, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none",
-  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1,
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE,
   names_to = "name", values_to = "value"){
   
   
@@ -623,14 +634,14 @@ wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars,
     colors_bar = colors_bar, 
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, subtitle_label_both = subtitle_label_both, tag_label_both = tag_label_both, 
-    legend_title_colors_bar = legend_title_colors_bar, facet_label_both = facet_label_both, 
+    legend_title_colors_bar = legend_title_colors_bar, legend_position = legend_position, facet_label_both = facet_label_both, 
     skip_levels = skip_levels, method = method, 
     show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
     label_size = label_size, label_vjust = label_vjust, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
     background_grid_major = background_grid_major,
-    strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
+    strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
   
   
   ggpl

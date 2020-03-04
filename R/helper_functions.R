@@ -103,7 +103,7 @@ cut_core_quartiles <- function(x, labels = c("(0%, 25%]", "(25%, 50%]", "(50%, 7
 }
 
 
-cut_core_median <- function(x, labels = c("<=MEDIAN", ">MEDIAN")){
+cut_core_median <- function(x, labels = c("<=MED", ">MED")){
   
   stopifnot(length(labels) == 2)
   
@@ -158,7 +158,7 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("(0%, 25%]", "(25%, 5
 
 
 
-cut_core_median_strat <- function(x, strata, labels = c("<=MEDIAN", ">MEDIAN")){
+cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
   
   stopifnot(is.factor(strata))
   

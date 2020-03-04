@@ -106,6 +106,122 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 
 
 
+# KM plot
+
+
+```{r KM_plot}
+
+
+data <- data_goya
+
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+covariate_var <- "Ann_Arbor_Stage"
+
+
+wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+
+
+
+```
+
+
+
+
+```{r KM_plot_strat, fig.width=10, fig.height=10}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+covariate_var <- "FCGR3A_cat2"
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin2"
+  
+
+wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
+
+
+
+```
+
+
+
+```{r KM_plot_interaction}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+
+biomarker_var <- "FCGR3A_cat2"
+treatment_var = "Treatment_Arm"
+
+
+
+wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
+
+```
+
+
+
+```{r KM_plot_biomarker, fig.width=10}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+
+biomarker_var <- "FCGR3A_cat2"
+treatment_var = "Treatment_Arm"
+
+
+wrapper_KM_plot_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
+
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+
+biomarker_var <- "Cell_Of_Origin"
+treatment_var = "Treatment_Arm"
+
+
+wrapper_KM_plot_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
+
+
+```
+
+
+
+
+
+```{r KM_plot_treatment, fig.width=10}
+
+
+data <- data_goya
+tte_var <- "PFS"
+censor_var <- "PFS_Censor"
+
+biomarker_var <- "FCGR3A_cat2"
+treatment_var = "Treatment_Arm"
+
+
+wrapper_KM_plot_treatment(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
+
+
+```
+
+
+
+
+
 
 # Barplot
 
@@ -168,10 +284,13 @@ strat2_var = "Cell_Of_Origin2"
 wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
+wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, less_legends = TRUE)
 
 
 
 ```
+
+
 
 
 # Complex barplot
@@ -662,68 +781,6 @@ data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
 
 wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
 
-
-
-
-```
-
-
-
-# KM plot
-
-
-```{r KM_plot}
-
-
-data <- data_goya
-
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-covariate_var <- "Ann_Arbor_Stage"
-
-
-wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
-
-
-
-```
-
-
-
-
-```{r KM_plot_strat, fig.width=10, fig.height=10}
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-covariate_var <- "FCGR3A_cat2"
-
-strat1_var = "Treatment_Arm"
-strat2_var = "Cell_Of_Origin2"
-  
-
-wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
-
-
-
-```
-
-
-
-```{r KM_plot_interaction}
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-biomarker_var <- "FCGR3A_cat2"
-treatment_var = "Treatment_Arm"
-
-
-
-wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
 
 
 
