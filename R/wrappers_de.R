@@ -45,6 +45,28 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
 
 
 
+
+wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"){
+  
+  ## We add '^' because we want to match expression at the beginning of the string
+  contrasts <- gsub(paste0("^", extract_prefix, sep), "", grep(paste0("^", extract_prefix, sep), colnames(x), value = TRUE))
+  
+  cols <- paste0(extract_prefix, sep, contrasts)
+  out <- x[, cols, drop = FALSE]
+  colnames(out) <- contrasts
+  
+  out
+  
+}
+
+
+
+
+
+
+
+
+
 # x <- topTable_DE_Ipat_Dx_Group_endpoints
 # contrast <- contrasts[1]
 # 
@@ -99,7 +121,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", top
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no significantly ", direction, "-regulated genes (", adjp_prefix, " < ", pval, ", ", lfc_prefix, " > ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("There are no significantly ", direction, "-regulated genes (", adjp_prefix, " < ", pval, ", |", lfc_prefix, "| > ", lfc, ") when testing for ", contrast, ".")
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
     
@@ -130,7 +152,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", top
   
   if(is.null(caption)){
     
-    caption <- paste0("List of significantly ", direction, "-regulated genes (", adjp_prefix, " < ", pval, ", ", lfc_prefix, " > ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("List of significantly ", direction, "-regulated genes (", adjp_prefix, " < ", pval, ", |", lfc_prefix, "| > ", lfc, ") when testing for ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       
