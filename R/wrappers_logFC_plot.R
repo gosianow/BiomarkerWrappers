@@ -159,18 +159,18 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
 
 
 
-#' Heatmap with logFC and p-values for mutiple contrasts
+#' Heatmap with logFC for mutiple contrasts
 #' 
 #' @param x TopTable
 wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
-  sep = "_", pval = 0.05, title = "",
+  sep = "_", pval = 0.05, draw = TRUE, title = "",
   color_low = '#D70131', color_mid = "white", color_high = '#42399B',
-  point_size = 3,
+  rect_gp = gpar(col = "grey"), point_size = 3,
   cluster_rows = FALSE, 
+  row_split = NULL, column_split = NULL,
   show_row_names = TRUE, show_column_names = TRUE, 
-  row_names_gp = gpar(fontsize = 9), column_names_gp = gpar(fontsize = 9),
-  row_split = NULL, column_split = NULL, ...){
+  row_names_gp = gpar(fontsize = 9), column_names_gp = gpar(fontsize = 9), ...){
   
   
   stopifnot(length(gene_var) == 1)
@@ -218,16 +218,12 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   
   
   # cell_fun <- function(j, i, x, y, width, height, fill){ 
-  #   grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "grey", fill = NA))
   #   grid.text(data_significance[i, j], x, y, gp = gpar(col = label_color, fontsize = label_size))
   # }
   
   
   
   cell_fun <- function(j, i, x, y, width, height, fill){ 
-    
-    grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "grey", fill = NA))
-    
     
     if(data_significance[i, j] == "***"){
       grid.points(x, y, pch = 21, size = unit(point_size, "mm"), gp = gpar(fill = "black"))
@@ -254,9 +250,10 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   
   
   ht <- ComplexHeatmap::Heatmap(matrix, 
-    name = "logFC",
+    name = lfc_prefix,
     col = colors_matrix, 
     na_col = "grey90",
+    rect_gp = rect_gp,
     heatmap_legend_param = list(color_bar = "continuous", at = breaks), 
     cell_fun = cell_fun,
     
@@ -278,13 +275,101 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
     ...)
   
   
-  draw(ht)
-  
+  if(draw){
+    draw(ht, column_title = title)
+  }else{
+    return(ht)  
+  }
   
   
 }
 
 
+
+
+
+#' Heatmap with logFC or z-score normalized gene expression
+#' 
+#' 
+#' @param x Matrix with expression to plot
+wrapper_gene_expression_heatmap <- function(x,  
+  name = "sample\nlogFC", draw = TRUE, title = "", trim_expression = NULL,
+  color_low = 'orchid1', color_mid = "royalblue4", color_high = 'turquoise1',
+  cluster_rows = FALSE, cluster_columns = FALSE,
+  left_annotation = NULL, top_annotation = NULL, 
+  row_split = NULL, column_split = NULL,
+  row_title = NULL, column_title = NULL, 
+  show_row_names = TRUE, show_column_names = FALSE, 
+  row_names_gp = gpar(fontsize = 9), column_names_gp = gpar(fontsize = 9), ...){
+  
+  
+  matrix <- as.matrix(x)
+  
+  
+  # ---------------------------------------------------------------------------
+  # Colors for the heatmap expression
+  # ---------------------------------------------------------------------------
+  
+  stopifnot(trim_expression > 0)
+  
+  if(is.null(trim_expression)){
+    max_abs_value <- ceiling(max(abs(range(matrix, na.rm = TRUE))))
+  }else if(trim_expression >= 1){
+    max_abs_value <- trim_expression
+  }else{
+    ### Use quantiles 
+    max_abs_value <- ceiling(max(abs(quantile(matrix, probs = c(trim_expression, 1 - trim_expression), na.rm = TRUE))))
+  }
+  
+  
+  colors_matrix <- circlize::colorRamp2(c(-max_abs_value, 0, max_abs_value), c(color_low, color_mid, color_high))
+  
+  breaks <- seq(-max_abs_value, max_abs_value, 1)
+  
+  
+  # ---------------------------------------------------------------------------
+  # Heatmap with the logFC
+  # ---------------------------------------------------------------------------
+  
+  
+  ht <- ComplexHeatmap::Heatmap(matrix, 
+    name = name,
+    col = colors_matrix, 
+    na_col = "grey90",
+    heatmap_legend_param = list(color_bar = "continuous", at = breaks), 
+    
+    cluster_columns = cluster_columns, 
+    cluster_rows = cluster_rows, 
+    
+    row_dend_reorder = FALSE, 
+    column_dend_reorder = FALSE,
+    
+    left_annotation = left_annotation,
+    top_annotation = top_annotation,
+    
+    row_split = row_split,
+    column_split = column_split,
+    
+    row_title = row_title,
+    column_title = column_title,
+    
+    show_row_names = show_row_names, 
+    show_column_names = show_column_names, 
+    
+    row_names_gp = row_names_gp,
+    column_names_gp = column_names_gp,
+    
+    ...)
+  
+  
+  if(draw){
+    draw(ht, column_title = title)
+  }else{
+    return(ht)  
+  }
+  
+  
+}
 
 
 
