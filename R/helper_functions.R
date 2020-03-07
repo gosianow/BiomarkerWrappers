@@ -4,12 +4,75 @@
 
 
 
+
+
+
+
+
+#' Calculate logFC for expression that will be plotted in a heatmap 
+#' 
+#' @param x eSet object
+wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NULL){
+  
+  
+  if(is.null(subgroup_var)){
+    pData(x)$dummy_subgroup_var <- factor("dummy_subgroup_var")
+    subgroup_var <- "dummy_subgroup_var"
+  }
+  
+  subgroup_levels <- levels(pData(x)[, subgroup_var])
+  
+  comparison_levels <- levels(pData(x)[, comparison_var])
+  
+  reference_level <- comparison_levels[1]
+  
+  tbl <- table(pData(x)[, comparison_var])
+  
+  stopifnot(tbl[reference_level] > 0)
+  
+  
+  expr_heatmap <- lapply(1:length(subgroup_levels), function(i){
+    # i = 1
+    
+    x_sub <- x[, pData(x)[, subgroup_var] == subgroup_levels[i]]
+    
+    expr_sub <- Biobase::exprs(x_sub)
+    
+    expr_lfc <- expr_sub - rowMeans(expr_sub[, pData(x_sub)[, comparison_var] == reference_level], na.rm = TRUE)
+    
+    expr_lfc
+    
+    
+  }) 
+  
+  
+  expr_heatmap <- do.call("cbind", expr_heatmap)
+  
+  
+  ### Bring the same sample order as in x
+  
+  expr_heatmap <- expr_heatmap[, colnames(Biobase::exprs(x)), drop = FALSE]
+  
+  ### Return an eSet
+  
+  out <- ExpressionSet(assayData = expr_heatmap, 
+    phenoData = phenoData(x), 
+    featureData = featureData(x))
+  
+
+  out
+  
+}
+
+
+
+
 duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
   
   if(is.factor(x)){
     x <- as.character(x)
   }
-
+  
   ### Make the NAs to count as unique
   if(na.rm){
     x[is.na(x)] <- paste0("X...NA...", 1:sum(is.na(x)))
@@ -79,7 +142,7 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
   }
   
   invisible(NULL)
-
+  
 }
 
 
