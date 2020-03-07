@@ -35,9 +35,9 @@ setValidity("BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bresults<-", "BclassTesting", function(x, value){
+setMethod("bresults<-", "BclassTesting", function(x, value){
   
-  BclassTesting(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
+  BclassTesting(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -46,9 +46,9 @@ setMethod("Bresults<-", "BclassTesting", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Boutput<-", "BclassTesting", function(x, value){
+setMethod("boutput<-", "BclassTesting", function(x, value){
   
-  BclassTesting(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
+  BclassTesting(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -57,9 +57,9 @@ setMethod("Boutput<-", "BclassTesting", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bcaption<-", "BclassTesting", function(x, value){
+setMethod("bcaption<-", "BclassTesting", function(x, value){
   
-  BclassTesting(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
+  BclassTesting(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
   
 })
 
@@ -68,42 +68,42 @@ setMethod("Bcaption<-", "BclassTesting", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bheader<-", "BclassTesting", function(x, value){
+setMethod("bheader<-", "BclassTesting", function(x, value){
   
-  BclassTesting(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  BclassTesting(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
   
 })
 
 
 
 ################################################################################
-### Show method and Bkable
+### Show method and bkable
 ################################################################################
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, block_vars = NULL, font_size = NULL, full_width = NULL){
+setMethod("bkable", "BclassTesting", function(x, caption = NULL, header = NULL, block_vars = NULL, font_size = NULL, full_width = NULL){
   
   
-  res <- Bresults(x)
-  out <- Boutput(x)
+  res <- bresults(x)
+  out <- boutput(x)
   
   
   if(is.null(caption)){
-    caption <- Bcaption(x)
+    caption <- bcaption(x)
   }
   
   if(is.null(header)){
-    header <- Bheader(x)
+    header <- bheader(x)
   }
   
   if(is.null(font_size)){
-    font_size <- getOption("Bkable_font_size", default = 11)
+    font_size <- getOption("bkable_font_size", default = 11)
   }
   
   if(is.null(full_width)){
-    full_width <- getOption("Bkable_full_width", default = TRUE)
+    full_width <- getOption("bkable_full_width", default = TRUE)
   }
   
   
@@ -156,27 +156,27 @@ setMethod("Bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
 
 setMethod("show", "BclassTesting", function(object){
   
-  print(Bkable(object))
+  print(bkable(object))
   
 })
 
 
 
 ################################################################################
-### Bforest method
+### bforest method
 ################################################################################
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = c(0, 5), lineheight = "auto"){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = c(0, 5), lineheight = "auto"){
   
   # lineheight = unit(1, "cm")
   
   
-  out <- Boutput(x)
-  res <- Bresults(x)
-  caption <- Bcaption(x)
+  out <- boutput(x)
+  res <- bresults(x)
+  caption <- bcaption(x)
   
   ### ----------------------------------------------------------------------
   ### Some checks

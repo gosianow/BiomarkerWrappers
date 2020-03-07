@@ -39,9 +39,9 @@ setValidity("BclassCharacteristics", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bresults<-", "BclassCharacteristics", function(x, value){
+setMethod("bresults<-", "BclassCharacteristics", function(x, value){
   
-  BclassCharacteristics(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
+  BclassCharacteristics(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -53,9 +53,9 @@ setMethod("Bresults<-", "BclassCharacteristics", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Boutput<-", "BclassCharacteristics", function(x, value){
+setMethod("boutput<-", "BclassCharacteristics", function(x, value){
   
-  BclassCharacteristics(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
+  BclassCharacteristics(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -69,9 +69,9 @@ setMethod("Boutput<-", "BclassCharacteristics", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bcaption<-", "BclassCharacteristics", function(x, value){
+setMethod("bcaption<-", "BclassCharacteristics", function(x, value){
   
-  BclassCharacteristics(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
+  BclassCharacteristics(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
   
 })
 
@@ -82,9 +82,9 @@ setMethod("Bcaption<-", "BclassCharacteristics", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bheader<-", "BclassCharacteristics", function(x, value){
+setMethod("bheader<-", "BclassCharacteristics", function(x, value){
   
-  BclassCharacteristics(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  BclassCharacteristics(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
   
 })
 
@@ -100,24 +100,24 @@ setMethod("Bheader<-", "BclassCharacteristics", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = FALSE){
+setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = FALSE){
   
   
-  res <- Bresults(x)
-  out <- Boutput(x)
+  res <- bresults(x)
+  out <- boutput(x)
   
   
   if(is.null(caption)){
-    caption <- Bcaption(x)
+    caption <- bcaption(x)
   }
   
   if(is.null(header)){
-    header <- Bheader(x)
+    header <- bheader(x)
   }
   
   ### Use the globally defined font_size
   if(is.null(font_size)){
-    font_size <- getOption("Bkable_font_size", default = 11)
+    font_size <- getOption("bkable_font_size", default = 11)
   }
   
   
@@ -159,7 +159,7 @@ setMethod("Bkable", "BclassCharacteristics", function(x, caption = NULL, header 
 
 setMethod("show", "BclassCharacteristics", function(object){
   
-  print(Bkable(object))
+  print(bkable(object))
   
 })
 

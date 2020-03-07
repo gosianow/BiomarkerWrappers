@@ -361,8 +361,8 @@ wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL,
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   # --------------------------------------------------------------------------
@@ -378,7 +378,7 @@ wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL,
   }
   
   
-  header <- Bheader(wrapper_res[[1]])
+  header <- bheader(wrapper_res[[1]])
   
   
   bout <- BclassCharacteristics(results = res, output = out, caption = caption, header = header)
@@ -447,8 +447,8 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
     characteristics_itt_treatment <- wrapper_core_characteristics(data = data, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL)
     
     
-    res <- cbind(Bresults(characteristics_itt), Bresults(characteristics_itt_treatment)[, -1, drop = FALSE])
-    out <- cbind(Boutput(characteristics_itt), Boutput(characteristics_itt_treatment)[, -1, drop = FALSE])
+    res <- cbind(bresults(characteristics_itt), bresults(characteristics_itt_treatment)[, -1, drop = FALSE])
+    out <- cbind(boutput(characteristics_itt), boutput(characteristics_itt_treatment)[, -1, drop = FALSE])
     
     characteristics_itt <- BclassCharacteristics(results = res, output = out)
     
@@ -486,23 +486,23 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
         characteristics_bep_treatment <- wrapper_core_characteristics(data = data_bep, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL)
         
         
-        res <- cbind(Bresults(characteristics_bep), Bresults(characteristics_bep_treatment)[, -1, drop = FALSE])
-        out <- cbind(Boutput(characteristics_bep), Boutput(characteristics_bep_treatment)[, -1, drop = FALSE])
+        res <- cbind(bresults(characteristics_bep), bresults(characteristics_bep_treatment)[, -1, drop = FALSE])
+        out <- cbind(boutput(characteristics_bep), boutput(characteristics_bep_treatment)[, -1, drop = FALSE])
         
         characteristics_bep <- BclassCharacteristics(results = res, output = out)
         
       }
       
       
-      characteristics_bep <- BclassCharacteristics(results = Bresults(characteristics_bep)[, -1, drop = FALSE], output = Boutput(characteristics_bep)[, -1, drop = FALSE])
+      characteristics_bep <- BclassCharacteristics(results = bresults(characteristics_bep)[, -1, drop = FALSE], output = boutput(characteristics_bep)[, -1, drop = FALSE])
       
       return(characteristics_bep)
       
     })
     
     
-    res <- cbind(Bresults(characteristics_itt), do.call("cbind", lapply(characteristics_beps, Bresults)))
-    out <- cbind(Boutput(characteristics_itt), do.call("cbind", lapply(characteristics_beps, Boutput)))
+    res <- cbind(bresults(characteristics_itt), do.call("cbind", lapply(characteristics_beps, bresults)))
+    out <- cbind(boutput(characteristics_itt), do.call("cbind", lapply(characteristics_beps, boutput)))
     
     characteristics_itt <- BclassCharacteristics(results = res, output = out)
     
@@ -510,7 +510,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
   }
   
   
-  Bcaption(characteristics_itt) <- caption
+  bcaption(characteristics_itt) <- caption
   
   
   return(characteristics_itt)

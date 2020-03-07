@@ -24,11 +24,12 @@ setClassUnion("integernumericNULL", c("integer", "numeric", "NULL"))
 #' Methods:
 #' 
 #' \itemize{ 
-#' \item \code{Bresults(x)}: Get a data frame with results. 
-#' \item \code{Boutput(x)}: Get a data frame with output that is dispalyed with kable.
-#' \item \code{Bcaption(x)}: Get a string with caption that is displayed with kable.
-#' \item \code{Bheader(x)}: Get a vector with header that is displayed with kable.
-#' \item \code{Bkable(x)}: Display output with kable.
+#' \item \code{bresults(x)}: Get a data frame with results. 
+#' \item \code{boutput(x)}: Get a data frame with output that is dispalyed with kable.
+#' \item \code{bcaption(x)}: Get a string with caption that is displayed with kable.
+#' \item \code{bheader(x)}: Get a vector with header that is displayed with kable.
+#' \item \code{bkable(x)}: Display output with kable.
+#' \item \code{bforest(x)}: Generate a forest plot. 
 #' }
 #' 
 #' Inheriting classes:
@@ -94,12 +95,12 @@ setValidity("Bclass", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bkable", function(x, ...) standardGeneric("Bkable"))
+setGeneric("bkable", function(x, ...) standardGeneric("bkable"))
 
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bforest", function(x, ...) standardGeneric("Bforest"))
+setGeneric("bforest", function(x, ...) standardGeneric("bforest"))
 
 
 ################################################################################
@@ -112,30 +113,30 @@ setGeneric("Bforest", function(x, ...) standardGeneric("Bforest"))
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bresults", function(x, ...) standardGeneric("Bresults"))
+setGeneric("bresults", function(x, ...) standardGeneric("bresults"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bresults", "Bclass", function(x) x@results )
+setMethod("bresults", "Bclass", function(x) x@results )
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bresults", "NULL", function(x) NULL )
+setMethod("bresults", "NULL", function(x) NULL )
 
 
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bresults<-", function(x, value) standardGeneric("Bresults<-"))
+setGeneric("bresults<-", function(x, value) standardGeneric("bresults<-"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bresults<-", "Bclass", function(x, value){
+setMethod("bresults<-", "Bclass", function(x, value){
   
-  Bclass(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
+  Bclass(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -147,30 +148,30 @@ setMethod("Bresults<-", "Bclass", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Boutput", function(x, ...) standardGeneric("Boutput"))
+setGeneric("boutput", function(x, ...) standardGeneric("boutput"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Boutput", "Bclass", function(x) x@output )
+setMethod("boutput", "Bclass", function(x) x@output )
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Boutput", "NULL", function(x) NULL )
+setMethod("boutput", "NULL", function(x) NULL )
 
 
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Boutput<-", function(x, value) standardGeneric("Boutput<-"))
+setGeneric("boutput<-", function(x, value) standardGeneric("boutput<-"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Boutput<-", "Bclass", function(x, value){
+setMethod("boutput<-", "Bclass", function(x, value){
   
-  Bclass(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
+  Bclass(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -183,29 +184,29 @@ setMethod("Boutput<-", "Bclass", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bcaption", function(x, ...) standardGeneric("Bcaption"))
+setGeneric("bcaption", function(x, ...) standardGeneric("bcaption"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bcaption", "Bclass", function(x) x@caption )
+setMethod("bcaption", "Bclass", function(x) x@caption )
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bcaption", "NULL", function(x) NULL )
+setMethod("bcaption", "NULL", function(x) NULL )
 
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bcaption<-", function(x, value) standardGeneric("Bcaption<-"))
+setGeneric("bcaption<-", function(x, value) standardGeneric("bcaption<-"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bcaption<-", "Bclass", function(x, value){
+setMethod("bcaption<-", "Bclass", function(x, value){
   
-  Bclass(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
+  Bclass(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
   
 })
 
@@ -215,29 +216,29 @@ setMethod("Bcaption<-", "Bclass", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bheader", function(x, ...) standardGeneric("Bheader"))
+setGeneric("bheader", function(x, ...) standardGeneric("bheader"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bheader", "Bclass", function(x) x@header )
+setMethod("bheader", "Bclass", function(x) x@header )
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bheader", "NULL", function(x) NULL )
+setMethod("bheader", "NULL", function(x) NULL )
 
 
 #' @rdname Bclass-class
 #' @export
-setGeneric("Bheader<-", function(x, value) standardGeneric("Bheader<-"))
+setGeneric("bheader<-", function(x, value) standardGeneric("bheader<-"))
 
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bheader<-", "Bclass", function(x, value){
+setMethod("bheader<-", "Bclass", function(x, value){
   
-  Bclass(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  Bclass(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
   
 })
 

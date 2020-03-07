@@ -45,10 +45,10 @@ font_size <- 11
 cache <- 0
 
 
-### Set global option for font_size for Bkable in this document 
+### Set global option for font_size for bkable in this document 
 
-options(Bkable_font_size = font_size)
-options(Bkable_full_width = TRUE)
+options(bkable_font_size = font_size)
+options(bkable_full_width = TRUE)
 
 
 knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center")
@@ -804,7 +804,7 @@ covariate_vars <- c("Treatment_Arm", "IPI_Caterories", "Cell_Of_Origin", "FCGR3A
 wrapper_res <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
 
   
-Bkable(wrapper_res, caption = "Changes", font_size = 6)
+bkable(wrapper_res, caption = "Changes", font_size = 6)
 
 
 

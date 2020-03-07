@@ -262,8 +262,8 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       wrapper_res <- wrapper_core_fishers_test(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       
-      res <- Bresults(wrapper_res)
-      out <- Boutput(wrapper_res)
+      res <- bresults(wrapper_res)
+      out <- boutput(wrapper_res)
       
       ## Add info about the strata to the data frames
       
@@ -278,10 +278,10 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       out <- cbind(prefix_df, out)
       
       ## Update header by adding 2 corresponding to the two strat variables to the first position
-      hdr <- Bheader(wrapper_res)
+      hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
-      wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res), header = hdr)
+      wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res), header = hdr)
       
       return(wrapper_res)
       
@@ -290,10 +290,10 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
     
     ### Merge the results
     
-    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+    res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
     
-    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = Bheader(wrapper_res[[1]]))
+    wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = bheader(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -302,8 +302,8 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -334,11 +334,11 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   }
   
   ## Update header by adding 2 corresponding to the two strat variables to the first position
-  hdr <- Bheader(wrapper_res[[1]])
+  hdr <- bheader(wrapper_res[[1]])
   hdr[1] <- hdr[1] - hdr_shift
   
   
-  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = hdr)
+  wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   
   
   return(wrapper_res)
@@ -399,8 +399,8 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -411,7 +411,7 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   }
   
   
-  hdr <- Bheader(wrapper_res[[1]])
+  hdr <- bheader(wrapper_res[[1]])
   
   ### Replace NAs with "" for OR
   missing_columns <- c("OR")
@@ -430,7 +430,7 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   
   
   
-  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]), header = hdr)
+  wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   
   
   return(wrapper_res)

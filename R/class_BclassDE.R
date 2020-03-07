@@ -35,9 +35,9 @@ setValidity("BclassDE", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bresults<-", "BclassDE", function(x, value){
+setMethod("bresults<-", "BclassDE", function(x, value){
   
-  BclassDE(results = value, output = Boutput(x), caption = Bcaption(x), header = Bheader(x))
+  BclassDE(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -46,9 +46,9 @@ setMethod("Bresults<-", "BclassDE", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Boutput<-", "BclassDE", function(x, value){
+setMethod("boutput<-", "BclassDE", function(x, value){
   
-  BclassDE(results = Bresults(x), output = value, caption = Bcaption(x), header = Bheader(x))
+  BclassDE(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
   
 })
 
@@ -57,9 +57,9 @@ setMethod("Boutput<-", "BclassDE", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bcaption<-", "BclassDE", function(x, value){
+setMethod("bcaption<-", "BclassDE", function(x, value){
   
-  BclassDE(results = Bresults(x), output = Boutput(x), caption = value, header = Bheader(x))
+  BclassDE(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
   
 })
 
@@ -68,9 +68,9 @@ setMethod("Bcaption<-", "BclassDE", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bheader<-", "BclassDE", function(x, value){
+setMethod("bheader<-", "BclassDE", function(x, value){
   
-  BclassDE(results = Bresults(x), output = Boutput(x), caption = Bcaption(x), header = value)
+  BclassDE(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
   
 })
 
@@ -83,32 +83,32 @@ setMethod("Bheader<-", "BclassDE", function(x, value){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("Bkable", "BclassDE", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = NULL){
+setMethod("bkable", "BclassDE", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = NULL){
   
   
-  res <- Bresults(x)
-  out <- Boutput(x)
+  res <- bresults(x)
+  out <- boutput(x)
   
   if(nrow(res) == 0){
-    message <- paste0("\n", Bcaption(x), "\n\n")
+    message <- paste0("\n", bcaption(x), "\n\n")
     return(message)
   }
   
   
   if(is.null(caption)){
-    caption <- Bcaption(x)
+    caption <- bcaption(x)
   }
   
   if(is.null(header)){
-    header <- Bheader(x)
+    header <- bheader(x)
   }
   
   if(is.null(font_size)){
-    font_size <- getOption("Bkable_font_size", default = 11)
+    font_size <- getOption("bkable_font_size", default = 11)
   }
   
   if(is.null(full_width)){
-    full_width <- getOption("Bkable_full_width", default = TRUE)
+    full_width <- getOption("bkable_full_width", default = TRUE)
   }
   
   
@@ -130,7 +130,7 @@ setMethod("Bkable", "BclassDE", function(x, caption = NULL, header = NULL, font_
 
 setMethod("show", "BclassDE", function(object){
   
-  x <- Bkable(object)
+  x <- bkable(object)
   
   if(is.character(x)){
     cat(x)

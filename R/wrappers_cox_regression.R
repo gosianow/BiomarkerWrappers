@@ -339,8 +339,8 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
       
       
       
-      res <- Bresults(wrapper_res)
-      out <- Boutput(wrapper_res)
+      res <- bresults(wrapper_res)
+      out <- boutput(wrapper_res)
       
       
       
@@ -351,12 +351,12 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
       # To res
       colnames(prefix_df) <- c(strat2_var, strat1_var)
       res <- cbind(prefix_df, res)
-      Bresults(wrapper_res) <- res
+      bresults(wrapper_res) <- res
       
       # To out
       colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
       out <- cbind(prefix_df, out)
-      Boutput(wrapper_res) <- out
+      boutput(wrapper_res) <- out
       
       return(wrapper_res)
       
@@ -365,10 +365,10 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
     
     ### Merge the results
     
-    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+    res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
     
-    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+    wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -377,8 +377,8 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -402,7 +402,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   }
   
   
-  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+  wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
   
   return(wrapper_res)
   
@@ -464,8 +464,8 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -595,8 +595,8 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     
     ### Rename strata column name to 'Biomarker Subgroup'
     
-    res <- Bresults(wrapper_res)
-    out <- Boutput(wrapper_res)
+    res <- bresults(wrapper_res)
+    out <- boutput(wrapper_res)
     
     colnames(res)[colnames(res) == biomarker_vars[i]] <- "biomarker_subgroup"
     colnames(out)[colnames(out) == variable_names[biomarker_vars[i]]] <- "Biomarker Subgroup"
@@ -613,8 +613,8 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     out <- dplyr::select(out, c(variable_names[strat2_var], "Biomarker", "Biomarker Subgroup"), everything())
     
     
-    Bresults(wrapper_res) <- res
-    Boutput(wrapper_res) <- out
+    bresults(wrapper_res) <- res
+    boutput(wrapper_res) <- out
     
     
     return(wrapper_res)
@@ -625,8 +625,8 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -1019,8 +1019,8 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
       wrapper_res <- wrapper_core_cox_regression_interaction(data = data_strata1, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
-      res <- Bresults(wrapper_res)
-      out <- Boutput(wrapper_res)
+      res <- bresults(wrapper_res)
+      out <- boutput(wrapper_res)
       
       
       ## Add info about the strata to the data frames
@@ -1030,12 +1030,12 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
       # To res
       colnames(prefix_df) <- c(strat2_var, strat1_var)
       res <- cbind(prefix_df, res)
-      Bresults(wrapper_res) <- res
+      bresults(wrapper_res) <- res
       
       # To out
       colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
       out <- cbind(prefix_df, out)
-      Boutput(wrapper_res) <- out
+      boutput(wrapper_res) <- out
       
       return(wrapper_res)
       
@@ -1044,10 +1044,10 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
     
     ### Merge the results
     
-    res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-    out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+    res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+    out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
     
-    wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+    wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -1056,8 +1056,8 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
   res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
@@ -1078,7 +1078,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
   }
   
   
-  wrapper_res <- BclassTesting(results = res, output = out, caption = Bcaption(wrapper_res[[1]]))
+  wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
   
   return(wrapper_res)
   
@@ -1134,8 +1134,8 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   
   ### Merge the results
   
-  res <- plyr::rbind.fill(lapply(wrapper_res, Bresults))
-  out <- plyr::rbind.fill(lapply(wrapper_res, Boutput))
+  res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
+  out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method

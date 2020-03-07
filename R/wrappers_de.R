@@ -412,7 +412,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra = NULL, gen
       
       genes <- wrapper_dispaly_significant_genes(x, contrast = contrasts, direction = direction, topn = topn, pval = pval, lfc = lfc, gene_vars = gene_var, lfc_prefix = lfc_prefix, pval_prefix = pval_prefix, adjp_prefix = adjp_prefix, sep = sep)
       
-      genes <- Bresults(genes)[, gene_var]
+      genes <- bresults(genes)[, gene_var]
       genes <- genes[!is.na(genes)]
       
       if(length(genes) < min_DE_size){
