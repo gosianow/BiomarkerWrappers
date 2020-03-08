@@ -1,6 +1,38 @@
 
 
+### Based on this AWESOME post http://michaeljw.com/blog/post/subchunkify/
 
+subchunkify <- function(g, fig_height=7, fig_width=5) {
+  g_deparsed <- paste0(deparse(
+    function() {g}
+  ), collapse = '')
+  
+  sub_chunk <- paste0("
+  `","``{r, fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}",
+    "\n(", 
+    g_deparsed
+    , ")()",
+    "\n`","``
+  ")
+  
+  cat(knitr::knit(text = knitr::knit_expand(text = sub_chunk), quiet = TRUE))
+}
+
+
+
+### My version, which does not seem to work...
+
+# subchunkify <- function(g, fig_height=5, fig_width=6, chunk_name = NULL){
+#   
+#   g_deparsed <- deparse(substitute(g))
+#   
+#   sub_chunk <- paste0("\n```{r ", chunk_name, ", fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}\n", 
+#     g_deparsed,
+#     "\n```\n")
+#   
+#   cat(knitr::knit(text = knitr::knit_expand(text = sub_chunk), quiet = TRUE))
+#   
+# }
 
 
 

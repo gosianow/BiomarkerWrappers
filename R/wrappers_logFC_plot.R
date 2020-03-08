@@ -57,13 +57,12 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   axis_text_x_angle = 30, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
   axis_text_y_size = 10, 
   color_low = '#D70131', color_mid = "white", color_high = '#42399B', 
-  radius_range = c(10, 3)){
+  trim_limits = 2, radius_range = c(10, 3),
+  legend_position = "right"){
   
   
   
   stopifnot(length(gene_var) == 1)
-  
-  
   
   
   data_lfc <- wrapper_extract_from_topTable(x, extract_prefix = lfc_prefix, sep = sep)
@@ -86,14 +85,22 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
     cols = contrasts, names_to = "contrast", values_to = adjp_prefix)
   
   
-  data <- data_lfc %>% 
-    left_join(data_pval, by = c(gene_var, "contrast")) %>% 
-    left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
-    as.data.frame()
+  if(pval_prefix == adjp_prefix){
+    data <- data_lfc %>% 
+      left_join(data_pval, by = c(gene_var, "contrast")) %>% 
+      as.data.frame()
+  }else{
+    data <- data_lfc %>% 
+      left_join(data_pval, by = c(gene_var, "contrast")) %>% 
+      left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
+      as.data.frame()
+  }
   
   
-  data$significance <- ifelse(data[, adjp_prefix] < pval, paste0("<", pval), paste0(">=", pval))
+  data$significance <- factor(ifelse(data[, adjp_prefix] < pval, paste0("<", pval), paste0(">=", pval)), levels = paste0(c("<", ">="), pval))
   values_shape <- c(4, 32)
+  names(values_shape) <- levels(data$significance)
+  
   
   data$contrast <- factor(data$contrast, levels = contrasts)
   
@@ -103,6 +110,19 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   
   pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.1, 0.2, 1)
   data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut[-1]))
+  
+  
+  
+  if(is.null(trim_limits)){
+    max_abs_value <- ceiling(max(abs(range(data[, lfc_prefix], na.rm = TRUE))))
+  }else if(trim_limits >= 1){
+    max_abs_value <- trim_limits
+  }else{
+    ### Use quantiles 
+    max_abs_value <- ceiling(max(abs(quantile(data[, lfc_prefix], probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE))))
+  }
+  
+  limits <- c(-max_abs_value, max_abs_value)
   
   
   # ---------------------------------------------------------------------------
@@ -118,12 +138,13 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
     theme(axis.line = element_blank(), 
       axis.title = element_blank(), 
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
-      axis.text.y = element_text(size = axis_text_y_size)) +
+      axis.text.y = element_text(size = axis_text_y_size),
+      legend.position = legend_position) +
     panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
     scale_radius(name = pval_prefix, range = radius_range, breaks = 1:(length(pval_cut) - 1), labels = pval_cut[-1], limits = c(1, length(pval_cut) - 1)) +
-    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high) + 
-    scale_shape_manual(name = adjp_prefix, values = values_shape)
+    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
+    scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE)
   
   
   # This is great. squish in this context converts clamps all values to be within the min and max of the limits argument. i.e., if value < min(limits) then value = min(limits) else if value > max(limits) then value = max(limits).
@@ -164,8 +185,8 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
 #' @param x TopTable
 wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
-  sep = "_", pval = 0.05, draw = TRUE, title = "",
-  color_low = '#D70131', color_mid = "white", color_high = '#42399B',
+  sep = "_", draw = TRUE, title = "",
+  color_low = '#D70131', color_mid = "white", color_high = '#42399B', trim_limits = NULL,
   rect_gp = gpar(col = "grey"), point_size = 3,
   cluster_rows = FALSE, 
   row_split = NULL, column_split = NULL,
@@ -204,7 +225,15 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   # Colors for the heatmap expression
   # ---------------------------------------------------------------------------
   
-  max_abs_value <- ceiling(max(abs(range(matrix, na.rm = TRUE))))
+  
+  if(is.null(trim_limits)){
+    max_abs_value <- ceiling(max(abs(range(matrix, na.rm = TRUE))))
+  }else if(trim_limits >= 1){
+    max_abs_value <- trim_limits
+  }else{
+    ### Use quantiles 
+    max_abs_value <- ceiling(max(abs(quantile(matrix, probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE))))
+  }
   
   colors_matrix <- circlize::colorRamp2(c(-max_abs_value, 0, max_abs_value), c(color_low, color_mid, color_high))
   
@@ -293,8 +322,8 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' 
 #' @param x Matrix with expression to plot
 wrapper_gene_expression_heatmap <- function(x,  
-  name = "sample\nlogFC", draw = TRUE, title = "", trim_expression = NULL,
-  color_low = 'orchid1', color_mid = "royalblue4", color_high = 'turquoise1',
+  name = "sample\nlogFC", draw = TRUE, title = "", 
+  color_low = 'orchid1', color_mid = "royalblue4", color_high = 'turquoise1', trim_limits = NULL,
   cluster_rows = FALSE, cluster_columns = FALSE,
   left_annotation = NULL, top_annotation = NULL, 
   row_split = NULL, column_split = NULL,
@@ -310,15 +339,14 @@ wrapper_gene_expression_heatmap <- function(x,
   # Colors for the heatmap expression
   # ---------------------------------------------------------------------------
   
-  stopifnot(trim_expression > 0)
   
-  if(is.null(trim_expression)){
+  if(is.null(trim_limits)){
     max_abs_value <- ceiling(max(abs(range(matrix, na.rm = TRUE))))
-  }else if(trim_expression >= 1){
-    max_abs_value <- trim_expression
+  }else if(trim_limits >= 1){
+    max_abs_value <- trim_limits
   }else{
     ### Use quantiles 
-    max_abs_value <- ceiling(max(abs(quantile(matrix, probs = c(trim_expression, 1 - trim_expression), na.rm = TRUE))))
+    max_abs_value <- ceiling(max(abs(quantile(matrix, probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE))))
   }
   
   

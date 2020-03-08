@@ -71,7 +71,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
   
   xintercept <- -log10(c(0.05, 0.1))
   xlab <- paste0("-log10(", adjp_var, ")")
-  xlim <- c(0, max(x[, "log_adjp"], na.rm = TRUE))
+  xlim <- c(0, max(c(x[, "log_adjp"], -log10(0.05)), na.rm = TRUE))
   
   
   ggp <- ggp +
@@ -101,9 +101,11 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
 
 
 
-
-
-# geneset_var = "Geneset"; GeneRatio_prefix = "GeneRatio"; adjp_prefix = "adj.P.Val";  sep = "_";
+# x <- topTable_significant_ora
+# 
+# geneset_var = "Geneset"
+# 
+# GeneRatio_prefix = "GeneRatio"; adjp_prefix = "adj.P.Val";  sep = "_";
 # title = ""; title_size = 10; title_width = 70; axis_text_y_size = 10; axis_text_y_width = 70; colors_point = NULL; size_range = c(2, 10)
 # point_alpha = 0.8
 
@@ -181,6 +183,8 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   data$directions <- factor(data$directions, levels = c("down", "up"), labels = c("Down-regulation", "Up-regulation"))
   
+  
+  
   adjp_var <- adjp_prefix
   GeneRatio_var <- GeneRatio_prefix
   
@@ -224,7 +228,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   xintercept <- -log10(c(0.05, 0.1))
   xlab <- paste0("-log10(", adjp_var, ")")
-  xlim <- c(0, max(data[, "log_adjp"], na.rm = TRUE))
+  xlim <- c(0, max(c(data[, "log_adjp"], -log10(0.05)), na.rm = TRUE))
   
   
   ggp <- ggp +
