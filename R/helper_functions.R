@@ -374,6 +374,56 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE){
 
 
 
+#' Format p-values
+#' 
+#' @param x Vector of p-values to be formatted.
+#' @param digits Number of digits after decimial to display.
+#' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
+format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
+  
+  # digits = 4
+  # asterisk <- TRUE
+  # x <- c(0.2, 0.05, 0.034534, 1.366332e-05, 1.366332e-04, NA, 7.174163e-16, 1.501826e-06, 6.642127e-10)
+  
+  
+  if(sum(is.na(x)) == length(x)){
+    return(rep("", length(x)))
+  }
+  
+  
+  min_pval <- 1/10^digits
+  
+  output_format_non_scientific <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
+  
+  output_format_scientific <- paste0("<", formatC(10 ^ -round(-log10(x)), format = "e", digits = 0))
+
+  
+  output <- ifelse(x < min_pval, output_format_scientific, output_format_non_scientific)
+  
+  output[is.na(x)] <- ""
+  
+  
+  
+  if(asterisk){
+    
+    pval_asterisk <- ifelse(x < 0.001, " ***", ifelse(x < 0.01, " **", ifelse(x < 0.05, " *", ifelse(x < 0.1, " .", ""))))
+    
+    pval_asterisk[is.na(pval_asterisk)] <- ""
+    
+    output <- paste0(output, pval_asterisk)
+    
+  }
+  
+  
+  return(output)
+  
+}
+
+
+
+
+
+
 
 #' Format Odds Ratios
 #' 

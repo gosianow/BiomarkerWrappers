@@ -590,7 +590,10 @@ method = "kruskal"
 wrapper_core_kruskal_test_col_cat(data, num_var = num_var, cat_var = cat_var, method = method, variable_names = NULL, caption = NULL, print_pvalues = TRUE)
 
 
-wrapper_core_kruskal_test_col_num(data, num_var = num_var, cat_var = cat_var, method = method, variable_names = NULL, caption = NULL, print_pvalues = TRUE)
+bout <- wrapper_core_kruskal_test_col_num(data, num_var = num_var, cat_var = cat_var, method = method, variable_names = NULL, caption = NULL, print_pvalues = TRUE)
+
+bout
+
 
 
 

@@ -1,0 +1,277 @@
+
+
+
+
+# geneset_var = "Geneset"; GeneRatio_var = "GeneRatio"; adjp_var = "adj.P.Val";  
+# title = ""; title_size = 10; axis_text_y_size = 10; axis_text_y_width = 70; color_point = 'darkslateblue'; size_range = c(2, 10)
+
+
+
+#' Dot plot with ORA results for a single contrast 
+#' 
+#' @param x TopTable with ORA results.
+wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRatio_var = "GeneRatio", adjp_var = "adj.P.Val",  
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70, color_point = 'darkslateblue', size_range = c(2, 10)){
+  
+  
+  stopifnot(length(geneset_var) == 1)
+  
+  ## Wrap the title so it can be nicely displayed in the plots
+  title <- stringr::str_wrap(title, width = title_width)
+  
+  
+  ## Wrap the gene set names so they can be nicely displayed in the plots
+  x[, geneset_var] <- stringr::str_wrap(x[, geneset_var], width = axis_text_y_width)
+  
+  ## Append white spaces to the befinning of the gene set names so the plots have the same width
+  nchar_geneset_name <- nchar(x[, geneset_var])
+  times_rep_blank <- axis_text_y_width - nchar_geneset_name
+  times_rep_blank[times_rep_blank < 0] <- 0
+  
+  x[, geneset_var] <- ifelse(nchar_geneset_name < axis_text_y_width, 
+    paste0(sapply(times_rep_blank, function(x){paste0(rep("  ", x), collapse = "")}), x[, geneset_var]), 
+      x[, geneset_var])
+
+  
+  x[, geneset_var] <- factor(x[, geneset_var], levels = rev(unique(x[, geneset_var])))
+  
+  
+  ## To avoid p-values equal to zero
+  min_non_zero_adjp <- min(x[x[, adjp_var] > 0, adjp_var], na.rm = TRUE)
+  x[x[, adjp_var] == 0, adjp_var] <- min(1e-15, min_non_zero_adjp)
+  
+  
+  x$log_adjp <- -log10(x[, adjp_var])
+  
+  ## Derive the number of DE genes that overlap with the gene set
+  
+  if(!is.null(GeneRatio_var)){
+    x$DE_in_set <- as.numeric(strsplit2(x[, GeneRatio_var], " / ")[, 1])
+    x$DE_in_set[x$DE_in_set == 0] <- NA
+  }
+  
+  
+  # ---------------------------------------------------------------------------
+  # ggplot
+  # ---------------------------------------------------------------------------
+  
+  if(!is.null(GeneRatio_var)){
+    
+    ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, size = "DE_in_set")) +
+      geom_point(color = color_point) +
+      scale_size(name = "No. DE in set", range = size_range) 
+    
+  }else{
+    
+    ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var)) +
+      geom_point(size = size_range[2])
+    
+  }
+  
+  
+  xintercept <- -log10(c(0.05, 0.1))
+  xlab <- paste0("-log10(", adjp_var, ")")
+  xlim <- c(0, max(x[, "log_adjp"], na.rm = TRUE))
+  
+  
+  ggp <- ggp +
+    geom_vline(xintercept = xintercept, linetype = 2, color = "lightgrey") +
+    ggtitle(title) +
+    xlab(xlab) +
+    theme_cowplot(12) +
+    theme(axis.line = element_blank(), 
+      axis.title.y = element_blank(), 
+      axis.text.y = element_text(size = axis_text_y_size),
+      plot.title = element_text(size = title_size, hjust = 1)) +
+    coord_cartesian(xlim = xlim) +
+    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    background_grid(major = "xy", minor = "none", size.major = 0.25)
+  
+  
+  ggp
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+# geneset_var = "Geneset"; GeneRatio_prefix = "GeneRatio"; adjp_prefix = "adj.P.Val";  sep = "_";
+# title = ""; title_size = 10; title_width = 70; axis_text_y_size = 10; axis_text_y_width = 70; colors_point = NULL; size_range = c(2, 10)
+# point_alpha = 0.8
+
+
+
+
+
+#' Dot plot with ORA results for a single contrast 
+#' 
+#' @param x TopTable with ORA results.
+wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", 
+  title = "", title_size = 10, title_width = 70, axis_text_y_size = 8, axis_text_y_width = 70, colors_point = NULL, size_range = c(2, 10),
+  point_alpha = 0.8){
+  
+  
+  stopifnot(length(geneset_var) == 1)
+
+  
+  ## Wrap the title so it can be nicely displayed in the plots
+  title <- stringr::str_wrap(title, width = title_width)
+  
+  
+  ## Wrap the gene set names so they can be nicely displayed in the plots
+  x[, geneset_var] <- stringr::str_wrap(x[, geneset_var], width = axis_text_y_width)
+  
+  x[, geneset_var] <- factor(x[, geneset_var], levels = rev(unique(x[, geneset_var])))
+  
+  
+  # -----------------------------------------------------------------
+  # Retrieve contrasts and data
+  # -----------------------------------------------------------------
+  
+  
+  ## We add '^' because we want to match expression at the beginning of the string
+  contrasts_and_directions <- gsub(paste0("^", adjp_prefix, sep), "", grep(paste0("^", adjp_prefix, sep), colnames(x), value = TRUE))
+  
+  directions <- c("up", "down")
+  
+  ## We add '$' because we want to match expression at the end of the string
+  contrasts <- gsub(paste0(sep, directions[1], "$"), "", contrasts_and_directions)
+  contrasts <- gsub(paste0(sep, directions[2], "$"), "", contrasts)
+  contrasts <- unique(contrasts)
+  
+  
+  data_adjp <- wrapper_extract_from_topTable(x, extract_prefix = adjp_prefix)
+  
+  data_GeneRatio <- wrapper_extract_from_topTable(x, extract_prefix = GeneRatio_prefix)
+  
+  
+  
+  data_adjp <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE), 
+    cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = adjp_prefix)
+  
+  data_GeneRatio <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_GeneRatio, stringsAsFactors = FALSE), 
+    cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = GeneRatio_prefix)
+  
+  
+  
+  data <- data_adjp %>% 
+    left_join(data_GeneRatio, by = c(geneset_var, "contrasts_and_directions")) %>% 
+    as.data.frame()
+  
+  
+  ### Retrive contrasts
+  data$contrasts <- gsub(paste0(sep, directions[1], "$"), "", data$contrasts_and_directions)
+  data$contrasts <- gsub(paste0(sep, directions[2], "$"), "", data$contrasts)
+  
+  data$contrasts <- factor(data$contrasts, levels = contrasts)
+  
+  ### Retrive directions
+  
+  data$directions <- sapply(seq_len(nrow(data)), function(i){
+    gsub(paste0("^", data$contrasts[i], sep), "", data$contrasts_and_directions[i])
+  })
+  
+  data$directions <- factor(data$directions, levels = c("down", "up"), labels = c("Down-regulation", "Up-regulation"))
+  
+  adjp_var <- adjp_prefix
+  GeneRatio_var <- GeneRatio_prefix
+  
+  
+  ## To avoid p-values equal to zero
+  min_non_zero_adjp <- min(data[data[, adjp_var] > 0, adjp_var], na.rm = TRUE)
+  data[data[, adjp_var] == 0, adjp_var] <- min(1e-15, min_non_zero_adjp)
+  
+  
+  data$log_adjp <- -log10(data[, adjp_var])
+  
+
+  ## Derive the number of DE genes that overlap with the gene set
+  
+  if(!is.null(GeneRatio_var)){
+    data$DE_in_set <- as.numeric(strsplit2(data[, GeneRatio_var], " / ")[, 1])
+    data$DE_in_set[data$DE_in_set == 0] <- NA
+  }
+  
+  
+  # ---------------------------------------------------------------------------
+  # ggplot
+  # ---------------------------------------------------------------------------
+  
+  colors_point <- format_colors(levels = contrasts, colors = colors_point)
+  
+  
+  if(!is.null(GeneRatio_var)){
+    
+    ggp <- ggplot(data, aes_string(x = "log_adjp", y = geneset_var, color = "contrasts", size = "DE_in_set")) +
+      geom_point(alpha = point_alpha) +
+      scale_size(name = "No. DE in set", range = size_range) 
+    
+  }else{
+    
+    ggp <- ggplot(data, aes_string(x = "log_adjp", y = geneset_var, color = "contrasts")) +
+      geom_point(alpha = point_alpha, size = size_range[2]) 
+    
+  }
+  
+  
+  xintercept <- -log10(c(0.05, 0.1))
+  xlab <- paste0("-log10(", adjp_var, ")")
+  xlim <- c(0, max(data[, "log_adjp"], na.rm = TRUE))
+  
+  
+  ggp <- ggp +
+    geom_vline(xintercept = xintercept, linetype = 2, color = "lightgrey") +
+    ggtitle(title) +
+    xlab(xlab) +
+    theme_cowplot(12) +
+    theme(axis.line = element_blank(), 
+      axis.title.y = element_blank(), 
+      axis.text.y = element_text(size = axis_text_y_size),
+      plot.title = element_text(size = title_size, hjust = 1),
+      strip.background = element_rect(colour = "white", fill = "white")) +
+    coord_cartesian(xlim = xlim) +
+    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    background_grid(major = "xy", minor = "none", size.major = 0.25) +
+    scale_color_manual(name = "Contrast", values = colors_point) +
+    facet_wrap(~ directions, nrow = 1)
+  
+  
+  ggp
+  
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -89,11 +89,6 @@ setMethod("bkable", "BclassDE", function(x, caption = NULL, header = NULL, font_
   res <- bresults(x)
   out <- boutput(x)
   
-  if(nrow(res) == 0){
-    message <- paste0("\n", bcaption(x), "\n\n")
-    return(message)
-  }
-  
   
   if(is.null(caption)){
     caption <- bcaption(x)
@@ -127,19 +122,19 @@ setMethod("bkable", "BclassDE", function(x, caption = NULL, header = NULL, font_
 })
 
 
-
 setMethod("show", "BclassDE", function(object){
   
-  x <- bkable(object)
+  res <- bresults(object)
   
-  if(is.character(x)){
-    cat(x)
+  if(nrow(res) == 0){
+    message <- paste0("\n", bcaption(object), "\n\n")
+    cat(message)
   }else{
-    print(x)
+    print(bkable(object))
   }
   
+  
 })
-
 
 
 
