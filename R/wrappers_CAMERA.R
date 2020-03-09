@@ -261,6 +261,16 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
   
   stopifnot(topn > 1)
   
+  stopifnot(direction %in% c("up", "down", "both"))
+  
+  if(direction == "both"){
+    direction_print <- "up-, down-"
+  }else{
+    direction_print <- paste0(direction, "-")  
+  }
+  
+  
+  
   ## We add '^' because we want to match expression at the beginning of the string
   contrasts <- gsub(paste0("^", direction_prefix, sep), "", grep(paste0("^", direction_prefix, sep), colnames(x), value = TRUE))
   
@@ -281,17 +291,18 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
   ## Subset by adj. p-value
   x_sort <- x_sort[x_sort[, adjp_prefix] < pval, , drop = FALSE]
   
+  
   ## Subset by LogFC
   if(direction == "up"){
     x_sort <- x_sort[x_sort[, direction_prefix] == "Up", , drop = FALSE]
-  }else{
+  }else if(direction == "down"){
     x_sort <- x_sort[x_sort[, direction_prefix] == "Down", , drop = FALSE]
   }
   
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no significantly enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction,"-regulated genes when testing for ", contrast, ".")
+    caption <- paste0("There are no enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -317,7 +328,7 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of significantly enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction,"-regulated genes when testing for ", contrast, ".")
+    caption <- paste0("List of enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       

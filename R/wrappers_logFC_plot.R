@@ -55,7 +55,7 @@
 wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", pval = 0.05, title = "", 
   axis_text_x_angle = 30, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
-  axis_text_y_size = 10, 
+  axis_text_y_size = 10, title_size = 12,
   color_low = '#D70131', color_mid = "white", color_high = '#42399B', 
   trim_limits = 2, radius_range = c(10, 3),
   legend_position = "right"){
@@ -135,7 +135,8 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
     geom_point(aes_string(size = "pval_cut", shape = "significance"), color = "black", show.legend = TRUE) +
     ggtitle(title) +
     theme_cowplot(12) +
-    theme(axis.line = element_blank(), 
+    theme(plot.title = element_text(size = title_size),
+      axis.line = element_blank(), 
       axis.title = element_blank(), 
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       axis.text.y = element_text(size = axis_text_y_size),

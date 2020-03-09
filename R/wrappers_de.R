@@ -94,23 +94,41 @@ wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"
 
 
 
+
 wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", 
-  topn = 20, pval = 0.05, lfc = 0, 
+  sort_by = "pval", topn = 20, pval = 0.05, lfc = 0, 
   gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   stats_prefixes = NULL, sep = "_", 
   caption = NULL){
   
-  
+  # -------------------------------------------------------------------------
+  # Checks
+  # -------------------------------------------------------------------------
   
   stopifnot(length(gene_vars) >= 1)
   stopifnot(all(gene_vars %in% colnames(x)))
   
   stopifnot(topn > 1)
   
+  stopifnot(sort_by %in% c("none", "pval", "lfc"))
+  
+  stopifnot(direction %in% c("up", "down", "both"))
+  
+  if(direction == "both"){
+    direction_print <- "up-, down-"
+  }else{
+    direction_print <- paste0(direction, "-")  
+  }
+  
   ## We add '^' because we want to match expression at the beginning of the string
   contrasts <- gsub(paste0("^", lfc_prefix, sep), "", grep(paste0("^", lfc_prefix, sep), colnames(x), value = TRUE))
   
   stopifnot(contrast %in% contrasts)
+  
+  
+  # -------------------------------------------------------------------------
+  # Processing
+  # -------------------------------------------------------------------------
   
   
   ## Find columns corresponding to the contrast and subset the data
@@ -122,21 +140,34 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   colnames(x) <- gsub(paste0(sep, contrast, "$"), "", colnames(x))
   
-  ## Sort by p-value
-  x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
+  
+  ## Sort
+  if(sort_by == "pval"){
+    x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
+  }else if(sort_by == "lfc"){
+    x_sort <- x[order(x[, lfc_prefix], decreasing = TRUE), , drop = FALSE]
+  }else{
+    x_sort <- x
+  }
+  
+  
   ## Subset by adj. p-value
   x_sort <- x_sort[x_sort[, adjp_prefix] < pval, , drop = FALSE]
-  ## Subset by LogFC
+  
+  
+  ## Subset by direction
   if(direction == "up"){
     x_sort <- x_sort[x_sort[, lfc_prefix] > lfc, , drop = FALSE]
-  }else{
+  }else if(direction == "down"){
     x_sort <- x_sort[x_sort[, lfc_prefix] < -lfc, , drop = FALSE]
+  }else{
+    x_sort <- x_sort[abs(x_sort[, lfc_prefix]) > lfc, , drop = FALSE]
   }
   
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no significantly ", direction, "-regulated genes (", adjp_prefix, " < ", pval, ", |", lfc_prefix, "| > ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("There are no ", direction_print, "regulated genes (", adjp_prefix, " < ", pval, ", |", lfc_prefix, "| > ", lfc, ") when testing for ", contrast, ".")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -164,7 +195,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of significantly ", direction, "-regulated genes (", adjp_prefix, " < ", pval, ", |", lfc_prefix, "| > ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("List of ", direction_print, "regulated genes (", adjp_prefix, " < ", pval, ", |", lfc_prefix, "| > ", lfc, ") when testing for ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       
@@ -185,8 +216,6 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   
 }
-
-
 
 
 
@@ -249,8 +278,8 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
   
   
   out <- plyr::rbind.fill(out)
-
-
+  
+  
   ## Adjust the p-values
   adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], p.adjust, method = "BH"))
   
