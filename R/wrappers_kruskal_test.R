@@ -202,7 +202,8 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassTesting(results = res, output = out, caption = caption, header = header)
   
@@ -415,7 +416,8 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassTesting(results = res, output = out, caption = caption, header = header)
   
@@ -538,6 +540,9 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
       hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
+      rownames(res) <- NULL
+      rownames(out) <- NULL
+      
       wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res), header = hdr)
       
       return(wrapper_res)
@@ -549,6 +554,9 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
     
     res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+    
+    rownames(res) <- NULL
+    rownames(out) <- NULL
     
     wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = bheader(wrapper_res[[1]]))
     
@@ -594,6 +602,8 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
   hdr <- bheader(wrapper_res[[1]])
   hdr[1] <- hdr[1] - hdr_shift
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   
@@ -695,6 +705,9 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
       hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
+      rownames(res) <- NULL
+      rownames(out) <- NULL
+      
       wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res), header = hdr)
       
       return(wrapper_res)
@@ -706,6 +719,9 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
     
     res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+    
+    rownames(res) <- NULL
+    rownames(out) <- NULL
     
     wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = bheader(wrapper_res[[1]]))
     
@@ -751,6 +767,8 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
   hdr <- bheader(wrapper_res[[1]])
   hdr[1] <- hdr[1] - hdr_shift
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   
@@ -870,7 +888,8 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
     }
   }
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   

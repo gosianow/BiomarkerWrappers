@@ -235,7 +235,8 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   caption <- gsub("_", " ", caption)
   
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassTesting(results = res, output = out, caption = caption)
   
@@ -365,8 +366,14 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
     
     ### Merge the results
     
+    ## This should work now too
+    # wrapper_res <- do.call(rbind, wrapper_res)
+    
     res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+    
+    rownames(res) <- NULL
+    rownames(out) <- NULL
     
     wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
     
@@ -401,6 +408,9 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
     out$`strat1 dummy` <- NULL
   }
   
+  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
   
@@ -515,6 +525,8 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = caption)
   
@@ -665,6 +677,8 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = caption)
   
@@ -939,7 +953,8 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   caption <- gsub("_", " ", caption)
   
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassTesting(results = res, output = out, caption = caption)
   
@@ -1047,6 +1062,9 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
     res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
     
+    rownames(res) <- NULL
+    rownames(out) <- NULL
+    
     wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
@@ -1077,6 +1095,8 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
     out$`strat1 dummy` <- NULL
   }
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
   
@@ -1189,6 +1209,8 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = caption)
   

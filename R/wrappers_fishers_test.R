@@ -162,7 +162,8 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassTesting(results = res, output = out, caption = caption, header = header)
   
@@ -281,6 +282,9 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
+      rownames(res) <- NULL
+      rownames(out) <- NULL
+      
       wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res), header = hdr)
       
       return(wrapper_res)
@@ -292,6 +296,9 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
     
     res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
     out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+    
+    rownames(res) <- NULL
+    rownames(out) <- NULL
     
     wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = bheader(wrapper_res[[1]]))
     
@@ -337,6 +344,8 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   hdr <- bheader(wrapper_res[[1]])
   hdr[1] <- hdr[1] - hdr_shift
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   
@@ -428,7 +437,8 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
     }
   }
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = hdr)
   

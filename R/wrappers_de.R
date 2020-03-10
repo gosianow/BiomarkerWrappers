@@ -208,6 +208,8 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassDE(results = res, output = out, caption = caption)
   

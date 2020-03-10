@@ -27,53 +27,6 @@ setValidity("BclassDE", function(object){
   
 })
 
-################################################################################
-### Replacing methods
-################################################################################
-
-### results
-
-#' @rdname Bclass-class
-#' @export
-setMethod("bresults<-", "BclassDE", function(x, value){
-  
-  BclassDE(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
-  
-})
-
-### output
-
-
-#' @rdname Bclass-class
-#' @export
-setMethod("boutput<-", "BclassDE", function(x, value){
-  
-  BclassDE(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
-  
-})
-
-
-### caption
-
-#' @rdname Bclass-class
-#' @export
-setMethod("bcaption<-", "BclassDE", function(x, value){
-  
-  BclassDE(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
-  
-})
-
-
-### header
-
-#' @rdname Bclass-class
-#' @export
-setMethod("bheader<-", "BclassDE", function(x, value){
-  
-  BclassDE(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
-  
-})
-
 
 
 ################################################################################

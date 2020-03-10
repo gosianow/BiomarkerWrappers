@@ -132,7 +132,8 @@ wrapper_core_characteristics_cat <- function(data, covariate_var, strat_var = NU
     
   }
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassCharacteristics(results = res, output = out, caption = caption, header = header)
   
@@ -270,7 +271,8 @@ wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NU
     
   }
   
-  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassCharacteristics(results = res, output = out, caption = caption, header = header)
   
@@ -380,6 +382,8 @@ wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL,
   
   header <- bheader(wrapper_res[[1]])
   
+  rownames(res) <- NULL
+  rownames(out) <- NULL
   
   bout <- BclassCharacteristics(results = res, output = out, caption = caption, header = header)
   
@@ -450,6 +454,9 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
     res <- cbind(bresults(characteristics_itt), bresults(characteristics_itt_treatment)[, -1, drop = FALSE])
     out <- cbind(boutput(characteristics_itt), boutput(characteristics_itt_treatment)[, -1, drop = FALSE])
     
+    rownames(res) <- NULL
+    rownames(out) <- NULL
+    
     characteristics_itt <- BclassCharacteristics(results = res, output = out)
     
   }
@@ -489,6 +496,9 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
         res <- cbind(bresults(characteristics_bep), bresults(characteristics_bep_treatment)[, -1, drop = FALSE])
         out <- cbind(boutput(characteristics_bep), boutput(characteristics_bep_treatment)[, -1, drop = FALSE])
         
+        rownames(res) <- NULL
+        rownames(out) <- NULL
+        
         characteristics_bep <- BclassCharacteristics(results = res, output = out)
         
       }
@@ -503,6 +513,9 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
     
     res <- cbind(bresults(characteristics_itt), do.call("cbind", lapply(characteristics_beps, bresults)))
     out <- cbind(boutput(characteristics_itt), do.call("cbind", lapply(characteristics_beps, boutput)))
+    
+    rownames(res) <- NULL
+    rownames(out) <- NULL
     
     characteristics_itt <- BclassCharacteristics(results = res, output = out)
     

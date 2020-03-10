@@ -24,6 +24,13 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   stopifnot(is.data.frame(data))
   
+  ### Keep non-missing data
+  
+  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+
+  
   ## Time to event variable must be numeric
   stopifnot(length(tte_var) == 1)
   stopifnot(is.numeric(data[, tte_var]))
@@ -34,13 +41,6 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.factor(data[, covariate_var]))
-  
-  
-  ### Keep non-missing data
-  
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
-  
-  variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
   # -------------------------------------------------------------------------

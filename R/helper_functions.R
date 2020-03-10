@@ -2,37 +2,52 @@
 
 ### Based on this AWESOME post http://michaeljw.com/blog/post/subchunkify/
 
-subchunkify <- function(g, fig_height=7, fig_width=5) {
-  g_deparsed <- paste0(deparse(
-    function() {g}
-  ), collapse = '')
-  
-  sub_chunk <- paste0("
-  `","``{r, fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}",
-    "\n(", 
-    g_deparsed
-    , ")()",
-    "\n`","``
-  ")
-  
-  cat(knitr::knit(text = knitr::knit_expand(text = sub_chunk), quiet = TRUE))
-}
-
-
-
-### My version, which does not seem to work...
-
-# subchunkify <- function(g, fig_height=5, fig_width=6, chunk_name = NULL){
+# subchunkify <- function(g, fig_height=7, fig_width=5) {
+#   g_deparsed <- paste0(deparse(
+#     function() {g}
+#   ), collapse = '')
 #   
-#   g_deparsed <- deparse(substitute(g))
-#   
-#   sub_chunk <- paste0("\n```{r ", chunk_name, ", fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}\n", 
-#     g_deparsed,
-#     "\n```\n")
+#   sub_chunk <- paste0("
+#   `","``{r, fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}",
+#     "\n(", 
+#     g_deparsed
+#     , ")()",
+#     "\n`","``
+#   ")
 #   
 #   cat(knitr::knit(text = knitr::knit_expand(text = sub_chunk), quiet = TRUE))
-#   
 # }
+
+
+
+
+### My version
+
+subchunkify <- function(g, fig_height = 5, fig_width = 6, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
+  ### Necessary to set for knit_child
+  ## knitr::opts_knit$set(output.dir = getwd())
+  
+  
+  g_deparsed <- paste0(deparse(substitute(g)), collapse = "")
+  
+  ### Make unique labels. In the end when using knit_child no need for unique labels. However, chunk_name must be unique.
+  # time <- paste0(gsub("[[:punct:] ]", "_", format(Sys.time())), "_", floor(runif(1) * 10000))
+  time <- NULL
+  
+  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}\n",
+    g_deparsed,
+    "\n```\n")
+  
+  if(display_subchunk){
+    cat(sub_chunk)
+  }
+  
+  ### Using knit_child is essential. Otherwise, with knit() error about unique chunk names.
+  
+  cat(knitr::knit_child(text = sub_chunk, quiet = TRUE, envir = envir))
+  
+}
+
 
 
 
@@ -91,7 +106,7 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
     phenoData = phenoData(x), 
     featureData = featureData(x))
   
-
+  
   out
   
 }
@@ -166,14 +181,14 @@ wrapper_write_gmt <- function(x, filename){
 
 wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
   
-  indx <- 1:length(plotlist)
+  indx <- seq_along(plotlist)
   indx_split <- split(indx, ceiling(seq_along(indx) / nsplit))
   
-  for(i in 1:length(indx_split)){
+  for(i in seq_along(indx_split)){
     print(plot_grid(plotlist = plotlist[indx_split[[i]]], ncol = ncol, nrow = nrow))
   }
   
-  invisible(NULL)
+  # invisible()
   
 }
 
@@ -428,7 +443,7 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
   output_format_non_scientific <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
   
   output_format_scientific <- paste0("<", formatC(10 ^ -round(-log10(x)), format = "e", digits = 0))
-
+  
   
   output <- ifelse(x < min_pval, output_format_scientific, output_format_non_scientific)
   

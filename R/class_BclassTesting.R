@@ -27,53 +27,6 @@ setValidity("BclassTesting", function(object){
   
 })
 
-################################################################################
-### Replacing methods
-################################################################################
-
-### results
-
-#' @rdname Bclass-class
-#' @export
-setMethod("bresults<-", "BclassTesting", function(x, value){
-  
-  BclassTesting(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
-  
-})
-
-### output
-
-
-#' @rdname Bclass-class
-#' @export
-setMethod("boutput<-", "BclassTesting", function(x, value){
-  
-  BclassTesting(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
-  
-})
-
-
-### caption
-
-#' @rdname Bclass-class
-#' @export
-setMethod("bcaption<-", "BclassTesting", function(x, value){
-  
-  BclassTesting(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
-  
-})
-
-
-### header
-
-#' @rdname Bclass-class
-#' @export
-setMethod("bheader<-", "BclassTesting", function(x, value){
-  
-  BclassTesting(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
-  
-})
-
 
 
 ################################################################################

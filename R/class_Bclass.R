@@ -74,6 +74,16 @@ setValidity("Bclass", function(object){
     return(paste0("Different number of rows for 'results' and 'output'!"))
   }
   
+  ### Check about the rownames
+  if(!is.null(rownames(object@results)) || !is.null(rownames(object@output))){
+    if(all(rownames(object@results) == rownames(object@output))){
+      out <- TRUE
+    }else{
+      return(paste0("Different row names for 'results' and 'output'!"))
+    }
+  }
+  
+  
   if(!is.null(object@header)){
     if(sum(object@header) == ncol(object@output)){
       out <- TRUE
@@ -89,7 +99,7 @@ setValidity("Bclass", function(object){
 
 
 ################################################################################
-### Generic for the show method
+### Generics for the show method
 ################################################################################
 
 
@@ -136,7 +146,13 @@ setGeneric("bresults<-", function(x, value) standardGeneric("bresults<-"))
 #' @export
 setMethod("bresults<-", "Bclass", function(x, value){
   
-  Bclass(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
+  # x <- Bclass(results = value, output = boutput(x), caption = bcaption(x), header = bheader(x))
+  
+  x@results <- value
+  
+  validObject(x)
+  
+  x
   
 })
 
@@ -171,7 +187,13 @@ setGeneric("boutput<-", function(x, value) standardGeneric("boutput<-"))
 #' @export
 setMethod("boutput<-", "Bclass", function(x, value){
   
-  Bclass(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
+  # x <- Bclass(results = bresults(x), output = value, caption = bcaption(x), header = bheader(x))
+  
+  x@output <- value
+  
+  validObject(x)
+  
+  x
   
 })
 
@@ -206,7 +228,13 @@ setGeneric("bcaption<-", function(x, value) standardGeneric("bcaption<-"))
 #' @export
 setMethod("bcaption<-", "Bclass", function(x, value){
   
-  Bclass(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
+  # x <- Bclass(results = bresults(x), output = boutput(x), caption = value, header = bheader(x))
+  
+  x@caption <- value
+  
+  validObject(x)
+  
+  x
   
 })
 
@@ -238,9 +266,335 @@ setGeneric("bheader<-", function(x, value) standardGeneric("bheader<-"))
 #' @export
 setMethod("bheader<-", "Bclass", function(x, value){
   
-  Bclass(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
+  # x <- Bclass(results = bresults(x), output = boutput(x), caption = bcaption(x), header = value)
+  
+  x@header <- value
+  
+  validObject(x)
+  
+  x
   
 })
+
+
+
+
+################################################################################
+### Other methods
+################################################################################
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("dim", "Bclass", function(x){
+  
+  dim(x@output)
+  
+})
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("nrow", "Bclass", function(x){
+  
+  nrow(x@output)
+  
+})
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("ncol", "Bclass", function(x){
+  
+  ncol(x@output)
+  
+})
+
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("colnames", "Bclass", function(x){
+  
+  colnames(x@output)
+  
+})
+
+#' @rdname Bclass-class
+#' @export
+setMethod("colnames<-", "Bclass", function(x, value){
+  
+  colnames(x@output) <- value
+  x
+  
+})
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("rownames", "Bclass", function(x){
+  
+  rownames(x@output)
+  
+})
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("rownames<-", "Bclass", function(x, value){
+  
+  rownames(x@output) <- value
+  rownames(x@results) <- value
+  
+  validObject(x)
+  
+  x
+  
+})
+
+
+
+###############################################################################
+### Subsetting methods
+###############################################################################
+
+
+
+#' @aliases [[,Bclass-method
+#' @rdname Bclass-class
+#' @export
+setMethod("[[", signature(x = "Bclass"), function(x, i, j){
+  
+  x@output[[i]]
+  
+})
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("$", "Bclass", function(x, name){
+  
+  x@output[[name]]
+  
+})
+
+
+
+
+#' @aliases [,Bclass-method [,Bclass,ANY-method
+#' @rdname Bclass-class
+#' @export
+setMethod("[", signature(x = "Bclass"), function(x, i, j){
+  ## No subsetting columns in results. Only rows.
+  
+  if(!missing(i)){
+    
+    if(!missing(j)){
+      
+      if(!is.null(bheader(x))){
+        ## TODO I have to update the calculation of header
+        new_header <- NULL
+      }else{
+        new_header <- bheader(x)
+      }
+      
+      new_results <- bresults(x)[i, , drop = FALSE]
+      new_output <- boutput(x)[i, j, drop = FALSE]
+      
+      
+      # x <- Bclass(results = new_results, 
+      #   output = new_output, 
+      #   caption = bcaption(x), 
+      #   header = new_header)
+      
+      
+      x@results <- new_results
+      x@output <- new_output
+      x@header <- new_header
+      
+      validObject(x)
+      
+      return(x)
+      
+      
+    }else{
+      
+      
+      new_results <- bresults(x)[i, , drop = FALSE]
+      new_output <- boutput(x)[i, , drop = FALSE]
+      
+      # x <- Bclass(results = new_results, 
+      #   output = new_output, 
+      #   caption = bcaption(x), 
+      #   header = bheader(x))
+      
+      x@results <- new_results
+      x@output <- new_output
+      
+      validObject(x)
+      
+      return(x)
+      
+    } 
+    
+  }else{
+    
+    if(!missing(j)){
+      
+      if(!is.null(bheader(x))){
+        ## TODO I have to update the calculation of header
+        new_header <- NULL
+      }else{
+        new_header <- bheader(x)
+      }
+      
+      new_output <- boutput(x)[, j, drop = FALSE]
+      
+      # x <- Bclass(results = bresults(x), 
+      #   output = new_output, 
+      #   caption = bcaption(x), 
+      #   header = new_header)
+      
+      
+      x@output <- new_output
+      x@header <- new_header
+      
+      validObject(x)
+      
+      return(x)
+      
+      
+    }else{
+      
+      return(x)
+      
+    } 
+    
+  }
+  
+})
+
+
+
+###############################################################################
+### rbind, cbind methods
+###############################################################################
+
+# getGeneric("rbind")
+# showMethods("rbind")
+# getMethod("rbind", "DataFrame")
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("rbind", "Bclass", function(..., deparse.level = 1){
+  
+  listData <- list(...)
+  
+  if(length(listData) == 1L && is.list(listData[[1L]])){
+    listData <- listData[[1L]]
+  }
+  
+  
+  if(length(listData) == 0L){
+    return()
+  }
+  
+  if(length(listData) == 1L){
+    return(listData[[1]])
+  }
+  
+  
+  ### All the objects have to be of the same class.
+  listData_class <- unique(sapply(listData, class))
+  
+  if(length(listData_class) > 1){
+    stop("All elements in '...' must be of the same class.")
+  }
+  
+  ### Caption and header are preserved from the first element
+  new_caption <- bcaption(listData[[1]])
+  new_header <- bheader(listData[[1]])
+  
+  
+  new_results <- do.call(rbind, lapply(listData, bresults))
+  new_output <- do.call(rbind, lapply(listData, boutput))
+  
+  
+  x <- new(listData_class, results = new_results, 
+    output = new_output,
+    caption = new_caption,
+    header = new_header)
+  
+  
+  return(x)
+  
+  
+})
+
+
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("cbind", "Bclass", function(..., deparse.level = 1){
+  
+  listData <- list(...)
+  
+  if(length(listData) == 1L && is.list(listData[[1L]])){
+    listData <- listData[[1L]]
+  }
+  
+  if(length(listData) == 0L){
+    return()
+  }
+  
+  if(length(listData) == 1L){
+    return(listData[[1]])
+  }
+  
+  
+  ### All the objects have to be of the same class.
+  listData_class <- unique(sapply(listData, class))
+  
+  if(length(listData_class) > 1){
+    stop("All elements in '...' must be of the same class.")
+  }
+  
+  ### Caption is preserved from the first element
+  ### Header is set to NULL
+  new_caption <- bcaption(listData[[1]])
+  new_header <- NULL
+  
+  
+  new_results <- do.call(cbind, lapply(listData, bresults))
+  new_output <- do.call(cbind, lapply(listData, boutput))
+  
+  
+  x <- new(listData_class, results = new_results, 
+    output = new_output,
+    caption = new_caption,
+    header = new_header)
+  
+  
+  return(x)
+  
+  
+})
+
+
+
+
+
+
+
+
+
+
 
 
 
