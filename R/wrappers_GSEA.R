@@ -1,20 +1,21 @@
-
+#' @include wrappers_CAMERA.R 
+NULL
 
 
 
 
 
 ##############################################################################
-# CAMERA
+# GSEA
 ##############################################################################
 
 
 
-# statistic <- topTable$t_LUMB_VS_LUMA
-# names(statistic) <- topTable$GeneID
+# statistic <- topTable$t_ECR1_VS_parental_NoTrt
+# names(statistic) <- topTable$EntrezIDs
 # 
 # genesets <- geneset_list_reactome
-# genesets_extra_info <- geneset_extra_reactome 
+# genesets_extra_info <- geneset_extra_reactome
 # gene_mapping <- entrez2hgnc
 # 
 # 
@@ -23,10 +24,10 @@
 
 
 
-#' Run CAMERA
+#' Run GSEA
 #' 
 #' @param statistic Named vector of t statistics from limma or logFC.
-wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
+wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
   
   
   # -------------------------------------------------------------------------
@@ -54,10 +55,18 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
   
   genesets <- lapply(genesets, unique)
   
+  # genesets[[1]]
+  # statistic[genesets[[1]]]
+  
+  
   ### Keep genes in the gene sets that are in the universe
   
   ## We want to keep the order that is in the univarse so it has to be the first argument in intersect
   genesets <- lapply(genesets, function(x){intersect(universe, x)})
+  
+  # genesets[[1]]
+  # statistic[genesets[[1]]]
+  
   
   ### Exclude too small or too large gene sets
   
@@ -74,7 +83,7 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
   
   camera_index <- ids2indices(genesets, universe)
   
-  # camera_index[["DNA Replication"]]
+  # camera_index[[1]]
   
   if(!is.null(gene_mapping)){
     
@@ -87,13 +96,16 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
   
   
   # -------------------------------------------------------------------------
-  # Run cameraPR
+  # Run fgseaMultilevel
   # -------------------------------------------------------------------------
   
+  ## Actually, fgsea sorts the statistic in the descending order
+  fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic)
   
-  camera_out <- limma::cameraPR(statistic = statistic, index = camera_index, inter.gene.cor = 0.05, sort = FALSE)
+  ### Make the same order as in genesets
+  fgsea_out <- fgsea_out[match(names(genesets), fgsea_out$pathway), , drop = FALSE]
   
-  stopifnot(all(rownames(camera_out) == names(genesets)))
+  stopifnot(all(fgsea_out$pathway == names(genesets)))
   
   
   # -------------------------------------------------------------------------
@@ -111,7 +123,7 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
     
   }
   
-  out$NGenes <- camera_out$NGenes
+  out$size <- fgsea_out$size
   
   ### Names of leading genes
   out$Genes <- sapply(seq_along(camera_index), function(i){
@@ -119,7 +131,7 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
     
     x <- camera_index[[i]]
     
-    direction <- camera_out$Direction[i]
+    direction <- ifelse(fgsea_out$ES[i] > 0, "Up", "Down")
     
     if(direction == "Up"){
       x <- rev(x)
@@ -141,11 +153,13 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
     mean(statistic[x], na.rm = TRUE)
   }), 2)
   
-  out$Direction <- camera_out$Direction
+  out$Direction <- ifelse(fgsea_out$ES > 0, "Up", "Down")
+  out$ES <- round(fgsea_out$ES, 2)
+  out$NES <- round(fgsea_out$NES, 2)
   
-  out$P.Value <- camera_out$PValue
+  out$P.Value <- fgsea_out$pval
   
-  out$adj.P.Val <- camera_out$FDR
+  out$adj.P.Val <- fgsea_out$padj
   
   
   ### Sort by p-value
@@ -179,10 +193,10 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
 
 
 
-#' Run CAMERA
+#' Run GSEA
 #' 
 #' @param x TopTable
-wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
+wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   min_GS_size = 10, max_GS_size = 500,
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
   display_topn = 10){
@@ -201,14 +215,14 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
   
   
   # -------------------------------------------------------------------------
-  # Run CAMERA for each contrast
+  # Run GSEA for each contrast
   # -------------------------------------------------------------------------
   
   ## We add '^' because we want to match expression at the beginning of the string
   contrasts <- gsub(paste0("^", statistic_prefix, sep), "", grep(paste0("^", statistic_prefix, sep), colnames(x), value = TRUE))
   
   
-  res_camera <- lapply(1:length(contrasts), function(i){
+  res_gsea <- lapply(1:length(contrasts), function(i){
     # i = 1
     
     contrast <- contrasts[i]
@@ -217,23 +231,23 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
     names(statistic) <- x[, gene_var]
     
     
-    res_camera <- wrapper_core_cameraPR(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
+    res_gsea <- wrapper_core_gsea(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
       min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn, statistic_name = statistic_prefix)
     
     
     ### Add contrast info to the column names
     
-    colnames2change <- !colnames(res_camera) %in% geneset_vars
+    colnames2change <- !colnames(res_gsea) %in% geneset_vars
     
-    colnames(res_camera)[colnames2change] <- paste(colnames(res_camera)[colnames2change], contrast, sep = sep)
+    colnames(res_gsea)[colnames2change] <- paste(colnames(res_gsea)[colnames2change], contrast, sep = sep)
     
-    return(res_camera)
+    return(res_gsea)
     
   })
   
-  res_camera <- Reduce(function(...) merge(..., by = geneset_vars, all = TRUE, sort = FALSE), res_camera)
+  res_gsea <- Reduce(function(...) merge(..., by = geneset_vars, all = TRUE, sort = FALSE), res_gsea)
   
-  return(res_camera)
+  return(res_gsea)
   
 }
 
@@ -242,116 +256,22 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 
 
 
-# x <- topTable_camera
-# 
-# direction = "up"
-# topn = 20; pval = 0.05; 
-# geneset_vars = "Geneset"; direction_prefix = "Direction"; pval_prefix = "P.Value"; adjp_prefix = "adj.P.Val"; 
-# stats_prefixes = c("NGenes", "Genes", "Mean.t"); sep = "_"; 
-# caption = NULL
 
 
-wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
+wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
   topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("NGenes", "Genes", "Mean.t"), sep = "_", 
+  stats_prefixes = c("size", "Genes", "Mean.t"), sep = "_", 
   caption = NULL){
   
   
-  stopifnot(length(geneset_vars) >= 1)
-  stopifnot(all(geneset_vars %in% colnames(x)))
+  out <- wrapper_dispaly_significant_camera(x, contrast = contrast, direction = direction, 
+    topn = topn, pval = pval, 
+    geneset_vars = geneset_vars, direction_prefix = direction_prefix, pval_prefix = pval_prefix, adjp_prefix = adjp_prefix, 
+    stats_prefixes = stats_prefixes, sep = sep, 
+    caption = caption)
   
-  stopifnot(topn > 1)
-  
-  stopifnot(length(direction) == 1)
-  stopifnot(direction %in% c("up", "down", "both"))
-  
-  if(direction == "both"){
-    direction_print <- "up-, down-"
-  }else{
-    direction_print <- paste0(direction, "-")  
-  }
-  
-  
-  
-  ## We add '^' because we want to match expression at the beginning of the string
-  contrasts <- gsub(paste0("^", direction_prefix, sep), "", grep(paste0("^", direction_prefix, sep), colnames(x), value = TRUE))
-  
-  stopifnot(contrast %in% contrasts)
-  
-  
-  ## Find columns corresponding to the contrast and subset the data
-  ## We add '$' because we want to match expression at the end of the string
-  
-  contrast_vars_display <- paste0(c(direction_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast)
-  
-  x <- x[ , c(geneset_vars, contrast_vars_display), drop = FALSE]
-  
-  colnames(x) <- gsub(paste0(sep, contrast, "$"), "", colnames(x))
-  
-  ## Sort by p-value
-  x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
-  ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] < pval, , drop = FALSE]
-  
-  
-  ## Subset by LogFC
-  if(direction == "up"){
-    x_sort <- x_sort[x_sort[, direction_prefix] == "Up", , drop = FALSE]
-  }else if(direction == "down"){
-    x_sort <- x_sort[x_sort[, direction_prefix] == "Down", , drop = FALSE]
-  }
-  
-  
-  if(nrow(x_sort) == 0){
-    
-    caption <- paste0("There are no enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
-    
-    ## Remove all undescores from the caption because they are problematic when rendering to PDF
-    caption <- gsub("_", " ", caption)
-    
-    return(BclassDE(caption = caption))
-    
-  }
-  
-  
-  res <- x_sort[1:(min(nrow(x_sort), topn)), , drop = FALSE]
-  rownames(res) <- NULL
-  
-  out <- res %>% 
-    mutate_at(pval_prefix, format_pvalues2) %>% 
-    mutate_at(adjp_prefix, format_pvalues2)
-  
-  
-  
-  # --------------------------------------------------------------------------
-  # Generate caption
-  # --------------------------------------------------------------------------
-  
-  
-  if(is.null(caption)){
-    
-    caption <- paste0("List of enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
-    
-    if(nrow(x_sort) >  topn){
-      
-      caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " gene sets.")
-      
-    }
-    
-  }
-  
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
-  caption <- gsub("_", " ", caption)
-  
-  rownames(res) <- NULL
-  rownames(out) <- NULL
-  
-  bout <- BclassDE(results = res, output = out, caption = caption)
-  
-  
-  return(bout)
-  
+  return(out)
   
 }
 

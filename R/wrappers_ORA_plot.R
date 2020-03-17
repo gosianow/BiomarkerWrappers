@@ -23,7 +23,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
   ## Wrap the gene set names so they can be nicely displayed in the plots
   x[, geneset_var] <- stringr::str_wrap(x[, geneset_var], width = axis_text_y_width)
   
-  ## Append white spaces to the befinning of the gene set names so the plots have the same width
+  ## Append white spaces to the beginning of the gene set names so the plots have the same width
   nchar_geneset_name <- nchar(x[, geneset_var])
   times_rep_blank <- axis_text_y_width - nchar_geneset_name
   times_rep_blank[times_rep_blank < 0] <- 0
@@ -116,13 +116,17 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with ORA results.
-wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", 
+wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", directions = c("down", "up", "both"),
   title = "", title_size = 10, title_width = 70, axis_text_y_size = 8, axis_text_y_width = 70, colors_point = NULL, size_range = c(2, 10),
   point_alpha = 0.8){
   
   
   stopifnot(length(geneset_var) == 1)
-
+  stopifnot(all(directions %in% c("up", "down", "both")))
+  
+  directions_labels <- c("up" = "Up-regulation", "down" = "Down-regulation", "both" = "Up-Down-regulation")
+  directions_labels <- directions_labels[directions]
+  
   
   ## Wrap the title so it can be nicely displayed in the plots
   title <- stringr::str_wrap(title, width = title_width)
@@ -142,11 +146,12 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   ## We add '^' because we want to match expression at the beginning of the string
   contrasts_and_directions <- gsub(paste0("^", adjp_prefix, sep), "", grep(paste0("^", adjp_prefix, sep), colnames(x), value = TRUE))
   
-  directions <- c("up", "down")
+  
   
   ## We add '$' because we want to match expression at the end of the string
-  contrasts <- gsub(paste0(sep, directions[1], "$"), "", contrasts_and_directions)
-  contrasts <- gsub(paste0(sep, directions[2], "$"), "", contrasts)
+  contrasts <- gsub(paste0(sep, "up$"), "", contrasts_and_directions)
+  contrasts <- gsub(paste0(sep, "down$"), "", contrasts)
+  contrasts <- gsub(paste0(sep, "both$"), "", contrasts)
   contrasts <- unique(contrasts)
   
   
@@ -170,8 +175,9 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   
   ### Retrive contrasts
-  data$contrasts <- gsub(paste0(sep, directions[1], "$"), "", data$contrasts_and_directions)
-  data$contrasts <- gsub(paste0(sep, directions[2], "$"), "", data$contrasts)
+  data$contrasts <- gsub(paste0(sep, "up$"), "", data$contrasts_and_directions)
+  data$contrasts <- gsub(paste0(sep, "down$"), "", data$contrasts)
+  data$contrasts <- gsub(paste0(sep, "both$"), "", data$contrasts)
   
   data$contrasts <- factor(data$contrasts, levels = contrasts)
   
@@ -181,7 +187,11 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
     gsub(paste0("^", data$contrasts[i], sep), "", data$contrasts_and_directions[i])
   })
   
-  data$directions <- factor(data$directions, levels = c("down", "up"), labels = c("Down-regulation", "Up-regulation"))
+  
+  data$directions <- factor(data$directions, levels = directions, labels = directions_labels)
+  
+  data <- data[complete.cases(data$directions), , drop = FALSE]
+  
   
   
   

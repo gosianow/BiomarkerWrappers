@@ -1,5 +1,57 @@
 
 
+
+
+round_signif <- function(x, digits = 2){
+  ifelse(abs(x) >= 1, round(x, digits = digits), signif(x, digits = digits))
+}
+
+
+
+eSet2csv <- function(es, file, digits = 2){
+  
+  fdata <- Biobase::fData(es)
+  pdata <- Biobase::pData(es)
+  expr <- round_signif(Biobase::exprs(es))
+  
+  
+  if(!all(colnames(expr) == pdata[, 1])){
+    stop("Column names of expression must be the same as the fisrt column in pData.")
+  }
+  
+  
+  ## Prepare the top table
+  if(ncol(pdata) == 0){
+    top_table <- data.frame()
+  }else{
+    top_table <- cbind(matrix("", nrow = ncol(pdata), ncol = ncol(fdata)), colnames(pdata), t(pdata))
+  }
+  
+  write.table(top_table, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = FALSE)
+  
+  ## Add empty row
+  if(nrow(top_table) > 0){
+    write.table("", file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
+  }
+  
+  ## Prepare bottom table
+  
+  bottom_header <- t(c(colnames(fdata), "", colnames(expr)))
+  
+  write.table(bottom_header, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
+  
+  bottom_table <- data.frame(fdata, "", as.data.frame.matrix(expr), stringsAsFactors = FALSE, check.names = FALSE)
+  
+  write.table(bottom_table, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
+  
+  
+}
+
+
+
+
+
+
 ### Based on this AWESOME post http://michaeljw.com/blog/post/subchunkify/
 
 # subchunkify <- function(g, fig_height=7, fig_width=5) {
@@ -27,6 +79,19 @@ subchunkify <- function(g, fig_height = 5, fig_width = 6, chunk_name = NULL, env
   ### Necessary to set for knit_child
   ## knitr::opts_knit$set(output.dir = getwd())
   
+  # -----------------------------------------------------------------------
+  # Some checks
+  # -----------------------------------------------------------------------
+  
+  stopifnot(length(fig_height) == 1)
+  stopifnot(fig_height > 0)
+  
+  stopifnot(length(fig_width) == 1)
+  stopifnot(fig_width > 0)
+  
+  # -----------------------------------------------------------------------
+  # Subchunkify
+  # -----------------------------------------------------------------------
   
   g_deparsed <- paste0(deparse(substitute(g)), collapse = "")
   

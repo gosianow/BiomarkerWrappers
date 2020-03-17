@@ -161,7 +161,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   ### ----------------------------------------------------------------------
   
-  res[res[, upper_var] == Inf, upper_var] <- NA
+  res[res[, upper_var] %in% Inf, upper_var] <- NA
   
   labeltext <- rbind(colnames(out), out)
   

@@ -61,6 +61,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   ## Set
   K <- sapply(genesets, length)
   
+  ## We want to keep the order that is in genes so it has to be the first argument in intersect
   genes_intersection <- lapply(genesets, function(x){intersect(genes, x)})
   
   ## DE in Set
@@ -170,9 +171,12 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
 #' @param x TopTable.
 wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL, gene_mapping = NULL, 
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500,
-  min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
+  directions = c("up", "down", "both"), min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
   gene_var = "EntrezIDs", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", sep = "_", 
   display_topn = 10){
+  
+  
+  stopifnot(all(directions %in% c("up", "down", "both")))
   
   
   # -------------------------------------------------------------------------
@@ -195,8 +199,6 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
   ## We add '^' because we want to match expression at the beginning of the string
   contrasts <- gsub(paste0("^", lfc_prefix, sep), "", grep(paste0("^", lfc_prefix, sep), colnames(x), value = TRUE))
   
-  directions <- c("up", "down")
-  
   
   # -------------------------------------------------------------------------
   # Run ORA for each contrast up- and down-regulated genes
@@ -217,6 +219,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
       
       
       x_sign <- wrapper_dispaly_significant_genes(x, contrast = contrast, direction = direction, topn = topn, pval = pval, lfc = lfc, gene_vars = gene_var, lfc_prefix = lfc_prefix, pval_prefix = pval_prefix, adjp_prefix = adjp_prefix, sep = sep)
+      
       
       if(nrow(bresults(x_sign)) < min_DE_size){
         return(NULL)
@@ -285,10 +288,27 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   caption = NULL){
   
   
+  # -------------------------------------------------------------------------
+  # Checks
+  # -------------------------------------------------------------------------
+  
   stopifnot(length(geneset_vars) >= 1)
   stopifnot(all(geneset_vars %in% colnames(x)))
   
   stopifnot(topn > 1)
+  
+  stopifnot(length(direction) == 1)
+  stopifnot(direction %in% c("up", "down", "both"))
+  
+  if(direction == "both"){
+    direction_print <- "up-, down-"
+  }else{
+    direction_print <- paste0(direction, "-")  
+  }
+  
+  # -------------------------------------------------------------------------
+  # Preprocessing
+  # -------------------------------------------------------------------------
   
   
   ## We add '^' because we want to match expression at the beginning of the string
@@ -299,7 +319,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   
   if(!contrast %in% contrasts){
     
-    caption <- paste0("There was no or too few ", direction, "-regulated genes when testing for ", contrast, ", and the ORA analysis was not possible.")
+    caption <- paste0("There was no or too few ", direction_print, "regulated genes when testing for ", contrast, ", and the ORA analysis was not possible.")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -327,7 +347,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction, "-regulated genes when testing for ", contrast, ".")
+    caption <- paste0("There are no over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -352,7 +372,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction, "-regulated genes when testing for ", contrast, ".")
+    caption <- paste0("List of over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " gene sets.")
