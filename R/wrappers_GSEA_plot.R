@@ -3,7 +3,10 @@
 
 
 
-
+# x <- topTable
+# genesets; contrast; gene_var = "EntrezIDs"; statistic_prefix = "t"; sep = "_"; 
+# trim_limits = 0.02; min_GS_size = 10; max_GS_size = 500;
+# title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 70
 
 
 
@@ -112,9 +115,11 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   
   ggdata$Geneset_num <- as.numeric(ggdata$Geneset)
   
-  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$Geneset_num
+  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.2, -0.2)
   
-  
+  ggdata$statistic_fixed <- ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.5, -0.5)
+    
+    
   # -------------------------------------------------------------------------
   # ggplot
   # -------------------------------------------------------------------------
@@ -122,6 +127,8 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   
   xlim <- c(0, max(data$rank))
   xlab <- "Rank"
+  
+  
   
   
   ggp <-  ggplot(ggdata, aes(x = rank, xend = rank, y = Geneset, yend = statistic_adj2, color = direction)) +
