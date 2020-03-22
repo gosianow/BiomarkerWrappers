@@ -4,32 +4,6 @@
 
 
 
-# color_point_var = NULL
-# facet_var = NULL
-# 
-# 
-# colors_point = NULL
-# variable_names = NULL
-# xlab = NULL
-# ylab = NULL
-# title = NULL
-# subtitle = NULL
-# tag = NULL
-# legend_title_colors_point = NULL
-# facet_label_both = TRUE
-# point_size = 1.5
-# point_shape = 1
-# point_alpha = 1
-# title_size = 12
-# strip_text_size = NULL
-# facet_scales = "fixed"
-# xlim = NULL
-# ylim = NULL
-# background_grid_major = "none"
-
-
-
-
 
 
 
@@ -39,12 +13,14 @@
 #' Generate a signle scatter.
 #' 
 #' @param data Data frame.
-wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
+wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   colors_point = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, 
   legend_title_colors_point = NULL, legend_position = "right", facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 1, point_alpha = 1, 
+  smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
+  smooth_size = 2, smooth_type = 1, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none"){
   
@@ -145,6 +121,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
     
   }
   
+  
   ggpl <- ggpl +
     labs(title = title, subtitle = subtitle, tag = tag) + 
     ylab(ylab) +
@@ -157,6 +134,28 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
       legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     coord_cartesian(xlim = xlim, ylim = ylim)
+  
+  
+  if(!is.null(color_smooth_var)){
+    
+    if(is.na(color_smooth_var)){
+      
+      ggpl <- ggpl + 
+        geom_smooth(aes_string(group = 1), 
+          method = smooth_method, formula = smooth_formula, se = smooth_se, 
+          linetype = smooth_type, size = smooth_size)
+      
+    }else{
+      
+      ggpl <- ggpl + 
+        geom_smooth(aes_string(group = color_smooth_var, color = color_smooth_var), 
+          method = smooth_method, formula = smooth_formula, se = smooth_se, 
+          linetype = smooth_type, size = smooth_size)
+      
+      
+    }
+    
+  }
   
   
   if(!is.null(facet_var)){
@@ -195,13 +194,15 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
 #' Generate scatter plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
-wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
+wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_point = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
   legend_title_colors_point = NULL, legend_position = "right", facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 1, point_alpha = 1, 
+  smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
+  smooth_size = 2, smooth_type = 1, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
@@ -302,12 +303,14 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
       }
       
       
-      ggpl <- wrapper_core_point_plot(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, facet_var = facet_var, 
+      ggpl <- wrapper_core_point_plot(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, color_smooth_var = , facet_var = facet_var, 
         colors_point = colors_point, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, 
         legend_title_colors_point = legend_title_colors_point, legend_position = legend_position, facet_label_both = facet_label_both, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, 
+        smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
+        smooth_size = smooth_size, smooth_type = smooth_type,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim, 
         background_grid_major = background_grid_major)
       
