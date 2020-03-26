@@ -11,6 +11,7 @@
 
 
 wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
+  name = "", sep = "_",
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, display_topn = 20){
   
   # -------------------------------------------------------------------------
@@ -25,6 +26,12 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   if(!is.null(gene_mapping)){
     stopifnot(all(genes %in% gene_mapping[, 1]))
   }
+  
+  
+  if(name == ""){
+    sep = ""
+  }
+  
   
   # -------------------------------------------------------------------------
   # Preprocessing
@@ -103,7 +110,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   }
   
   
-  out$Genes <- sapply(genes_intersection, function(x){
+  out[, paste0("Genes", sep, name)] <- sapply(genes_intersection, function(x){
     
     suffix <- ""
     
@@ -127,20 +134,20 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   })
   
   
-  out$GeneRatio <- paste0(k, " / ", n)
-  out$BgRatio <- paste0(K, " / ", N)
+  out[, paste0("GeneRatio", sep, name)] <- paste0(k, " / ", n)
+  out[, paste0("BgRatio", sep, name)] <- paste0(K, " / ", N)
   
-  out$Observed <- k
-  out$Expected <- round(K/N*n, 1)
+  out[, paste0("Observed", sep, name)] <- k
+  out[, paste0("Expected", sep, name)] <- round(K/N*n, 1)
   
-  out$P.Value <- pvalues
+  out[, paste0("P.Value", sep, name)] <- pvalues
   
-  out$adj.P.Val <- p.adjust(pvalues, method = "BH")
+  out[, paste0("adj.P.Val", sep, name)] <- p.adjust(pvalues, method = "BH")
   
   
   ### Sort by p-value
   
-  out <- out[order(out$P.Value, decreasing = FALSE), , drop = FALSE]
+  out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
   
   out
   
@@ -168,7 +175,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
 
 #' Over-representation analysis (ORA)
 #' 
-#' @param x TopTable.
+#' @param x TopTable with DGE results.
 wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL, gene_mapping = NULL, 
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500,
   directions = c("up", "down", "both"), min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
@@ -229,17 +236,14 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
       genes <- genes[!is.na(genes)]
       
       
+      name <- paste0(contrast, sep, direction)
+      
+      
       ### Run ORA
       
       res_ora <- wrapper_core_ora(genes, genesets = genesets, universe = universe, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
+        name = name, sep = sep,
         method = method, min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn)
-      
-      
-      ### Add contrast info to the column names
-      
-      colnames2change <- !colnames(res_ora) %in% geneset_vars
-      
-      colnames(res_ora)[colnames2change] <- paste(colnames(res_ora)[colnames2change], contrast, direction, sep = sep)
       
       
       return(res_ora)
@@ -280,11 +284,13 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
 
 
 
-
-wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up", 
-  topn = 20, pval = 0.05,
+#' Display significant pathways for a given contrast and direction
+#' 
+#' @param x TopTable with ORA results.
+wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both", 
+  sort_by = "pval", topn = 20, pval = 0.05,
   geneset_vars = "Geneset", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("Genes", "GeneRatio", "BgRatio", "Observed", "Expected"), sep = "_", 
+  genes_prefix = "Genes", stats_prefixes = c("GeneRatio", "BgRatio", "Observed", "Expected"), sep = "_", 
   caption = NULL){
   
   
@@ -297,13 +303,18 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   
   stopifnot(topn > 1)
   
-  stopifnot(length(direction) == 1)
-  stopifnot(direction %in% c("up", "down", "both"))
+  stopifnot(sort_by %in% c("none", "pval"))
   
-  if(direction == "both"){
-    direction_print <- "up-, down-"
+  stopifnot(length(direction) == 1)
+  stopifnot(direction %in% c("up", "down", "both", ""))
+  
+  
+  if(direction ==""){
+    direction_print <- ""
+  }else if(direction == "both"){
+    direction_print <- "up- and down-regulated"
   }else{
-    direction_print <- paste0(direction, "-")  
+    direction_print <- paste0(direction, "-regulated")  
   }
   
   # -------------------------------------------------------------------------
@@ -319,7 +330,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   
   if(!contrast %in% contrasts){
     
-    caption <- paste0("There was no or too few ", direction_print, "regulated genes when testing for ", contrast, ", and the ORA analysis was not possible.")
+    caption <- paste0("There was no or too few ", direction_print, " genes corresponding to ", contrast, ", and the ORA analysis was not possible.")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -332,22 +343,36 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   ## Find columns corresponding to the contrast and subset the data
   ## We add '$' because we want to match expression at the end of the string
   
-  contrast_vars_display <- paste0(c(stats_prefixes, pval_prefix, adjp_prefix), sep, contrast, sep, direction)
+  if(direction == "both"){
+    contrast_vars_display <- c(paste0(genes_prefix, sep, contrast, sep, c("up", "down")),
+      paste0(c(stats_prefixes, pval_prefix, adjp_prefix), sep, contrast, sep, direction))
+    contrast_vars_display <- contrast_vars_display[contrast_vars_display %in% colnames(x)]
+  }else{
+    contrast_vars_display <- paste0(c(genes_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast, sep, direction)
+  }
+  
   
   x <- x[ , c(geneset_vars, contrast_vars_display), drop = FALSE]
   
   colnames(x) <- gsub(paste0(sep, contrast, sep, direction, "$"), "", colnames(x))
+  colnames(x)[grep(paste0(sep, "up$"), colnames(x))] <- paste0(genes_prefix, ":up-regulated")
+  colnames(x)[grep(paste0(sep, "down$"), colnames(x))] <- paste0(genes_prefix, ":down-regulated")
   
   
-  ## Sort by p-value
-  x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
+  ## Sort
+  if(sort_by == "pval"){
+    x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
+  }else{
+    x_sort <- x
+  }
+  
   ## Subset by adj. p-value
   x_sort <- x_sort[x_sort[, adjp_prefix] < pval, , drop = FALSE]
   
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
+    caption <- paste0("There are no over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, " genes corresponding to ", contrast, ".")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -372,7 +397,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
+    caption <- paste0("List of over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, " genes corresponding to ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " gene sets.")
@@ -398,8 +423,100 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "up",
 
 
 
+# directions = c("up", "down"); 
+# geneset_vars = "Geneset"; genes_prefix = "Genes"; sep = "_"; 
+# caption = NULL
 
 
+
+
+#' Display DE genes that are present in the selected gene sets
+#' 
+#' @param x TopTable with ORA results for gene sets that should be displayed.
+#' @param contrast Name of the contrasts that should be displayed.
+#' @param directions Names of gene regulation directions that should be displayed.  
+wrapper_dispaly_ora_genes <- function(x, contrast, directions = c("up", "down"), 
+  geneset_vars = "Geneset", genes_prefix = "Genes", sep = "_", 
+  caption = NULL){
+  
+  
+  # -------------------------------------------------------------------------
+  # Checks
+  # -------------------------------------------------------------------------
+  
+  stopifnot(nrow(x) > 0)
+  
+  stopifnot(length(geneset_vars) >= 1)
+  stopifnot(all(geneset_vars %in% colnames(x)))
+  
+  
+  if(all(directions %in% c("up", "down"))){
+    directions_print <- paste0(directions, "-regulated") 
+  }else{
+    directions_print <- directions
+  }
+  
+  
+  # -------------------------------------------------------------------------
+  # Preprocessing
+  # -------------------------------------------------------------------------
+  
+  contrast_and_directions <- paste0(contrast, sep, directions)
+  
+  ## We add '^' because we want to match expression at the beginning of the string
+  contrasts_and_directions <- gsub(paste0("^", genes_prefix, sep), "", grep(paste0("^", genes_prefix, sep), colnames(x), value = TRUE))
+  ## We add '$' because we want to match expression at the end of the string
+  contrasts <- lapply(seq_along(directions), function(i){
+    # i = 1
+    direction <- directions[i]
+    gsub(paste0(sep, direction, "$"), "", grep(paste0(sep, direction, "$"), contrasts_and_directions, value = TRUE))
+  })
+  contrasts <- unique(unlist(contrasts))
+  
+  
+  if(!(contrast %in% contrasts && any(contrast_and_directions %in% contrasts_and_directions))){
+    
+    caption <- paste0("There was no or too few genes corresponding to ", contrast, ", and the ORA analysis was not possible.")
+    
+    ## Remove all undescores from the caption because they are problematic when rendering to PDF
+    caption <- gsub("_", " ", caption)
+    
+    return(BclassDE(caption = caption))
+    
+  }
+  
+  
+  ## Find columns corresponding to the contrast and directions
+
+  res <- out <- x[, c(geneset_vars, paste0(genes_prefix, sep, contrast_and_directions)), drop = FALSE]
+  
+  colnames(out) <- c(geneset_vars, paste0(genes_prefix, ":", directions_print))
+  
+  
+  # --------------------------------------------------------------------------
+  # Generate caption
+  # --------------------------------------------------------------------------
+  
+  
+  if(is.null(caption)){
+    
+    caption <- paste0("List of genes corresponding to ", contrast, ".")
+  
+  }
+  
+  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  caption <- gsub("_", " ", caption)
+  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
+  
+  bout <- BclassDE(results = res, output = out, caption = caption)
+  
+  
+  return(bout)
+  
+  
+}
 
 
 

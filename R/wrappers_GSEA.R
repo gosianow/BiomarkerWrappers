@@ -27,7 +27,9 @@ NULL
 #' Run GSEA
 #' 
 #' @param statistic Named vector of t statistics from limma or logFC.
-wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
+wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
+  name = "", sep = "_",
+  min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
   
   
   # -------------------------------------------------------------------------
@@ -47,7 +49,9 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
     stopifnot(all(intersect(unlist(genesets), universe) %in% gene_mapping[, 1]))
   }
   
-  
+  if(name == ""){
+    sep = ""
+  }
   
   # -------------------------------------------------------------------------
   # Preprocessing
@@ -123,10 +127,10 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
     
   }
   
-  out$size <- fgsea_out$size
+  out[, paste0("size", sep, name)] <- fgsea_out$size
   
   ### Names of leading genes
-  out$Genes <- sapply(seq_along(camera_index), function(i){
+  out[, paste0("Genes", sep, name)] <- sapply(seq_along(camera_index), function(i){
     # i = 1
     
     x <- camera_index[[i]]
@@ -149,22 +153,22 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
   })
   
   
-  out[, paste0("Mean.", statistic_name)] <- round(sapply(camera_index, function(x){
+  out[, paste0("Mean.", statistic_name, sep, name)] <- round(sapply(camera_index, function(x){
     mean(statistic[x], na.rm = TRUE)
   }), 2)
   
-  out$Direction <- ifelse(fgsea_out$ES > 0, "Up", "Down")
-  out$ES <- round(fgsea_out$ES, 2)
-  out$NES <- round(fgsea_out$NES, 2)
+  out[, paste0("Direction", sep, name)] <- ifelse(fgsea_out$ES > 0, "Up", "Down")
+  out[, paste0("ES", sep, name)] <- round(fgsea_out$ES, 2)
+  out[, paste0("NES", sep, name)] <- round(fgsea_out$NES, 2)
   
-  out$P.Value <- fgsea_out$pval
+  out[, paste0("P.Value", sep, name)] <- fgsea_out$pval
   
-  out$adj.P.Val <- fgsea_out$padj
+  out[, paste0("adj.P.Val", sep, name)] <- fgsea_out$padj
   
   
   ### Sort by p-value
   
-  out <- out[order(out$P.Value, decreasing = FALSE), , drop = FALSE]
+  out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
   
   out
   
@@ -230,16 +234,12 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
     statistic <- x[, paste0(statistic_prefix, sep, contrast)]
     names(statistic) <- x[, gene_var]
     
-    
+    name <- contrast
+
     res_gsea <- wrapper_core_gsea(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
+      name = name, sep = sep,
       min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn, statistic_name = statistic_prefix)
     
-    
-    ### Add contrast info to the column names
-    
-    colnames2change <- !colnames(res_gsea) %in% geneset_vars
-    
-    colnames(res_gsea)[colnames2change] <- paste(colnames(res_gsea)[colnames2change], contrast, sep = sep)
     
     return(res_gsea)
     
@@ -259,14 +259,14 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
 
 
 wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
-  topn = 20, pval = 0.05, 
+  sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   stats_prefixes = c("size", "Genes", "Mean.t"), sep = "_", 
   caption = NULL){
   
   
   out <- wrapper_dispaly_significant_camera(x, contrast = contrast, direction = direction, 
-    topn = topn, pval = pval, 
+    sort_by = sort_by, topn = topn, pval = pval, 
     geneset_vars = geneset_vars, direction_prefix = direction_prefix, pval_prefix = pval_prefix, adjp_prefix = adjp_prefix, 
     stats_prefixes = stats_prefixes, sep = sep, 
     caption = caption)

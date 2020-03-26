@@ -26,7 +26,9 @@
 #' Run CAMERA
 #' 
 #' @param statistic Named vector of t statistics from limma or logFC.
-wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
+wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
+  name = "", sep = "_",
+  min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
   
   
   # -------------------------------------------------------------------------
@@ -46,7 +48,9 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
     stopifnot(all(intersect(unlist(genesets), universe) %in% gene_mapping[, 1]))
   }
   
-  
+  if(name == ""){
+    sep = ""
+  }
   
   # -------------------------------------------------------------------------
   # Preprocessing
@@ -111,10 +115,10 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
     
   }
   
-  out$NGenes <- camera_out$NGenes
+  out[, paste0("NGenes", sep, name)] <- camera_out$NGenes
   
   ### Names of leading genes
-  out$Genes <- sapply(seq_along(camera_index), function(i){
+  out[, paste0("Genes", sep, name)] <- sapply(seq_along(camera_index), function(i){
     # i = 1
     
     x <- camera_index[[i]]
@@ -137,20 +141,20 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
   })
   
   
-  out[, paste0("Mean.", statistic_name)] <- round(sapply(camera_index, function(x){
+  out[, paste0("Mean.", statistic_name, sep, name)] <- round(sapply(camera_index, function(x){
     mean(statistic[x], na.rm = TRUE)
   }), 2)
   
-  out$Direction <- camera_out$Direction
+  out[, paste0("Direction", sep, name)] <- camera_out$Direction
   
-  out$P.Value <- camera_out$PValue
+  out[, paste0("P.Value", sep, name)] <- camera_out$PValue
   
-  out$adj.P.Val <- camera_out$FDR
+  out[, paste0("adj.P.Val", sep, name)] <- camera_out$FDR
   
   
   ### Sort by p-value
   
-  out <- out[order(out$P.Value, decreasing = FALSE), , drop = FALSE]
+  out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
   
   out
   
@@ -216,17 +220,13 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
     statistic <- x[, paste0(statistic_prefix, sep, contrast)]
     names(statistic) <- x[, gene_var]
     
-    
+    name <- contrast
+
     res_camera <- wrapper_core_cameraPR(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
+      name = name, sep = sep,
       min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn, statistic_name = statistic_prefix)
     
-    
-    ### Add contrast info to the column names
-    
-    colnames2change <- !colnames(res_camera) %in% geneset_vars
-    
-    colnames(res_camera)[colnames2change] <- paste(colnames(res_camera)[colnames2change], contrast, sep = sep)
-    
+
     return(res_camera)
     
   })
@@ -252,17 +252,22 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 
 
 wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
-  topn = 20, pval = 0.05, 
+  sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   stats_prefixes = c("NGenes", "Genes", "Mean.t"), sep = "_", 
   caption = NULL){
   
+  # -------------------------------------------------------------------------
+  # Checks
+  # -------------------------------------------------------------------------
   
   stopifnot(length(geneset_vars) >= 1)
   stopifnot(all(geneset_vars %in% colnames(x)))
   
   stopifnot(topn > 1)
   
+  stopifnot(sort_by %in% c("none", "pval"))
+
   stopifnot(length(direction) == 1)
   stopifnot(direction %in% c("up", "down", "both"))
   
@@ -272,6 +277,9 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
     direction_print <- paste0(direction, "-")  
   }
   
+  # -------------------------------------------------------------------------
+  # Preprocessing
+  # -------------------------------------------------------------------------
   
   
   ## We add '^' because we want to match expression at the beginning of the string
@@ -289,13 +297,19 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
   
   colnames(x) <- gsub(paste0(sep, contrast, "$"), "", colnames(x))
   
-  ## Sort by p-value
-  x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
+  
+  ## Sort
+  if(sort_by == "pval"){
+    x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
+  }else{
+    x_sort <- x
+  }
+
   ## Subset by adj. p-value
   x_sort <- x_sort[x_sort[, adjp_prefix] < pval, , drop = FALSE]
   
   
-  ## Subset by LogFC
+  ## Subset by direction
   if(direction == "up"){
     x_sort <- x_sort[x_sort[, direction_prefix] == "Up", , drop = FALSE]
   }else if(direction == "down"){

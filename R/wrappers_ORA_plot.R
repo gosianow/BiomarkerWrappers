@@ -9,9 +9,9 @@
 
 #' Dot plot with ORA results for a single contrast 
 #' 
-#' @param x TopTable with ORA results.
-wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRatio_var = "GeneRatio", adjp_var = "adj.P.Val",  
-  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70, color_point = 'darkslateblue', size_range = c(2, 10)){
+#' @param x TopTable with selected ORA results obtained by running 'wrapper_dispaly_significant_ora'.
+wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_prefix = "Genes", GeneRatio_var = "GeneRatio", adjp_var = "adj.P.Val",  
+  title = "", title_size = 10, title_width = 200, axis_text_y_size = 8, axis_text_y_width = 150, color_point = 'darkslateblue', size_range = c(2, 10)){
   
   
   stopifnot(length(geneset_var) == 1)
@@ -20,20 +20,21 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
   title <- stringr::str_wrap(title, width = title_width)
   
   
-  ## Wrap the gene set names so they can be nicely displayed in the plots
-  x[, geneset_var] <- stringr::str_wrap(x[, geneset_var], width = axis_text_y_width)
+  ## Add gene lists to the gene set names 
+  genes_vars <- setdiff(grep(paste0("^", genes_prefix), colnames(x), value = TRUE), "Geneset")
+  if(genes_vars > 1){
+    for(i in seq_along(genes_vars)){
+      x[, genes_vars[i]] <- ifelse(x[, genes_vars[i]] == "", "", paste0(gsub(paste0(genes_prefix, ":"), "", genes_vars[i]), ": ", x[, genes_vars[i]]))
+      
+    }
+  }
   
-  ## Append white spaces to the beginning of the gene set names so the plots have the same width
-  nchar_geneset_name <- nchar(x[, geneset_var])
-  times_rep_blank <- axis_text_y_width - nchar_geneset_name
-  times_rep_blank[times_rep_blank < 0] <- 0
+  gene_list_suffix <- paste0(" [", unlist(apply(x[, genes_vars, drop = FALSE], 1, paste0, collapse = " ")), "]") 
+  gene_list_suffix <- stringr::str_wrap(gene_list_suffix, width = axis_text_y_width)
   
-  x[, geneset_var] <- ifelse(nchar_geneset_name < axis_text_y_width, 
-    paste0(sapply(times_rep_blank, function(x){paste0(rep("  ", x), collapse = "")}), x[, geneset_var]), 
-      x[, geneset_var])
-
+  x[, geneset_var] <- paste0(x[, geneset_var], "\n", gene_list_suffix)
   
-  x[, geneset_var] <- factor(x[, geneset_var], levels = rev(unique(x[, geneset_var])))
+  x[, geneset_var] <- factor(x[, geneset_var], levels = rev(x[, geneset_var]))
   
   
   ## To avoid p-values equal to zero
@@ -82,10 +83,12 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
     theme(axis.line = element_blank(), 
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
-      plot.title = element_text(size = title_size, hjust = 1)) +
+      plot.title = element_text(size = title_size, hjust = 1),
+      legend.position = "left") +
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
-    background_grid(major = "xy", minor = "none", size.major = 0.25)
+    background_grid(major = "xy", minor = "none", size.major = 0.25) +
+    scale_y_discrete(position = "right")
   
   
   ggp
@@ -117,7 +120,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
 #' 
 #' @param x TopTable with ORA results.
 wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
-  title = "", title_size = 10, title_width = 70, axis_text_y_size = 8, axis_text_y_width = 70, colors_point = NULL, size_range = c(2, 10),
+  title = "", title_size = 10, title_width = 150, axis_text_y_size = 8, axis_text_y_width = 100, colors_point = NULL, size_range = c(2, 10),
   point_alpha = 0.8){
   
   
@@ -206,7 +209,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   data$log_adjp <- -log10(data[, adjp_var])
   
-
+  
   ## Derive the number of DE genes that overlap with the gene set
   
   if(!is.null(GeneRatio_var)){
