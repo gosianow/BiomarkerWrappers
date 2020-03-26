@@ -43,7 +43,7 @@
 # title = "";
 # axis_text_x_angle = 30; axis_text_x_vjust = 1; axis_text_x_hjust = 1;
 # axis_text_y_size = 10;
-# color_low = '#D70131'; color_mid = "white"; color_high = '#42399B'; radius_range = c(10, 3)
+# color_low = '#42399B'; color_mid = "white"; color_high = '#D70131'; radius_range = c(10, 3)
 
 
 
@@ -56,7 +56,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   sep = "_", pval = 0.05, title = "", 
   axis_text_x_angle = 30, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
   axis_text_y_size = 10, title_size = 12,
-  color_low = '#D70131', color_mid = "white", color_high = '#42399B', 
+  color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_limits = 2, radius_range = c(10, 3),
   legend_position = "right"){
   
@@ -187,7 +187,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
 wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", draw = TRUE, title = "",
-  color_low = '#D70131', color_mid = "white", color_high = '#42399B', trim_limits = NULL,
+  color_low = '#42399B', color_mid = "white", color_high = '#D70131', trim_limits = NULL,
   rect_gp = gpar(col = "grey"), point_size = 3,
   cluster_rows = FALSE, 
   row_split = NULL, column_split = NULL,
@@ -324,7 +324,7 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' @param x Matrix with expression to plot
 wrapper_gene_expression_heatmap <- function(x,  
   name = "sample\nlogFC", draw = TRUE, title = "", 
-  color_low = 'orchid1', color_mid = "royalblue4", color_high = 'turquoise1', trim_limits = NULL,
+  color_low = 'turquoise1', color_mid = "royalblue4", color_high = 'orchid1', trim_limits = NULL,
   cluster_rows = FALSE, cluster_columns = FALSE,
   left_annotation = NULL, top_annotation = NULL, 
   row_split = NULL, column_split = NULL,
@@ -332,6 +332,8 @@ wrapper_gene_expression_heatmap <- function(x,
   show_row_names = TRUE, show_column_names = FALSE, 
   row_names_gp = gpar(fontsize = 9), column_names_gp = gpar(fontsize = 9), ...){
   
+  ### Colors for z-score
+  # color_low = 'cornflowerblue', color_mid = "black", color_high = 'orangered'
   
   matrix <- as.matrix(x)
   

@@ -36,7 +36,7 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   data <- data.frame(universe = names(statistic), statistic = statistic, rank = rank(-statistic), 
     stringsAsFactors = FALSE)
   
-  data$direction <- factor(ifelse(data$statistic > 0, "up", "down"))
+  data$direction <- factor(ifelse(data$statistic > 0, "up", "down"), levels = c("up", "down"))
   
   
   
@@ -144,7 +144,7 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
     background_grid(major = "y", minor = "none", size.major = 0.25) +
-    scale_color_manual(values = c('#42399B', '#D70131')) +
+    scale_color_manual(values = c('#D70131', '#42399B')) +
     scale_x_continuous(expand = c(0, 0))
   
   

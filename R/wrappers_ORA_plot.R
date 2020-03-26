@@ -116,7 +116,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", GeneRati
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with ORA results.
-wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", directions = c("down", "up", "both"),
+wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
   title = "", title_size = 10, title_width = 70, axis_text_y_size = 8, axis_text_y_width = 70, colors_point = NULL, size_range = c(2, 10),
   point_alpha = 0.8){
   

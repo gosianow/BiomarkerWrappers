@@ -302,6 +302,82 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
 
 
 
+##############################################################################
+# lmer
+##############################################################################
+
+
+# data <- pdata
+# biomarker_vars <- names(gene_signature_collection[[1]])
+# formula <- as.formula("~ 0 + DE_var + (1|PatientID)")
+
+
+
+wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
+  
+  
+  stopifnot(length(biomarker_vars) >= 1)
+  stopifnot(all(sapply(data[, biomarker_vars], class) == "numeric"))
+  
+  contrasts <- colnames(contrast_matrix)
+  
+  
+  ## Fit lm for each biomarker separately
+  
+  out <- lapply(seq_along(biomarker_vars), function(i){
+    # i = 1
+    
+    formula_tmp <- as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
+    
+    fit <- lme4::lmer(formula_tmp, data)
+    
+    
+    ## Fit contrasts one by one
+    out_glht <- lapply(seq_along(contrasts), function(k){
+      # k = 1
+      
+      glht_tmp <- multcomp::glht(fit, linfct = t(contrast_matrix[, k, drop = FALSE]))
+      
+      summary_tmp <- summary(glht_tmp)
+      
+      
+      pval <- summary_tmp$test$pvalues
+      
+      lfc <- as.numeric(summary_tmp$test$coefficients)
+      
+      out <- data.frame(biomarker = biomarker_vars[i], lfc = lfc, pval = pval, stringsAsFactors = FALSE)
+      colnames(out) <- c("biomarker", paste0("logFC_", contrasts[k]), paste0("P.Value_", contrasts[k]))
+      
+      out
+      
+    })
+    
+    out <- do.call(cbind, out_glht)
+    out
+    
+    
+  })
+  
+  
+  out <- plyr::rbind.fill(out)
+  
+  
+  ## Adjust the p-values
+  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], p.adjust, method = "BH"))
+  
+  colnames(adjp) <- paste0("adj.P.Val_", contrasts)
+  
+  out <- cbind(out, adjp)
+  
+  column_order <- c("biomarker", apply(expand.grid(c("logFC_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
+  
+  out <- out[, column_order, drop = FALSE]
+  
+  out
+  
+  
+}
+
 
 
 

@@ -11,7 +11,7 @@
 
 
 wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
-  method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, display_topn = 10){
+  method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, display_topn = 20){
   
   # -------------------------------------------------------------------------
   # Checks
@@ -173,7 +173,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500,
   directions = c("up", "down", "both"), min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
   gene_var = "EntrezIDs", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", sep = "_", 
-  display_topn = 10){
+  display_topn = 20){
   
   
   stopifnot(all(directions %in% c("up", "down", "both")))
