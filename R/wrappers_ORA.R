@@ -252,7 +252,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
     })
     
     
-
+    
     null_res_ora <- sapply(res_ora, is.null)
     if(all(null_res_ora)){
       return(NULL)
@@ -324,8 +324,13 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
   
   ## We add '^' because we want to match expression at the beginning of the string
   contrasts_and_directions <- gsub(paste0("^", pval_prefix, sep), "", grep(paste0("^", pval_prefix, sep), colnames(x), value = TRUE))
+  
   ## We add '$' because we want to match expression at the end of the string
-  contrasts <- gsub(paste0(sep, direction, "$"), "", grep(paste0(sep, direction, "$"), contrasts_and_directions, value = TRUE))
+  if(direction == ""){
+    contrasts <- contrasts_and_directions
+  }else{
+    contrasts <- gsub(paste0(sep, direction, "$"), "", grep(paste0(sep, direction, "$"), contrasts_and_directions, value = TRUE))
+  }
   
   
   if(!contrast %in% contrasts){
@@ -347,14 +352,22 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
     contrast_vars_display <- c(paste0(genes_prefix, sep, contrast, sep, c("up", "down")),
       paste0(c(stats_prefixes, pval_prefix, adjp_prefix), sep, contrast, sep, direction))
     contrast_vars_display <- contrast_vars_display[contrast_vars_display %in% colnames(x)]
+  }else if(direction == ""){
+    contrast_vars_display <- paste0(c(genes_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast)
   }else{
     contrast_vars_display <- paste0(c(genes_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast, sep, direction)
   }
   
+  print(contrast_vars_display)
   
   x <- x[ , c(geneset_vars, contrast_vars_display), drop = FALSE]
   
-  colnames(x) <- gsub(paste0(sep, contrast, sep, direction, "$"), "", colnames(x))
+  if(direction == ""){
+    colnames(x) <- gsub(paste0(sep, contrast, "$"), "", colnames(x))
+  }else{
+    colnames(x) <- gsub(paste0(sep, contrast, sep, direction, "$"), "", colnames(x))
+  }
+  
   colnames(x)[grep(paste0(sep, "up$"), colnames(x))] <- paste0(genes_prefix, ":up-regulated")
   colnames(x)[grep(paste0(sep, "down$"), colnames(x))] <- paste0(genes_prefix, ":down-regulated")
   
@@ -487,7 +500,7 @@ wrapper_dispaly_ora_genes <- function(x, contrast, directions = c("up", "down"),
   
   
   ## Find columns corresponding to the contrast and directions
-
+  
   res <- out <- x[, c(geneset_vars, paste0(genes_prefix, sep, contrast_and_directions)), drop = FALSE]
   
   colnames(out) <- c(geneset_vars, paste0(genes_prefix, ":", directions_print))
@@ -501,7 +514,7 @@ wrapper_dispaly_ora_genes <- function(x, contrast, directions = c("up", "down"),
   if(is.null(caption)){
     
     caption <- paste0("List of genes corresponding to ", contrast, ".")
-  
+    
   }
   
   ## Remove all undescores from the caption because they are problematic when rendering to PDF
