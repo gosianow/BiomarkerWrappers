@@ -3,10 +3,11 @@
 
 
 
-# x <- topTable
-# genesets; contrast; gene_var = "EntrezIDs"; statistic_prefix = "t"; sep = "_"; 
-# trim_limits = 0.02; min_GS_size = 10; max_GS_size = 500;
-# title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 70
+x <- topTable
+genesets; contrast; gene_var = "EntrezIDs"; 
+statistic_prefix = "t"; sep = "_";
+trim_limits = 0.02; min_GS_size = 10; max_GS_size = 500;
+title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 70
 
 
 
@@ -15,7 +16,7 @@
 #' 
 #' @param x TopTable.
 wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
-  trim_limits = 0.02, min_GS_size = 10, max_GS_size = 500,
+  trim_limits = NULL, min_GS_size = 10, max_GS_size = 500,
   title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70){
   
   
@@ -43,18 +44,19 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   ### Trim limits
   
   if(is.null(trim_limits)){
-    max_abs_value <- ceiling(max(abs(range(data[, "statistic"], na.rm = TRUE))))
+    max_abs_value <- max(abs(range(data[, "statistic"], na.rm = TRUE)))
   }else if(trim_limits >= 1){
     max_abs_value <- trim_limits
   }else{
     ### Use quantiles 
-    max_abs_value <- ceiling(max(abs(quantile(data[, "statistic"], probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE))))
+    max_abs_value <- max(abs(quantile(data[, "statistic"], probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE)))
   }
   
   
   data$statistic[data$statistic > max_abs_value] <- max_abs_value
   data$statistic[data$statistic < -max_abs_value] <- -max_abs_value
   
+  ### Normalize the hight of lines to 1
   data$statistic_adj <- data$statistic / (2 * max_abs_value)
   
   
@@ -115,7 +117,7 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   
   ggdata$Geneset_num <- as.numeric(ggdata$Geneset)
   
-  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.2, -0.2)
+  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.1, -0.1)
   
   ggdata$statistic_fixed <- ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.5, -0.5)
     
@@ -129,10 +131,11 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   xlab <- "Rank"
   
   
+  # ggp <-  ggplot(ggdata, aes(x = rank, xend = rank, y = Geneset, yend = statistic_fixed, color = direction))
   
-  
-  ggp <-  ggplot(ggdata, aes(x = rank, xend = rank, y = Geneset, yend = statistic_adj2, color = direction)) +
-    geom_segment() +
+  ggp <-  ggplot(ggdata, aes(x = 0, y = Geneset, group = Geneset)) +
+    geom_line() +
+    geom_segment(aes(x = rank, xend = rank, y = Geneset_num - 0.45, yend = Geneset_num + 0.45, color = direction)) +
     ggtitle(title) +
     xlab(xlab) +
     theme_cowplot(12) +

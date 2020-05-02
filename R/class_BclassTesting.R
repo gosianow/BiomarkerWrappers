@@ -62,7 +62,7 @@ setMethod("bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
   
   kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = full_width, font_size = font_size) %>% 
-    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "FC", "P-value", "Adj. P-value")), bold = TRUE) 
+    kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "Difference", "P-value", "Adj. P-value")), bold = TRUE) 
   
   
   if(!is.null(header)){

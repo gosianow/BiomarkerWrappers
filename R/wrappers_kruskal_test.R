@@ -802,8 +802,8 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
-#' @param cat_vars Vector with names of categorical variables. If it has length > 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
-wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+#' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
+wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -814,6 +814,10 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   stopifnot(length(num_vars) >= 1)
   stopifnot(length(cat_vars) >= 1)
   
+  stopifnot(length(display_in_column) == 1)
+  stopifnot(display_in_column %in% c("cat", "num"))
+  
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
@@ -822,7 +826,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   # --------------------------------------------------------------------------
   
   
-  if(length(cat_vars) > 1){
+  if(length(cat_vars) >= 1 && display_in_column == "num"){
     
     stopifnot(length(num_vars) == 1)
     

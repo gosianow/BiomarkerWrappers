@@ -75,7 +75,7 @@ eSet2csv <- function(es, file, digits = 2){
 
 ### My version
 
-subchunkify <- function(g, fig_height = 5, fig_width = 6, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
+subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
   ### Necessary to set for knit_child
   ## knitr::opts_knit$set(output.dir = getwd())
   
@@ -83,11 +83,11 @@ subchunkify <- function(g, fig_height = 5, fig_width = 6, chunk_name = NULL, env
   # Some checks
   # -----------------------------------------------------------------------
   
-  stopifnot(length(fig_height) == 1)
-  stopifnot(fig_height > 0)
+  stopifnot(length(fig.height) == 1)
+  stopifnot(fig.height > 0)
   
-  stopifnot(length(fig_width) == 1)
-  stopifnot(fig_width > 0)
+  stopifnot(length(fig.width) == 1)
+  stopifnot(fig.width > 0)
   
   # -----------------------------------------------------------------------
   # Subchunkify
@@ -99,7 +99,7 @@ subchunkify <- function(g, fig_height = 5, fig_width = 6, chunk_name = NULL, env
   # time <- paste0(gsub("[[:punct:] ]", "_", format(Sys.time())), "_", floor(runif(1) * 10000))
   time <- NULL
   
-  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig_height, ", fig.width=", fig_width, ", echo=FALSE}\n",
+  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", echo=FALSE}\n",
     g_deparsed,
     "\n```\n")
   
@@ -321,7 +321,7 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("(0%, 25%]", "(25%, 5
   for(i in 1:length(strata_levels)){
     # i = 1
     
-    indx_sub <- which(strata == strata_levels[i])
+    indx_sub <- which(strata %in% strata_levels[i])
     
     out[indx_sub] <- cut_core_quartiles(x[indx_sub], labels = labels)
     
@@ -344,7 +344,7 @@ cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
   for(i in 1:length(strata_levels)){
     # i = 1
     
-    indx_sub <- which(strata == strata_levels[i])
+    indx_sub <- which(strata %in% strata_levels[i])
     
     out[indx_sub] <- cut_core_median(x[indx_sub], labels = labels)
     
@@ -356,20 +356,26 @@ cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
 
 
 
-cut_core_2groups_strat <- function(x, strata, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
+cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high")){
   
   stopifnot(is.factor(strata))
+  
+  stopifnot(length(probs) == nlevels(strata))
+  
+  if(!is.null(cutoff)){
+    stopifnot(length(cutoff) == nlevels(strata))
+  }
   
   strata_levels <- levels(strata)
   
   out <- factor(rep(NA, length(x)), levels = labels)
   
-  for(i in 1:length(strata_levels)){
+  for(i in seq_along(strata_levels)){
     # i = 1
     
-    indx_sub <- which(strata == strata_levels[i])
+    indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- cut_core_2groups(x[indx_sub], probs = probs, cutoff = cutoff, labels = labels) 
+    out[indx_sub] <- cut_core_2groups(x[indx_sub], probs = probs[i], cutoff = cutoff[i], labels = labels) 
     
   }
   
@@ -703,6 +709,7 @@ format_variable_names <- function(data, variable_names = NULL){
   new_variable_names <- gsub("_", " ", colnames(data))
   names(new_variable_names) <- colnames(data)
   
+  
   if(!is.null(variable_names)){
     
     stopifnot(!is.null(names(variable_names)))
@@ -712,20 +719,21 @@ format_variable_names <- function(data, variable_names = NULL){
     
   }
   
+  
   ### There cannot be duplicated names. If so, fix it.
   
   if(sum(duplicated(new_variable_names)) > 0){
     
     dupl_names <- unique(new_variable_names[duplicated(new_variable_names)])
     
-    fixed_names <- lapply(1:length(dupl_names), function(i){
+    fixed_names <- lapply(seq_along(dupl_names), function(i){
       # i = 1
       
       dupl_indx <- which(new_variable_names == dupl_names[i])
       
       new_names <- paste(dupl_names[i], 1:length(dupl_indx))
       
-      out <- data.frame(dupl_indx = dupl_indx, new_names = new_names)
+      out <- data.frame(dupl_indx = dupl_indx, new_names = new_names, stringsAsFactors = FALSE)
       
       
     })

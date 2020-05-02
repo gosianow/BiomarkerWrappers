@@ -39,7 +39,8 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
   stopifnot(min_GS_size >= 1)
   stopifnot(max_GS_size > min_GS_size)
   
-  statistic <- sort(statistic, decreasing = FALSE)
+  ## fgsea sorts the statistic in the descending order
+  statistic <- sort(statistic, decreasing = TRUE)
   
   stopifnot(!is.null(names(statistic)))
   
@@ -103,7 +104,7 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
   # Run fgseaMultilevel
   # -------------------------------------------------------------------------
   
-  ## Actually, fgsea sorts the statistic in the descending order
+  ## fgsea sorts the statistic in the descending order
   fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic)
   
   ### Make the same order as in genesets
@@ -137,7 +138,7 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
     
     direction <- ifelse(fgsea_out$ES[i] > 0, "Up", "Down")
     
-    if(direction == "Up"){
+    if(direction == "Down"){
       x <- rev(x)
     }
     
@@ -153,8 +154,8 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
   })
   
   
-  out[, paste0("Mean.", statistic_name, sep, name)] <- round(sapply(camera_index, function(x){
-    mean(statistic[x], na.rm = TRUE)
+  out[, paste0("Median.", statistic_name, sep, name)] <- round(sapply(camera_index, function(x){
+    median(statistic[x], na.rm = TRUE)
   }), 2)
   
   out[, paste0("Direction", sep, name)] <- ifelse(fgsea_out$ES > 0, "Up", "Down")
@@ -261,7 +262,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
 wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("size", "Genes", "Mean.t"), sep = "_", 
+  stats_prefixes = c("size", "Genes", "Median.t", "NES"), sep = "_", 
   caption = NULL){
   
   

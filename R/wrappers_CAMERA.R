@@ -141,8 +141,8 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
   })
   
   
-  out[, paste0("Mean.", statistic_name, sep, name)] <- round(sapply(camera_index, function(x){
-    mean(statistic[x], na.rm = TRUE)
+  out[, paste0("Median.", statistic_name, sep, name)] <- round(sapply(camera_index, function(x){
+    median(statistic[x], na.rm = TRUE)
   }), 2)
   
   out[, paste0("Direction", sep, name)] <- camera_out$Direction
@@ -254,7 +254,7 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("NGenes", "Genes", "Mean.t"), sep = "_", 
+  stats_prefixes = c("NGenes", "Genes", "Median.t"), sep = "_", 
   caption = NULL){
   
   # -------------------------------------------------------------------------

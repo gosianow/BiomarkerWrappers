@@ -13,7 +13,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, 
   legend_title_colors_box = NULL, legend_title_colors_point = NULL, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = TRUE, show_median = TRUE, 
-  point_size = 1, point_shape = 1, point_alpha = 1, 
+  point_size = 1, point_shape = 1, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -25,6 +25,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   # -------------------------------------------------------------------------
   
   stopifnot(is.data.frame(data))
+  data <- data.frame(data, stringsAsFactors = FALSE, check.names = FALSE)
   
   stopifnot(length(x_var) == 1)
   stopifnot(is.factor(data[, x_var]))
@@ -52,6 +53,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   
   ## We do not exclude the missing values in color_line_var
   data <- data[complete.cases(data[, c(x_var, y_var, dodge_var, facet_var)]), , drop = FALSE]
+  
+  stopifnot(nrow(data) > 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -184,15 +187,15 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
     if(point_shape %in% 21:25){
       
       ggpl <- ggpl +
-        new_scale_fill() +
-        geom_jitter(aes_string(fill = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_point) +
+        ggnewscale::new_scale_fill() +
+        geom_jitter(aes_string(fill = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
     }else{
       
       ggpl <- ggpl +
-        geom_jitter(aes_string(color = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_point) +
+        geom_jitter(aes_string(color = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -209,8 +212,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
     if(point_shape %in% 21:25){
       
       ggpl <- ggpl +
-        new_scale_fill() +
-        geom_jitter(aes_string(fill = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_point) +
+        ggnewscale::new_scale_fill() +
+        geom_jitter(aes_string(fill = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
@@ -218,7 +221,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ## The group determines dodging 
       ggpl <- ggpl +
-        geom_jitter(aes_string(color = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_point) +
+        geom_jitter(aes_string(color = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -335,7 +338,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
   xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
   legend_title_colors_box = NULL, legend_title_colors_point = NULL, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = TRUE, show_median = TRUE, 
-  point_size = 1, point_shape = 1, point_alpha = 1, 
+  point_size = 1, point_shape = 1, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -438,7 +441,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, 
         legend_title_colors_box = legend_title_colors_box, legend_title_colors_point = legend_title_colors_point, legend_position = legend_position, facet_label_both = facet_label_both, 
         show_total_counts = show_total_counts, show_median = show_median, 
-        point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, 
+        point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
         label_size = label_size, 
@@ -500,7 +503,7 @@ wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_
   xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
   legend_title_colors_box = NULL, legend_title_colors_point = NULL, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = TRUE, show_median = TRUE, 
-  point_size = 1, point_shape = 1, point_alpha = 1, 
+  point_size = 1, point_shape = 1, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -549,7 +552,7 @@ wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_
     xlab = xlab, ylab = ylab, title = title, subtitle_label_both = subtitle_label_both, tag_label_both = tag_label_both,
     legend_title_colors_box = legend_title_colors_box, legend_title_colors_point = legend_title_colors_point, legend_position = legend_position, facet_label_both = facet_label_both, 
     show_total_counts = show_total_counts, show_median = show_median, 
-    point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, 
+    point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
     label_size = label_size, 

@@ -152,7 +152,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
         coord_cartesian(xlim = c(0, max_tte)))
     
     
-    ggpl_new <- cowplot::plot_grid(ggpl_plot, ggpl_table, ncol = 1, align = 'v', axis = 'l', rel_heights = rel_heights)
+    ggpl_new <- cowplot::plot_grid(ggpl_plot, ggpl_table, ncol = 1, nrow = 2, align = 'v', axis = 'lr', rel_heights = rel_heights)
     
     
   }else{

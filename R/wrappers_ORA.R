@@ -358,7 +358,6 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
     contrast_vars_display <- paste0(c(genes_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast, sep, direction)
   }
   
-  print(contrast_vars_display)
   
   x <- x[ , c(geneset_vars, contrast_vars_display), drop = FALSE]
   

@@ -37,7 +37,7 @@ setValidity("BclassCharacteristics", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = FALSE){
+setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header = NULL, font_size = NULL, full_width = NULL){
   
   
   res <- bresults(x)
@@ -55,6 +55,10 @@ setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header 
   ### Use the globally defined font_size
   if(is.null(font_size)){
     font_size <- getOption("bkable_font_size", default = 11)
+  }
+  
+  if(is.null(full_width)){
+    full_width <- getOption("bkable_full_width", default = TRUE)
   }
   
   

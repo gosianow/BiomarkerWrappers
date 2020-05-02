@@ -21,18 +21,26 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_pr
   
   
   ## Add gene lists to the gene set names 
-  genes_vars <- setdiff(grep(paste0("^", genes_prefix), colnames(x), value = TRUE), "Geneset")
-  if(genes_vars > 1){
-    for(i in seq_along(genes_vars)){
-      x[, genes_vars[i]] <- ifelse(x[, genes_vars[i]] == "", "", paste0(gsub(paste0(genes_prefix, ":"), "", genes_vars[i]), ": ", x[, genes_vars[i]]))
-      
+  
+  if(!is.na(genes_prefix)){
+    
+    
+    genes_vars <- setdiff(grep(paste0("^", genes_prefix), colnames(x), value = TRUE), "Geneset")
+    if(genes_vars > 1){
+      for(i in seq_along(genes_vars)){
+        x[, genes_vars[i]] <- ifelse(x[, genes_vars[i]] == "", "", paste0(gsub(paste0(genes_prefix, ":"), "", genes_vars[i]), ": ", x[, genes_vars[i]]))
+        
+      }
     }
+    
+    gene_list_suffix <- paste0(" [", unlist(apply(x[, genes_vars, drop = FALSE], 1, paste0, collapse = " ")), "]") 
+    gene_list_suffix <- stringr::str_wrap(gene_list_suffix, width = axis_text_y_width)
+    
+    x[, geneset_var] <- paste0(x[, geneset_var], "\n", gene_list_suffix)
+    
+    
   }
   
-  gene_list_suffix <- paste0(" [", unlist(apply(x[, genes_vars, drop = FALSE], 1, paste0, collapse = " ")), "]") 
-  gene_list_suffix <- stringr::str_wrap(gene_list_suffix, width = axis_text_y_width)
-  
-  x[, geneset_var] <- paste0(x[, geneset_var], "\n", gene_list_suffix)
   
   x[, geneset_var] <- factor(x[, geneset_var], levels = rev(x[, geneset_var]))
   
@@ -84,11 +92,11 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_pr
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
       plot.title = element_text(size = title_size, hjust = 1),
-      legend.position = "left") +
+      legend.position = "right") +
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
-    scale_y_discrete(position = "right")
+    scale_y_discrete(position = "left")
   
   
   ggp
