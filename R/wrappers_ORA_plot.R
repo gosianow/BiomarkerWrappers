@@ -2,7 +2,7 @@
 
 
 
-# geneset_var = "Geneset"; GeneRatio_var = "GeneRatio"; adjp_var = "adj.P.Val";  
+# geneset_var = "Geneset"; observed_var = "Observed"; adjp_var = "adj.P.Val";  
 # title = ""; title_size = 10; axis_text_y_size = 10; axis_text_y_width = 70; color_point = 'darkslateblue'; size_range = c(2, 10)
 
 
@@ -10,17 +10,24 @@
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with selected ORA results obtained by running 'wrapper_dispaly_significant_ora'.
-wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_prefix = "Genes", GeneRatio_var = "GeneRatio", adjp_var = "adj.P.Val",  
-  title = "", title_size = 10, title_width = 200, axis_text_y_size = 8, axis_text_y_width = 150, color_point = 'darkslateblue', size_range = c(2, 10)){
+wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed_var = "Observed", adjp_var = "adj.P.Val",  genes_prefix = NA, color_point_var = NULL,
+  trim_limits = 0.01, color_point = 'darkslateblue',
+  color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
+  size_range = c(2, 10),
+  title = "", title_size = 10, title_width = 200, axis_text_y_size = 8, axis_text_y_width = 150){
   
   
   stopifnot(length(geneset_var) == 1)
   
   ## Wrap the title so it can be nicely displayed in the plots
-  title <- stringr::str_wrap(title, width = title_width)
+  if(title_width > 0){
+    title <- stringr::str_wrap(title, width = title_width)
+  }
+  
   
   
   ## Add gene lists to the gene set names 
+  ## TODO Display genes with geom_text in a separate plot 
   
   if(!is.na(genes_prefix)){
     
@@ -54,9 +61,28 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_pr
   
   ## Derive the number of DE genes that overlap with the gene set
   
-  if(!is.null(GeneRatio_var)){
-    x$DE_in_set <- as.numeric(strsplit2(x[, GeneRatio_var], " / ")[, 1])
+  if(!is.null(observed_var)){
+    x$DE_in_set <- as.numeric(x[, observed_var])
     x$DE_in_set[x$DE_in_set == 0] <- NA
+  }
+  
+  
+  if(!is.null(color_point_var)){
+    
+    ### Trim limits
+    
+    if(is.null(trim_limits)){
+      max_abs_value <- ceiling(max(abs(range(x[, color_point_var], na.rm = TRUE))))
+    }else if(trim_limits >= 1){
+      max_abs_value <- trim_limits
+    }else{
+      ### Use quantiles 
+      max_abs_value <- ceiling(max(abs(quantile(x[, color_point_var], probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE))))
+    }
+    
+    
+    limits <- c(-max_abs_value, max_abs_value)
+    
   }
   
   
@@ -64,16 +90,37 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_pr
   # ggplot
   # ---------------------------------------------------------------------------
   
-  if(!is.null(GeneRatio_var)){
+  if(!is.null(observed_var)){
     
-    ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, size = "DE_in_set")) +
-      geom_point(color = color_point) +
-      scale_size(name = "No. DE in set", range = size_range) 
+    if(!is.null(color_point_var)){
+      
+      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, size = "DE_in_set", color = color_point_var)) +
+        geom_point() +
+        scale_size(name = "No. DE in set", range = size_range) +
+        scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
+      
+    }else{
+      
+      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, size = "DE_in_set")) +
+        geom_point(color = color_point) +
+        scale_size(name = "No. DE in set", range = size_range) 
+      
+    }
     
   }else{
     
-    ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var)) +
-      geom_point(size = size_range[2])
+    if(!is.null(color_point_var)){
+      
+      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, color = color_point_var)) +
+        geom_point(size = size_range[2]) +
+        scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
+      
+    }else{
+      
+      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var)) +
+        geom_point(color = color_point, size = size_range[2])
+      
+    }
     
   }
   
@@ -116,7 +163,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_pr
 # 
 # geneset_var = "Geneset"
 # 
-# GeneRatio_prefix = "GeneRatio"; adjp_prefix = "adj.P.Val";  sep = "_";
+# observed_prefix = "Observed"; adjp_prefix = "adj.P.Val";  sep = "_";
 # title = ""; title_size = 10; title_width = 70; axis_text_y_size = 10; axis_text_y_width = 70; colors_point = NULL; size_range = c(2, 10)
 # point_alpha = 0.8
 
@@ -127,9 +174,9 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", genes_pr
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with ORA results.
-wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRatio_prefix = "GeneRatio", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
-  title = "", title_size = 10, title_width = 140, axis_text_y_size = 8, axis_text_y_width = 70, colors_point = NULL, size_range = c(2, 10),
-  point_alpha = 0.8){
+wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observed_prefix = "Observed", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
+  title = "", title_size = 10, title_width = 140, axis_text_y_size = 8, axis_text_y_width = 70, 
+  colors_point = NULL, size_range = c(2, 10), point_alpha = 0.8){
   
   
   stopifnot(length(geneset_var) == 1)
@@ -168,20 +215,20 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   data_adjp <- wrapper_extract_from_topTable(x, extract_prefix = adjp_prefix)
   
-  data_GeneRatio <- wrapper_extract_from_topTable(x, extract_prefix = GeneRatio_prefix)
+  data_observed <- wrapper_extract_from_topTable(x, extract_prefix = observed_prefix)
   
   
   
   data_adjp <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE), 
     cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = adjp_prefix)
   
-  data_GeneRatio <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_GeneRatio, stringsAsFactors = FALSE), 
-    cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = GeneRatio_prefix)
+  data_observed <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_observed, stringsAsFactors = FALSE), 
+    cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = observed_prefix)
   
   
   
   data <- data_adjp %>% 
-    left_join(data_GeneRatio, by = c(geneset_var, "contrasts_and_directions")) %>% 
+    left_join(data_observed, by = c(geneset_var, "contrasts_and_directions")) %>% 
     as.data.frame()
   
   
@@ -207,7 +254,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   
   adjp_var <- adjp_prefix
-  GeneRatio_var <- GeneRatio_prefix
+  observed_var <- observed_prefix
   
   
   ## To avoid p-values equal to zero
@@ -220,8 +267,8 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   
   ## Derive the number of DE genes that overlap with the gene set
   
-  if(!is.null(GeneRatio_var)){
-    data$DE_in_set <- as.numeric(strsplit2(data[, GeneRatio_var], " / ")[, 1])
+  if(!is.null(observed_var)){
+    data$DE_in_set <- as.numeric(data[, observed_var])
     data$DE_in_set[data$DE_in_set == 0] <- NA
   }
   
@@ -233,7 +280,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", GeneRa
   colors_point <- format_colors(levels = contrasts, colors = colors_point)
   
   
-  if(!is.null(GeneRatio_var)){
+  if(!is.null(observed_var)){
     
     ggp <- ggplot(data, aes_string(x = "log_adjp", y = geneset_var, color = "contrasts", size = "DE_in_set")) +
       geom_point(alpha = point_alpha) +

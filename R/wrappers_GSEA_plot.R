@@ -3,20 +3,23 @@
 
 
 
-x <- topTable
-genesets; contrast; gene_var = "EntrezIDs"; 
-statistic_prefix = "t"; sep = "_";
-trim_limits = 0.02; min_GS_size = 10; max_GS_size = 500;
-title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 70
+# x <- topTable
+# genesets; contrast; gene_var = "EntrezIDs"; 
+# statistic_prefix = "t"; sep = "_";
+# trim_limits = 0.01;
+# color_low = '#42399B'; color_mid = "darkgrey"; color_high = '#D70131';
+# title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 70
 
 
 
 
 #' Plot GSEA statistics ranks
 #' 
-#' @param x TopTable.
-wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
-  trim_limits = NULL, min_GS_size = 10, max_GS_size = 500,
+#' @param x TopTable with DGE results, for example, from limma.
+wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
+  gsea_results = NULL, geneset_var = "Geneset", adjp_var = "adj.P.Val", color_point_var = "NES",
+  trim_limits = 0.01,
+  color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
   title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70){
   
   
@@ -28,8 +31,8 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   # Prepare data
   # -------------------------------------------------------------------------
   
-  statistic <- topTable[, paste0(statistic_prefix, sep, contrast)]
-  names(statistic) <- topTable[, gene_var]
+  statistic <- x[, paste0(statistic_prefix, sep, contrast)]
+  names(statistic) <- x[, gene_var]
   
   statistic <- sort(statistic, decreasing = TRUE)
   
@@ -44,17 +47,20 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   ### Trim limits
   
   if(is.null(trim_limits)){
-    max_abs_value <- max(abs(range(data[, "statistic"], na.rm = TRUE)))
+    max_abs_value <- ceiling(max(abs(range(data[, "statistic"], na.rm = TRUE))))
   }else if(trim_limits >= 1){
     max_abs_value <- trim_limits
   }else{
     ### Use quantiles 
-    max_abs_value <- max(abs(quantile(data[, "statistic"], probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE)))
+    max_abs_value <- ceiling(max(abs(quantile(data[, "statistic"], probs = c(trim_limits, 1 - trim_limits), na.rm = TRUE))))
   }
   
   
-  data$statistic[data$statistic > max_abs_value] <- max_abs_value
-  data$statistic[data$statistic < -max_abs_value] <- -max_abs_value
+  limits <- c(-max_abs_value, max_abs_value)
+  
+  
+  # data$statistic[data$statistic > max_abs_value] <- max_abs_value
+  # data$statistic[data$statistic < -max_abs_value] <- -max_abs_value
   
   ### Normalize the hight of lines to 1
   data$statistic_adj <- data$statistic / (2 * max_abs_value)
@@ -79,16 +85,11 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   # statistic[genesets[[1]]]
   
   
-  ### Exclude too small or too large gene sets
-  
-  size_genesets <- sapply(genesets, length)
-  
-  genesets <- genesets[size_genesets >= min_GS_size & size_genesets <= max_GS_size]
-  
   if(length(genesets) == 0){
     message("There are no common genes between the universe and the genesets.")
     return(NULL)
   }
+  
   
   # -------------------------------------------------------------------------
   # Data for ggplot
@@ -120,8 +121,8 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.1, -0.1)
   
   ggdata$statistic_fixed <- ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.5, -0.5)
-    
-    
+  
+  
   # -------------------------------------------------------------------------
   # ggplot
   # -------------------------------------------------------------------------
@@ -135,29 +136,89 @@ wrapper_plot_GSEA <- function(x, genesets, contrast, gene_var = "EntrezIDs", sta
   
   ggp <-  ggplot(ggdata, aes(x = 0, y = Geneset, group = Geneset)) +
     geom_line() +
-    geom_segment(aes(x = rank, xend = rank, y = Geneset_num - 0.45, yend = Geneset_num + 0.45, color = direction)) +
+    geom_segment(aes(x = rank, xend = rank, y = Geneset_num - 0.45, yend = Geneset_num + 0.45, color = statistic)) +
     ggtitle(title) +
     xlab(xlab) +
     theme_cowplot(12) +
     theme(axis.line = element_blank(), 
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
+      # axis.title.x = element_blank(), 
+      # axis.text.x = element_blank(),
+      # axis.ticks.x = element_blank(),
       plot.title = element_text(size = title_size, hjust = 1),
       legend.position = "none") +
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
     background_grid(major = "y", minor = "none", size.major = 0.25) +
-    scale_color_manual(values = c('#D70131', '#42399B')) +
+    scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
     scale_x_continuous(expand = c(0, 0))
   
   
-  ggp
+  # ggp
+  
+  
+  
+  
+  ggp2 <- ggplot(data, aes(x = rank, xend = rank, y = 0, yend = statistic, color = statistic)) +
+    geom_segment() +
+    xlab(xlab) +
+    ylab(statistic_prefix) +
+    theme_cowplot(12) +
+    theme(axis.line = element_blank(), 
+      # axis.title.y = element_blank(), 
+      axis.text.y = element_text(size = axis_text_y_size),
+      plot.title = element_text(size = axis_text_y_size, hjust = 0.5, face = "plain"),
+      legend.position = "none") +
+    coord_cartesian(xlim = xlim) +
+    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    background_grid(major = "y", minor = "none", size.major = 0.25) +
+    scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
+    scale_x_continuous(expand = c(0, 0))
+  
+  
+  # ggp2
+  
+  out1 <- cowplot::plot_grid(ggp, ggp2, nrow = 2, ncol = 1, rel_heights = c(length(genesets), 5), align = "v", axis = 'lr')
+  
+  
+  
+  if(!is.null(gsea_results)){
+    
+    if(all(names(genesets) == gsea_results[, geneset_var])){
+      
+      ### Use a trick with the title. Otherwise, the plots are not aligned :/
+      
+      ggp3 <- wrapper_plot_ORA_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = color_point_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size) +
+        theme(axis.text.y = element_blank(), 
+          axis.ticks.y = element_blank())
+      
+      
+      out2 <- cowplot::plot_grid(ggp3, nrow = 2, ncol = 1, rel_heights = c(length(genesets), 5))
+      
+      
+      out <- cowplot::plot_grid(out1, out2, nrow = 1, ncol = 2, rel_widths = c(4, 1), align = "h", axis = "tb")
+      
+      out
+      
+      
+    }else{
+      
+      out1
+      
+    }
+    
+    
+  }else{
+    
+    out1
+    
+  }
   
   
   
   
 }
-
 
 
 
