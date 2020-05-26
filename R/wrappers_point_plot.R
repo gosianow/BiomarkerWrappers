@@ -69,7 +69,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
     color_point_var <- "color_point_dummy"
     
     if(is.null(colors_point)){
-      colors_point <- "black"
+      colors_point <- "grey40"
     }else{
       colors_point <- colors_point[1]
     }

@@ -79,7 +79,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
     color_line_var <- "color_line_dummy"
     
     if(is.null(colors_line)){
-      colors_line <- "darkgrey"
+      colors_line <- "grey40"
     }else{
       colors_line <- colors_line[1]
     }

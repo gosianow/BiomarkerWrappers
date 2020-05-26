@@ -212,16 +212,11 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     txt_gp = forestplot::fpTxtGp(xlab = gpar(fontsize = 20), ticks = gpar(fontsize = 18)), 
     mar = unit(c(20, rep(5, times = 3)), "mm"), 
     clip = clip, 
-    ci.vertices = TRUE)
+    ci.vertices = TRUE,
+    align = "l")
   
   
 })
-
-
-
-
-
-
 
 
 

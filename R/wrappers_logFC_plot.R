@@ -324,7 +324,7 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' @param x Matrix with expression to plot
 wrapper_gene_expression_heatmap <- function(x,  
   name = "sample\nlogFC", draw = TRUE, title = "", 
-  color_low = 'turquoise1', color_mid = "royalblue4", color_high = 'orchid1', trim_limits = NULL,
+  color_low = 'cornflowerblue', color_mid = "royalblue4", color_high = '#ff717e', trim_limits = NULL,
   cluster_rows = FALSE, cluster_columns = FALSE,
   left_annotation = NULL, top_annotation = NULL, 
   row_split = NULL, column_split = NULL,

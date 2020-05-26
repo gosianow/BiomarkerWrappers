@@ -179,7 +179,7 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   # ggp2
   
-  out1 <- cowplot::plot_grid(ggp, ggp2, nrow = 2, ncol = 1, rel_heights = c(length(genesets), 5), align = "v", axis = 'lr')
+  out1 <- cowplot::plot_grid(ggp, ggp2, nrow = 2, ncol = 1, rel_heights = c(max(c(1, length(genesets) / 4)), 1), align = "v", axis = 'lr')
   
   
   
@@ -189,12 +189,12 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
       
       ### Use a trick with the title. Otherwise, the plots are not aligned :/
       
-      ggp3 <- wrapper_plot_ORA_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = color_point_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size) +
+      ggp3 <- wrapper_plot_ORA_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = color_point_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5)) +
         theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank())
       
       
-      out2 <- cowplot::plot_grid(ggp3, nrow = 2, ncol = 1, rel_heights = c(length(genesets), 5))
+      out2 <- cowplot::plot_grid(ggp3, nrow = 2, ncol = 1, rel_heights = c(max(c(1, length(genesets) / 4)), 1))
       
       
       out <- cowplot::plot_grid(out1, out2, nrow = 1, ncol = 2, rel_widths = c(4, 1), align = "h", axis = "tb")
