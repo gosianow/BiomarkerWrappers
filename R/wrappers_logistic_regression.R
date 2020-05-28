@@ -2,30 +2,26 @@
 
 
 
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# covariate_vars <- c("Treatment_Arm", "IPI_Caterories", "Cell_Of_Origin", "FCGR3A")
-# return_vars = NULL
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
 
 
-#' Cox regression with simple additive model
+
+
+# response_var = "Response_by_pCR"; covariate_vars = c("Treatment_Arm", "AKT.S473.D9E"); return_vars = NULL; variable_names = NULL; caption = NULL; print_pvalues = TRUE; print_adjpvalues = TRUE
+
+
+
+
+#' Logistic regression with simple additive model
 #' 
-#' Cox regression with simple additive model.
+#' Logistic regression with simple additive model.
 #' 
 #' @param data Data frame.
-#' @param tte_var Name of the time-to-event variable. This variable must be numeric.
-#' @param censor_var Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.
+#' @param response_var Name of the response variable. This variable must be a factor where 'success' is interpreted as the factor not having the first level.
 #' @param covariate_vars Vector with names of covariate that should be included in the formula.
 #' @param return_vars Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.
-wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_logistic_regression_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -34,14 +30,10 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   stopifnot(is.data.frame(data))
   
-  ## Time to event variable must be numeric
-  stopifnot(length(tte_var) == 1)
-  stopifnot(is.numeric(data[, tte_var]))
-  
-  ## Censor variable must be numeric and encode 1 for event and 0 for censor
-  stopifnot(length(censor_var) == 1)
-  stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1)))
-  
+  ## Response variable must be factor with two levels
+  stopifnot(length(response_var) == 1)
+  stopifnot(is.factor(data[, response_var]))
+  stopifnot(nlevels(data[, response_var]) == 2)
   
   covariate_class <- sapply(data[, covariate_vars], class)
   
@@ -50,7 +42,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_vars)]), ]
+  data <- data[complete.cases(data[, c(response_var, covariate_vars)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -61,23 +53,23 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   }
   
   # --------------------------------------------------------------------------
-  # Cox regression
+  # Logistic regression
   # --------------------------------------------------------------------------
   
   ## Create the formula
   formula_covariates <- paste0(covariate_vars, collapse = " + ")
-  f <- as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
+  f <- as.formula(paste0(response_var, " ~ ", formula_covariates))
   
   
-  ## Fit the Cox model
-  regression_fit <- survival::coxph(f, data)
+  ## Fit the logistic model
+  regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data)
   regression_summ <- summary(regression_fit)
   
   
   # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
-
+  
   # --------------------------------------------------------------------------
   ### Parce the regression summary
   ## Generate data frame with coefficient names and levels and information about reference groups
@@ -88,7 +80,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     
     if(covariate_class[i] %in% c("numeric", "integer")){
       
-      out <- data.frame(covariate = covariate_vars[i], levels = "", reference = "", reference_indx = 0, n_levels = 0, n_reference = 0, nevent_levels = 0, nevent_reference = 0,
+      out <- data.frame(covariate = covariate_vars[i], levels = "", reference = "", reference_indx = 0, n_levels = 0, n_reference = 0, nresponse_levels = 0, nresponse_reference = 0, propresponse_levels = 0, propresponse_reference = 0,
         stringsAsFactors = FALSE)
       
       return(out)
@@ -96,22 +88,20 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     }else{
       
       ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-      ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+      ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
       tbl <- table(data[, covariate_vars[i]])
       
-      if(tbl[1] > 0){
-        reference_indx <- 1
-        names(reference_indx) <- names(tbl[1])
-      }else{
-        reference_indx <- rev(which(tbl > 0))[1]
-      }
+      reference_indx <- which(tbl > 0)[1]
       
       
-      ## Calculate nevent 
-      tbl_event <- table(data[data[, censor_var] == 1, covariate_vars[i]])
+      ## Calculate nresponse and propresponse
+      tbl_response <- table(data[data[, response_var] == levels(data[, response_var])[2], covariate_vars[i]])
+      prop_response <- tbl_response / tbl * 100
       
-      out <- data.frame(covariate = covariate_vars[i], levels = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n_levels = as.numeric(tbl), n_reference = as.numeric(tbl[reference_indx]), nevent_levels = as.numeric(tbl_event), nevent_reference = as.numeric(tbl_event[reference_indx]),
+      
+      out <- data.frame(covariate = covariate_vars[i], levels = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n_levels = as.numeric(tbl), n_reference = as.numeric(tbl[reference_indx]), nresponse_levels = as.numeric(tbl_response), nresponse_reference = as.numeric(tbl_response[reference_indx]), propresponse_levels = as.numeric(prop_response), propresponse_reference = as.numeric(prop_response[reference_indx]),
         stringsAsFactors = FALSE)
+      
       
       return(out) 
       
@@ -126,18 +116,41 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   rownames(coef_info) <- coef_info$coefficient
   
+  
+  # --------------------------------------------------------------------------
+  ## Calculate confidence intervals
+  # --------------------------------------------------------------------------
+  
+  
+  ## Note: When MASS is loaded, the 95% CIs are calculated (using confint) based on profile likelihood
+  ## To compute 95% Wald CIs (based on asymptotic normality), one needs to use confint.default()
+  
+  
+  ## There can be an error from confint when all samples have the same response
+  # conf.int <- NULL
+  # try(conf.int <- exp(stats::confint(regression_fit)), silent = TRUE)
+  # if(is.null(conf.int)){
+  #   conf.int <- exp(stats::confint.default(regression_fit))
+  # }
+  
+  ## I use the Wald CIs because they are in concordance with p-values i.e. they contain 1 when p-value is not significant
+  conf.int <- exp(stats::confint.default(regression_fit))
+  
+  
+  
   # --------------------------------------------------------------------------
   ## Append results from regression
   # --------------------------------------------------------------------------
   
-  conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(conf_int) <- c("coefficient", "HR", "CI95_lower", "CI95_upper")
   
-  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(coefficients) <- c("coefficient", "pvalue")
+  conf_int <- data.frame(coefficient = rownames(conf.int), conf.int[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
+  colnames(conf_int) <- c("coefficient", "CI95_lower", "CI95_upper")
   
-  coef_info$n <- regression_summ$n
-  coef_info$nevent <- regression_summ$nevent
+  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+  colnames(coefficients) <- c("coefficient", "OR", "pvalue")
+  coefficients$OR <- exp(coefficients$OR)
+  
+  coef_info$n <- nrow(data) - length(regression_summ$na.action)
   
   coef_info <- coef_info %>% 
     left_join(conf_int, by = "coefficient") %>% 
@@ -167,12 +180,13 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA becasue eventually this level is not used as a reference in the fitted model.
     if(any(res$reference_indx > 1)){
       
-      res[, -which(colnames(res) %in% c("covariate", "levels", "reference", "reference_indx", "coefficient"))] <- NA
+      res[, -which(colnames(res) %in% c("covariate", "levels", "reference", "reference_indx", "coefficient", "n"))] <- NA
       
     }
     
     
   }
+  
   
   # --------------------------------------------------------------------------
   ### Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
@@ -182,9 +196,9 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     Effect = format_vs(res$levels, res$reference),
     `Total n` = as.character(res$n),
     `Subgroup n` = format_vs(res$n_levels, res$n_reference),
-    `Total events` = as.character(res$nevent),
-    `Subgroup events` = format_vs(res$nevent_levels, res$nevent_reference),
-    `HR` = as.character(round(res$HR, 2)),
+    `Response n (%)` = format_vs(paste0(res$nresponse_levels, " (", round(res$propresponse_levels, 1), "%)"),
+      paste0(res$nresponse_reference, " (", round(res$propresponse_reference, 1), "%)")),
+    `OR` = as.character(round(res$OR, 2)),
     `95% CI` = format_CIs(res$CI95_lower, res$CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
@@ -192,14 +206,6 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   stopifnot(all(sapply(out, class) == "character"))
   
-  if(!print_nevent){
-    out$`Total events` <- NULL
-    out$`Subgroup events` <- NULL
-  }else{
-    if(all(out$`Subgroup events` == "")){
-      out$`Subgroup events` <- NULL
-    }
-  }
   
   if(!print_pvalues){
     out$`P-value` <- NULL
@@ -209,13 +215,14 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     out$`Adj. P-value` <- NULL
   }
   
-  ### For all numerical covariate Effect and Subgroup n are empty and we do not display them.
+  ### For all numerical covariates Effect and Subgroup n etc. are empty and we do not display them.
   if(all(out$Effect == "")){
     out$Effect <- NULL
   }
   
   if(all(out$`Subgroup n` == "")){
     out$`Subgroup n` <- NULL
+    out$`Response n (%)` <- NULL
   }
   
   
@@ -226,8 +233,8 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   if(is.null(caption)){
     
-    caption <- paste0("Covariate effect on ", variable_names[tte_var], ". ", 
-      "Cox regression model includes ", paste0(variable_names[covariate_vars], collapse = ", "), ".")
+    caption <- paste0("Covariate effect on ", variable_names[response_var], ". ", 
+      "Logistic regression model includes ", paste0(variable_names[covariate_vars], collapse = ", "), ".")
     
   }
   
@@ -243,6 +250,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   return(bout)
   
+  
 }
 
 
@@ -251,32 +259,13 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 
 
 
-
-
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# covariate_vars <- c("IPI_Caterories", "FCGR3A")
-# return_vars = NULL
-# 
-# strat1_var = "Treatment_Arm"
-# strat2_var = NULL
-# 
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
-#' @inheritParams wrapper_core_cox_regression_simple
+#' @inheritParams wrapper_core_logistic_regression_simple
 #' 
-#' Cox regression with simple additive model within subgroups defined by strata.
+#' Logistic regression with simple additive model within subgroups defined by strata.
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
-wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_logistic_regression_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -306,7 +295,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[complete.cases(data[, c(response_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -336,7 +325,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
       }
       
       
-      wrapper_res <- wrapper_core_cox_regression_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_core_logistic_regression_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       
@@ -429,13 +418,13 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
 
 
 
-#' @inheritParams wrapper_core_cox_regression_simple_strat
+#' @inheritParams wrapper_core_logistic_regression_simple_strat
 #' 
-#' Cox regression estimating biomarker effect 
+#' Logistic regression estimating biomarker effect 
 #' 
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
-wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -463,7 +452,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_logistic_regression_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -487,7 +476,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   
   
   ### Replace NAs with "" for columns that are missing for numerical biomarkers
-  missing_columns <- c("Effect", "Subgroup n", "Subgroup events")
+  missing_columns <- c("Effect", "Subgroup n", "Response n", "Response prop. (%)")
   
   for(i in 1:length(missing_columns)){
     if(missing_columns[i] %in% colnames(out)){
@@ -507,16 +496,16 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   
   if(is.null(caption)){
     
-    caption <- paste0("Biomarker effect on ", variable_names[tte_var], ". ")
+    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". ")
     
     
     if(is.null(adjustment_vars)){
       
-      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes only the biomarker.")
+      caption <- paste0(caption, "Unadjusted analysis. Logistic regression model includes only the biomarker.")
       
     }else{
       
-      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes the biomarker and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Adjusted analysis. Logistic regression model includes the biomarker and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
       
     }
     
@@ -542,33 +531,14 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 
 
 
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# 
-# treatment_var = "Treatment_Arm"
-# biomarker_vars <- c("FCGR2B_cat2", "FCGR3A_cat2")
-# adjustment_vars <- "IPI_Caterories"
-# 
-# strat2_var = "Cell_Of_Origin"
-# 
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
-
-#' @inheritParams wrapper_core_cox_regression_simple_strat
+#' @inheritParams wrapper_core_logistic_regression_simple_strat
 #' 
-#' Cox regression estimating treatment effect within biomaker subgroups
+#' Logistic regression estimating treatment effect within biomaker subgroups
 #' 
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
-wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   ### TODO Allow biomarker_vars = NULL.
   
@@ -601,7 +571,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_logistic_regression_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     
@@ -659,16 +629,16 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
   
   if(is.null(caption)){
     
-    caption <- paste0("Treatment effect on ", variable_names[tte_var], ". ")
+    caption <- paste0("Treatment effect on ", variable_names[response_var], ". ")
     
     
     if(is.null(adjustment_vars)){
       
-      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes only the treatment.")
+      caption <- paste0(caption, "Unadjusted analysis. Logistic regression model includes only the treatment.")
       
     }else{
       
-      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes the treatment and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Adjusted analysis. Logistic regression model includes the treatment and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
       
     }
     
@@ -694,31 +664,17 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 ###############################################################################
 
 
-
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# 
-# interaction1_var <- "FCGR3A_cat2"
-# interaction2_var <- "Treatment_Arm"
-# covariate_vars <- c("IPI_Caterories", "Cell_Of_Origin")
-# 
-# 
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
+# response_var = "Response_by_pCR"; interaction1_var = "Treatment_Arm"; interaction2_var = "AKT.S473.D9E"; covariate_vars = c("Ipat_Dx"); variable_names = NULL; caption = NULL; print_pvalues = TRUE; print_adjpvalues = TRUE
 
 
 
-#' @inheritParams wrapper_core_cox_regression_simple
+#' @inheritParams wrapper_core_logistic_regression_simple
 #' 
-#' Cox regression with additive model with interaction
+#' Logistic regression with additive model with interaction
 #' 
 #' @param interaction1_var Data frame.
 #' @param interaction2_var Name of the time-to-event variable. This variable must be numeric.
-wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_logistic_regression_interaction <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -727,14 +683,10 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   stopifnot(is.data.frame(data))
   
-  ## Time to event variable must be numeric
-  stopifnot(length(tte_var) == 1)
-  stopifnot(is.numeric(data[, tte_var]))
-  
-  ## Censor variable must be numeric and encode 1 for event and 0 for censor
-  stopifnot(length(censor_var) == 1)
-  stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1)))
-  
+  ## Response variable must be factor with two levels
+  stopifnot(length(response_var) == 1)
+  stopifnot(is.factor(data[, response_var]))
+  stopifnot(nlevels(data[, response_var]) == 2)
   
   covariate_class <- sapply(data[, c(interaction1_var, interaction2_var, covariate_vars)], class)
   
@@ -743,7 +695,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars)]), ]
+  data <- data[complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -754,17 +706,17 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   
   # --------------------------------------------------------------------------
-  # Cox regression
+  # Logistic regression
   # --------------------------------------------------------------------------
   
   
   ## Create the formula
   formula_covariates <- paste0(paste0(covariate_vars, collapse = " + "), " + ", interaction1_var, " * ", interaction2_var)
-  f <- as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
+  f <- as.formula(paste0(response_var, " ~ ", formula_covariates))
   
   
-  ## Fit the Cox model
-  regression_fit <- survival::coxph(f, data)
+  ## Fit the logistic model
+  regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data)
   regression_summ <- summary(regression_fit)
   
   
@@ -786,15 +738,10 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   }else if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("factor")){
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+    ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
     tbl <- table(data[, interaction2_var])
     
-    if(tbl[1] > 0){
-      reference_indx <- 1
-      names(reference_indx) <- names(tbl[1])
-    }else{
-      reference_indx <- rev(which(tbl > 0))[1]
-    }
+    reference_indx <- which(tbl > 0)[1]
     
     
     out <- data.frame(covariate1 = interaction1_var, levels1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, levels2 = levels(data[, interaction2_var]), reference2 = names(reference_indx), reference2_indx = as.numeric(reference_indx),
@@ -803,15 +750,10 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   }else if(class(data[, interaction1_var]) %in% c("factor") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+    ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
     tbl <- table(data[, interaction1_var])
     
-    if(tbl[1] > 0){
-      reference_indx <- 1
-      names(reference_indx) <- names(tbl[1])
-    }else{
-      reference_indx <- rev(which(tbl > 0))[1]
-    }
+    reference_indx <- which(tbl > 0)[1]
     
     
     out <- data.frame(covariate1 = interaction1_var, levels1 = levels(data[, interaction1_var]), reference1 = names(reference_indx), reference1_indx = as.numeric(reference_indx), covariate2 = interaction2_var, levels2 = "", reference2 = "", reference2_indx = 0,
@@ -820,24 +762,14 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   }else{
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+    ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
     tbl <- table(data[, interaction1_var])
     
-    if(tbl[1] > 0){
-      reference1_indx <- 1
-      names(reference1_indx) <- names(tbl[1])
-    }else{
-      reference1_indx <- rev(which(tbl > 0))[1]
-    }
+    reference1_indx <- which(tbl > 0)[1]
     
     tbl <- table(data[, interaction2_var])
     
-    if(tbl[1] > 0){
-      reference2_indx <- 1
-      names(reference2_indx) <- names(tbl[1])
-    }else{
-      reference2_indx <- rev(which(tbl > 0))[1]
-    }
+    reference2_indx <- which(tbl > 0)[1]
     
     
     out <- data.frame(covariate1 = interaction1_var, levels1 = rep(levels(data[, interaction1_var]), times = nlevels(data[, interaction2_var])), reference1 = names(reference1_indx), reference1_indx = as.numeric(reference1_indx), covariate2 = interaction2_var, levels2 = rep(levels(data[, interaction2_var]), each = nlevels(data[, interaction1_var])), reference2 = names(reference2_indx), reference2_indx = as.numeric(reference2_indx),
@@ -853,18 +785,39 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   rownames(coef_info) <- coef_info$coefficient
   
+  
+  # --------------------------------------------------------------------------
+  ## Calculate confidence intervals
+  # --------------------------------------------------------------------------
+  
+  
+  ## Note: When MASS is loaded, the 95% CIs are calculated (using confint) based on profile likelihood
+  ## To compute 95% Wald CIs (based on asymptotic normality), one needs to use confint.default()
+  
+  
+  ## There can be an error from confint when all samples have the same response
+  # conf.int <- NULL
+  # try(conf.int <- exp(stats::confint(regression_fit)), silent = TRUE)
+  # if(is.null(conf.int)){
+  #   conf.int <- exp(stats::confint.default(regression_fit))
+  # }
+  
+  ## I use the Wald CIs because they are in concordance with p-values i.e. they contain 1 when p-value is not significant
+  conf.int <- exp(stats::confint.default(regression_fit))
+  
+  
   # --------------------------------------------------------------------------
   ## Append results from regression
   # --------------------------------------------------------------------------
   
-  conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(conf_int) <- c("coefficient", "HR", "CI95_lower", "CI95_upper")
+  conf_int <- data.frame(coefficient = rownames(conf.int), conf.int[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
+  colnames(conf_int) <- c("coefficient", "CI95_lower", "CI95_upper")
   
-  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(coefficients) <- c("coefficient", "pvalue")
+  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+  colnames(coefficients) <- c("coefficient", "OR", "pvalue")
+  coefficients$OR <- exp(coefficients$OR)
   
-  coef_info$n <- regression_summ$n
-  coef_info$nevent <- regression_summ$nevent
+  coef_info$n <- nrow(data) - length(regression_summ$na.action)
   
   coef_info <- coef_info %>% 
     left_join(conf_int, by = "coefficient") %>% 
@@ -900,8 +853,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
     Covariate2 = variable_names[res$covariate2], 
     Effect2 = format_vs(res$levels2, res$reference2),
     `Total n` = as.character(res$n),
-    `Total events` = as.character(res$nevent),
-    `HR` = as.character(round(res$HR, 2)),
+    `OR` = as.character(round(res$OR, 2)),
     `95% CI` = format_CIs(res$CI95_lower, res$CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
@@ -910,10 +862,6 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   stopifnot(all(sapply(out, class) == "character"))
   
-  
-  if(!print_nevent){
-    out$`Total events` <- NULL
-  }
   
   if(!print_pvalues){
     out$`P-value` <- NULL
@@ -932,6 +880,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
     out$Effect2 <- NULL
   }
   
+  
   # --------------------------------------------------------------------------
   ### Generate caption
   # --------------------------------------------------------------------------
@@ -939,10 +888,10 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[tte_var], ". ")
+    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[response_var], ". ")
     
     if(!is.null(covariate_vars)){
-      caption <- paste0(caption, paste0("Cox regression model additionally includes ", paste0(variable_names[covariate_vars], collapse = ", "), ". "))
+      caption <- paste0(caption, paste0("Logistic regression model additionally includes ", paste0(variable_names[covariate_vars], collapse = ", "), ". "))
     }
     
   }
@@ -965,13 +914,13 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
 
 
 
-#' @inheritParams wrapper_core_cox_regression_interaction
+#' @inheritParams wrapper_core_logistic_regression_interaction
 #' 
-#' Cox regression with additive model with interaction within subgroups defined by strata
+#' Logistic regression with additive model with interaction within subgroups defined by strata
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
-wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_logistic_regression_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -1001,7 +950,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -1030,7 +979,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
       }
       
       
-      wrapper_res <- wrapper_core_cox_regression_interaction(data = data_strata1, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_core_logistic_regression_interaction(data = data_strata1, response_var = response_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       res <- bresults(wrapper_res)
@@ -1106,14 +1055,14 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
 
 
 
-#' @inheritParams wrapper_core_cox_regression_interaction_strat
+#' @inheritParams wrapper_core_logistic_regression_interaction_strat
 #' 
-#' Cox regression estimating interaction effect between biomaker and treatment
+#' Logistic regression estimating interaction effect between biomaker and treatment
 #' 
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
-wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_interaction <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -1144,7 +1093,7 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
     interaction2_var <- treatment_var
     covariate_vars <- adjustment_vars
     
-    wrapper_res <- wrapper_core_cox_regression_interaction_strat(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_logistic_regression_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     
@@ -1190,16 +1139,16 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", "biomarker", " and ", "treatment", " on ", variable_names[tte_var], ". ")
+    caption <- paste0("Effect of interaction between ", "biomarker", " and ", "treatment", " on ", variable_names[response_var], ". ")
     
     
     if(is.null(adjustment_vars)){
       
-      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes only the biomarker and treatment.")
+      caption <- paste0(caption, "Unadjusted analysis. Logistic regression model includes only the biomarker and treatment.")
       
     }else{
       
-      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes the biomarker, treatment and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Adjusted analysis. Logistic regression model includes the biomarker, treatment and ", paste0(variable_names[adjustment_vars], collapse = ", "), ". ")
       
     }
     

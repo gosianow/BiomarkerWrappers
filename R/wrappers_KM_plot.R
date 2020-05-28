@@ -559,7 +559,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 
 
 
-#' KM plot - Treatment effect per treatment arm
+#' KM plot - Treatment effect per biomarker subgroup
 #' 
 #' @param data Data frame.
 #' @param colors If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
