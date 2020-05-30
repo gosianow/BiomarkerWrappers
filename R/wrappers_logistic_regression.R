@@ -196,8 +196,10 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
     Effect = format_vs(res$levels, res$reference),
     `Total n` = as.character(res$n),
     `Subgroup n` = format_vs(res$n_levels, res$n_reference),
-    `Response n (%)` = format_vs(paste0(res$nresponse_levels, " (", round(res$propresponse_levels, 1), "%)"),
-      paste0(res$nresponse_reference, " (", round(res$propresponse_reference, 1), "%)")),
+    
+    `Response n (%)` = format_vs(paste0(res$nresponse_levels, " (", formatC(res$propresponse_levels, format = "f", digits = 1, drop0trailing = FALSE), "%)"),
+      paste0(res$nresponse_reference, " (", formatC(res$propresponse_reference, format = "f", digits = 1, drop0trailing = FALSE), "%)")),
+    
     `OR` = as.character(round(res$OR, 2)),
     `95% CI` = format_CIs(res$CI95_lower, res$CI95_upper),
     `P-value` = format_pvalues(res$pvalue),

@@ -2,29 +2,16 @@
 
 
 
-# data <- data_goya
-# 
-# col_var <- "Cell_Of_Origin"
-# row_var <- "Ann_Arbor_Stage"
-# 
-# # col_var <- "Cell_Of_Origin2"
-# # row_var <- "FCGR2B_cat2"
-# 
-# variable_names = NULL
-# caption = NULL
-# 
-# margin = 1
-# 
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
+
+# variable_names = NULL; caption = NULL; margin = 1; force_empty_cols = FALSE; print_pvalues = TRUE
 
 
 
 
-#' Fisher's test
+#' Pearson’s Chi-squared test
 #' 
 #' @param data Data frame.
-wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_core_pearsons_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -34,7 +21,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   stopifnot(length(col_var) == 1)
   stopifnot(is.factor(data[, col_var]))
-  stopifnot(nlevels(data[, col_var]) >= 2)
+  stopifnot(nlevels(data[, col_var]) == 2)
   
   stopifnot(length(row_var) == 1)
   stopifnot(is.factor(data[, row_var]))
@@ -43,40 +30,65 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
+  
   # --------------------------------------------------------------------------
   # Calculate counts and proportions and do testing
   # --------------------------------------------------------------------------
   
   tbl <- table(data[, row_var], data[, col_var])
   
+  margin <- 1
+  
   prop <- prop.table(tbl, margin = margin) * 100
+  
+  tbl_test <- tbl[, rev(seq_len(ncol(tbl)))]
+  
+  success_level <- colnames(tbl_test)[1]
   
   
   if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
-    ## Fisher's exact test: get odds rations and CI for OR
+    ## Pearson’s Chi-squared test: get difference of proportions of succeses and CI for difference
+    ## Success category is defined by the first column
     
-    test_res <- NULL
-    try(test_res <- fisher.test(tbl), silent = TRUE)
-    if(is.null(test_res)){
-      test_res <- fisher.test(tbl, simulate.p.value = TRUE)
-    }
+    test_res <- prop.test(tbl_test)
     
-    if(is.null(test_res)){
-      pvalue <- NA
-      or <- NA
+    pvalue <- test_res$p.value
+    
+    if(!is.null(test_res$conf.int)){
+      difference <- (test_res$estimate[2] - test_res$estimate[1]) * 100
+      CI95_upper <- -test_res$conf.int[1] * 100
+      CI95_lower <- -test_res$conf.int[2] * 100
     }else{
-      pvalue <- test_res$p.value
-      or <- test_res$estimate
-      if(is.null(or)){
-        or <- NA
-      }
+      difference <- NA
+      CI95_upper <- NA
+      CI95_lower <- NA
     }
+    
+
     
   }else{
+    
     pvalue <- NA
-    or <- NA
+    difference <- NA
+    CI95_lower <- NA
+    CI95_upper <- NA
+    
   }
   
+  
+  ### Calculate CIs for proportions of success 
+  
+  cidf <- lapply(1:nrow(tbl_test), function(k){
+    # k = 1
+    
+    res_binom <- binom.test(as.numeric(tbl_test[k, ]), alternative = "two.sided", conf.level = 0.95)
+    
+    cidf <- data.frame(CI95_lower = res_binom$conf.int[1] * 100, CI95_upper = res_binom$conf.int[2] * 100)
+    
+  })
+  
+  cidf <- rbind.fill(cidf)
+  colnames(cidf) <- paste0(c("CI95_lower", "CI95_upper"), "_", success_level)
   
   
   # --------------------------------------------------------------------------
@@ -92,8 +104,10 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   res <- data.frame(covariate = row_var,
     subgroup = rownames(tbl),
-    countdf, propdf,
-    or = c(or, rep(NA, nrow(tbl) - 1)),
+    countdf, propdf, cidf,
+    difference = c(difference, rep(NA, nrow(tbl) - 1)),
+    CI95_lower = c(CI95_lower, rep(NA, nrow(tbl) - 1)),
+    CI95_upper = c(CI95_upper, rep(NA, nrow(tbl) - 1)),
     pvalue = c(pvalue, rep(NA, nrow(tbl) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -109,8 +123,14 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
     
     format_counts_and_props(counts = countdf, props = propdf, digits = 1),
     
-    OR = format_or(res$or, digits = 2),
+    format_CIs.data.frame(cidf, digits = 1, colname = paste0("95% CI ", success_level)),
+    
+    Difference = format_difference(res$difference, digits = 1),
+    
+    `95% CI` = format_CIs(res$CI95_lower, res$CI95_upper, digits = 1),
+    
     `P-value` = format_pvalues(res$pvalue), 
+    
     check.names = FALSE, stringsAsFactors = FALSE)
   
   
@@ -122,9 +142,10 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   }
   
   
-  ### If all OR are empty, do not display that column.
-  if(all(out$OR == "") && !force_empty_cols){
-    out$OR <- NULL
+  ### If all Difference are empty, do not display that column.
+  if(all(out$Difference == "") && !force_empty_cols){
+    out$Difference <- NULL
+    out$`95% CI` <- NULL
   }
   
   
@@ -137,7 +158,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   # --------------------------------------------------------------------------
   
   num_start_cols <- 2
-  num_end_cols <- sum(c("OR", "P-value") %in% colnames(out))
+  num_end_cols <- sum(c(paste0("95% CI ", success_level), "Difference", "95% CI", "P-value") %in% colnames(out))
   
   
   header <- c(num_start_cols, nlevels(data[, col_var]), num_end_cols)
@@ -152,7 +173,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   if(is.null(caption)){
     
-    caption <- paste0("Fisher's exact test.")
+    caption <- paste0("Pearson’s Chi-squared test.")
     
   }
   
@@ -174,24 +195,11 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
 
 
 
-# col_var
-# row_var
-# strat1_var = NULL
-# strat2_var = NULL
-# variable_names = NULL
-# caption = NULL
-# margin = 1
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
-
-#' @inheritParams wrapper_core_fishers_test
+#' @inheritParams wrapper_core_pearsons_test
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
-wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_pearsons_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -257,7 +265,7 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       }
       
       
-      wrapper_res <- wrapper_core_fishers_test(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_core_pearsons_test(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -357,22 +365,13 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
 
 
 
-# strat1_var = NULL
-# strat2_var = NULL
-# variable_names = NULL
-# caption = NULL
-# margin = 1
-# force_empty_cols = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
 
-
-#' @inheritParams wrapper_core_fishers_test_strat
+#' @inheritParams wrapper_core_pearsons_test_strat
 #' 
-#' Fisher's test
+#' Pearson’s Chi-squared test
 #' 
 #' @param row_vars Vector with names of categorical variables.
-wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -396,7 +395,7 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
     
     row_var <- row_vars[i]
     
-    wrapper_res <- wrapper_core_fishers_test_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_pearsons_test_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     
@@ -419,13 +418,13 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   
   hdr <- bheader(wrapper_res[[1]])
   
-  ### Replace NAs with "" for OR
-  missing_columns <- c("OR")
+  ### Replace NAs with "" for "Difference", "95% CI"
+  missing_columns <- c("Difference", "95% CI")
   
   for(i in 1:length(missing_columns)){
     if(missing_columns[i] %in% colnames(out)){
       out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
-      ### If all FC are empty, do not display that column.
+      ### If all are empty, do not display that column.
       if(all(out[, missing_columns[i]] == "") && !force_empty_cols){
         out[, missing_columns[i]] <- NULL
         ### Update header

@@ -545,7 +545,7 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
 
 #' Format Odds Ratios
 #' 
-#' @param x Vector of levels.
+#' @param x Vector with odds ratios.
 #' @param digits Number of decimal places.
 format_or <- function(x, digits = 2){
   
@@ -566,7 +566,7 @@ format_or <- function(x, digits = 2){
 
 #' Format difference 
 #' 
-#' @param x Vector of levels.
+#' @param x Vector with differences.
 #' @param digits Number of decimal places.
 format_difference <- function(x, digits = 2){
   
@@ -585,22 +585,40 @@ format_difference <- function(x, digits = 2){
 
 #' Format CIs (confidence intervals)
 #' 
-#' @param CI_lower Vector of lower CIs.
-#' @param CI_upper Vector of upper CIs.
+#' @param CI_lower Vector with lower CIs.
+#' @param CI_upper Vector with upper CIs.
 format_CIs <- function(CI_lower, CI_upper, digits = 2){
   
-  output <- paste0("(", round(CI_lower, digits), "-", round(CI_upper, digits), ")")
+  stopifnot(length(CI_lower) == length(CI_upper))
+  
+  
+  if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper)){
+    return(rep("", length(CI_lower)))
+  }
+  
+  output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
+  
+  output[is.na(CI_lower) & is.na(CI_upper)] <- ""
   
   return(output)
   
 }
 
 
+format_CIs.data.frame <- function(x, digits = 2, colname = NULL){
+  
+  output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits), stringsAsFactors = FALSE)
+  colnames(output) <- colname
+  
+  return(output)
+  
+}
+
 
 #' Format versus
 #' 
-#' @param level Vector of levels.
-#' @param reference Vector of references.
+#' @param level Vector with levels.
+#' @param reference Vector with references.
 format_vs <- function(level, reference){
   
   output <- paste0(level, " vs ", reference)
@@ -631,7 +649,7 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
   output <- lapply(1:nrow(counts), function(i){
     # i = 1
     
-    out <- paste0(ifelse(is.na(counts[i, ]), "", counts[i, ]), ifelse(is.na(props[i, ]), "", paste0(" (", round(props[i, ], digits), "%)")))
+    out <- paste0(ifelse(is.na(counts[i, ]), "", counts[i, ]), ifelse(is.na(props[i, ]), "", paste0(" (", formatC(as.numeric(props[i, ]), format = "f", digits = digits, drop0trailing = FALSE), "%)")))
     
     # Remove white spaces from the beginning and the end of a string
     
