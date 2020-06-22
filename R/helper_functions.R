@@ -470,7 +470,7 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE){
   
   min_pval <- 1/10^digits
   
-  output <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
+  output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[x < min_pval] <- paste0("<", formatC(min_pval, format = "f", digits = digits))
   output[is.na(x)] <- ""
   
@@ -511,7 +511,7 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
   
   min_pval <- 1/10^digits
   
-  output_format_non_scientific <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
+  output_format_non_scientific <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   
   output_format_scientific <- paste0("<", formatC(10 ^ -round(-log10(x)), format = "e", digits = 0))
   
@@ -555,7 +555,7 @@ format_or <- function(x, digits = 2){
   
   min_val <- 1/10^digits
   
-  output <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
+  output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[x < min_val] <- paste0("<", formatC(min_val, format = "f", digits = digits))
   output[is.na(x)] <- ""
   
@@ -574,7 +574,7 @@ format_difference <- function(x, digits = 2){
     return(rep("", length(x)))
   }
   
-  output <- formatC(x, format = "f", digits = digits, drop0trailing = TRUE)
+  output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[is.na(x)] <- ""
   
   return(output)
@@ -780,15 +780,19 @@ format_variable_names <- function(data, variable_names = NULL){
 #' @param colors Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.
 #' @param palette Vector of at least two colors used to create a color palette. 
 #' @return Named vector of unique colors for all levels.
-format_colors <- function(levels, colors = NULL, palette = NULL){
+format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicated = TRUE){
+  
   
   if(is.null(colors)){
     
     if(is.null(palette)){
       
-      stopifnot(length(levels) <= 12)
+      ## D3 20 colors
+      palette <- c("#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5")
       
-      colors <- RColorBrewer::brewer.pal(12, "Paired")[1:length(levels)]
+      stopifnot(length(levels) <= 20)
+      
+      colors <- palette[1:length(levels)]
       names(colors) <- levels
       
       
@@ -818,8 +822,11 @@ format_colors <- function(levels, colors = NULL, palette = NULL){
       colors <- colors[levels]
     }
     
-    ### Colors have to be unique. Otherwise, ggsurvplot does not work.
-    stopifnot(sum(duplicated(colors)) == 0)
+    ### Colors have to be unique for ggsurvplot. Otherwise, it does not work.
+    if(!allow_duplicated){
+      stopifnot(sum(duplicated(colors)) == 0)
+    }
+    
     
   }
   

@@ -47,7 +47,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   # Colors
   # -------------------------------------------------------------------------
   
-  colors <- format_colors(levels = levels(data[, covariate_var]), colors = colors)
+  colors <- format_colors(levels = levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
   
   ### Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts. For the ggsurvplot function and in ggplot adjustment colors cannot have names. Otherwise, it does not work. 
   
@@ -336,7 +336,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
 #' KM plot - All curves per biomarker and treatment in one panel
 #' 
 #' @param data Data frame.
-#' @param colors A list of length equal to tratment levels.
+#' @param colors A list of length equal to treatment levels.
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
@@ -395,7 +395,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     
     
     colors <- unlist(lapply(1:nlevels_treatment, function(i){
-      format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]])
+      format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
     }))
     
     
@@ -403,7 +403,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     
     colors <- unlist(lapply(1:nlevels_treatment, function(i){
       # i = 1
-      out <- format_colors(levels = levels_biomarker, colors = colors[[i]])
+      out <- format_colors(levels = levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
       names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
       return(out)
     }))
@@ -498,7 +498,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
       default_colors_per_treatment <- list(c("#E69F00", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
-        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]])
+        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
       }))
       
       
@@ -506,7 +506,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
         # i = 1
-        out <- format_colors(levels = levels_biomarker, colors = colors[[i]])
+        out <- format_colors(levels = levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
         names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
         return(out)
       }))
@@ -621,7 +621,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
       default_colors_per_treatment <- list(c("#E69F00", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
-        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]])
+        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
       }))
       
       
@@ -629,7 +629,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
         # i = 1
-        out <- format_colors(levels = levels_biomarker, colors = colors[[i]])
+        out <- format_colors(levels = levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
         names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
         return(out)
       }))

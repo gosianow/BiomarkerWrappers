@@ -814,6 +814,18 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   stopifnot(length(num_vars) >= 1)
   stopifnot(length(cat_vars) >= 1)
   
+  
+  if(length(num_vars) > 1){
+    stopifnot(length(cat_vars) == 1)
+    display_in_column <- "cat"
+  }
+  
+  if(length(cat_vars) > 1){
+    stopifnot(length(num_vars) == 1)
+    display_in_column <- "num"
+  }
+  
+  
   stopifnot(length(display_in_column) == 1)
   stopifnot(display_in_column %in% c("cat", "num"))
   
@@ -826,7 +838,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   # --------------------------------------------------------------------------
   
   
-  if(length(cat_vars) >= 1 && display_in_column == "num"){
+  if(display_in_column == "num"){
     
     stopifnot(length(num_vars) == 1)
     

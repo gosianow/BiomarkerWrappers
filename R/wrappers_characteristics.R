@@ -374,7 +374,7 @@ wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL,
   
   if(!is.null(caption)){
     
-    ## Remove all undescores from the caption because they are problematic when rendering to PDF
+    ## Remove all underscores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
     
   }

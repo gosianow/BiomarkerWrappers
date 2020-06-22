@@ -77,7 +77,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   
   if(method == "hypergeometric"){
     
-    ## -0.5 like in EGSEA ORA to avoid p-value = 0
+    ## q = k - 0.5 like in EGSEA ORA to avoid p-value = 0
     pvalues <- phyper(q = k - 0.5, m = K, n = N - K, k = n, lower.tail = FALSE)
     
     
@@ -85,10 +85,10 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
     
     pvalues <- sapply(1:length(genesets), function(i){
       # i = 1
+
+      tbl <- data.frame(not_DE = c((N - K[i]) - (n - k[i]), K[i] - k[i]), DE = c(n - k[i], k[i]), row.names = c("not_in_Set", "in_Set"))
       
-      tbl <- data.frame(not_DE = c(K[i] - k[i], (N - K[i]) - (n - k[i])), DE = c(k[i], n - k[i]), row.names = c("in_Set", "not_in_Set"))
-      
-      pvalue <- fisher.test(tbl, alternative = "less")$p.value
+      pvalue <- fisher.test(tbl, alternative = "greater")$p.value
       
     })
     
