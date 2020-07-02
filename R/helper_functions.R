@@ -727,12 +727,12 @@ format_summ <- function(summ, per = "row", digits = 2){
 
 #' Create variable names
 #' 
-#' Make sure that unique variable names exists for all the variables in the data frame. Creates from scratch or adds missing variable names for variables in data.
+#' Make sure that variable names exists for all the variables in the data frame. Creates from scratch or adds missing variable names for variables in data.
 #' 
 #' @param data Data frame.
 #' @param variable_names Named vector of variable names corresponding to variables in data. This vector does not have to contain names for all the variables in data. If names for some variables are missing, they will be created. If NULL, variable names are created by subtracting underscore from the column names of data.
-#' @return Named vector of unique variable names for all variables from data.
-format_variable_names <- function(data, variable_names = NULL){
+#' @return Named vector of (optionally unique) variable names for all variables from data.
+format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
   
   
   new_variable_names <- gsub("_", " ", colnames(data))
@@ -741,7 +741,15 @@ format_variable_names <- function(data, variable_names = NULL){
   
   if(!is.null(variable_names)){
     
+    ## If variable_names is provided, it has to be a named vector
     stopifnot(!is.null(names(variable_names)))
+    
+    ## If there are multiple names corresponding to one variable, we keep the first one 
+    if(sum(duplicated(names(variable_names))) > 0){
+      warning("\nSome variables have multiple names assigned. The first one will be kept. Please double check if this is the name that you want to use.\n")
+    }
+    
+    variable_names <- variable_names[!duplicated(names(variable_names))]
     
     mm <- match(names(new_variable_names), names(variable_names))
     new_variable_names[!is.na(mm)] <- variable_names[na.omit(mm)]
@@ -749,29 +757,34 @@ format_variable_names <- function(data, variable_names = NULL){
   }
   
   
-  ### There cannot be duplicated names. If so, fix it.
-  
-  if(sum(duplicated(new_variable_names)) > 0){
+  if(unique){
     
-    dupl_names <- unique(new_variable_names[duplicated(new_variable_names)])
+    ## There cannot be duplicated names. If so, fix it.
     
-    fixed_names <- lapply(seq_along(dupl_names), function(i){
-      # i = 1
+    if(sum(duplicated(new_variable_names)) > 0){
       
-      dupl_indx <- which(new_variable_names == dupl_names[i])
+      dupl_names <- unique(new_variable_names[duplicated(new_variable_names)])
       
-      new_names <- paste(dupl_names[i], 1:length(dupl_indx))
+      fixed_names <- lapply(seq_along(dupl_names), function(i){
+        # i = 1
+        
+        dupl_indx <- which(new_variable_names == dupl_names[i])
+        
+        new_names <- paste(dupl_names[i], 1:length(dupl_indx))
+        
+        out <- data.frame(dupl_indx = dupl_indx, new_names = new_names, stringsAsFactors = FALSE)
+        
+        
+      })
       
-      out <- data.frame(dupl_indx = dupl_indx, new_names = new_names, stringsAsFactors = FALSE)
+      fixed_names <- plyr::rbind.fill(fixed_names)
       
+      new_variable_names[fixed_names[, "dupl_indx"]] <- fixed_names[, "new_names"]
       
-    })
-    
-    fixed_names <- plyr::rbind.fill(fixed_names)
-    
-    new_variable_names[fixed_names[, "dupl_indx"]] <- fixed_names[, "new_names"]
+    }
     
   }
+  
   
   
   return(new_variable_names)
