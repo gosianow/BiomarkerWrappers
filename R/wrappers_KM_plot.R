@@ -85,12 +85,12 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   if(is.null(break_time_by)){
     break_time_by <- calculate_break_time(data[, tte_var], n_breaks = 10)
   }
-  
+  # print(break_time_by)
   
   if(is.null(max_tte)){
     max_tte <- max(data[, tte_var], na.rm = TRUE)
   }
-  
+  # print(max_tte)
   
   ### To make sure that no data is cut off the range of the plot, extend the x-axis
   ## Extend to the next break time point - It is usually too much and gives zeros in risk table. 

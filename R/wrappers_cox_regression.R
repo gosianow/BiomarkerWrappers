@@ -77,7 +77,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
-
+  
   # --------------------------------------------------------------------------
   ### Parce the regression summary
   ## Generate data frame with coefficient names and levels and information about reference groups
@@ -1180,8 +1180,10 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   
   
   ### Replace NAs with "" for columns that are missing for numerical biomarkers
+  if("Biomarker Effect" %in% colnames(out)){
+    out$`Biomarker Effect`[is.na(out$`Biomarker Effect`)] <- ""
+  }
   
-  out$`Biomarker Effect`[is.na(out$`Biomarker Effect`)] <- ""
   
   
   

@@ -59,8 +59,10 @@ setMethod("bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
     full_width <- getOption("bkable_full_width", default = TRUE)
   }
   
+  ### We add format as an option because kableExtra::column_spec does not work if format is not specified in the kable call
+  format <- getOption("knitr.table.format", default = "html")
   
-  kable <- knitr::kable(out, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
+  kable <- kable <- knitr::kable(out, format = format, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = full_width, font_size = font_size) %>% 
     kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "Difference", "P-value", "Adj. P-value")), bold = TRUE) 
   

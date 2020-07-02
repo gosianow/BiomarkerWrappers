@@ -265,7 +265,7 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
 # x <- data$FCGR1A
 
 
-cut_core_quartiles <- function(x, labels = c("(0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
   stopifnot(length(labels) == 4)
   
@@ -310,7 +310,7 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
 
 
 
-cut_core_quartiles_strat <- function(x, strata, labels = c("(0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
   stopifnot(is.factor(strata))
   
@@ -668,6 +668,7 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
 }
 
 
+
 #' Format summary statistics such as N, mean, median, min, max
 #' 
 #' @param summ Data frame.
@@ -675,12 +676,18 @@ format_summ <- function(summ, per = "row", digits = 2){
   
   stopifnot(per %in% c("row", "col"))
   
+  
+  
   if(per == "row"){
+    
+    if(length(digits) == 1){
+      digits <- rep(digits, times = nrow(summ))
+    }
     
     output <- lapply(1:nrow(summ), function(i){
       # i = 1
       
-      out <- ifelse(is.na(summ[i, ]), "", formatC(round(summ[i, ], digits), format = "f", digits = digits, drop0trailing = TRUE))
+      out <- ifelse(is.na(summ[i, ]), "", formatC(as.numeric(summ[i, ]), format = "f", digits = digits[i], drop0trailing = FALSE))
       
       
       return(out)
@@ -691,10 +698,14 @@ format_summ <- function(summ, per = "row", digits = 2){
     
   }else{
     
+    if(length(digits) == 1){
+      digits <- rep(digits, times = ncol(summ))
+    }
+    
     output <- lapply(1:ncol(summ), function(i){
       # i = 1
       
-      out <- ifelse(is.na(summ[, i]), "", formatC(round(summ[, i], digits), format = "f", digits = digits, drop0trailing = TRUE))
+      out <- ifelse(is.na(summ[, i]), "", formatC(as.numeric(summ[, i]), format = "f", digits = digits[i], drop0trailing = FALSE))
       
       
       return(out)
@@ -845,7 +856,7 @@ calculate_break_time <- function(x, n_breaks = 10){
   
   decimial_nr <- round(log10(max_tte_tmp))
   
-  break.time.by <- round(max_tte_tmp / 10^decimial_nr) * 10^decimial_nr
+  break.time.by <- round(max_tte_tmp * 10^decimial_nr) / 10^decimial_nr
   
   return(break.time.by)
   

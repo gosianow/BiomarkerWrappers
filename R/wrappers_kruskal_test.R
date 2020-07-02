@@ -140,10 +140,14 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
+  digits <- rep(2, length(display_statistics))
+  digits[display_statistics == "N"] <- 0
+  
+  
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Statistic = res$statistic, 
     
-    format_summ(summ = summdf),
+    format_summ(summ = summdf, digits = digits),
     
     Difference = format_difference(res$difference, digits = 2),
     
@@ -354,10 +358,14 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
+  digits <- rep(2, length(display_statistics))
+  digits[display_statistics == "N"] <- 0
+  
+  
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = res$subgroup, 
     
-    format_summ(summ = summdf, per = "col"),
+    format_summ(summ = summdf, per = "col", digits = digits),
     
     Difference = format_difference(res$difference, digits = 2),
     

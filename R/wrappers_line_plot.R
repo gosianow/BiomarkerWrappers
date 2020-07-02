@@ -137,12 +137,14 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
     labs(title = title, subtitle = subtitle, tag = tag) + 
     ylab(ylab) +
     xlab(xlab) +
-    theme_cowplot(12) +
+    # theme_cowplot(12) +
     theme(plot.title = element_text(size = title_size, face = "bold"),
       plot.subtitle = element_text(size = title_size),
       plot.tag.position = "top",
       plot.tag = element_text(size = title_size, face = "plain"),
-      legend.position = legend_position) +
+      legend.position = legend_position,
+      axis.line = element_blank()) +
+    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   
@@ -185,9 +187,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
     ggpl <- ggpl +
       facet_wrap(as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
       theme(strip.background = element_rect(colour = "white", fill = "white"),
-        strip.text = element_text(size = strip_text_size),
-        axis.line = element_blank()) +
-      panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE)
+        strip.text = element_text(size = strip_text_size))
     
   }
   
