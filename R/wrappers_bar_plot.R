@@ -380,7 +380,9 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       plot.tag.position = "top",
       plot.tag = element_text(size = title_size, face = "plain"),
-      legend.position = legend_position) +
+      legend.position = legend_position,
+      axis.line = element_blank()) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)

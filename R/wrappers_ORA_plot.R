@@ -141,7 +141,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
       plot.title = element_text(size = title_size, hjust = 1),
       legend.position = "right") +
     coord_cartesian(xlim = xlim) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
     scale_y_discrete(position = "left")
   
@@ -310,7 +310,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observ
       plot.title = element_text(size = title_size, hjust = 1),
       strip.background = element_rect(colour = "white", fill = "white")) +
     coord_cartesian(xlim = xlim) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
     scale_color_manual(name = "Contrast", values = colors_point) +
     facet_wrap(~ directions, nrow = 1)

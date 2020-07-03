@@ -141,7 +141,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       axis.text.y = element_text(size = axis_text_y_size),
       legend.position = legend_position) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
     scale_radius(name = pval_prefix, range = radius_range, breaks = 1:(length(pval_cut) - 1), labels = pval_cut[-1], limits = c(1, length(pval_cut) - 1)) +
     scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 

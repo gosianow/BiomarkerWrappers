@@ -144,7 +144,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
       plot.tag = element_text(size = title_size, face = "plain"),
       legend.position = legend_position,
       axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   

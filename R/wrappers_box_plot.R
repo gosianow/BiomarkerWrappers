@@ -188,14 +188,16 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ggpl <- ggpl +
         ggnewscale::new_scale_fill() +
-        geom_jitter(aes_string(fill = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes_string(fill = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes_string(fill = color_point_var), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
     }else{
       
       ggpl <- ggpl +
-        geom_jitter(aes_string(color = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes_string(color = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes_string(color = color_point_var), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -213,7 +215,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ggpl <- ggpl +
         ggnewscale::new_scale_fill() +
-        geom_jitter(aes_string(fill = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes_string(fill = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes_string(fill = color_point_var, group = dodge_var), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
@@ -221,7 +224,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ## The group determines dodging 
       ggpl <- ggpl +
-        geom_jitter(aes_string(color = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes_string(color = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes_string(color = color_point_var, group = dodge_var), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -243,7 +247,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       plot.tag = element_text(size = title_size, face = "plain"),
       legend.position = legend_position,
       axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE)
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
@@ -268,7 +272,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       facet_wrap(as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
       theme(strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip_text_size))
-      
+    
     
   }
   

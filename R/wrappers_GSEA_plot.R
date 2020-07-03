@@ -149,7 +149,7 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
       plot.title = element_text(size = title_size, hjust = 1),
       legend.position = "none") +
     coord_cartesian(xlim = xlim) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "y", minor = "none", size.major = 0.25) +
     scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
     scale_x_continuous(expand = c(0, 0))
@@ -171,7 +171,7 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
       plot.title = element_text(size = axis_text_y_size, hjust = 0.5, face = "plain"),
       legend.position = "none") +
     coord_cartesian(xlim = xlim) +
-    panel_border(colour = "black", linetype = 1, size = 1, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "y", minor = "none", size.major = 0.25) +
     scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
     scale_x_continuous(expand = c(0, 0))
