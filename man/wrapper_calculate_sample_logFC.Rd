@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_functions.R
 \name{wrapper_calculate_sample_logFC}
 \alias{wrapper_calculate_sample_logFC}
-\title{Calculate logFC for expression that will be plotted in a heatmap}
+\title{Calculate logFC for expression data that will be plotted in a heatmap}
 \usage{
 wrapper_calculate_sample_logFC(x, comparison_var, subgroup_var = NULL)
 }
@@ -10,5 +10,5 @@ wrapper_calculate_sample_logFC(x, comparison_var, subgroup_var = NULL)
 \item{x}{eSet object}
 }
 \description{
-Calculate logFC for expression that will be plotted in a heatmap
+Calculate logFC for expression data that will be plotted in a heatmap
 }

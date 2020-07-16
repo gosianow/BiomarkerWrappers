@@ -12,3 +12,4 @@ format_summ(summ, per = "row", digits = 2)
 \description{
 Format summary statistics such as N, mean, median, min, max
 }
+\keyword{internal}

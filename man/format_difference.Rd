@@ -14,3 +14,4 @@ format_difference(x, digits = 2)
 \description{
 Format difference
 }
+\keyword{internal}

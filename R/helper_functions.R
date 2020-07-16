@@ -1,12 +1,17 @@
 
 
-
-
+#' Use round or signif
+#' 
+#' @keywords internal
 round_signif <- function(x, digits = 2){
   ifelse(abs(x) >= 1, round(x, digits = digits), signif(x, digits = digits))
 }
 
 
+
+
+#' Save content of an eSet into a CSV file 
+#' 
 #' @export
 eSet2csv <- function(es, file, digits = 2){
   
@@ -73,8 +78,9 @@ eSet2csv <- function(es, file, digits = 2){
 
 
 
-### My version
 
+#' My version of subchunkify 
+#' 
 #' @export
 subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
   ### Necessary to set for knit_child
@@ -122,7 +128,7 @@ subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, env
 
 
 
-#' Calculate logFC for expression that will be plotted in a heatmap 
+#' Calculate logFC for expression data that will be plotted in a heatmap 
 #' 
 #' @param x eSet object
 #' @export
@@ -179,7 +185,8 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
 }
 
 
-
+#' My version of duplicated
+#' 
 #' @export
 duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
   
@@ -205,7 +212,9 @@ duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
 }
 
 
-
+#' Calculate number of non-NA elements in a vector 
+#' 
+#' @keywords internal
 length_nonNA <- function(x){
   sum(!is.na(x))
 }
@@ -214,6 +223,7 @@ length_nonNA <- function(x){
 
 
 #' Read gmt file and return a list of genes
+#' 
 #' @export
 wrapper_read_gmt <- function(filename){
   x <- GSEABase::getGmt(filename)
@@ -223,6 +233,7 @@ wrapper_read_gmt <- function(filename){
 
 
 #' Write a list of genes into a gmt file
+#' 
 #' @export
 wrapper_write_gmt <- function(x, filename){
   
@@ -246,7 +257,8 @@ wrapper_write_gmt <- function(x, filename){
 
 
 
-
+#' Spit a list of plots into chunks and plot them in a grid layout
+#' 
 #' @export
 wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
   
@@ -265,7 +277,8 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
 
 
 
-
+#' Stratify data into quartiles
+#' 
 #' @export
 cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
@@ -279,6 +292,8 @@ cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 7
   
 }
 
+#' Dichotomize data by median 
+#' 
 #' @export
 cut_core_median <- function(x, labels = c("<=MED", ">MED")){
   
@@ -292,6 +307,8 @@ cut_core_median <- function(x, labels = c("<=MED", ">MED")){
   
 }
 
+#' Stratify data into two groups
+#' 
 #' @export
 cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
   
@@ -310,7 +327,7 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
   
 }
 
-
+#' @rdname cut_core_quartiles
 #' @export
 cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
@@ -334,6 +351,8 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 5
 }
 
 
+
+#' @rdname cut_core_median
 #' @export
 cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
   
@@ -357,6 +376,8 @@ cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
 }
 
 
+
+#' @rdname cut_core_2groups
 #' @export
 cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high")){
   
@@ -393,7 +414,9 @@ cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)),
 
 
 
-
+#' Internal function used in bkable to highlight the rows 
+#' 
+#' @keywords internal 
 indicate_blocks <- function(d, block_vars, return = "block"){
   
   stopifnot(length(return) == 1)
@@ -460,6 +483,7 @@ indicate_blocks <- function(d, block_vars, return = "block"){
 #' @param x Vector of p-values to be formatted.
 #' @param digits Number of digits after decimial to display.
 #' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
+#' @keywords internal 
 format_pvalues <- function(x, digits = 4, asterisk = TRUE){
   
   # digits = 4
@@ -499,6 +523,7 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE){
 #' @param x Vector of p-values to be formatted.
 #' @param digits Number of digits after decimial to display.
 #' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
+#' @keywords internal 
 format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
   
   # digits = 4
@@ -549,6 +574,7 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
 #' 
 #' @param x Vector with odds ratios.
 #' @param digits Number of decimal places.
+#' @keywords internal 
 format_or <- function(x, digits = 2){
   
   if(sum(is.na(x)) == length(x)){
@@ -566,10 +592,12 @@ format_or <- function(x, digits = 2){
 }
 
 
+
 #' Format difference 
 #' 
 #' @param x Vector with differences.
 #' @param digits Number of decimal places.
+#' @keywords internal
 format_difference <- function(x, digits = 2){
   
   if(sum(is.na(x)) == length(x)){
@@ -589,6 +617,7 @@ format_difference <- function(x, digits = 2){
 #' 
 #' @param CI_lower Vector with lower CIs.
 #' @param CI_upper Vector with upper CIs.
+#' @keywords internal
 format_CIs <- function(CI_lower, CI_upper, digits = 2){
   
   stopifnot(length(CI_lower) == length(CI_upper))
@@ -607,6 +636,10 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2){
 }
 
 
+#' Format CIs (confidence intervals)
+#' 
+#' @param x Data frame.
+#' @keywords internal
 format_CIs.data.frame <- function(x, digits = 2, colname = NULL){
   
   output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits), stringsAsFactors = FALSE)
@@ -621,6 +654,7 @@ format_CIs.data.frame <- function(x, digits = 2, colname = NULL){
 #' 
 #' @param level Vector with levels.
 #' @param reference Vector with references.
+#' @keywords internal
 format_vs <- function(level, reference){
   
   output <- paste0(level, " vs ", reference)
@@ -638,6 +672,7 @@ format_vs <- function(level, reference){
 #' @param counts Data frame with counts.
 #' @param props Data frame with proportions.
 #' @param digits Number of decimal places when rounding proportions.
+#' @keywords internal
 format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "counts_"){
   
   ### Match parrern at the beginning
@@ -674,6 +709,7 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
 #' Format summary statistics such as N, mean, median, min, max
 #' 
 #' @param summ Data frame.
+#' @keywords internal
 format_summ <- function(summ, per = "row", digits = 2){
   
   stopifnot(per %in% c("row", "col"))
@@ -865,6 +901,10 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
 
 
 
+#' Calculate break time used in KM plots
+#' 
+#' @param x Vector with time-to-event data.
+#' @keywords internal
 calculate_break_time <- function(x, n_breaks = 10){
   
   

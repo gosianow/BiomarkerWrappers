@@ -16,3 +16,4 @@ format_pvalues2(x, digits = 4, asterisk = TRUE)
 \description{
 Format p-values
 }
+\keyword{internal}

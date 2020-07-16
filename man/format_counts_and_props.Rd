@@ -16,3 +16,4 @@ format_counts_and_props(counts, props, digits = 2, prefix_counts = "counts_")
 \description{
 Paste counts and proportions corresponding to one subgroup
 }
+\keyword{internal}

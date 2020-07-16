@@ -14,3 +14,4 @@ format_or(x, digits = 2)
 \description{
 Format Odds Ratios
 }
+\keyword{internal}

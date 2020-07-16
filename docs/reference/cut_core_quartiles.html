@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate logFC for expression data that will be plotted in a heatmap — wrapper_calculate_sample_logFC • BiomarkerWrappers</title>
+<title>Stratify data into quartiles — cut_core_quartiles • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Calculate logFC for expression data that will be plotted in a heatmap — wrapper_calculate_sample_logFC" />
-<meta property="og:description" content="Calculate logFC for expression data that will be plotted in a heatmap" />
+<meta property="og:title" content="Stratify data into quartiles — cut_core_quartiles" />
+<meta property="og:description" content="Stratify data into quartiles" />
 
 
 
@@ -115,25 +115,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate logFC for expression data that will be plotted in a heatmap</h1>
+    <h1>Stratify data into quartiles</h1>
     
-    <div class="hidden name"><code>wrapper_calculate_sample_logFC.Rd</code></div>
+    <div class="hidden name"><code>cut_core_quartiles.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate logFC for expression data that will be plotted in a heatmap</p>
+    <p>Stratify data into quartiles</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_calculate_sample_logFC</span>(<span class='no'>x</span>, <span class='no'>comparison_var</span>, <span class='kw'>subgroup_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>cut_core_quartiles</span>(
+  <span class='no'>x</span>,
+  <span class='kw'>labels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"[0%, 25%]"</span>, <span class='st'>"(25%, 50%]"</span>, <span class='st'>"(50%, 75%]"</span>, <span class='st'>"(75%, 100%]"</span>)
+)
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>x</th>
-      <td><p>eSet object</p></td>
-    </tr>
-    </table>
+<span class='fu'>cut_core_quartiles_strat</span>(
+  <span class='no'>x</span>,
+  <span class='no'>strata</span>,
+  <span class='kw'>labels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"[0%, 25%]"</span>, <span class='st'>"(25%, 50%]"</span>, <span class='st'>"(50%, 75%]"</span>, <span class='st'>"(75%, 100%]"</span>)
+)</pre>
+
 
 
   </div>
