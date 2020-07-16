@@ -2,21 +2,12 @@
 
 
 
-# data <- data_goya
-# 
-# strat_var <- "Treatment_Arm"
-# strat_var <- NULL
-# covariate_var <- "Ann_Arbor_Stage"
-# 
-# variable_names = NULL
-# caption = NULL
-
-
 
 
 #' Table with distribution summary for a categorical covariate
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_characteristics_cat <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
@@ -146,20 +137,10 @@ wrapper_core_characteristics_cat <- function(data, covariate_var, strat_var = NU
 
 
 
-# data <- data_goya
-# 
-# strat_var <- "Treatment_Arm"
-# strat_var <- NULL
-# covariate_var <- "FCGR2B"
-# 
-# variable_names = NULL
-# caption = NULL
-# out_colname = "Value"
-
-
 #' Table with distribution summary for a numerical covariate
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
@@ -284,20 +265,11 @@ wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NU
 
 
 
-# data <- data_goya
-# 
-# strat_var <- "Treatment_Arm"
-# covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
-# 
-# variable_names = NULL
-# caption = NULL
-# out_colname = "Value"
-
-
 
 #' Table with distribution summary for categorical and numerical covariates
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
@@ -395,28 +367,12 @@ wrapper_core_characteristics <- function(data, covariate_vars, strat_var = NULL,
 
 
 
-# data <- data_goya
-# 
-# bep_vars <- "BEP_RNAseq"
-# covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
-# 
-# treatment_var <- "Treatment_Arm"
-# 
-# bep_vars = NULL
-# treatment_var = NULL
-# 
-# 
-# variable_names = NULL
-# caption = "Bla"
-# 
-# itt_name = "ITT"
-
-
 
 #' Table with distribution summary for a list of covariates for ITT and BEP
 #' 
 #' @param data Data frame.
 #' @param bep_vars Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).
+#' @export
 wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT"){
   
   

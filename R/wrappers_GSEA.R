@@ -27,6 +27,7 @@ NULL
 #' Run GSEA
 #' 
 #' @param statistic Named vector of t statistics from limma or logFC.
+#' @export
 wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
   min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
@@ -201,6 +202,7 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
 #' Run GSEA
 #' 
 #' @param x TopTable
+#' @export
 wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   min_GS_size = 10, max_GS_size = 500,
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
@@ -258,7 +260,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
 
 
 
-
+#' @export
 wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 

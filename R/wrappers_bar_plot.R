@@ -23,6 +23,7 @@
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, 
   colors_bar = NULL, 
   variable_names = NULL, 
@@ -277,8 +278,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     ggpl <- ggplot() +
       geom_col(data = ggdata, aes(x = Subgroup, y = Proportion, fill = Observation), color = "black") +
-      scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE) +
-      theme_cowplot(12)
+      scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE)
     
     
     ### Facet
@@ -339,8 +339,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     ggpl <- ggplot() +
       geom_col(data = ggdata, aes_string(x = facet_var, y = "Proportion", fill = "Subgroup"), color = "black", position = position_dodge2(preserve = "single", width = 0.75)) +
-      scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE) +
-      theme_cowplot(12)
+      scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE)
     
     
     ### Labels
@@ -380,9 +379,10 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       plot.tag.position = "top",
       plot.tag = element_text(size = title_size, face = "plain"),
-      legend.position = legend_position,
-      axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+      # axis.line = element_blank(),
+      # axis.ticks = element_line(color = "black", size = 0.5),
+      # panel.border = element_rect(colour = "black", size = 1),
+      legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
@@ -419,6 +419,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
 #' Generate bar plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
@@ -585,6 +586,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
 #' Generate barplots for multiple variables in one faceted or dodged panel.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 

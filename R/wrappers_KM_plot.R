@@ -8,6 +8,7 @@
 #' Generate a signle KM plot.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, 
   colors = NULL, 
   variable_names = NULL, 
@@ -182,6 +183,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
 #' Generate KM plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var, 
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
@@ -337,6 +339,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
 #' 
 #' @param data Data frame.
 #' @param colors A list of length equal to treatment levels.
+#' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
@@ -440,6 +443,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 #' 
 #' @param data Data frame.
 #' @param colors If treatment = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
+#' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
   strat2_var = NULL,
   colors = NULL, 
@@ -563,6 +567,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 #' 
 #' @param data Data frame.
 #' @param colors If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
+#' @export
 wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var = NULL, treatment_var, 
   strat2_var = NULL,
   colors = NULL, 

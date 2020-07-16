@@ -16,3 +16,30 @@ Depends: R (>= 3.6.2)
 Imports: tidyverse, plyr, cowplot, RColorBrewer, ggbeeswarm, survival, survminer, forestplot, utils, stats, knitr, kableExtra
 Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr
+RoxygenNote: 7.0.2
+Collate: 
+    'class_Bclass.R'
+    'class_BclassCharacteristics.R'
+    'class_BclassDE.R'
+    'class_BclassTesting.R'
+    'generate_test_data.R'
+    'helper_functions.R'
+    'wrappers_CAMERA.R'
+    'wrappers_DE.R'
+    'wrappers_GSEA.R'
+    'wrappers_GSEA_plot.R'
+    'wrappers_KM_plot.R'
+    'wrappers_ORA.R'
+    'wrappers_ORA_plot.R'
+    'wrappers_bar_plot.R'
+    'wrappers_box_plot.R'
+    'wrappers_characteristics.R'
+    'wrappers_cox_regression.R'
+    'wrappers_fishers_test.R'
+    'wrappers_kruskal_test.R'
+    'wrappers_line_plot.R'
+    'wrappers_logFC_plot.R'
+    'wrappers_logistic_regression.R'
+    'wrappers_pearsons_test.R'
+    'wrappers_point_plot.R'
+    'wrappers_tileplot.R'

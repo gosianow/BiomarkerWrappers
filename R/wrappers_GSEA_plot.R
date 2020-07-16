@@ -16,6 +16,7 @@
 #' Plot GSEA statistics ranks
 #' 
 #' @param x TopTable with DGE results, for example, from limma.
+#' @export
 wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
   gsea_results = NULL, geneset_var = "Geneset", adjp_var = "adj.P.Val", color_point_var = "NES",
   trim_limits = 0.01,

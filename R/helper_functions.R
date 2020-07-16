@@ -7,7 +7,7 @@ round_signif <- function(x, digits = 2){
 }
 
 
-
+#' @export
 eSet2csv <- function(es, file, digits = 2){
   
   fdata <- Biobase::fData(es)
@@ -75,6 +75,7 @@ eSet2csv <- function(es, file, digits = 2){
 
 ### My version
 
+#' @export
 subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
   ### Necessary to set for knit_child
   ## knitr::opts_knit$set(output.dir = getwd())
@@ -124,6 +125,7 @@ subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, env
 #' Calculate logFC for expression that will be plotted in a heatmap 
 #' 
 #' @param x eSet object
+#' @export
 wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NULL){
   
   
@@ -178,7 +180,7 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
 
 
 
-
+#' @export
 duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
   
   if(is.factor(x)){
@@ -212,6 +214,7 @@ length_nonNA <- function(x){
 
 
 #' Read gmt file and return a list of genes
+#' @export
 wrapper_read_gmt <- function(filename){
   x <- GSEABase::getGmt(filename)
   x <- GSEABase::geneIds(x)
@@ -220,6 +223,7 @@ wrapper_read_gmt <- function(filename){
 
 
 #' Write a list of genes into a gmt file
+#' @export
 wrapper_write_gmt <- function(x, filename){
   
   gsc <- GSEABase::GeneSetCollection(lapply(1:length(x), function(i){
@@ -243,7 +247,7 @@ wrapper_write_gmt <- function(x, filename){
 
 
 
-
+#' @export
 wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
   
   indx <- seq_along(plotlist)
@@ -262,9 +266,7 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
 
 
 
-# x <- data$FCGR1A
-
-
+#' @export
 cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
   stopifnot(length(labels) == 4)
@@ -277,7 +279,7 @@ cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 7
   
 }
 
-
+#' @export
 cut_core_median <- function(x, labels = c("<=MED", ">MED")){
   
   stopifnot(length(labels) == 2)
@@ -290,7 +292,7 @@ cut_core_median <- function(x, labels = c("<=MED", ">MED")){
   
 }
 
-
+#' @export
 cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
   
   stopifnot(length(probs) == 1)
@@ -309,7 +311,7 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
 }
 
 
-
+#' @export
 cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
   stopifnot(is.factor(strata))
@@ -332,7 +334,7 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 5
 }
 
 
-
+#' @export
 cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
   
   stopifnot(is.factor(strata))
@@ -355,7 +357,7 @@ cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
 }
 
 
-
+#' @export
 cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high")){
   
   stopifnot(is.factor(strata))
@@ -732,6 +734,7 @@ format_summ <- function(summ, per = "row", digits = 2){
 #' @param data Data frame.
 #' @param variable_names Named vector of variable names corresponding to variables in data. This vector does not have to contain names for all the variables in data. If names for some variables are missing, they will be created. If NULL, variable names are created by subtracting underscore from the column names of data.
 #' @return Named vector of (optionally unique) variable names for all variables from data.
+#' @export
 format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
   
   
@@ -793,8 +796,6 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 }
 
 
-# levels <- levels(data_goya[, "Ann_Arbor_Stage"])
-
 
 #' Check or create colors
 #' 
@@ -804,6 +805,7 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 #' @param colors Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.
 #' @param palette Vector of at least two colors used to create a color palette. 
 #' @return Named vector of unique colors for all levels.
+#' @export
 format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicated = TRUE){
   
   

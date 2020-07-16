@@ -9,7 +9,7 @@
 
 
 
-
+#' @export
 wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, display_topn = 20){
@@ -176,6 +176,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
 #' Over-representation analysis (ORA)
 #' 
 #' @param x TopTable with DGE results.
+#' @export
 wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL, gene_mapping = NULL, 
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500,
   directions = c("up", "down", "both"), min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
@@ -287,6 +288,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
 #' Display significant pathways for a given contrast and direction
 #' 
 #' @param x TopTable with ORA results.
+#' @export
 wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both", 
   sort_by = "pval", topn = 20, pval = 0.05,
   geneset_vars = "Geneset", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
@@ -447,6 +449,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
 #' @param x TopTable with ORA results for gene sets that should be displayed.
 #' @param contrast Name of the contrasts that should be displayed.
 #' @param directions Names of gene regulation directions that should be displayed.  
+#' @export
 wrapper_dispaly_ora_genes <- function(x, contrast, directions = c("up", "down"), 
   geneset_vars = "Geneset", genes_prefix = "Genes", sep = "_", 
   caption = NULL){

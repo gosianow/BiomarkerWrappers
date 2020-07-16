@@ -10,6 +10,7 @@
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with selected ORA results obtained by running 'wrapper_dispaly_significant_ora'.
+#' @export
 wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed_var = "Observed", adjp_var = "adj.P.Val",  genes_prefix = NA, color_point_var = NULL,
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
@@ -174,6 +175,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with ORA results.
+#' @export
 wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observed_prefix = "Observed", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
   title = "", title_size = 10, title_width = 140, axis_text_y_size = 8, axis_text_y_width = 70, 
   colors_point = NULL, size_range = c(2, 10), point_alpha = 0.8){

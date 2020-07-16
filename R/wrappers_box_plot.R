@@ -7,6 +7,7 @@
 #' Generate a signle boxplot.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
@@ -239,15 +240,16 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
     labs(title = title, subtitle = subtitle, tag = tag) + 
     ylab(ylab) +
     xlab(xlab) +
-    theme_cowplot(12) +
+    # theme_cowplot(12) +
     theme(plot.title = element_text(size = title_size, face = "bold"),
       plot.subtitle = element_text(size = title_size),
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       plot.tag.position = "top",
       plot.tag = element_text(size = title_size, face = "plain"),
-      legend.position = legend_position,
-      axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+      axis.line = element_blank(),
+      axis.ticks = element_line(color = "black", size = 0.5),
+      panel.border = element_rect(colour = "black", size = 1),
+      legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
@@ -330,12 +332,14 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
 
 
 
-
+#' @inheritParams wrapper_core_box_plot
+#' 
 #' Boxplot
 #' 
 #' Generate box plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL,
@@ -501,6 +505,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
 #' Generate boxplots for multiple variables in one faceted or dodged panel.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL, 

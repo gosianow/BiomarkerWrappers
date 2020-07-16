@@ -11,6 +11,7 @@
 #' Pearson’s Chi-squared test
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_pearsons_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
@@ -199,6 +200,7 @@ wrapper_core_pearsons_test <- function(data, col_var, row_var, variable_names = 
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @export
 wrapper_core_pearsons_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -371,6 +373,7 @@ wrapper_core_pearsons_test_strat <- function(data, col_var, row_var, strat1_var 
 #' Pearson’s Chi-squared test
 #' 
 #' @param row_vars Vector with names of categorical variables.
+#' @export
 wrapper_pearsons_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   

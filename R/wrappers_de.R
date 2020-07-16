@@ -7,6 +7,7 @@
 #' Merge topTable results for multiple contrasts
 #' 
 #' @param fit Fit should be an object of class MArrayLM as produced by lmFit and eBayes where we can apply topTable.
+#' @export
 wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), res_vars = c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val"), sep = "_", pval = 0.05, lfc = c(0, 1)){
   
   
@@ -55,7 +56,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
 
 
 
-
+#' @export
 wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"){
   
   ## We add '^' because we want to match expression at the beginning of the string
@@ -94,7 +95,7 @@ wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"
 
 
 
-
+#' @export
 wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, lfc = 0, 
   gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
@@ -232,7 +233,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
 # formula <- as.formula("~ 0 + DE_var")
 
 
-
+#' @export
 wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
   
   
@@ -312,7 +313,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
 # formula <- as.formula("~ 0 + DE_var + (1|PatientID)")
 
 
-
+#' @export
 wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
   
   
@@ -406,7 +407,7 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
 # formula <- as.formula("~ 0 + DE_var + (1|PatientID)")
 
 
-
+#' @export
 wrapper_glmm_beta <- function(data, biomarker_vars, formula, contrast_matrix){
   
   
@@ -505,7 +506,7 @@ wrapper_glmm_beta <- function(data, biomarker_vars, formula, contrast_matrix){
 
 
 
-
+#' @export
 wrapper_betareg <- function(data, biomarker_vars, formula, contrast_matrix){
   
   

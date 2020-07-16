@@ -2,18 +2,6 @@
 
 
 
-# data <- data_goya
-# 
-# cat_var <- "Cell_Of_Origin2"
-# num_var <- "FCGR2B"
-# 
-# variable_names = NULL
-# caption = NULL
-# 
-# print_pvalues = TRUE
-# 
-# method = "kruskal"
-
 
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
@@ -22,6 +10,7 @@
 #' @param data Data frame.
 #' @param num_var Name of a numerical variable.
 #' @param cat_var Name of a categorical variable. That variable must be a factor with at least two levels.
+#' @export
 wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
@@ -219,25 +208,13 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
 
 
 
-# data <- data_goya
-# 
-# cat_var <- "Cell_Of_Origin2"
-# num_var <- "FCGR2B"
-# 
-# variable_names = NULL
-# caption = NULL
-# 
-# print_pvalues = TRUE
-# 
-# method = "kruskal"
-# display_statistics = c("N", "Median")
-
 
 #' @inheritParams wrapper_core_kruskal_test_col_cat
 #' 
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' Returns a table where stratification subgroups are in rows and distribution summary statistics for the numerical variable are in columns. 
+#' @export
 wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
@@ -438,30 +415,11 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
 
 
 
-
-# data <- data_goya
-# 
-# cat_var <- "Cell_Of_Origin2"
-# num_var <- "FCGR2B"
-# 
-# strat1_var = "Treatment_Arm"
-# strat2_var = NULL
-# 
-# variable_names = NULL
-# caption = NULL
-# 
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-# 
-# method = "kruskal"
-# display_statistics = c("N", "Median")
-
-
-
 #' @inheritParams wrapper_core_kruskal_test_col_cat
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @export
 wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -627,6 +585,7 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @export
 wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -792,25 +751,13 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
 
 
 
-# strat1_var = NULL
-# strat2_var = NULL
-# method = "kruskal"
-# variable_names = NULL
-# caption = NULL
-# display_statistics = c("N", "Median")
-# force_empty_cols = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
-
 #' @inheritParams wrapper_core_kruskal_test_col_cat_strat
 #' 
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
 #' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
+#' @export
 wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   

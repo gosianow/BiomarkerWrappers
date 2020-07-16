@@ -1,32 +1,19 @@
 ---
-title: "Example workflow for exploratory biomarker analysis"
+title: "Exploratory biomarker analysis"
 author: "Malgorzata Nowicka"
 date: "`r Sys.Date()`"
-output:
+output: 
   html_document:
+    number_sections: yes
     toc: yes
     toc_depth: 3
-    toc_float:
-      collapsed: no
-      smooth_scroll: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-header-includes:
-  - \renewcommand*{\familydefault}{\sfdefault}
-  - \usepackage{hyperref}
-  - \usepackage{booktabs}
-  - \usepackage{longtable}
-  - \usepackage{array}
-  - \usepackage{multirow}
-  - \usepackage{wrapfig}
-  - \usepackage{float}
-  - \floatplacement{figure}{H}
-  - \usepackage{colortbl}
-  - \usepackage{pdflscape}
-  - \usepackage{tabu}
-  - \usepackage{threeparttable}
-  - \usepackage[normalem]{ulem}
+    toc_float: 
+      collapsed: false
+      smooth_scroll: false
+vignette: >
+  %\VignetteIndexEntry{Exploratory biomarker analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 
@@ -51,7 +38,7 @@ options(bkable_font_size = font_size)
 options(bkable_full_width = TRUE)
 
 
-knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center")
+knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center", tidy=TRUE, tidy.opts = list(width.cutoff = 80))
 
 
 
@@ -62,6 +49,7 @@ knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warnin
 
 
 ```{r library, results="hide", cache = FALSE}
+
 
 ### Packages for data manipulations
 library(tidyverse)
@@ -74,16 +62,23 @@ library(RColorBrewer) # brewer.pal
 library(ggbeeswarm)
 
 ### Packages for survival analysis 
-library(gClinBiomarker)
 library(survival)
 library(survminer)
 library(forestplot)
 
 
-library(devtools)
+
+ggplot2::theme_set(theme_cowplot())
 
 
-devtools::load_all()
+library(BiomarkerWrappers)
+# devtools::load_all()
+# devtools::check()
+# devtools::build()
+# devtools::install()
+
+
+# install_github("nowickm2/BiomarkerWrappers",  host="https://github.roche.com/api/v3")
 
 
 ```
@@ -91,17 +86,129 @@ devtools::load_all()
 
 ```{r load_data}
 
-### For now I use GOYA data but this has to be replaced with a test data that can be made publically available 
-### This data should be loaded from data/
+
+data(bdata)
 
 
-data_goya <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/data_goya.RDS")
-data <- data_goya
+genes <- c("BCL2", "GeneA", "GeneB", "GeneC", "GeneD")
 
-variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/variable_names.RDS")
+data_cat2 <- mutate_all(bdata[, genes], cut_core_2groups)
+  
+colnames(data_cat2) <- paste0(genes, "_cat2")
+
+
+data_cat4 <- mutate_all(bdata[, genes], cut_core_quartiles)
+  
+colnames(data_cat4) <- paste0(genes, "_cat4")
+
+
+bdata <- cbind(bdata, data_cat2, data_cat4)
+
 
 
 ```
+
+
+
+# Cox regression
+
+
+```{r cox_regression, results='asis'}
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
+
+
+wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+
+
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_vars <- c("IPI", "GeneA")
+
+strat1_var = "Cell_Of_Origin"
+strat2_var = "Treatment_Arm"
+
+
+wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+
+
+
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+biomarker_vars <- c("GeneA", "GeneA_cat2")
+adjustment_vars <- "IPI"
+
+strat1_var = "Treatment_Arm"
+
+
+wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
+
+
+
+
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
+adjustment_vars <- "IPI"
+
+
+wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars)
+  
+
+
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+interaction1_var <- "GeneA_cat2"
+interaction2_var <- "Treatment_Arm"
+covariate_vars <- c("IPI", "Cell_Of_Origin")
+
+
+
+wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+
+
+
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("GeneA", "GeneA_cat2")
+adjustment_vars <- "IPI"
+
+
+
+wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars)
+  
+  
+
+
+```
+
+
+
 
 
 
@@ -112,14 +219,28 @@ variable_names <- readRDS("/Users/nowickm2/Workspace/GOYA_GALLIUM_FCGR/tmp/varia
 ```{r KM_plot}
 
 
-data <- data_goya
+data <- bdata
 
 tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-covariate_var <- "Ann_Arbor_Stage"
+censor_var <- "PFS_Event"
+covariate_var <- "IPI"
 
 
 wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+
+
+
+
+data <- bdata
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_var <- "Treatment_Arm"
+
+
+wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+
+
 
 
 
@@ -128,16 +249,16 @@ wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, co
 
 
 
-```{r KM_plot_strat, fig.width=10, fig.height=10}
+```{r KM_plot_strat, fig.width=10, fig.height=15}
 
 
-data <- data_goya
+data <- bdata
 tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-covariate_var <- "FCGR3A_cat2"
+censor_var <- "PFS_Event"
+covariate_var <- "GeneA_cat2"
 
 strat1_var = "Treatment_Arm"
-strat2_var = "Cell_Of_Origin2"
+strat2_var = "Cell_Of_Origin"
   
 
 wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
@@ -151,16 +272,17 @@ wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_v
 ```{r KM_plot_interaction}
 
 
-data <- data_goya
+data <- bdata
 tte_var <- "PFS"
-censor_var <- "PFS_Censor"
+censor_var <- "PFS_Event"
 
-biomarker_var <- "FCGR3A_cat2"
+biomarker_var <- "GeneA_cat2"
 treatment_var = "Treatment_Arm"
 
 
 
 wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
 
 
 ```
@@ -170,24 +292,11 @@ wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, bi
 ```{r KM_plot_biomarker, fig.width=10}
 
 
-data <- data_goya
+data <- bdata
 tte_var <- "PFS"
-censor_var <- "PFS_Censor"
+censor_var <- "PFS_Event"
 
-biomarker_var <- "FCGR3A_cat2"
-treatment_var = "Treatment_Arm"
-
-
-wrapper_KM_plot_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
-
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-biomarker_var <- "Cell_Of_Origin"
+biomarker_var <- "GeneA_cat2"
 treatment_var = "Treatment_Arm"
 
 
@@ -204,11 +313,11 @@ wrapper_KM_plot_biomarker(data, tte_var = tte_var, censor_var = censor_var, biom
 ```{r KM_plot_treatment, fig.width=10}
 
 
-data <- data_goya
+data <- bdata
 tte_var <- "PFS"
-censor_var <- "PFS_Censor"
+censor_var <- "PFS_Event"
 
-biomarker_var <- "FCGR3A_cat2"
+biomarker_var <- "GeneA_cat2"
 treatment_var = "Treatment_Arm"
 
 
@@ -229,10 +338,10 @@ wrapper_KM_plot_treatment(data, tte_var = tte_var, censor_var = censor_var, biom
 ```{r barplot}
 
 
-data <- data_goya
+data <- bdata
 
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
+x_var = "GeneA_cat2"
+y_var = "Response"
 
 
 wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
@@ -240,42 +349,41 @@ wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 
-data <- data_goya
+data <- bdata
 
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
+x_var = "GeneA_cat2"
+y_var = "Response"
 facet_var <- "Treatment_Arm"
-  
   
 
 wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var)
 
 
 
-data <- data_goya
+data <- bdata
 
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
-skip_levels <- "CMR"
+x_var = "GeneA_cat2"
+y_var = "Response"
+skip_levels <- c("NE", "PD", "SD")
 show_total_proportions <- TRUE
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, skip_levels = skip_levels)
+wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, skip_levels = skip_levels, ylim = c(0, 100))
 
 
 
 ```
 
 
-```{r barplot_strat}
+```{r barplot_strat, fig.height=15, fig.width=10}
 
 
-data <- data_goya
+data <- bdata
 
-x_var = "FCGR3A_cat2"
-y_var = "Resp_Lugano"
+x_var = "GeneA_cat2"
+y_var = "Response"
 
 strat1_var = "Treatment_Arm"
-strat2_var = "Cell_Of_Origin2"
+strat2_var = "Cell_Of_Origin"
 
 
 wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
@@ -293,14 +401,13 @@ wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 # Complex barplot
 
 
-```{r Complex_barplot}
+```{r Complex_barplot, fig.height=5, fig.width=7}
 
 
-data <- data_goya
+data <- bdata
 
-x_var <- "Cell_Of_Origin2"
-y_vars <- c("FCGR1A_cat2", "FCGR2B_cat2", "FCGR2C_cat2")
-
+x_var <- "Cell_Of_Origin"
+y_vars <- c("GeneA_cat2", "GeneB_cat2", "GeneC_cat2")
 
 
 wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, values_to = "Gene expression")
@@ -308,18 +415,89 @@ wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, values_t
 
 
 
-data <- data_goya
+data <- bdata
 
 x_var <- "Cell_Of_Origin"
-y_vars <- c("FCGR1A_cat2", "FCGR2B_cat2", "FCGR2C_cat2")
+y_vars <- c("GeneA_cat2", "GeneB_cat2", "GeneC_cat2")
 
-skip_levels <- "<=MEDIAN"
+skip_levels <- "low"
 method <- "dodge"
 
 
 wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, skip_levels = skip_levels, method = method, values_to = "Gene expression", names_to = "Gene")
 
 
+
+
+
+```
+
+
+
+# Box plot
+
+
+```{r Box_plot, fig.height=5, fig.width=7}
+
+
+data <- bdata
+
+x_var <- "Cell_Of_Origin"
+y_var <- "GeneA"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+
+data <- bdata
+data$Cell_Of_Origin[data$Cell_Of_Origin == "UNCLASSIFIED"] <- NA
+x_var <- "Cell_Of_Origin"
+y_var <- "GeneA"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
+
+
+
+
+
+data <- bdata
+
+x_var <- "Cell_Of_Origin"
+y_var <- "GeneA"
+facet_var <- "Treatment_Arm"
+dodge_var = NULL
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, dodge_var = dodge_var)
+
+
+
+
+data <- bdata
+
+x_var <- "Treatment_Arm"
+y_var <- "GeneA"
+facet_var <- NULL
+dodge_var = "Cell_Of_Origin"
+
+
+wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, dodge_var = dodge_var)
+
+
+
+
+data <- bdata
+
+x_var <- "Cell_Of_Origin"
+y_var <- "GeneA"
+
+
+strat1_var = "Treatment_Arm"
+
+
+wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var)
 
 
 
@@ -338,8 +516,8 @@ wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, skip_lev
 ```{r complex_boxplot, fig.width = 10}
 
 
-data <- data_goya
-y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+data <- bdata
+y_vars <- c("GeneA", "GeneB", "GeneC")
 
 
 wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars)
@@ -347,115 +525,27 @@ wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars)
 
 
 
-data <- data_goya
-y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+data <- bdata
+y_vars <- c("GeneA", "GeneB", "GeneC")
 
 x_var = "Cell_Of_Origin"
 facet_var = NULL
 dodge_var = NULL
-color_point_var = NULL
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var, color_point_var = color_point_var)
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var)
 
 
 
-data <- data_goya
-y_vars <- c("FCGR1A", "FCGR2A", "FCGR3A")
+data <- bdata
+y_vars <- c("GeneA", "GeneB", "GeneC")
 
 x_var = NULL
 facet_var = NULL
 dodge_var = "Cell_Of_Origin"
-color_point_var = NULL
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var, color_point_var = color_point_var)
-
-
-
-
-```
-
-
-
-
-# Box plot
-
-
-```{r Box_plot}
-
-
-data <- data_goya
-
-x_var <- "Cell_Of_Origin"
-y_var <- "FCGR3A"
-
-
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
-
-
-
-data <- data_goya
-data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
-x_var <- "Cell_Of_Origin"
-y_var <- "FCGR3A"
-
-
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
-
-
-
-
-
-data <- data_goya
-
-x_var <- "Cell_Of_Origin"
-y_var <- "FCGR3A"
-facet_var <- "Treatment_Arm"
-dodge_var = NULL
-color_point_var = "ORR_Lugano"
-
-
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var, dodge_var = dodge_var)
-
-
-
-
-data <- data_goya
-
-x_var <- "Treatment_Arm"
-y_var <- "FCGR3A"
-facet_var <- NULL
-dodge_var = "Cell_Of_Origin"
-color_point_var = "ORR_Lugano"
-
-
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var, dodge_var = dodge_var)
-
-
-
-
-
-
-```
-
-
-
-
-```{r Box_plot_strat}
-
-
-data <- data_goya
-
-x_var <- "BCL2_cat2"
-y_var <- "FCGR3A"
-
-
-strat1_var = "Treatment_Arm"
-strat2_var = "Cell_Of_Origin2"
-
-
-wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
+wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var)
 
 
 
@@ -474,19 +564,20 @@ wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 ```{r Point_plot}
 
 
-data <- data_goya
+data <- bdata
 
-x_var <- "FCGR2A"
-y_var <- "FCGR3A"
+x_var <- "GeneA"
+y_var <- "GeneB"
 
 
 wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
 
 
-data <- data_goya
 
-x_var <- "FCGR2A"
-y_var <- "FCGR3A"
+data <- bdata
+
+x_var <- "GeneA"
+y_var <- "GeneB"
 facet_var <- "Treatment_Arm"
 color_point_var <- "Cell_Of_Origin"
 
@@ -495,10 +586,32 @@ wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var, facet_var = f
 
 
 
-data <- data_goya
 
-x_var <- "FCGR2A"
-y_var <- "FCGR3A"
+data <- bdata
+
+x_var <- "GeneD"
+y_var <- "GeneB"
+facet_var <- "Treatment_Arm"
+strat1_var <- "Cell_Of_Origin"
+
+
+wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
+
+
+
+```
+
+
+
+
+
+```{r Point_plot_strat, fig.width = 10}
+
+
+data <- bdata
+
+x_var <- "GeneA"
+y_var <- "GeneB"
 facet_var <- "Treatment_Arm"
 strat1_var <- "Cell_Of_Origin"
 
@@ -516,50 +629,43 @@ wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_v
 
 
 
-
-# Complex barplot
-
-
-```{r complex_barplot, fig.width = 10}
+# Kruskal–Wallis H test
 
 
-data <- data_goya
-x_var <- "Cell_Of_Origin"
-y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
+```{r kruskal_test, results='asis'}
 
 
+data <- bdata
 
-colors = NULL
-skip_levels = NULL
-show_proportions = TRUE
-show_total_proportions = TRUE
-ylim = NULL
-method = "facet"
+cat_var <- "Cell_Of_Origin"
+num_var <- "GeneA"
 
-
-wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+wrapper_core_kruskal_test_col_cat(data, num_var = num_var, cat_var = cat_var)
 
 
 
-data <- data_goya
-x_var <- "Cell_Of_Origin"
-y_vars <- c("FCGR1A_cat2", "FCGR2A_cat2", "FCGR3A_cat2")
 
-colors = NULL
+data <- bdata
 
-skip_levels = "<=MEDIAN"
-show_proportions = TRUE
-show_total_proportions = TRUE
-
-ylim = NULL
-
-method = "dodge"
+cat_vars <- "Cell_Of_Origin"
+num_vars <- c("GeneA", "GeneB")
 
 
-wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors = colors, skip_levels = skip_levels, show_proportions = show_proportions, show_total_proportions = show_total_proportions, ylim = ylim, method = method)
+wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
+  
+
+  
+data <- bdata
+
+cat_vars <- c("Cell_Of_Origin", "IPI", "Treatment_Arm")
+num_vars <- "GeneA"
 
 
-
+wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
+ 
+ 
+  
+  
 
 ```
 
@@ -568,79 +674,22 @@ wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, colors =
 
 
 
-# Kruskal–Wallis H test
+# Fisher's test
 
 
-```{r kruskal_test, results='asis'}
+```{r fishers_test, results='asis'}
 
 
-data <- data_goya
+data <- bdata
 
-cat_var <- "Cell_Of_Origin2"
-num_var <- "FCGR2B"
-
-variable_names = NULL
-caption = NULL
-
-print_pvalues = TRUE
-
-method = "kruskal"
+col_var <- "Cell_Of_Origin"
+row_var <- "IPI"
 
 
-wrapper_core_kruskal_test_col_cat(data, num_var = num_var, cat_var = cat_var, method = method, variable_names = NULL, caption = NULL, print_pvalues = TRUE)
-
-
-bout <- wrapper_core_kruskal_test_col_num(data, num_var = num_var, cat_var = cat_var, method = method, variable_names = NULL, caption = NULL, print_pvalues = TRUE)
-
-bout
+wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var)
 
 
 
-
-data <- data_goya
-
-cat_var <- "Cell_Of_Origin2"
-num_var <- "FCGR2B"
-
-strat1_var = "Treatment_Arm"
-strat2_var = NULL
-
-variable_names = NULL
-caption = NULL
-
-print_pvalues = TRUE
-print_adjpvalues = TRUE
-
-method = "kruskal"
-display_statistics = c("N", "Median")
-
-
-wrapper_core_kruskal_test_col_cat_strat(data, num_var, cat_var, strat1_var = strat1_var, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE)
-
-wrapper_core_kruskal_test_col_num_strat(data, num_var, cat_var, strat1_var = strat1_var, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE)
-
-
-data <- data_goya
-
-cat_vars <- "Cell_Of_Origin2"
-num_vars <- c("FCGR2B", "FCGR2A")
-
-
-wrapper_kruskal_test(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE)
-  
-  
-data <- data_goya
-
-cat_vars <- c("Cell_Of_Origin2", "Ann_Arbor_Stage", "Treatment_Arm")
-num_vars <- "FCGR2A"
-
-
-wrapper_kruskal_test(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), print_pvalues = TRUE, print_adjpvalues = TRUE)
-  
-    
- 
-  
-  
 
 ```
 
@@ -653,56 +702,48 @@ wrapper_kruskal_test(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = N
 ```{r characteristics, results='asis'}
 
 
-data <- data_goya
+data <- bdata
 
-covariate_var <- "Ann_Arbor_Stage"
+covariate_var <- "IPI"
 
 
 wrapper_core_characteristics_cat(data, covariate_var = covariate_var)
 
 
 
-data <- data_goya
+data <- bdata
 
 strat_var <- "Treatment_Arm"
-covariate_var <- "Ann_Arbor_Stage"
+covariate_var <- "IPI"
 
 
 wrapper_core_characteristics_cat(data, strat_var = strat_var, covariate_var = covariate_var)
 
 
-data <- data_goya
-
-strat_var <- "FCGR2B_cat4"
-covariate_var <- "Ann_Arbor_Stage"
 
 
-wrapper_core_characteristics_cat(data, strat_var = strat_var, covariate_var = covariate_var)
+data <- bdata
 
-
-data <- data_goya
-
-covariate_var <- "FCGR2B"
+covariate_var <- "Age"
 
 wrapper_core_characteristics_num(data, covariate_var = covariate_var)
 
 
 
-data <- data_goya
+data <- bdata
 
 strat_var <- "Treatment_Arm"
-covariate_var <- "FCGR2B"
-
+covariate_var <- "Age"
 
 
 wrapper_core_characteristics_num(data, strat_var = strat_var, covariate_var = covariate_var)
 
 
 
-data <- data_goya
+data <- bdata
 
 strat_var <- "Treatment_Arm"
-covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+covariate_vars <- c("Age", "IPI")
 
 
 wrapper_core_characteristics(data, strat_var = strat_var, covariate_vars = covariate_vars)
@@ -710,217 +751,20 @@ wrapper_core_characteristics(data, strat_var = strat_var, covariate_vars = covar
   
 
 
-data <- data_goya
-
-covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
-
-
-wrapper_characteristics_bep(data, covariate_vars = covariate_vars)
-  
 
 
 bep_vars <- "BEP_RNAseq"
-covariate_vars <- c("FCGR2B", "Ann_Arbor_Stage")
+covariate_vars <- c("Age", "IPI")
 
 treatment_var <- "Treatment_Arm"
-
-variable_names = NULL
-caption = NULL
-
 itt_name = "ITT"
 
-wrapper_characteristics_bep(data, covariate_vars = covariate_vars, bep_vars = bep_vars, treatment_var = treatment_var, variable_names = NULL, caption = NULL, itt_name = "ITT")
+
+wrapper_characteristics_bep(data, covariate_vars = covariate_vars, bep_vars = bep_vars, treatment_var = treatment_var, itt_name = itt_name)
 
 
   
 ```
-
-
-
-
-# Fisher's test
-
-
-```{r fishers_test, results='asis'}
-
-
-data <- data_goya
-
-col_var <- "Cell_Of_Origin"
-row_var <- "Ann_Arbor_Stage"
-
-
-variable_names = NULL
-caption = NULL
-
-margin = 1
-print_pvalues = TRUE
-
-
-
-wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
-
-
-
-col_var <- "Cell_Of_Origin2"
-row_var <- "FCGR2B_cat2"
-
-
-wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
-
-
-
-data <- data_goya
-
-col_var <- "Cell_Of_Origin"
-row_var <- "FCGR2B_cat2"
-margin = 1
-
-data$Cell_Of_Origin[data$Cell_Of_Origin == "ABC"] <- NA
-
-
-wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var, margin = margin)
-
-
-
-
-```
-
-
-
-
-
-
-# Cox regression
-
-
-```{r cox_regression, results='asis'}
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-covariate_vars <- c("Treatment_Arm", "IPI_Caterories", "Cell_Of_Origin", "FCGR3A")
-
-
-wrapper_res <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
-
-  
-bkable(wrapper_res, caption = "Changes", font_size = 6)
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-covariate_vars <- c("IPI_Caterories", "FCGR3A")
-
-strat1_var = "Cell_Of_Origin"
-strat2_var = "Treatment_Arm"
-
-
-wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-biomarker_vars <- c("FCGR2B_cat2", "FCGR3A", "FCGR3A_cat2")
-adjustment_vars <- "IPI_Caterories"
-
-strat1_var = "Treatment_Arm"
-
-
-wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-biomarker_vars <- c("FCGR2B", "FCGR3A")
-adjustment_vars <- "IPI_Caterories"
-
-strat1_var = "Treatment_Arm"
-
-
-wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-treatment_var = "Treatment_Arm"
-biomarker_vars <- c("FCGR2B_cat2", "FCGR3A_cat2")
-adjustment_vars <- "IPI_Caterories"
-
-strat2_var = "Cell_Of_Origin"
-
-
-wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat2_var = strat2_var)
-  
-
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-interaction1_var <- "FCGR3A_cat2"
-interaction2_var <- "Treatment_Arm"
-covariate_vars <- c("IPI_Caterories", "Cell_Of_Origin")
-
-
-
-wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
-
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-interaction1_var <- "FCGR3A_cat2"
-interaction2_var <- "Treatment_Arm"
-covariate_vars <- c("IPI_Caterories")
-
-strat1_var = "Cell_Of_Origin"
-strat2_var = NULL
-
-wrapper_core_cox_regression_interaction_strat(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
-
-
-
-
-data <- data_goya
-tte_var <- "PFS"
-censor_var <- "PFS_Censor"
-
-treatment_var = "Treatment_Arm"
-biomarker_vars <- c("FCGR2B_cat2", "FCGR3A_cat2")
-adjustment_vars <- "IPI_Caterories"
-
-strat1_var = NULL
-strat2_var = "Cell_Of_Origin"
-
-
-
-
-wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, strat2_var = strat2_var)
-  
-  
-
-
-```
-
-
 
 
 

@@ -2,28 +2,12 @@
 
 
 
-# data <- data_goya
-# 
-# col_var <- "Cell_Of_Origin"
-# row_var <- "Ann_Arbor_Stage"
-# 
-# # col_var <- "Cell_Of_Origin2"
-# # row_var <- "FCGR2B_cat2"
-# 
-# variable_names = NULL
-# caption = NULL
-# 
-# margin = 1
-# 
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
 
 
 #' Fisher's test
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
@@ -174,23 +158,11 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
 
 
 
-# col_var
-# row_var
-# strat1_var = NULL
-# strat2_var = NULL
-# variable_names = NULL
-# caption = NULL
-# margin = 1
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
-
 #' @inheritParams wrapper_core_fishers_test
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @export
 wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -356,22 +328,12 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
 
 
 
-
-# strat1_var = NULL
-# strat2_var = NULL
-# variable_names = NULL
-# caption = NULL
-# margin = 1
-# force_empty_cols = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
 #' @inheritParams wrapper_core_fishers_test_strat
 #' 
 #' Fisher's test
 #' 
 #' @param row_vars Vector with names of categorical variables.
+#' @export
 wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   

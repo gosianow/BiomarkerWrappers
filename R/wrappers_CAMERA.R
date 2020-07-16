@@ -26,6 +26,7 @@
 #' Run CAMERA
 #' 
 #' @param statistic Named vector of t statistics from limma or logFC.
+#' @export
 wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
   min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
@@ -186,6 +187,7 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
 #' Run CAMERA
 #' 
 #' @param x TopTable
+#' @export
 wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   min_GS_size = 10, max_GS_size = 500,
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
@@ -251,6 +253,8 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 # caption = NULL
 
 
+
+#' @export
 wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
@@ -344,8 +348,9 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
   
   
   if(is.null(caption)){
-    
-    caption <- paste0("List of enriched gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, "regulated genes when testing for ", contrast, ".")
+
+    caption <- paste0("List of gene sets enriched by ", direction_print, "regulated genes when testing for ", contrast, " (", adjp_prefix, " < ", pval, ").")
+
     
     if(nrow(x_sort) >  topn){
       

@@ -1,19 +1,6 @@
 
 
 
-
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# covariate_vars <- c("Treatment_Arm", "IPI_Caterories", "Cell_Of_Origin", "FCGR3A")
-# return_vars = NULL
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
 #' Cox regression with simple additive model
 #' 
 #' Cox regression with simple additive model.
@@ -25,6 +12,7 @@
 #' @param return_vars Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.
+#' @export
 wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -249,33 +237,13 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 
 
 
-
-
-
-
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# covariate_vars <- c("IPI_Caterories", "FCGR3A")
-# return_vars = NULL
-# 
-# strat1_var = "Treatment_Arm"
-# strat2_var = NULL
-# 
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
 #' @inheritParams wrapper_core_cox_regression_simple
 #' 
 #' Cox regression with simple additive model within subgroups defined by strata.
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @export
 wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
@@ -435,6 +403,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
 #' 
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
+#' @export
 wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -541,26 +510,6 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 
 
 
-
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# 
-# treatment_var = "Treatment_Arm"
-# biomarker_vars <- c("FCGR2B_cat2", "FCGR3A_cat2")
-# adjustment_vars <- "IPI_Caterories"
-# 
-# strat2_var = "Cell_Of_Origin"
-# 
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
-
-
 #' @inheritParams wrapper_core_cox_regression_simple_strat
 #' 
 #' Cox regression estimating treatment effect within biomaker subgroups
@@ -568,6 +517,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
+#' @export
 wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   ### TODO Allow biomarker_vars = NULL.
@@ -695,22 +645,6 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 
 
 
-# data <- data_goya
-# tte_var <- "PFS"
-# censor_var <- "PFS_Censor"
-# 
-# interaction1_var <- "FCGR3A_cat2"
-# interaction2_var <- "Treatment_Arm"
-# covariate_vars <- c("IPI_Caterories", "Cell_Of_Origin")
-# 
-# 
-# variable_names = NULL
-# caption = NULL
-# print_nevent = FALSE
-# print_pvalues = TRUE
-# print_adjpvalues = TRUE
-
-
 
 #' @inheritParams wrapper_core_cox_regression_simple
 #' 
@@ -718,6 +652,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' 
 #' @param interaction1_var Data frame.
 #' @param interaction2_var Name of the time-to-event variable. This variable must be numeric.
+#' @export
 wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
@@ -971,6 +906,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @export
 wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
@@ -1113,6 +1049,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
+#' @export
 wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   

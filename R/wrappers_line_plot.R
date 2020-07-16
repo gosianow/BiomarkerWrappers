@@ -21,6 +21,7 @@
 #' Generate a signle line plot.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
@@ -144,7 +145,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
       plot.tag = element_text(size = title_size, face = "plain"),
       legend.position = legend_position,
       axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+    panel_border(colour = "black", linetype = 1, size = 0.8, remove = FALSE) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   
@@ -210,6 +211,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
 #' Generate line plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, 

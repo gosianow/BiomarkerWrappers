@@ -13,6 +13,7 @@
 #' Generate a signle scatter.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   colors_point = NULL, 
   variable_names = NULL, 
@@ -132,10 +133,10 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
       plot.subtitle = element_text(size = title_size),
       plot.tag.position = "top",
       plot.tag = element_text(size = title_size, face = "plain"),
-      legend.position = legend_position,
       axis.line = element_blank(),
       axis.ticks = element_line(color = "black", size = 0.5),
-      panel.border = element_rect(colour = "black", size = 0.5)) +
+      panel.border = element_rect(colour = "black", size = 1),
+      legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   
@@ -196,6 +197,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
 #' Generate scatter plots for each subgroup defined by two stratification variables.
 #' 
 #' @param data Data frame.
+#' @export
 wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_point = NULL, 

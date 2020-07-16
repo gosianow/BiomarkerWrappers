@@ -52,6 +52,7 @@
 #' Dot plot with logFC and p-values for mutiple contrasts
 #' 
 #' @param x TopTable
+#' @export
 wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", pval = 0.05, title = "", 
   axis_text_x_angle = 30, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
@@ -184,6 +185,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
 #' Heatmap with logFC for mutiple contrasts
 #' 
 #' @param x TopTable
+#' @export
 wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", draw = TRUE, title = "",
@@ -322,6 +324,7 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' 
 #' 
 #' @param x Matrix with expression to plot
+#' @export
 wrapper_gene_expression_heatmap <- function(x,  
   name = "sample\nlogFC", draw = TRUE, title = "", 
   color_low = 'cornflowerblue', color_mid = "royalblue4", color_high = '#ff717e', trim_limits = NULL,
