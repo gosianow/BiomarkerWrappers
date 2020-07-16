@@ -76,7 +76,7 @@ library(BiomarkerWrappers)
 # devtools::check()
 # devtools::build()
 # devtools::install()
-
+# pkgdown::build_site()
 
 # install_github("nowickm2/BiomarkerWrappers",  host="https://github.roche.com/api/v3")
 
