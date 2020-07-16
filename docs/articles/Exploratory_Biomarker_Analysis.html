@@ -119,17 +119,26 @@
 
 
 
-<span class="kw pkg">ggplot2</span><span class="kw ns">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html">theme_set</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/cowplot/man/theme_cowplot.html">theme_cowplot</a></span>())
+<span class="kw pkg">ggplot2</span><span class="kw ns">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html">theme_set</a></span>(<span class="kw pkg">cowplot</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/cowplot/man/theme_cowplot.html">theme_cowplot</a></span>())
 
 
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">BiomarkerWrappers</span>)
+
+
 <span class="co"># devtools::load_all() devtools::check() devtools::build() devtools::install()</span>
 <span class="co"># pkgdown::build_site()</span>
 
 <span class="co"># install_github('nowickm2/BiomarkerWrappers',</span>
 <span class="co"># host='https://github.roche.com/api/v3')</span></pre></body></html></div>
+<div id="load-data" class="section level1">
+<h1 class="hasAnchor">
+<a href="#load-data" class="anchor"></a>Load data</h1>
+<p><code>bdata</code> object contains random survival and biomarker data. It is not expected to observe any biologically meaningful associations. The goal for this data sets is to solely demonstrate the functionality of this package.</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">bdata</span>)
 
+
+
+<span class="co">### Dichotomize gene expression into low and high</span>
 
 <span class="no">genes</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2"</span>, <span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>, <span class="st">"GeneD"</span>)
 
@@ -138,12 +147,15 @@
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">data_cat2</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">genes</span>, <span class="st">"_cat2"</span>)
 
 
+<span class="co">### Stratify gene expression into quartiles</span>
+
 <span class="no">data_cat4</span> <span class="kw">&lt;-</span> <span class="fu">mutate_all</span>(<span class="no">bdata</span>[, <span class="no">genes</span>], <span class="no">cut_core_quartiles</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">data_cat4</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">genes</span>, <span class="st">"_cat4"</span>)
 
 
 <span class="no">bdata</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/cbind.html">cbind</a></span>(<span class="no">bdata</span>, <span class="no">data_cat2</span>, <span class="no">data_cat4</span>)</pre></body></html></div>
+</div>
 <div id="cox-regression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#cox-regression" class="anchor"></a>Cox regression</h1>
@@ -377,7 +389,7 @@ GeneA
 <span class="no">strat2_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu">wrapper_core_cox_regression_simple_strat</span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_core_cox_regression_simple.html">wrapper_core_cox_regression_simple_strat</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">covariate_vars</span> <span class="kw">=</span> <span class="no">covariate_vars</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>, <span class="kw">strat2_var</span> <span class="kw">=</span> <span class="no">strat2_var</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1184,7 +1196,7 @@ GeneA
 <span class="no">strat1_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu">wrapper_cox_regression_biomarker</span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1343,7 +1355,7 @@ high vs low
 <span class="no">adjustment_vars</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
 
 
-<span class="fu">wrapper_cox_regression_treatment</span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>, <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1507,7 +1519,7 @@ TRT vs CTRL
 
 
 
-<span class="fu">wrapper_core_cox_regression_interaction</span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_core_cox_regression_interaction.html">wrapper_core_cox_regression_interaction</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">interaction1_var</span> <span class="kw">=</span> <span class="no">interaction1_var</span>, <span class="kw">interaction2_var</span> <span class="kw">=</span> <span class="no">interaction2_var</span>, <span class="kw">covariate_vars</span> <span class="kw">=</span> <span class="no">covariate_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1582,7 +1594,7 @@ TRT vs CTRL
 
 
 
-<span class="fu">wrapper_cox_regression_interaction</span>(<span class="no">data</span>, <span class="no">tte_var</span>, <span class="no">censor_var</span>, <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>,
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_cox_regression_interaction.html">wrapper_cox_regression_interaction</a></span>(<span class="no">data</span>, <span class="no">tte_var</span>, <span class="no">censor_var</span>, <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>,
     <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1857,7 +1869,7 @@ high vs low
 <span class="no">strat1_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu">wrapper_core_box_plot_strat</span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_core_box_plot.html">wrapper_core_box_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-5.png" width="672" style="display: block; margin: auto;"></p>
 </div>
 <div id="complex-boxplot" class="section level1">
@@ -2030,7 +2042,7 @@ Median
 <span class="no">num_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>)
 
 
-<span class="fu">wrapper_kruskal_test</span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal–Wallis H test.
@@ -2153,7 +2165,7 @@ Median
 <span class="no">num_vars</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
 
 
-<span class="fu">wrapper_kruskal_test</span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal–Wallis H test.
@@ -2420,7 +2432,7 @@ Low
 13 (14.3%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0220 *
+0.0195 *
 </td>
 </tr>
 <tr>
@@ -2480,9 +2492,9 @@ High
 </tbody>
 </table>
 </div>
-<div id="characteristics" class="section level1">
+<div id="characteristics-of-itt-and-bep" class="section level1">
 <h1 class="hasAnchor">
-<a href="#characteristics" class="anchor"></a>Characteristics</h1>
+<a href="#characteristics-of-itt-and-bep" class="anchor"></a>Characteristics of ITT and BEP</h1>
 <div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>

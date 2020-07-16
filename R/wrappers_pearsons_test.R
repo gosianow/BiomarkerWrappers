@@ -195,9 +195,8 @@ wrapper_core_pearsons_test <- function(data, col_var, row_var, variable_names = 
 
 
 
-
+#' @rdname wrapper_core_pearsons_test
 #' @inheritParams wrapper_core_pearsons_test
-#' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
@@ -368,10 +367,11 @@ wrapper_core_pearsons_test_strat <- function(data, col_var, row_var, strat1_var 
 
 
 
-#' @inheritParams wrapper_core_pearsons_test_strat
-#' 
 #' Pearson’s Chi-squared test
 #' 
+#' Run Pearson’s Chi-squared test for multiple covariates.
+#' 
+#' @inheritParams wrapper_core_pearsons_test_strat
 #' @param row_vars Vector with names of categorical variables.
 #' @export
 wrapper_pearsons_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){

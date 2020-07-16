@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrappers_logistic_regression.R
 \name{wrapper_core_logistic_regression_simple}
 \alias{wrapper_core_logistic_regression_simple}
+\alias{wrapper_core_logistic_regression_simple_strat}
 \title{Logistic regression with simple additive model}
 \usage{
 wrapper_core_logistic_regression_simple(
@@ -9,6 +10,19 @@ wrapper_core_logistic_regression_simple(
   response_var,
   covariate_vars,
   return_vars = NULL,
+  variable_names = NULL,
+  caption = NULL,
+  print_pvalues = TRUE,
+  print_adjpvalues = TRUE
+)
+
+wrapper_core_logistic_regression_simple_strat(
+  data,
+  response_var,
+  covariate_vars,
+  return_vars = NULL,
+  strat1_var = NULL,
+  strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_pvalues = TRUE,
@@ -23,9 +37,11 @@ wrapper_core_logistic_regression_simple(
 \item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
 
 \item{return_vars}{Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.}
+
+\item{strat1_var}{Name of the second stratification variable.}
 }
 \description{
-Logistic regression with simple additive model.
+Logistic regression with simple additive model
 }
 \details{
 If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.

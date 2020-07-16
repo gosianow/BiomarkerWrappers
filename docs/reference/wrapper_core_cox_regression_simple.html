@@ -135,6 +135,21 @@
   <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
+
+<span class='fu'>wrapper_core_cox_regression_simple_strat</span>(
+  <span class='no'>data</span>,
+  <span class='no'>tte_var</span>,
+  <span class='no'>censor_var</span>,
+  <span class='no'>covariate_vars</span>,
+  <span class='kw'>return_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -159,6 +174,14 @@
     <tr>
       <th>return_vars</th>
       <td><p>Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.</p></td>
+    </tr>
+    <tr>
+      <th>strat1_var</th>
+      <td><p>Name of the firts stratification variable.</p></td>
+    </tr>
+    <tr>
+      <th>strat2_var</th>
+      <td><p>Name of the second stratification variable.</p></td>
     </tr>
     </table>
 

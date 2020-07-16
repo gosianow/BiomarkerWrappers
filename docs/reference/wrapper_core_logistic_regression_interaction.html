@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Logistic regression with simple additive model — wrapper_core_logistic_regression_simple • BiomarkerWrappers</title>
+<title>Logistic regression with additive model with interaction — wrapper_core_logistic_regression_interaction • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Logistic regression with simple additive model — wrapper_core_logistic_regression_simple" />
-<meta property="og:description" content="Logistic regression with simple additive model" />
+<meta property="og:title" content="Logistic regression with additive model with interaction — wrapper_core_logistic_regression_interaction" />
+<meta property="og:description" content="Logistic regression with additive model with interaction" />
 
 
 
@@ -115,31 +115,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Logistic regression with simple additive model</h1>
+    <h1>Logistic regression with additive model with interaction</h1>
     
-    <div class="hidden name"><code>wrapper_core_logistic_regression_simple.Rd</code></div>
+    <div class="hidden name"><code>wrapper_core_logistic_regression_interaction.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Logistic regression with simple additive model</p>
+    <p>Logistic regression with additive model with interaction</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_core_logistic_regression_simple</span>(
+    <pre class="usage"><span class='fu'>wrapper_core_logistic_regression_interaction</span>(
   <span class='no'>data</span>,
   <span class='no'>response_var</span>,
-  <span class='no'>covariate_vars</span>,
-  <span class='kw'>return_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>interaction1_var</span>,
+  <span class='no'>interaction2_var</span>,
+  <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
-<span class='fu'>wrapper_core_logistic_regression_simple_strat</span>(
+<span class='fu'>wrapper_core_logistic_regression_interaction_strat</span>(
   <span class='no'>data</span>,
   <span class='no'>response_var</span>,
-  <span class='no'>covariate_vars</span>,
-  <span class='kw'>return_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>interaction1_var</span>,
+  <span class='no'>interaction2_var</span>,
+  <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -160,12 +162,16 @@
       <td><p>Name of the response variable. This variable must be a factor where 'success' is interpreted as the factor not having the first level.</p></td>
     </tr>
     <tr>
-      <th>covariate_vars</th>
-      <td><p>Vector with names of covariate that should be included in the formula.</p></td>
+      <th>interaction1_var</th>
+      <td><p>Name of the first interaction variable.</p></td>
     </tr>
     <tr>
-      <th>return_vars</th>
-      <td><p>Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.</p></td>
+      <th>interaction2_var</th>
+      <td><p>Name of the second interaction variable.</p></td>
+    </tr>
+    <tr>
+      <th>covariate_vars</th>
+      <td><p>Vector with names of covariate that should be included in the formula.</p></td>
     </tr>
     <tr>
       <th>strat1_var</th>
@@ -173,9 +179,6 @@
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

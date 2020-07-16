@@ -208,12 +208,11 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
 
 
 
-
-#' @inheritParams wrapper_core_kruskal_test_col_cat
-#' 
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' Returns a table where stratification subgroups are in rows and distribution summary statistics for the numerical variable are in columns. 
+#' 
+#' @inheritParams wrapper_core_kruskal_test_col_cat
 #' @export
 wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
   
@@ -414,9 +413,8 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
 
 
 
-
+#' @rdname wrapper_core_kruskal_test_col_cat
 #' @inheritParams wrapper_core_kruskal_test_col_cat
-#' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
@@ -581,8 +579,8 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
 
 
 
+#' @rdname wrapper_core_kruskal_test_col_num
 #' @inheritParams wrapper_core_kruskal_test_col_num
-#' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
@@ -750,11 +748,11 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
 
 
 
-
-#' @inheritParams wrapper_core_kruskal_test_col_cat_strat
-#' 
 #' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
 #' 
+#' Run Kruskal–Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
+#' 
+#' @inheritParams wrapper_core_kruskal_test_col_cat_strat
 #' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
 #' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
 #' @export

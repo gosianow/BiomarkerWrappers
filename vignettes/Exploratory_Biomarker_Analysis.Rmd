@@ -68,10 +68,12 @@ library(forestplot)
 
 
 
-ggplot2::theme_set(theme_cowplot())
+ggplot2::theme_set(cowplot::theme_cowplot())
 
 
 library(BiomarkerWrappers)
+
+
 # devtools::load_all()
 # devtools::check()
 # devtools::build()
@@ -84,11 +86,22 @@ library(BiomarkerWrappers)
 ```
 
 
+
+# Load data
+
+
+`bdata` object contains random survival and biomarker data. It is not expected to observe any biologically meaningful associations. The goal for this data sets is to solely demonstrate the functionality of this package. 
+
+
+
 ```{r load_data}
 
 
 data(bdata)
 
+
+
+### Dichotomize gene expression into low and high
 
 genes <- c("BCL2", "GeneA", "GeneB", "GeneC", "GeneD")
 
@@ -96,6 +109,8 @@ data_cat2 <- mutate_all(bdata[, genes], cut_core_2groups)
   
 colnames(data_cat2) <- paste0(genes, "_cat2")
 
+
+### Stratify gene expression into quartiles
 
 data_cat4 <- mutate_all(bdata[, genes], cut_core_quartiles)
   
@@ -696,7 +711,7 @@ wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var)
 
 
 
-# Characteristics
+# Characteristics of ITT and BEP
 
 
 ```{r characteristics, results='asis'}

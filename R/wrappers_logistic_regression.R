@@ -13,8 +13,6 @@
 
 #' Logistic regression with simple additive model
 #' 
-#' Logistic regression with simple additive model.
-#' 
 #' @param data Data frame.
 #' @param response_var Name of the response variable. This variable must be a factor where 'success' is interpreted as the factor not having the first level.
 #' @param covariate_vars Vector with names of covariate that should be included in the formula.
@@ -262,10 +260,8 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
 
 
 
+#' @rdname wrapper_core_logistic_regression_simple
 #' @inheritParams wrapper_core_logistic_regression_simple
-#' 
-#' Logistic regression with simple additive model within subgroups defined by strata.
-#' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
@@ -420,12 +416,9 @@ wrapper_core_logistic_regression_simple_strat <- function(data, response_var, co
 
 
 
-
-
-#' @inheritParams wrapper_core_logistic_regression_simple_strat
-#' 
 #' Logistic regression estimating biomarker effect 
 #' 
+#' @inheritParams wrapper_core_logistic_regression_simple_strat
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
@@ -534,12 +527,9 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 
 
 
-
-
-#' @inheritParams wrapper_core_logistic_regression_simple_strat
-#' 
 #' Logistic regression estimating treatment effect within biomaker subgroups
 #' 
+#' @inheritParams wrapper_core_logistic_regression_simple_strat
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
@@ -674,12 +664,11 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
 
 
 
-#' @inheritParams wrapper_core_logistic_regression_simple
-#' 
 #' Logistic regression with additive model with interaction
 #' 
-#' @param interaction1_var Data frame.
-#' @param interaction2_var Name of the time-to-event variable. This variable must be numeric.
+#' @inheritParams wrapper_core_logistic_regression_simple
+#' @param interaction1_var Name of the first interaction variable. 
+#' @param interaction2_var Name of the second interaction variable.
 #' @export
 wrapper_core_logistic_regression_interaction <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -921,10 +910,9 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
 
 
 
+#' @rdname wrapper_core_logistic_regression_interaction
+#' 
 #' @inheritParams wrapper_core_logistic_regression_interaction
-#' 
-#' Logistic regression with additive model with interaction within subgroups defined by strata
-#' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
@@ -1063,11 +1051,10 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
 
 
 
+#' Logistic regression estimating effect of interaction between biomaker and treatment
+#' 
 #' @inheritParams wrapper_core_logistic_regression_interaction_strat
-#' 
-#' Logistic regression estimating interaction effect between biomaker and treatment
-#' 
-#' @param treatment_var Name of column with treatment information.
+#' @param treatment_var Name of the variable with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export

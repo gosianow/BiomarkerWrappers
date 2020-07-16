@@ -332,13 +332,10 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
 
 
 
+
+#' @rdname wrapper_core_box_plot
+#' 
 #' @inheritParams wrapper_core_box_plot
-#' 
-#' Boxplot
-#' 
-#' Generate box plots for each subgroup defined by two stratification variables.
-#' 
-#' @param data Data frame.
 #' @export
 wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
@@ -504,7 +501,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
 #' 
 #' Generate boxplots for multiple variables in one faceted or dodged panel.
 #' 
-#' @param data Data frame.
+#' @inheritParams wrapper_core_box_plot_strat
 #' @export
 wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 

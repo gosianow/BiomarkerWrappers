@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrappers_cox_regression.R
 \name{wrapper_core_cox_regression_simple}
 \alias{wrapper_core_cox_regression_simple}
+\alias{wrapper_core_cox_regression_simple_strat}
 \title{Cox regression with simple additive model}
 \usage{
 wrapper_core_cox_regression_simple(
@@ -10,6 +11,21 @@ wrapper_core_cox_regression_simple(
   censor_var,
   covariate_vars,
   return_vars = NULL,
+  variable_names = NULL,
+  caption = NULL,
+  print_nevent = FALSE,
+  print_pvalues = TRUE,
+  print_adjpvalues = TRUE
+)
+
+wrapper_core_cox_regression_simple_strat(
+  data,
+  tte_var,
+  censor_var,
+  covariate_vars,
+  return_vars = NULL,
+  strat1_var = NULL,
+  strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_nevent = FALSE,
@@ -27,6 +43,10 @@ wrapper_core_cox_regression_simple(
 \item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
 
 \item{return_vars}{Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.}
+
+\item{strat1_var}{Name of the firts stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
 Cox regression with simple additive model.

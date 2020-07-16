@@ -237,12 +237,11 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 
 
 
+#' @rdname wrapper_core_cox_regression_simple 
+#' 
 #' @inheritParams wrapper_core_cox_regression_simple
-#' 
-#' Cox regression with simple additive model within subgroups defined by strata.
-#' 
 #' @param strat1_var Name of the firts stratification variable.
-#' @param strat1_var Name of the second stratification variable.
+#' @param strat2_var Name of the second stratification variable.
 #' @export
 wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -397,10 +396,9 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
 
 
 
-#' @inheritParams wrapper_core_cox_regression_simple_strat
-#' 
 #' Cox regression estimating biomarker effect 
 #' 
+#' @inheritParams wrapper_core_cox_regression_simple_strat
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
@@ -509,11 +507,9 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 
 
 
-
-#' @inheritParams wrapper_core_cox_regression_simple_strat
-#' 
 #' Cox regression estimating treatment effect within biomaker subgroups
 #' 
+#' @inheritParams wrapper_core_cox_regression_simple_strat
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
@@ -646,12 +642,11 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 
 
 
-#' @inheritParams wrapper_core_cox_regression_simple
-#' 
 #' Cox regression with additive model with interaction
 #' 
-#' @param interaction1_var Data frame.
-#' @param interaction2_var Name of the time-to-event variable. This variable must be numeric.
+#' @inheritParams wrapper_core_cox_regression_simple
+#' @param interaction1_var Name of the first interaction variable.
+#' @param interaction2_var Name of the second interaction variable.
 #' @export
 wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -900,10 +895,9 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
 
 
 
+#' @rdname wrapper_core_cox_regression_interaction
+#' 
 #' @inheritParams wrapper_core_cox_regression_interaction
-#' 
-#' Cox regression with additive model with interaction within subgroups defined by strata
-#' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
@@ -1042,10 +1036,9 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
 
 
 
-#' @inheritParams wrapper_core_cox_regression_interaction_strat
-#' 
 #' Cox regression estimating interaction effect between biomaker and treatment
 #' 
+#' @inheritParams wrapper_core_cox_regression_interaction_strat
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.

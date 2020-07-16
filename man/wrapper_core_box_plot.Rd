@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrappers_box_plot.R
 \name{wrapper_core_box_plot}
 \alias{wrapper_core_box_plot}
+\alias{wrapper_core_box_plot_strat}
 \title{Boxplot}
 \usage{
 wrapper_core_box_plot(
@@ -38,6 +39,50 @@ wrapper_core_box_plot(
   axis_text_x_vjust = 0,
   axis_text_x_hjust = 0.5,
   background_grid_major = "none"
+)
+
+wrapper_core_box_plot_strat(
+  data,
+  x_var,
+  y_var,
+  color_point_var = NULL,
+  dodge_var = NULL,
+  facet_var = NULL,
+  strat1_var = NULL,
+  strat2_var = NULL,
+  colors_box = NULL,
+  colors_point = NULL,
+  variable_names = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  title = NULL,
+  subtitle_label_both = TRUE,
+  tag_label_both = TRUE,
+  legend_title_colors_box = NULL,
+  legend_title_colors_point = NULL,
+  legend_position = "right",
+  facet_label_both = TRUE,
+  show_total_counts = TRUE,
+  show_median = TRUE,
+  point_size = 1,
+  point_shape = 1,
+  point_alpha = 1,
+  point_stroke = 0.8,
+  label_size = 3.5,
+  title_size = 12,
+  strip_text_size = NULL,
+  facet_scales = "fixed",
+  ylim = NULL,
+  axis_text_x_angle = 0,
+  axis_text_x_vjust = 0,
+  axis_text_x_hjust = 0.5,
+  background_grid_major = "none",
+  strat_scales = "fixed",
+  strat1_nrow = 1,
+  strat1_ncol = NULL,
+  strat2_nrow = NULL,
+  strat2_ncol = 1,
+  less_legends = FALSE
 )
 }
 \arguments{
