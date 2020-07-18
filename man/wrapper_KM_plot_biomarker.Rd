@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_KM_plot.R
 \name{wrapper_KM_plot_biomarker}
 \alias{wrapper_KM_plot_biomarker}
-\title{KM plot - Biomarker effect per treatment arm}
+\title{KM plots with biomarker effect per treatment arm}
 \usage{
 wrapper_KM_plot_biomarker(
   data,
@@ -14,9 +14,9 @@ wrapper_KM_plot_biomarker(
   colors = NULL,
   variable_names = NULL,
   title = NULL,
-  subtitle_label_both = TRUE,
-  tag_label_both = TRUE,
-  legend_title_colors = NULL,
+  strat1_label_both = TRUE,
+  strat2_label_both = TRUE,
+  legend_colors_title = NULL,
   legend_position = c(0.03, 0.03),
   legend_justification = c(0, 0),
   break_time_by = NULL,
@@ -37,8 +37,14 @@ wrapper_KM_plot_biomarker(
 \arguments{
 \item{data}{Data frame.}
 
+\item{tte_var}{Name of the variable containing time-to-event data.}
+
+\item{censor_var}{Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
 \item{colors}{If treatment = NULL, then a vector. Otherwise, a list of length equal to tratment levels.}
 }
 \description{
-KM plot - Biomarker effect per treatment arm
+KM plots with biomarker effect per treatment arm
 }

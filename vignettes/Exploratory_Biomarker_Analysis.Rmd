@@ -362,7 +362,7 @@ wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 # Complex barplot
 
 
-```{r Complex_barplot, fig.height=5, fig.width=7}
+```{r Complex_barplot, fig.height=5, fig.width=10}
 
 
 data <- bdata
@@ -411,15 +411,13 @@ wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 
-data <- bdata
-data$Cell_Of_Origin[data$Cell_Of_Origin == "UNCLASSIFIED"] <- NA
-x_var <- "Cell_Of_Origin"
-y_var <- "GeneA"
+
+```
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
 
 
+```{r Box_plot_strat, fig.height=5, fig.width=8}
 
 
 
@@ -463,7 +461,6 @@ wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_va
 
 
 ```
-
 
 
 
@@ -535,6 +532,13 @@ wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
 
 
 
+```
+
+
+
+```{r Point_plot_strat, fig.width = 12}
+
+
 data <- bdata
 
 x_var <- "GeneA"
@@ -566,44 +570,12 @@ wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_v
 
 
 
-```{r Point_plot_strat, fig.width = 10}
-
-
-data <- bdata
-
-x_var <- "GeneA"
-y_var <- "GeneB"
-facet_var <- "Treatment_Arm"
-strat1_var <- "Cell_Of_Origin"
-
-
-wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
-
-
-
-```
-
-
-
-
-
-
 
 
 # Kruskal–Wallis H test
 
 
 ```{r kruskal_test, results='asis'}
-
-
-data <- bdata
-
-cat_var <- "Cell_Of_Origin"
-num_var <- "GeneA"
-
-wrapper_core_kruskal_test_col_cat(data, num_var = num_var, cat_var = cat_var)
-
-
 
 
 data <- bdata
@@ -663,43 +635,6 @@ wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var)
 ```{r characteristics, results='asis'}
 
 
-data <- bdata
-
-covariate_var <- "IPI"
-
-
-wrapper_core_characteristics_cat(data, covariate_var = covariate_var)
-
-
-
-data <- bdata
-
-strat_var <- "Treatment_Arm"
-covariate_var <- "IPI"
-
-
-wrapper_core_characteristics_cat(data, strat_var = strat_var, covariate_var = covariate_var)
-
-
-
-
-data <- bdata
-
-covariate_var <- "Age"
-
-wrapper_core_characteristics_num(data, covariate_var = covariate_var)
-
-
-
-data <- bdata
-
-strat_var <- "Treatment_Arm"
-covariate_var <- "Age"
-
-
-wrapper_core_characteristics_num(data, strat_var = strat_var, covariate_var = covariate_var)
-
-
 
 data <- bdata
 
@@ -710,8 +645,6 @@ covariate_vars <- c("Age", "IPI")
 wrapper_core_characteristics(data, strat_var = strat_var, covariate_vars = covariate_vars)
   
   
-
-
 
 
 bep_vars <- "BEP_RNAseq"

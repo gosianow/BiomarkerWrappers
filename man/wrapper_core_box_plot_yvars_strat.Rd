@@ -19,16 +19,16 @@ wrapper_core_box_plot_yvars_strat(
   xlab = NULL,
   ylab = NULL,
   title = NULL,
-  subtitle_label_both = TRUE,
-  tag_label_both = TRUE,
-  legend_title_colors_box = NULL,
-  legend_title_colors_point = NULL,
+  strat1_label_both = TRUE,
+  strat2_label_both = TRUE,
+  legend_colors_box_title = NULL,
+  legend_colors_point_title = NULL,
   legend_position = "right",
   facet_label_both = TRUE,
   show_total_counts = TRUE,
   show_median = TRUE,
   point_size = 1,
-  point_shape = 1,
+  point_shape = 20,
   point_alpha = 1,
   point_stroke = 0.8,
   label_size = 3.5,
@@ -52,6 +52,10 @@ wrapper_core_box_plot_yvars_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{strat1_var}{Name of the firts stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
 Generate boxplots for multiple variables in one faceted or dodged panel.

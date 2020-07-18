@@ -3,8 +3,8 @@
 
 # colors_line = NULL; 
 # variable_names = NULL; 
-# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL; tag = NULL; 
-# legend_title_colors_line = NULL; legend_position = "right"; facet_label_both = TRUE; 
+# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL;
+# legend_colors_line_title = NULL; legend_position = "right"; facet_label_both = TRUE; 
 # line_size = 1; line_type = 1; line_alpha = 1;
 # smooth_method = "lm"; smooth_formula = y ~ x; smooth_se = FALSE;
 # smooth_size = 2; smooth_type = 1; 
@@ -18,15 +18,13 @@
 
 #' Line plot
 #' 
-#' Generate a signle line plot.
-#' 
 #' @param data Data frame.
 #' @export
 wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, 
-  legend_title_colors_line = NULL, legend_position = "right", facet_label_both = TRUE, 
+  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
+  legend_colors_line_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1, 
   smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_type = 1, 
@@ -100,8 +98,8 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
   if(is.null(ylab)){
     ylab <- variable_names[y_var]
   }
-  if(is.null(legend_title_colors_line)){
-    legend_title_colors_line <- variable_names[color_line_var]
+  if(is.null(legend_colors_line_title)){
+    legend_colors_line_title <- variable_names[color_line_var]
   }
   
   
@@ -116,14 +114,14 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
   
   ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]], group = .data[[group_var]])) +
     geom_line(aes(color = .data[[color_line_var]]), linetype = line_type, size = line_size, alpha = line_alpha, show.legend = legend_show_colors_line) +
-    scale_color_manual(name = legend_title_colors_line, values = colors_line, drop = FALSE, na.value = "grey")
+    scale_color_manual(name = legend_colors_line_title, values = colors_line, drop = FALSE, na.value = "grey")
   
   
   if(point_shape %in% 21:25){
     
     ggpl <- ggpl +
       geom_point(aes(fill = .data[[color_line_var]]), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) +
-      scale_fill_manual(name = legend_title_colors_line, values = colors_line, drop = FALSE, na.value = "grey")
+      scale_fill_manual(name = legend_colors_line_title, values = colors_line, drop = FALSE, na.value = "grey")
     
     
   }else{
@@ -135,18 +133,16 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
   
   
   ggpl <- ggpl +
-    labs(title = title, subtitle = subtitle, tag = tag) + 
+    labs(title = title, subtitle = subtitle) + 
     ylab(ylab) +
     xlab(xlab) +
-    # theme_cowplot(12) +
     theme(plot.title = element_text(size = title_size, face = "bold"),
       plot.subtitle = element_text(size = title_size),
-      plot.tag.position = "top",
-      plot.tag = element_text(size = title_size, face = "plain"),
-      legend.position = legend_position,
-      axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 0.8, remove = FALSE) +
-    background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
+      axis.line = element_blank(),
+      axis.ticks = element_line(color = "black", size = 0.5),
+      panel.border = element_rect(colour = "black", size = 0.8),
+      legend.position = legend_position) +
+    background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   
   
@@ -206,18 +202,17 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
 
 
 
-#' Line plot
-#' 
-#' Generate line plots for each subgroup defined by two stratification variables.
-#' 
-#' @param data Data frame.
+
+#' @rdname wrapper_core_line_plot
+#' @param strat1_var Name of the firts stratification variable.
+#' @param strat2_var Name of the second stratification variable.
 #' @export
 wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors_line = NULL, legend_position = "right", facet_label_both = TRUE, 
+  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_line_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1,
   smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_type = 1, 
@@ -290,14 +285,14 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
       return(NULL)
     }
     
-    ### Tag
+    ### subtitle_strat2
     if(strat2_var == "strat2_dummy"){
-      tag <- NULL
+      subtitle_strat2 <- NULL
     }else{
-      if(tag_label_both){
-        tag <- paste0(variable_names[strat2_var], ": ", strata2_levels[j])
+      if(strat2_label_both){
+        subtitle_strat2 <- paste0(variable_names[strat2_var], ": ", strata2_levels[j])
       }else{
-        tag <- strata2_levels[j]
+        subtitle_strat2 <- strata2_levels[j]
       }
     }
     
@@ -311,23 +306,28 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
         return(NULL)
       }
       
-      ### Subtitle
+      ### subtitle_strat1
       if(strat1_var == "strat1_dummy"){
-        subtitle <- NULL
+        subtitle_strat1 <- NULL
       }else{
-        if(subtitle_label_both){
-          subtitle <- paste0(variable_names[strat1_var], ": ", strata1_levels[i])
+        if(strat1_label_both){
+          subtitle_strat1 <- paste0(variable_names[strat1_var], ": ", strata1_levels[i])
         }else{
-          subtitle <- strata1_levels[i]
+          subtitle_strat1 <- strata1_levels[i]
         }
+      }
+      
+      subtitle <- paste0(c(subtitle_strat2, subtitle_strat1), collapse = "\n")
+      if(subtitle == ""){
+        subtitle <- NULL
       }
       
       
       ggpl <- wrapper_core_line_plot(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, color_smooth_var = color_smooth_var, facet_var = facet_var, 
         colors_line = colors_line, 
         variable_names = variable_names, 
-        xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, 
-        legend_title_colors_line = legend_title_colors_line, legend_position = legend_position, facet_label_both = facet_label_both, 
+        xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,
+        legend_colors_line_title = legend_colors_line_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         line_size = line_size, line_type = line_type, line_alpha = line_alpha,
         smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
         smooth_size = smooth_size, smooth_type = smooth_type, 

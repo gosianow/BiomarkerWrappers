@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrappers_KM_plot.R
 \name{wrapper_core_KM_plot}
 \alias{wrapper_core_KM_plot}
+\alias{wrapper_core_KM_plot_strat}
 \title{KM plot}
 \usage{
 wrapper_core_KM_plot(
@@ -13,8 +14,7 @@ wrapper_core_KM_plot(
   variable_names = NULL,
   title = NULL,
   subtitle = NULL,
-  tag = NULL,
-  legend_title_colors = NULL,
+  legend_colors_title = NULL,
   legend_position = c(0.03, 0.03),
   legend_justification = c(0, 0),
   break_time_by = NULL,
@@ -26,10 +26,80 @@ wrapper_core_KM_plot(
   rel_heights = c(5, 1),
   background_grid_major = "none"
 )
+
+wrapper_core_KM_plot_strat(
+  data,
+  tte_var,
+  censor_var,
+  covariate_var,
+  strat1_var = NULL,
+  strat2_var = NULL,
+  colors = NULL,
+  variable_names = NULL,
+  title = NULL,
+  strat1_label_both = TRUE,
+  strat2_label_both = TRUE,
+  legend_colors_title = NULL,
+  legend_position = c(0.03, 0.03),
+  legend_justification = c(0, 0),
+  break_time_by = NULL,
+  max_tte = NULL,
+  risk_table = TRUE,
+  conf_int = FALSE,
+  title_size = 12,
+  label_size = 3,
+  rel_heights = c(5, 1),
+  background_grid_major = "none",
+  strat_scales = "fixed",
+  strat1_nrow = 1,
+  strat1_ncol = NULL,
+  strat2_nrow = NULL,
+  strat2_ncol = 1
+)
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{tte_var}{Name of the variable containing time-to-event data.}
+
+\item{censor_var}{Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.}
+
+\item{covariate_var}{Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.}
+
+\item{strat1_var}{Name of the firts stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
-Generate a signle KM plot.
+KM plot
+}
+\examples{
+
+data(bdata)
+
+data <- bdata
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_var <- "Treatment_Arm"
+
+
+wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+
+
+data(bdata)
+
+data <- bdata
+data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_var <- "GeneA_cat2"
+
+strat1_var = "Treatment_Arm"
+strat2_var = "Cell_Of_Origin"
+
+
+wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
+
 }

@@ -5,15 +5,30 @@
 
 #' KM plot
 #' 
-#' Generate a signle KM plot.
-#' 
 #' @param data Data frame.
+#' @param tte_var Name of the variable containing time-to-event data.
+#' @param censor_var Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.
+#' @param covariate_var Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.
+#' 
+#' @examples 
+#' 
+#' data(bdata)
+#' 
+#' data <- bdata
+#' 
+#' tte_var <- "PFS"
+#' censor_var <- "PFS_Event"
+#' covariate_var <- "Treatment_Arm"
+#' 
+#' 
+#' wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+#' 
 #' @export
 wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, 
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, subtitle = NULL, tag = NULL, 
-  legend_title_colors = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = NULL, subtitle = NULL,
+  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none"){
@@ -71,8 +86,8 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   xlab <- variable_names[tte_var]
   
   
-  if(is.null(legend_title_colors)){
-    legend_title_colors <- variable_names[covariate_var]
+  if(is.null(legend_colors_title)){
+    legend_colors_title <- variable_names[covariate_var]
   }
   
   
@@ -106,7 +121,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   
   ### Define the model formula
-  f <- stats::as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
+  f <- stats::as.formula(paste0("survival::Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
   
   ### Fit the model
   fit <- survival::survfit(f, data)
@@ -122,21 +137,19 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   ## palette must be a non-named vector. Otherwise, it does not work. For each subplot has to have unique values. If a level has zero counts, it is not plotted. Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts.
   
-  ggpl <- survminer::ggsurvplot(fit, data = data, palette = colors, linetype = 1, conf.int = conf_int, risk.table = risk_table, ggtheme = theme_classic(), xlab = xlab, break.time.by = break_time_by, xlim = c(0, max_tte), fontsize = label_size) 
+  ggpl <- survminer::ggsurvplot(fit, data = data, palette = colors, linetype = 1, conf.int = conf_int, risk.table = risk_table, ggtheme = ggplot2::theme_classic(), xlab = xlab, break.time.by = break_time_by, xlim = c(0, max_tte), fontsize = label_size) 
   
   
   ### Customize the plot
   suppressMessages(ggpl_plot <- ggpl$plot +
-      labs(title = title, subtitle = subtitle, tag = tag) +
+      labs(title = title, subtitle = subtitle) +
       theme(plot.title = element_text(size = title_size, face = "bold"),
         plot.subtitle = element_text(size = title_size),
         legend.position = legend_position,
         legend.justification = legend_justification,
-        legend.background = element_rect(fill = NA),
-        plot.tag.position = "top",
-        plot.tag = element_text(size = title_size, face = "plain")) +
-      scale_color_manual(name = legend_title_colors, labels = levels(data[, covariate_var]), values = colors) +
-      scale_fill_manual(name = legend_title_colors, labels = levels(data[, covariate_var]), values = colors) +
+        legend.background = element_rect(fill = NA)) +
+      scale_color_manual(name = legend_colors_title, labels = levels(data[, covariate_var]), values = colors) +
+      scale_fill_manual(name = legend_colors_title, labels = levels(data[, covariate_var]), values = colors) +
       coord_cartesian(xlim = c(0, max_tte)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.15))
   
@@ -178,18 +191,34 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
 
 
 
-#' KM plot
+
+#' @rdname wrapper_core_KM_plot
+#' @param strat1_var Name of the firts stratification variable.
+#' @param strat2_var Name of the second stratification variable.
+#' @examples 
 #' 
-#' Generate KM plots for each subgroup defined by two stratification variables.
+#' data(bdata)
 #' 
-#' @param data Data frame.
+#' data <- bdata
+#' data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+#' 
+#' tte_var <- "PFS"
+#' censor_var <- "PFS_Event"
+#' covariate_var <- "GeneA_cat2"
+#' 
+#' strat1_var = "Treatment_Arm"
+#' strat2_var = "Cell_Of_Origin"
+#' 
+#' 
+#' wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
+#' 
 #' @export
 wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var, 
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
@@ -262,14 +291,14 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
     }
     
     
-    ### Tag
+    ### subtitle_strat2
     if(strat2_var == "strat2_dummy"){
-      tag <- NULL
+      subtitle_strat2 <- NULL
     }else{
-      if(tag_label_both){
-        tag <- paste0(variable_names[strat2_var], ": ", strata2_levels[j])
+      if(strat2_label_both){
+        subtitle_strat2 <- paste0(variable_names[strat2_var], ": ", strata2_levels[j])
       }else{
-        tag <- strata2_levels[j]
+        subtitle_strat2 <- strata2_levels[j]
       }
     }
     
@@ -284,23 +313,27 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
       }
       
       
-      ### Subtitle
+      ### subtitle_strat1
       if(strat1_var == "strat1_dummy"){
-        subtitle <- NULL
+        subtitle_strat1 <- NULL
       }else{
-        if(subtitle_label_both){
-          subtitle <- paste0(variable_names[strat1_var], ": ", strata1_levels[i])
+        if(strat1_label_both){
+          subtitle_strat1 <- paste0(variable_names[strat1_var], ": ", strata1_levels[i])
         }else{
-          subtitle <- strata1_levels[i]
+          subtitle_strat1 <- strata1_levels[i]
         }
       }
       
+      subtitle <- paste0(c(subtitle_strat2, subtitle_strat1), collapse = "\n")
+      if(subtitle == ""){
+        subtitle <- NULL
+      }
       
       ggpl <- wrapper_core_KM_plot(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
         colors = colors, 
         variable_names = variable_names, 
-        title = title, subtitle = subtitle, tag = tag, 
-        legend_title_colors = legend_title_colors, legend_position = legend_position, legend_justification = legend_justification,
+        title = title, subtitle = subtitle,
+        legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
         break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
         title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
         background_grid_major = background_grid_major)
@@ -335,17 +368,17 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
 
 
 
-#' KM plot - All curves per biomarker and treatment in one panel
+#' KM plot with curves per biomarker and treatment in a single panel
 #' 
-#' @param data Data frame.
-#' @param colors A list of length equal to treatment levels.
+#' @inheritParams wrapper_core_KM_plot_strat
+#' @param colors A list of length equal to the number of treatment levels.
 #' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
   title_size = 12, label_size = 3, rel_heights = c(4, 1), 
   background_grid_major = "none",
@@ -422,8 +455,8 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
-    title = title, subtitle_label_both = subtitle_label_both, tag_label_both = tag_label_both, 
-    legend_title_colors = legend_title_colors, legend_position = legend_position, legend_justification = legend_justification,
+    title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major,
@@ -439,17 +472,17 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 
 
 
-#' KM plot - Biomarker effect per treatment arm
+#' KM plots with biomarker effect per treatment arm
 #' 
-#' @param data Data frame.
+#' @inheritParams wrapper_KM_plot_interaction
 #' @param colors If treatment = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
 #' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
   strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
@@ -538,8 +571,8 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
-    title = title, subtitle_label_both = subtitle_label_both, tag_label_both = tag_label_both, 
-    legend_title_colors = legend_title_colors, legend_position = legend_position, legend_justification = legend_justification,
+    title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major,
@@ -563,17 +596,17 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 
 
 
-#' KM plot - Treatment effect per biomarker subgroup
+#' KM plot with treatment effect per biomarker subgroup
 #' 
-#' @param data Data frame.
+#' @inheritParams wrapper_KM_plot_interaction
 #' @param colors If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
 #' @export
 wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var = NULL, treatment_var, 
   strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
@@ -661,8 +694,8 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
-    title = title, subtitle_label_both = subtitle_label_both, tag_label_both = tag_label_both, 
-    legend_title_colors = legend_title_colors, legend_position = legend_position, legend_justification = legend_justification,
+    title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major,

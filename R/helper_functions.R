@@ -904,17 +904,19 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
 #' Calculate break time used in KM plots
 #' 
 #' @param x Vector with time-to-event data.
+#' @param n_breaks Number of breaks.
+#' @examples 
+#' 
+#' data(bdata)
+#' 
+#' calculate_break_time(bdata$PFS)
+#' 
 #' @keywords internal
 calculate_break_time <- function(x, n_breaks = 10){
   
+  break_time_by <- max(x, na.rm = TRUE) %/% n_breaks
   
-  max_tte_tmp <- max(x, na.rm = TRUE) / n_breaks
-  
-  decimial_nr <- round(log10(max_tte_tmp))
-  
-  break.time.by <- round(max_tte_tmp * 10^decimial_nr) / 10^decimial_nr
-  
-  return(break.time.by)
+  break_time_by
   
 }
 

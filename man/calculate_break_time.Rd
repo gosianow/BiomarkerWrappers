@@ -8,8 +8,17 @@ calculate_break_time(x, n_breaks = 10)
 }
 \arguments{
 \item{x}{Vector with time-to-event data.}
+
+\item{n_breaks}{Number of breaks.}
 }
 \description{
 Calculate break time used in KM plots
+}
+\examples{
+
+data(bdata)
+
+calculate_break_time(bdata$PFS)
+
 }
 \keyword{internal}

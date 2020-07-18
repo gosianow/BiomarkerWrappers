@@ -6,8 +6,8 @@
 # facet_var = NULL;
 # colors_bar = NULL;
 # variable_names = NULL;
-# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL; tag = NULL;
-# legend_title_colors_bar = NULL; facet_label_both = TRUE;
+# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL;
+# legend_colors_title = NULL; facet_label_both = TRUE;
 # skip_levels = NULL; method = "facet";
 # show_proportions = TRUE; show_counts = TRUE; show_total_proportions = FALSE; show_total_counts = TRUE;
 # label_size = 3.5; label_vjust = 0.5;
@@ -40,8 +40,8 @@
 wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, 
   colors_bar = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, tag = NULL, 
-  legend_title_colors_bar = NULL, legend_position = "right", facet_label_both = TRUE, 
+  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
+  legend_colors_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = TRUE, 
   label_size = 3.5, label_vjust = 0.5, 
@@ -116,7 +116,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
   if(method == "facet"){
     
     ### By default we do not display legend title as the description of the variable is on the y-axis 
-    legend_title_colors_bar <- legend_title_colors_bar
+    legend_colors_title <- legend_colors_title
     
     if(is.null(xlab)){
       xlab <- variable_names[x_var]
@@ -129,8 +129,8 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
   
   if(method == "dodge"){
     
-    if(is.null(legend_title_colors_bar)){
-      legend_title_colors_bar <- variable_names[x_var]
+    if(is.null(legend_colors_title)){
+      legend_colors_title <- variable_names[x_var]
     }
     
     if(is.null(xlab)){
@@ -291,7 +291,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     ggpl <- ggplot() +
       geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Observation), color = "black") +
-      scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE)
+      scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
     ### Facet
@@ -352,7 +352,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     ggpl <- ggplot() +
       geom_col(data = ggdata, aes(x = .data[[facet_var]], y = .data$Proportion, fill = .data$Subgroup), color = "black", position = position_dodge2(preserve = "single", width = 0.75)) +
-      scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE)
+      scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
     ### Labels
@@ -384,19 +384,17 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
   
   
   ggpl <- ggpl +
-    labs(title = title, subtitle = subtitle, tag = tag) + 
+    labs(title = title, subtitle = subtitle) + 
     ylab(ylab) +
     xlab(xlab) +
     theme(plot.title = element_text(size = title_size, face = "bold"),
       plot.subtitle = element_text(size = title_size),
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
-      plot.tag.position = "top",
-      plot.tag = element_text(size = title_size, face = "plain"),
       # axis.line = element_blank(),
       # axis.ticks = element_line(color = "black", size = 0.5),
       # panel.border = element_rect(colour = "black", size = 1),
       legend.position = legend_position) +
-    background_grid(major = background_grid_major, minor = "none", size.major = 0.2) +
+    background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
   
@@ -414,8 +412,8 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
 # strat1_var = NULL; strat2_var = NULL;
 # colors_bar = NULL;
 # variable_names = NULL;
-# xlab = NULL; ylab = NULL; title = NULL; subtitle_label_both = TRUE; tag_label_both = TRUE;
-# legend_title_colors_bar = NULL; facet_label_both = TRUE;
+# xlab = NULL; ylab = NULL; title = NULL; strat1_label_both = TRUE; strat2_label_both = TRUE;
+# legend_colors_title = NULL; facet_label_both = TRUE;
 # skip_levels = NULL; method = "facet";
 # show_proportions = TRUE; show_counts = TRUE; show_total_proportions = FALSE; show_total_counts = TRUE;
 # label_size = 3.5; label_vjust = 0.5;
@@ -436,8 +434,8 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors_bar = NULL, legend_position = "right", facet_label_both = TRUE, 
+  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = TRUE, 
   label_size = 3.5, label_vjust = 0.5, 
@@ -502,14 +500,14 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
       return(NULL)
     }
     
-    ### Tag
+    ### subtitle_strat2
     if(strat2_var == "strat2_dummy"){
-      tag <- NULL
+      subtitle_strat2 <- NULL
     }else{
-      if(tag_label_both){
-        tag <- paste0(variable_names[strat2_var], ": ", strata2_levels[j])
+      if(strat2_label_both){
+        subtitle_strat2 <- paste0(variable_names[strat2_var], ": ", strata2_levels[j])
       }else{
-        tag <- strata2_levels[j]
+        subtitle_strat2 <- strata2_levels[j]
       }
     }
     
@@ -524,23 +522,27 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
       }
       
       
-      ### Subtitle
+      ### subtitle_strat1
       if(strat1_var == "strat1_dummy"){
-        subtitle <- NULL
+        subtitle_strat1 <- NULL
       }else{
-        if(subtitle_label_both){
-          subtitle <- paste0(variable_names[strat1_var], ": ", strata1_levels[i])
+        if(strat1_label_both){
+          subtitle_strat1 <- paste0(variable_names[strat1_var], ": ", strata1_levels[i])
         }else{
-          subtitle <- strata1_levels[i]
+          subtitle_strat1 <- strata1_levels[i]
         }
       }
       
+      subtitle <- paste0(c(subtitle_strat2, subtitle_strat1), collapse = "\n")
+      if(subtitle == ""){
+        subtitle <- NULL
+      }
       
       ggpl <- wrapper_core_bar_plot(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, 
         colors_bar = colors_bar, 
         variable_names = variable_names, 
-        xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, tag = tag, 
-        legend_title_colors_bar = legend_title_colors_bar, legend_position = legend_position, facet_label_both = facet_label_both, 
+        xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
+        legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         skip_levels = skip_levels, method = method, 
         show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
         label_size = label_size, label_vjust = label_vjust, 
@@ -555,7 +557,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
     })
     
     
-
+    
     if(less_legends && legend_position == "right"){
       
       # Extract the legend from one of the plots
@@ -563,7 +565,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
         # Create some space to the left of the legend
         ggpl[[1]] + theme(legend.box.margin = margin(0, 0, 0, 12))
       )
-
+      
       # Remove legends in the plots
       ggpl <- lapply(ggpl, function(x) x + theme(legend.position = "none"))
       
@@ -598,14 +600,13 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
 #' Generate barplots for multiple variables in one faceted or dodged panel.
 #' 
 #' @inheritParams wrapper_core_bar_plot_strat
-#' @param data Data frame.
 #' @export
 wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle_label_both = TRUE, tag_label_both = TRUE, 
-  legend_title_colors_bar = NULL, legend_position = "right", facet_label_both = TRUE, 
+  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = TRUE, 
   label_size = 3.5, label_vjust = 0.5, 
@@ -657,8 +658,8 @@ wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars,
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, 
     variable_names = variable_names, 
-    xlab = xlab, ylab = ylab, title = title, subtitle_label_both = subtitle_label_both, tag_label_both = tag_label_both, 
-    legend_title_colors_bar = legend_title_colors_bar, legend_position = legend_position, facet_label_both = facet_label_both, 
+    xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
     skip_levels = skip_levels, method = method, 
     show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
     label_size = label_size, label_vjust = label_vjust, 

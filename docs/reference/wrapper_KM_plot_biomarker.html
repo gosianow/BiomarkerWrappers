@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>KM plot - Biomarker effect per treatment arm — wrapper_KM_plot_biomarker • BiomarkerWrappers</title>
+<title>KM plots with biomarker effect per treatment arm — wrapper_KM_plot_biomarker • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="KM plot - Biomarker effect per treatment arm — wrapper_KM_plot_biomarker" />
-<meta property="og:description" content="KM plot - Biomarker effect per treatment arm" />
+<meta property="og:title" content="KM plots with biomarker effect per treatment arm — wrapper_KM_plot_biomarker" />
+<meta property="og:description" content="KM plots with biomarker effect per treatment arm" />
 
 
 
@@ -115,13 +115,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>KM plot - Biomarker effect per treatment arm</h1>
+    <h1>KM plots with biomarker effect per treatment arm</h1>
     
     <div class="hidden name"><code>wrapper_KM_plot_biomarker.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>KM plot - Biomarker effect per treatment arm</p>
+    <p>KM plots with biomarker effect per treatment arm</p>
     </div>
 
     <pre class="usage"><span class='fu'>wrapper_KM_plot_biomarker</span>(
@@ -134,9 +134,9 @@
   <span class='kw'>colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>subtitle_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>tag_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>legend_title_colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strat1_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>strat2_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>legend_colors_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>legend_position</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.03</span>, <span class='fl'>0.03</span>),
   <span class='kw'>legend_justification</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
   <span class='kw'>break_time_by</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -160,6 +160,18 @@
     <tr>
       <th>data</th>
       <td><p>Data frame.</p></td>
+    </tr>
+    <tr>
+      <th>tte_var</th>
+      <td><p>Name of the variable containing time-to-event data.</p></td>
+    </tr>
+    <tr>
+      <th>censor_var</th>
+      <td><p>Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.</p></td>
+    </tr>
+    <tr>
+      <th>strat2_var</th>
+      <td><p>Name of the second stratification variable.</p></td>
     </tr>
     <tr>
       <th>colors</th>

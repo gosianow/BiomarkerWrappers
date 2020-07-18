@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrappers_point_plot.R
 \name{wrapper_core_point_plot}
 \alias{wrapper_core_point_plot}
+\alias{wrapper_core_point_plot_strat}
 \title{Scatterplot}
 \usage{
 wrapper_core_point_plot(
@@ -17,12 +18,11 @@ wrapper_core_point_plot(
   ylab = NULL,
   title = NULL,
   subtitle = NULL,
-  tag = NULL,
-  legend_title_colors_point = NULL,
+  legend_colors_point_title = NULL,
   legend_position = "right",
   facet_label_both = TRUE,
   point_size = 1.5,
-  point_shape = 1,
+  point_shape = 20,
   point_alpha = 1,
   point_stroke = 0.8,
   smooth_method = "auto",
@@ -37,10 +37,68 @@ wrapper_core_point_plot(
   ylim = NULL,
   background_grid_major = "none"
 )
+
+wrapper_core_point_plot_strat(
+  data,
+  x_var,
+  y_var,
+  color_point_var = NULL,
+  color_smooth_var = NULL,
+  facet_var = NULL,
+  strat1_var = NULL,
+  strat2_var = NULL,
+  colors_point = NULL,
+  variable_names = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  title = NULL,
+  strat1_label_both = TRUE,
+  strat2_label_both = TRUE,
+  legend_colors_point_title = NULL,
+  legend_position = "right",
+  facet_label_both = TRUE,
+  point_size = 1.5,
+  point_shape = 20,
+  point_alpha = 1,
+  point_stroke = 0.8,
+  smooth_method = "auto",
+  smooth_formula = y ~ x,
+  smooth_se = FALSE,
+  smooth_size = 2,
+  smooth_type = 1,
+  title_size = 12,
+  strip_text_size = NULL,
+  facet_scales = "fixed",
+  xlim = NULL,
+  ylim = NULL,
+  background_grid_major = "none",
+  strat_scales = "fixed",
+  strat1_nrow = 1,
+  strat1_ncol = NULL,
+  strat2_nrow = NULL,
+  strat2_ncol = 1,
+  less_legends = FALSE
+)
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{strat1_var}{Name of the firts stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
-Generate a signle scatter.
+Scatterplot
+}
+\examples{
+
+data(bdata)
+data <- bdata
+
+x_var <- "GeneA"
+y_var <- "GeneB"
+
+
+wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
+
 }
