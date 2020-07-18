@@ -42,15 +42,51 @@ wrapper_core_cox_regression_simple_strat(
 
 \item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
 
-\item{return_vars}{Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.}
+\item{return_vars}{Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.}
+
+\item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
+
+\item{caption}{Caption for the table with results.}
+
+\item{print_nevent}{Logical. Whether to print numbers of events.}
+
+\item{print_pvalues}{Logical. Whether to print p-values.}
+
+\item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 
 \item{strat1_var}{Name of the firts stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
-Cox regression with simple additive model.
+This function can be used if one is interested in effects of multiple covariates in a multivariate model.
 }
 \details{
-If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.
+If for a factor covariate that should be returned the reference level has zero count, results are set to NAs becasue this levels is not used as a reference which means that it is not possible to fit the model that we want.
+}
+\examples{
+
+data(bdata)
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
+
+wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+
+
+data(bdata)
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+covariate_vars <- c("IPI", "GeneA")
+
+strat1_var = "Cell_Of_Origin"
+strat2_var = "Treatment_Arm"
+
+
+wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+
 }

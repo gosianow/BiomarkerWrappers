@@ -87,7 +87,7 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
   
   ### Generate index for camera
   
-  camera_index <- ids2indices(genesets, universe)
+  camera_index <- limma::ids2indices(genesets, universe)
   
   # camera_index[[1]]
   
@@ -259,7 +259,9 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
 
 
 
-
+#' Display significantly enriched gene sets
+#' 
+#' @param x Data frame with GSEA results.
 #' @export
 wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 

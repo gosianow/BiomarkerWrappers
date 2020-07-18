@@ -3,15 +3,31 @@
 
 #' Cox regression with simple additive model
 #' 
-#' Cox regression with simple additive model.
+#' This function can be used if one is interested in effects of multiple covariates in a multivariate model.
 #' 
 #' @param data Data frame.
 #' @param tte_var Name of the time-to-event variable. This variable must be numeric.
 #' @param censor_var Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.
 #' @param covariate_vars Vector with names of covariate that should be included in the formula.
-#' @param return_vars Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.
+#' @param return_vars Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.
+#' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
+#' @param caption Caption for the table with results.
+#' @param print_nevent Logical. Whether to print numbers of events.
+#' @param print_pvalues Logical. Whether to print p-values.
+#' @param print_adjpvalues Logical. Whether to print adjusted p-values.
 #' @details 
-#' If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.
+#' If for a factor covariate that should be returned the reference level has zero count, results are set to NAs becasue this levels is not used as a reference which means that it is not possible to fit the model that we want.
+#' @examples
+#' 
+#' data(bdata)
+#' 
+#' data <- bdata
+#' tte_var <- "PFS"
+#' censor_var <- "PFS_Event"
+#' covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
+#' 
+#' wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+#' 
 #' @export
 wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -54,7 +70,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   ## Create the formula
   formula_covariates <- paste0(covariate_vars, collapse = " + ")
-  f <- as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
+  f <- as.formula(paste0("survival::Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
   
   
   ## Fit the Cox model
@@ -128,12 +144,12 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   coef_info$nevent <- regression_summ$nevent
   
   coef_info <- coef_info %>% 
-    left_join(conf_int, by = "coefficient") %>% 
-    left_join(coefficients, by = "coefficient")
+    dplyr::left_join(conf_int, by = "coefficient") %>% 
+    dplyr::left_join(coefficients, by = "coefficient")
   
   
   ## Calculate adjusted p-values using the Benjamini & Hochberg method
-  coef_info$adj_pvalue <- p.adjust(coef_info$pvalue, method = "BH")
+  coef_info$adj_pvalue <- stats::p.adjust(coef_info$pvalue, method = "BH")
   
   
   # --------------------------------------------------------------------------
@@ -239,9 +255,24 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 
 #' @rdname wrapper_core_cox_regression_simple 
 #' 
-#' @inheritParams wrapper_core_cox_regression_simple
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat2_var Name of the second stratification variable.
+#' 
+#' @examples 
+#' 
+#' data(bdata)
+#' 
+#' data <- bdata
+#' tte_var <- "PFS"
+#' censor_var <- "PFS_Event"
+#' covariate_vars <- c("IPI", "GeneA")
+#' 
+#' strat1_var = "Cell_Of_Origin"
+#' strat2_var = "Treatment_Arm"
+#' 
+#' 
+#' wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+#' 
 #' @export
 wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -647,6 +678,25 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' @inheritParams wrapper_core_cox_regression_simple
 #' @param interaction1_var Name of the first interaction variable.
 #' @param interaction2_var Name of the second interaction variable.
+#' 
+#' @examples 
+#' 
+#' data(bdata)
+#' 
+#' data <- bdata
+#' 
+#' data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+#' 
+#' tte_var <- "PFS"
+#' censor_var <- "PFS_Event"
+#' 
+#' interaction1_var <- "GeneA_cat2"
+#' interaction2_var <- "Treatment_Arm"
+#' covariate_vars <- c("IPI", "Cell_Of_Origin")
+#' 
+#' wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+#' 
+#' 
 #' @export
 wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -690,7 +740,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   ## Create the formula
   formula_covariates <- paste0(paste0(covariate_vars, collapse = " + "), " + ", interaction1_var, " * ", interaction2_var)
-  f <- as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
+  f <- as.formula(paste0("survival::Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
   
   
   ## Fit the Cox model

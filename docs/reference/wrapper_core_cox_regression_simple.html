@@ -40,7 +40,7 @@
 
 
 <meta property="og:title" content="Cox regression with simple additive model — wrapper_core_cox_regression_simple" />
-<meta property="og:description" content="Cox regression with simple additive model." />
+<meta property="og:description" content="This function can be used if one is interested in effects of multiple covariates in a multivariate model." />
 
 
 
@@ -121,7 +121,7 @@
     </div>
 
     <div class="ref-description">
-    <p>Cox regression with simple additive model.</p>
+    <p>This function can be used if one is interested in effects of multiple covariates in a multivariate model.</p>
     </div>
 
     <pre class="usage"><span class='fu'>wrapper_core_cox_regression_simple</span>(
@@ -173,7 +173,27 @@
     </tr>
     <tr>
       <th>return_vars</th>
-      <td><p>Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.</p></td>
+      <td><p>Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.</p></td>
+    </tr>
+    <tr>
+      <th>variable_names</th>
+      <td><p>Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.</p></td>
+    </tr>
+    <tr>
+      <th>caption</th>
+      <td><p>Caption for the table with results.</p></td>
+    </tr>
+    <tr>
+      <th>print_nevent</th>
+      <td><p>Logical. Whether to print numbers of events.</p></td>
+    </tr>
+    <tr>
+      <th>print_pvalues</th>
+      <td><p>Logical. Whether to print p-values.</p></td>
+    </tr>
+    <tr>
+      <th>print_adjpvalues</th>
+      <td><p>Logical. Whether to print adjusted p-values.</p></td>
     </tr>
     <tr>
       <th>strat1_var</th>
@@ -187,8 +207,32 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.</p>
+    <p>If for a factor covariate that should be returned the reference level has zero count, results are set to NAs becasue this levels is not used as a reference which means that it is not possible to fit the model that we want.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
+
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='no'>bdata</span>
+<span class='no'>tte_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS"</span>
+<span class='no'>censor_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS_Event"</span>
+<span class='no'>covariate_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Treatment_Arm"</span>, <span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>, <span class='st'>"GeneA"</span>)
+
+<span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)</div><div class='output co'>#&gt; <span class='error'>Error in coef_info %&gt;% left_join(conf_int, by = "coefficient") %&gt;% left_join(coefficients,     by = "coefficient"): could not find function "%&gt;%"</span></div><div class='input'>
+
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
+
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='no'>bdata</span>
+<span class='no'>tte_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS"</span>
+<span class='no'>censor_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS_Event"</span>
+<span class='no'>covariate_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"IPI"</span>, <span class='st'>"GeneA"</span>)
+
+<span class='no'>strat1_var</span> <span class='kw'>=</span> <span class='st'>"Cell_Of_Origin"</span>
+<span class='no'>strat2_var</span> <span class='kw'>=</span> <span class='st'>"Treatment_Arm"</span>
+
+
+<span class='fu'>wrapper_core_cox_regression_simple_strat</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='no'>strat1_var</span>, <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='no'>strat2_var</span>)</div><div class='output co'>#&gt; <span class='error'>Error in coef_info %&gt;% left_join(conf_int, by = "coefficient") %&gt;% left_join(coefficients,     by = "coefficient"): could not find function "%&gt;%"</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

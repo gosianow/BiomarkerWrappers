@@ -77,7 +77,7 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
   
   ### Generate index for camera
   
-  camera_index <- ids2indices(genesets, universe)
+  camera_index <- limma::ids2indices(genesets, universe)
   
   # camera_index[["DNA Replication"]]
   
@@ -112,7 +112,7 @@ wrapper_core_cameraPR <- function(statistic, genesets, genesets_extra_info = NUL
     
     colnames(genesets_extra_info)[1] <- "Geneset"
     
-    out <- left_join(out, genesets_extra_info, by = "Geneset")
+    out <- dplyr::left_join(out, genesets_extra_info, by = "Geneset")
     
   }
   
@@ -254,6 +254,9 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 
 
 
+#' Display significantly enriched gene sets
+#' 
+#' @param x Data frame with CAMERA results.
 #' @export
 wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 

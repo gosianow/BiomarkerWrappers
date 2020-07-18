@@ -131,31 +131,7 @@ bdata <- cbind(bdata, data_cat2, data_cat4)
 ```{r cox_regression, results='asis'}
 
 
-data <- bdata
-tte_var <- "PFS"
-censor_var <- "PFS_Event"
-covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
-
-
-wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
-
-
-
-
-data <- bdata
-tte_var <- "PFS"
-censor_var <- "PFS_Event"
-covariate_vars <- c("IPI", "GeneA")
-
-strat1_var = "Cell_Of_Origin"
-strat2_var = "Treatment_Arm"
-
-
-wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
-
-
-
-
+### Biomarker effect 
 
 data <- bdata
 tte_var <- "PFS"
@@ -170,9 +146,7 @@ strat1_var = "Treatment_Arm"
 wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
 
 
-
-
-
+### Treatment effect 
 
 data <- bdata
 tte_var <- "PFS"
@@ -187,22 +161,7 @@ wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_va
   
 
 
-
-
-data <- bdata
-tte_var <- "PFS"
-censor_var <- "PFS_Event"
-
-interaction1_var <- "GeneA_cat2"
-interaction2_var <- "Treatment_Arm"
-covariate_vars <- c("IPI", "Cell_Of_Origin")
-
-
-
-wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
-
-
-
+### Treatment-biomarker interaction effect 
 
 
 data <- bdata
@@ -238,23 +197,10 @@ data <- bdata
 
 tte_var <- "PFS"
 censor_var <- "PFS_Event"
-covariate_var <- "IPI"
-
-
-wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
-
-
-
-
-data <- bdata
-
-tte_var <- "PFS"
-censor_var <- "PFS_Event"
 covariate_var <- "Treatment_Arm"
 
 
 wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
-
 
 
 

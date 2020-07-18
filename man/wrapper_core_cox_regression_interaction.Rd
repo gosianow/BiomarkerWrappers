@@ -48,10 +48,39 @@ wrapper_core_cox_regression_interaction_strat(
 
 \item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
 
+\item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
+
+\item{caption}{Caption for the table with results.}
+
+\item{print_nevent}{Logical. Whether to print numbers of events.}
+
+\item{print_pvalues}{Logical. Whether to print p-values.}
+
+\item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
+
 \item{strat1_var}{Name of the second stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
 Cox regression with additive model with interaction
+}
+\examples{
+
+data(bdata)
+
+data <- bdata
+
+data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+interaction1_var <- "GeneA_cat2"
+interaction2_var <- "Treatment_Arm"
+covariate_vars <- c("IPI", "Cell_Of_Origin")
+
+wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+
+
 }

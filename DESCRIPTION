@@ -13,7 +13,7 @@ License: Artistic
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.6.2)
-Imports: ggplot2, plyr, cowplot, RColorBrewer, ggbeeswarm, survival, survminer, forestplot, utils, stats, knitr, kableExtra, fgsea
+Imports: ggplot2, plyr, dplyr, cowplot, RColorBrewer, ggbeeswarm, survival, survminer, forestplot, utils, stats, knitr, kableExtra, fgsea, lme4, multcomp, limma
 Suggests: BiocStyle, knitr, testthat
 VignetteBuilder: knitr
 RoxygenNote: 7.0.2

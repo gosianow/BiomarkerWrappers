@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2020-07-16</h4>
+            <h4 class="date">2020-07-17</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -159,1034 +159,9 @@
 <div id="cox-regression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#cox-regression" class="anchor"></a>Cox regression</h1>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
-<span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
-<span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
-<span class="no">covariate_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Treatment_Arm"</span>, <span class="st">"IPI"</span>, <span class="st">"Cell_Of_Origin"</span>, <span class="st">"GeneA"</span>)
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co">### Biomarker effect</span>
 
-
-<span class="fu"><a href="../reference/wrapper_core_cox_regression_simple.html">wrapper_core_cox_regression_simple</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
-    <span class="kw">covariate_vars</span> <span class="kw">=</span> <span class="no">covariate_vars</span>)</pre></body></html></div>
-<table class="table table table-condensed table-bordered">
-<caption style="font-size: initial !important;">
-Covariate effect on PFS. Cox regression model includes Treatment Arm, IPI, Cell Of Origin, GeneA.
-</caption>
-<thead><tr>
-<th style="text-align:left;">
-Covariate
-</th>
-<th style="text-align:left;">
-Effect
-</th>
-<th style="text-align:left;">
-Total n
-</th>
-<th style="text-align:left;">
-Subgroup n
-</th>
-<th style="text-align:left;">
-HR
-</th>
-<th style="text-align:left;">
-95% CI
-</th>
-<th style="text-align:left;">
-P-value
-</th>
-<th style="text-align:left;">
-Adj. P-value
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Treatment Arm
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT vs CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-391
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-191 vs 200
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.73
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.53 - 0.99)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0444 *
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0777 .
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IPI
-</td>
-<td style="text-align:left;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;">
-391
-</td>
-<td style="text-align:left;">
-144 vs 78
-</td>
-<td style="text-align:left;font-weight: bold;">
-1.17
-</td>
-<td style="text-align:left;">
-(0.72 - 1.91)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.5157
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.6017
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IPI
-</td>
-<td style="text-align:left;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;">
-391
-</td>
-<td style="text-align:left;">
-103 vs 78
-</td>
-<td style="text-align:left;font-weight: bold;">
-1.79
-</td>
-<td style="text-align:left;">
-(1.10 - 2.93)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.0202 *
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.0500 *
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IPI
-</td>
-<td style="text-align:left;">
-High vs Low
-</td>
-<td style="text-align:left;">
-391
-</td>
-<td style="text-align:left;">
-66 vs 78
-</td>
-<td style="text-align:left;font-weight: bold;">
-2.70
-</td>
-<td style="text-align:left;">
-(1.62 - 4.51)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.0001 ***
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.0010 ***
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Cell Of Origin
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED vs GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-391
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-62 vs 218
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.62
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(1.07 - 2.44)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0214 *
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0500 *
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Cell Of Origin
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC vs GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-391
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-111 vs 218
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.23
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.86 - 1.75)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.2659
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.3723
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-391
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-1.03
-</td>
-<td style="text-align:left;">
-(0.89 - 1.20)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.6919
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.6919
-</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
-<span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
-<span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
-<span class="no">covariate_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"IPI"</span>, <span class="st">"GeneA"</span>)
-
-<span class="no">strat1_var</span> <span class="kw">=</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="no">strat2_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
-
-
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_core_cox_regression_simple.html">wrapper_core_cox_regression_simple_strat</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
-    <span class="kw">covariate_vars</span> <span class="kw">=</span> <span class="no">covariate_vars</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>, <span class="kw">strat2_var</span> <span class="kw">=</span> <span class="no">strat2_var</span>)</pre></body></html></div>
-<table class="table table table-condensed table-bordered">
-<caption style="font-size: initial !important;">
-Covariate effect on PFS. Cox regression model includes IPI, GeneA.
-</caption>
-<thead><tr>
-<th style="text-align:left;">
-Treatment Arm
-</th>
-<th style="text-align:left;">
-Cell Of Origin
-</th>
-<th style="text-align:left;">
-Covariate
-</th>
-<th style="text-align:left;">
-Effect
-</th>
-<th style="text-align:left;">
-Total n
-</th>
-<th style="text-align:left;">
-Subgroup n
-</th>
-<th style="text-align:left;">
-HR
-</th>
-<th style="text-align:left;">
-95% CI
-</th>
-<th style="text-align:left;">
-P-value
-</th>
-<th style="text-align:left;">
-Adj. P-value
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-121
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-44 vs 32
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.97
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.45 - 2.11)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9439
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9676
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-121
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-32 vs 32
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-2.22
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(1.05 - 4.70)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0374 *
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.2777
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-121
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-13 vs 32
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.89
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.74 - 4.82)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.1860
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5209
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CTRL
-</td>
-<td style="text-align:left;">
-GCB
-</td>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-121
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.99
-</td>
-<td style="text-align:left;">
-(0.73 - 1.34)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9417
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9676
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-28
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-10 vs 7
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.65
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.37 - 7.43)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5120
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.8292
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-28
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-7 vs 7
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.29
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.25 - 6.61)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.7592
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9590
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-28
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-4 vs 7
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.74
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.28 - 10.74)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5528
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.8292
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CTRL
-</td>
-<td style="text-align:left;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-28
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.93
-</td>
-<td style="text-align:left;">
-(0.59 - 1.45)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.7359
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9590
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-51
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-17 vs 5
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.23
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.03 - 1.53)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.1271
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5085
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-51
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-18 vs 5
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.91
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.18 - 4.62)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9130
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9676
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-51
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-11 vs 5
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-2.91
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.59 - 14.20)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.1874
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5209
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CTRL
-</td>
-<td style="text-align:left;">
-ABC
-</td>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-51
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-1.68
-</td>
-<td style="text-align:left;">
-(1.01 - 2.79)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.0463 *
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.2777
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-97
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-36 vs 23
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-2.19
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.59 - 8.13)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.2396
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5229
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-97
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-20 vs 23
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-3.06
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.79 - 11.86)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.1065
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5085
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GCB
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-97
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-18 vs 23
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-6.13
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(1.70 - 22.09)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0055 **
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.1328
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TRT
-</td>
-<td style="text-align:left;">
-GCB
-</td>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-97
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-1.08
-</td>
-<td style="text-align:left;">
-(0.71 - 1.64)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.7348
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9590
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-34
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-14 vs 5
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-3.53
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.44 - 28.27)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.2346
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5229
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-34
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-10 vs 5
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-4.07
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.49 - 34.00)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.1954
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5209
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-34
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-5 vs 5
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-10.54
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(1.07 - 103.38)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0433 *
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.2777
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TRT
-</td>
-<td style="text-align:left;">
-UNCLASSIFIED
-</td>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-34
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-1.02
-</td>
-<td style="text-align:left;">
-(0.67 - 1.54)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9268
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9676
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Low-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-60
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-23 vs 6
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.70
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.22 - 2.20)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5411
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.8292
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High-Intermediate vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-60
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-16 vs 6
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.63
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.18 - 2.15)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.4583
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.8292
-</td>
-</tr>
-<tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-ABC
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-IPI
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-High vs Low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-60
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-15 vs 6
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.03
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.31 - 3.42)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9676
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.9676
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TRT
-</td>
-<td style="text-align:left;">
-ABC
-</td>
-<td style="text-align:left;">
-GeneA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-60
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.81
-</td>
-<td style="text-align:left;">
-(0.53 - 1.25)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.3499
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.6999
-</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
@@ -1196,7 +171,7 @@ GeneA
 <span class="no">strat1_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
+<span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1346,7 +321,9 @@ high vs low
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="co">### Treatment effect</span>
+
+<span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
@@ -1355,7 +332,7 @@ high vs low
 <span class="no">adjustment_vars</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
+<span class="fu"><a href="../reference/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>, <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1509,82 +486,10 @@ TRT vs CTRL
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
-<span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
-<span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
-
-<span class="no">interaction1_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA_cat2"</span>
-<span class="no">interaction2_var</span> <span class="kw">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="no">covariate_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"IPI"</span>, <span class="st">"Cell_Of_Origin"</span>)
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="co">### Treatment-biomarker interaction effect</span>
 
 
-
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_core_cox_regression_interaction.html">wrapper_core_cox_regression_interaction</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
-    <span class="kw">interaction1_var</span> <span class="kw">=</span> <span class="no">interaction1_var</span>, <span class="kw">interaction2_var</span> <span class="kw">=</span> <span class="no">interaction2_var</span>, <span class="kw">covariate_vars</span> <span class="kw">=</span> <span class="no">covariate_vars</span>)</pre></body></html></div>
-<table class="table table table-condensed table-bordered">
-<caption style="font-size: initial !important;">
-Effect of interaction between GeneA cat2 and Treatment Arm on PFS. Cox regression model additionally includes IPI, Cell Of Origin.
-</caption>
-<thead><tr>
-<th style="text-align:left;">
-Covariate1
-</th>
-<th style="text-align:left;">
-Effect1
-</th>
-<th style="text-align:left;">
-Covariate2
-</th>
-<th style="text-align:left;">
-Effect2
-</th>
-<th style="text-align:left;">
-Total n
-</th>
-<th style="text-align:left;">
-HR
-</th>
-<th style="text-align:left;">
-95% CI
-</th>
-<th style="text-align:left;">
-P-value
-</th>
-<th style="text-align:left;">
-Adj. P-value
-</th>
-</tr></thead>
-<tbody><tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-GeneA cat2
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-high vs low
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-Treatment Arm
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT vs CTRL
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-391
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.88
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.48 - 1.63)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.6878
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.6878
-</td>
-</tr></tbody>
-</table>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
@@ -1594,7 +499,7 @@ TRT vs CTRL
 
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_cox_regression_interaction.html">wrapper_cox_regression_interaction</a></span>(<span class="no">data</span>, <span class="no">tte_var</span>, <span class="no">censor_var</span>, <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>,
+<span class="fu"><a href="../reference/wrapper_cox_regression_interaction.html">wrapper_cox_regression_interaction</a></span>(<span class="no">data</span>, <span class="no">tte_var</span>, <span class="no">censor_var</span>, <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>,
     <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -1684,16 +589,7 @@ high vs low
 <div id="km-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#km-plot" class="anchor"></a>KM plot</h1>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
-
-<span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
-<span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
-<span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
-
-
-<span class="fu"><a href="../reference/wrapper_core_KM_plot.html">wrapper_core_KM_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>, <span class="kw">covariate_var</span> <span class="kw">=</span> <span class="no">covariate_var</span>)</pre></body></html></div>
-<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
@@ -1701,8 +597,8 @@ high vs low
 
 
 <span class="fu"><a href="../reference/wrapper_core_KM_plot.html">wrapper_core_KM_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>, <span class="kw">covariate_var</span> <span class="kw">=</span> <span class="no">covariate_var</span>)</pre></body></html></div>
-<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot-2.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot-1.png" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 <span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA_cat2"</span>
@@ -1714,7 +610,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_KM_plot_strat.html">wrapper_core_KM_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
     <span class="kw">covariate_var</span> <span class="kw">=</span> <span class="no">covariate_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>, <span class="kw">strat2_var</span> <span class="kw">=</span> <span class="no">strat2_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
@@ -1726,7 +622,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_KM_plot_interaction.html">wrapper_KM_plot_interaction</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>, <span class="kw">biomarker_var</span> <span class="kw">=</span> <span class="no">biomarker_var</span>,
     <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_interaction-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
@@ -1737,7 +633,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_KM_plot_biomarker.html">wrapper_KM_plot_biomarker</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>, <span class="kw">biomarker_var</span> <span class="kw">=</span> <span class="no">biomarker_var</span>,
     <span class="kw">treatment_var</span> <span class="kw">=</span> <span class="no">treatment_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_biomarker-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
@@ -1752,7 +648,7 @@ high vs low
 <div id="barplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#barplot" class="anchor"></a>Barplot</h1>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">=</span> <span class="st">"GeneA_cat2"</span>
 <span class="no">y_var</span> <span class="kw">=</span> <span class="st">"Response"</span>
@@ -1760,7 +656,7 @@ high vs low
 
 <span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">=</span> <span class="st">"GeneA_cat2"</span>
 <span class="no">y_var</span> <span class="kw">=</span> <span class="st">"Response"</span>
@@ -1769,7 +665,7 @@ high vs low
 
 <span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">facet_var</span> <span class="kw">=</span> <span class="no">facet_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-2.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">=</span> <span class="st">"GeneA_cat2"</span>
 <span class="no">y_var</span> <span class="kw">=</span> <span class="st">"Response"</span>
@@ -1779,7 +675,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">show_total_proportions</span> <span class="kw">=</span> <span class="no">show_total_proportions</span>,
     <span class="kw">skip_levels</span> <span class="kw">=</span> <span class="no">skip_levels</span>, <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">100</span>))</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-3.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">=</span> <span class="st">"GeneA_cat2"</span>
 <span class="no">y_var</span> <span class="kw">=</span> <span class="st">"Response"</span>
@@ -1791,14 +687,14 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_bar_plot_strat.html">wrapper_core_bar_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>,
     <span class="kw">strat2_var</span> <span class="kw">=</span> <span class="no">strat2_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../reference/wrapper_core_bar_plot_strat.html">wrapper_core_bar_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>,
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="../reference/wrapper_core_bar_plot_strat.html">wrapper_core_bar_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>,
     <span class="kw">strat2_var</span> <span class="kw">=</span> <span class="no">strat2_var</span>, <span class="kw">less_legends</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-2.png" width="960" style="display: block; margin: auto;"></p>
 </div>
 <div id="complex-barplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#complex-barplot" class="anchor"></a>Complex barplot</h1>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">y_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span>)
@@ -1806,7 +702,7 @@ high vs low
 
 <span class="fu"><a href="../reference/wrapper_core_bar_plot_yvars_strat.html">wrapper_core_bar_plot_yvars_strat</a></span>(<span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_vars</span> <span class="kw">=</span> <span class="no">y_vars</span>, <span class="kw">values_to</span> <span class="kw">=</span> <span class="st">"Gene expression"</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-1.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">y_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span>)
@@ -1822,7 +718,7 @@ high vs low
 <div id="box-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#box-plot" class="anchor"></a>Box plot</h1>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
@@ -1830,7 +726,7 @@ high vs low
 
 <span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-1.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">data</span>$<span class="no">Cell_Of_Origin</span>[<span class="no">data</span>$<span class="no">Cell_Of_Origin</span> <span class="kw">==</span> <span class="st">"UNCLASSIFIED"</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
@@ -1838,7 +734,7 @@ high vs low
 
 <span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-2.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
@@ -1849,7 +745,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">facet_var</span> <span class="kw">=</span> <span class="no">facet_var</span>,
     <span class="kw">dodge_var</span> <span class="kw">=</span> <span class="no">dodge_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-3.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
@@ -1860,7 +756,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">facet_var</span> <span class="kw">=</span> <span class="no">facet_var</span>,
     <span class="kw">dodge_var</span> <span class="kw">=</span> <span class="no">dodge_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-4.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
@@ -1869,19 +765,19 @@ high vs low
 <span class="no">strat1_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_core_box_plot.html">wrapper_core_box_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-5.png" width="672" style="display: block; margin: auto;"></p>
 </div>
 <div id="complex-boxplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#complex-boxplot" class="anchor"></a>Complex boxplot</h1>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">y_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
 
 <span class="fu"><a href="../reference/wrapper_core_box_plot_yvars_strat.html">wrapper_core_box_plot_yvars_strat</a></span>(<span class="no">data</span>, <span class="kw">y_vars</span> <span class="kw">=</span> <span class="no">y_vars</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">y_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
 <span class="no">x_var</span> <span class="kw">=</span> <span class="st">"Cell_Of_Origin"</span>
@@ -1892,7 +788,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_box_plot_yvars_strat.html">wrapper_core_box_plot_yvars_strat</a></span>(<span class="no">data</span>, <span class="kw">y_vars</span> <span class="kw">=</span> <span class="no">y_vars</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">facet_var</span> <span class="kw">=</span> <span class="no">facet_var</span>,
     <span class="kw">dodge_var</span> <span class="kw">=</span> <span class="no">dodge_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-2.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 <span class="no">y_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
 <span class="no">x_var</span> <span class="kw">=</span> <span class="kw">NULL</span>
@@ -1907,7 +803,7 @@ high vs low
 <div id="point-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#point-plot" class="anchor"></a>Point plot</h1>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneB"</span>
@@ -1915,7 +811,7 @@ high vs low
 
 <span class="fu"><a href="../reference/wrapper_core_point_plot.html">wrapper_core_point_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneB"</span>
@@ -1926,7 +822,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_point_plot.html">wrapper_core_point_plot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">facet_var</span> <span class="kw">=</span> <span class="no">facet_var</span>,
     <span class="kw">color_point_var</span> <span class="kw">=</span> <span class="no">color_point_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot-2.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb29"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneD"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneB"</span>
@@ -1937,7 +833,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_point_plot_strat.html">wrapper_core_point_plot_strat</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">data</span>, <span class="kw">x_var</span> <span class="kw">=</span> <span class="no">x_var</span>, <span class="kw">y_var</span> <span class="kw">=</span> <span class="no">y_var</span>, <span class="kw">facet_var</span> <span class="kw">=</span> <span class="no">facet_var</span>,
     <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot-3.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">x_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
 <span class="no">y_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneB"</span>
@@ -1952,7 +848,7 @@ high vs low
 <div id="kruskalwallis-h-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#kruskalwallis-h-test" class="anchor"></a>Kruskal–Wallis H test</h1>
-<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">cat_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">num_var</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
@@ -2036,13 +932,13 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb32"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">cat_vars</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">num_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>)
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal–Wallis H test.
@@ -2159,13 +1055,13 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">cat_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Cell_Of_Origin"</span>, <span class="st">"IPI"</span>, <span class="st">"Treatment_Arm"</span>)
 <span class="no">num_vars</span> <span class="kw">&lt;-</span> <span class="st">"GeneA"</span>
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/BiomarkerWrappers/man/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal–Wallis H test.
@@ -2370,7 +1266,7 @@ TRT
 <div id="fishers-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#fishers-test" class="anchor"></a>Fisher’s test</h1>
-<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb34"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">col_var</span> <span class="kw">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 <span class="no">row_var</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
@@ -2432,7 +1328,7 @@ Low
 13 (14.3%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0240 *
+0.0310 *
 </td>
 </tr>
 <tr>
@@ -2495,7 +1391,7 @@ High
 <div id="characteristics-of-itt-and-bep" class="section level1">
 <h1 class="hasAnchor">
 <a href="#characteristics-of-itt-and-bep" class="anchor"></a>Characteristics of ITT and BEP</h1>
-<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb35"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
 
@@ -2568,7 +1464,7 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb36"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">strat_var</span> <span class="kw">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 <span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
@@ -2676,7 +1572,7 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb37"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"Age"</span>
 
@@ -2748,7 +1644,7 @@ Max
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb42"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb38"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">strat_var</span> <span class="kw">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 <span class="no">covariate_var</span> <span class="kw">&lt;-</span> <span class="st">"Age"</span>
@@ -2856,7 +1752,7 @@ Max
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb43"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
+<div class="sourceCode" id="cb39"><html><body><pre class="r"><span class="no">data</span> <span class="kw">&lt;-</span> <span class="no">bdata</span>
 
 <span class="no">strat_var</span> <span class="kw">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 <span class="no">covariate_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Age"</span>, <span class="st">"IPI"</span>)
@@ -3039,7 +1935,7 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb44"><html><body><pre class="r"><span class="no">bep_vars</span> <span class="kw">&lt;-</span> <span class="st">"BEP_RNAseq"</span>
+<div class="sourceCode" id="cb40"><html><body><pre class="r"><span class="no">bep_vars</span> <span class="kw">&lt;-</span> <span class="st">"BEP_RNAseq"</span>
 <span class="no">covariate_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Age"</span>, <span class="st">"IPI"</span>)
 
 <span class="no">treatment_var</span> <span class="kw">&lt;-</span> <span class="st">"Treatment_Arm"</span>
@@ -3385,7 +2281,7 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb45"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()</pre></body></html></div>
+<div class="sourceCode" id="cb41"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()</pre></body></html></div>
 <pre><code>## R version 3.6.2 (2019-12-12)
 ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
 ## Running under: macOS Mojave 10.14.6
