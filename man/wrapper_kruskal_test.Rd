@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_kruskal_test.R
 \name{wrapper_kruskal_test}
 \alias{wrapper_kruskal_test}
-\title{Kruskal–Wallis H test or Wilcoxon Rank-Sum test}
+\title{Kruskal-Wallis H test or Wilcoxon Rank-Sum test}
 \usage{
 wrapper_kruskal_test(
   data,
@@ -30,5 +30,5 @@ wrapper_kruskal_test(
 \item{strat1_var}{Name of the second stratification variable.}
 }
 \description{
-Run Kruskal–Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
+Run Kruskal-Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
 }

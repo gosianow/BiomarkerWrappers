@@ -73,7 +73,11 @@ tte_var <- "PFS"
 censor_var <- "PFS_Event"
 covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
 
-wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+x <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+
+boutput(x)
+
+bforest(x)
 
 
 data(bdata)
@@ -87,6 +91,8 @@ strat1_var = "Cell_Of_Origin"
 strat2_var = "Treatment_Arm"
 
 
-wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+x <- wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+
+boutput(x)
 
 }

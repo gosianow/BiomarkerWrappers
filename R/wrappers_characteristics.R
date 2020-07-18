@@ -181,11 +181,11 @@ wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NU
   colnames(empty_row) <- levels(data[, strat_var])
   
   
-  Median = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-  Mean = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  Median = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
   
-  Min = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
-  Max = aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+  Min = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
   
   summdf <- t(data.frame(Median, Mean, Min, Max))

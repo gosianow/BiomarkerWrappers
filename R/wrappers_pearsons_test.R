@@ -8,7 +8,7 @@
 
 
 
-#' Pearson’s Chi-squared test
+#' Pearson's Chi-squared test
 #' 
 #' @param data Data frame.
 #' @export
@@ -48,7 +48,7 @@ wrapper_core_pearsons_test <- function(data, col_var, row_var, variable_names = 
   
   
   if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
-    ## Pearson’s Chi-squared test: get difference of proportions of succeses and CI for difference
+    ## Pearson's Chi-squared test: get difference of proportions of succeses and CI for difference
     ## Success category is defined by the first column
     
     test_res <- prop.test(tbl_test)
@@ -174,7 +174,7 @@ wrapper_core_pearsons_test <- function(data, col_var, row_var, variable_names = 
   
   if(is.null(caption)){
     
-    caption <- paste0("Pearson’s Chi-squared test.")
+    caption <- paste0("Pearson's Chi-squared test.")
     
   }
   
@@ -367,9 +367,9 @@ wrapper_core_pearsons_test_strat <- function(data, col_var, row_var, strat1_var 
 
 
 
-#' Pearson’s Chi-squared test
+#' Pearson's Chi-squared test
 #' 
-#' Run Pearson’s Chi-squared test for multiple covariates.
+#' Run Pearson's Chi-squared test for multiple covariates.
 #' 
 #' @inheritParams wrapper_core_pearsons_test_strat
 #' @param row_vars Vector with names of categorical variables.

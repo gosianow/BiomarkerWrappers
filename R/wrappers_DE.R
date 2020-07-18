@@ -17,7 +17,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
     contrast <- contrasts[i]
     
     
-    topTable_out <- topTable(fit, coef = contrast, sort.by = "none", number = Inf)
+    topTable_out <- limma::topTable(fit, coef = contrast, sort.by = "none", number = Inf)
     
     topTable_out <- topTable_out[, c(gene_vars, res_vars), drop = FALSE]
     
@@ -26,7 +26,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
       
       for(l in 1:length(lfc)){
         
-        topTable_out[, paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l])] <- as.numeric(decideTests(fit, p.value = pval[p], lfc = lfc[l])[, contrast])
+        topTable_out[, paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l])] <- as.numeric(limma::decideTests(fit, p.value = pval[p], lfc = lfc[l])[, contrast])
         
       }
       
@@ -236,7 +236,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
 
 # data <- pdata
 # biomarker_vars <- names(gene_signature_collection[[1]])
-# formula <- as.formula("~ 0 + DE_var")
+# formula <- stats::as.formula("~ 0 + DE_var")
 
 
 #' Fit a linear model 
@@ -294,7 +294,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
   
   
   ## Adjust the p-values
-  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], p.adjust, method = "BH"))
+  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], stats::p.adjust, method = "BH"))
   
   colnames(adjp) <- paste0("adj.P.Val_", contrasts)
   
@@ -320,7 +320,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
 
 # data <- pdata
 # biomarker_vars <- names(gene_signature_collection[[1]])
-# formula <- as.formula("~ 0 + DE_var + (1|PatientID)")
+# formula <- stats::as.formula("~ 0 + DE_var + (1|PatientID)")
 
 
 #' Fit a linear mixed model 
@@ -342,7 +342,7 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
   out <- lapply(seq_along(biomarker_vars), function(i){
     # i = 1
     
-    formula_tmp <- as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
+    formula_tmp <- stats::as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
     
     fit <- lme4::lmer(formula_tmp, data)
     
@@ -378,7 +378,7 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
   
   
   ## Adjust the p-values
-  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], p.adjust, method = "BH"))
+  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], stats::p.adjust, method = "BH"))
   
   colnames(adjp) <- paste0("adj.P.Val_", contrasts)
   
@@ -402,203 +402,6 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
 
 
 
-##############################################################################
-# Beta regression
-##############################################################################
-
-# library(betareg)
-# library(glmmTMB)
-
-
-
-# library(glmmADMB)
-# try(fit_tmp <- glmmADMB::glmmadmb(y/total ~ response + day + response:day, family = "beta", data = data_tmp), silent = TRUE)
-# try(fit_tmp <- glmmADMB::glmmadmb(prop ~ response + day + response:day + (1|patient_id), family = "beta", data = data_tmp), silent = TRUE)
-
-
-
-# biomarker_vars <- names(gene_signature_collection[[1]])
-# formula <- as.formula("~ 0 + DE_var + (1|PatientID)")
-
-
-
-#' Fit a beta regression mixed model 
-#' 
-#' @param data Data frame.
-#' @param biomarker_vars Variables defining dependent variables.
-#' @keywords internal
-wrapper_glmm_beta <- function(data, biomarker_vars, formula, contrast_matrix){
-  
-  
-  stopifnot(length(biomarker_vars) >= 1)
-  stopifnot(all(sapply(data[, biomarker_vars], class) == "numeric"))
-  stopifnot(all(sapply(data[, biomarker_vars], function(x){all(x[!is.na(x)] > 0 & x[!is.na(x)] < 1)})))
-  
-  
-  contrasts <- colnames(contrast_matrix)
-  
-  
-  ## Fit beta mixed model for each biomarker separately
-  
-  out <- lapply(seq_along(biomarker_vars), function(i){
-    # i = 1
-    
-    data_tmp <- data[complete.cases(data[, biomarker_vars[i]]), , drop = FALSE]
-    
-    formula_tmp <- as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
-    
-    
-    fit <- NULL
-    
-    ### multcomp::glht does not work for glmmTMB
-    # fit <- glmmTMB::glmmTMB(formula = formula_tmp, family = beta_family(link = "logit"), data = data_tmp)
-    
-    try(fit <- glmmADMB::glmmadmb(formula = formula_tmp, family = "beta", link = "logit", data = data_tmp), silent = TRUE)
-    
-    
-    if(!is.null(fit)){
-      
-      ## Fit contrasts one by one
-      out_glht <- lapply(seq_along(contrasts), function(k){
-        # k = 1
-        
-        glht_tmp <- multcomp::glht(fit, linfct = t(contrast_matrix[, k, drop = FALSE]))
-        
-        summary_tmp <- summary(glht_tmp)
-        
-        
-        pval <- summary_tmp$test$pvalues
-        
-        lfc <- as.numeric(summary_tmp$test$coefficients)
-        
-        out <- data.frame(biomarker = biomarker_vars[i], lfc = lfc, pval = pval, stringsAsFactors = FALSE)
-        colnames(out) <- c("biomarker", paste0("logOR_", contrasts[k]), paste0("P.Value_", contrasts[k]))
-        
-        out
-        
-      })
-      
-      out <- do.call(cbind, out_glht)
-      
-    }else{
-      
-      out_glht <- lapply(seq_along(contrasts), function(k){
-        # k = 1
-        
-        out <- data.frame(biomarker = biomarker_vars[i], lfc = NA, pval = NA, stringsAsFactors = FALSE)
-        colnames(out) <- c("biomarker", paste0("logOR_", contrasts[k]), paste0("P.Value_", contrasts[k]))
-        
-        out
-        
-      })
-      
-      out <- do.call(cbind, out_glht)
-      
-    }
-    
-    
-    out
-    
-    
-  })
-  
-  
-  out <- plyr::rbind.fill(out)
-  
-  
-  ## Adjust the p-values
-  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], p.adjust, method = "BH"))
-  
-  colnames(adjp) <- paste0("adj.P.Val_", contrasts)
-  
-  out <- cbind(out, adjp)
-  
-  column_order <- c("biomarker", apply(expand.grid(c("logOR_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
-  
-  out <- out[, column_order, drop = FALSE]
-  
-  out
-  
-  
-}
-
-
-
-
-#' Fit a beta regression model 
-#' 
-#' @param data Data frame.
-#' @param biomarker_vars Variables defining dependent variables.
-#' @keywords internal
-wrapper_betareg <- function(data, biomarker_vars, formula, contrast_matrix){
-  
-  
-  stopifnot(length(biomarker_vars) >= 1)
-  stopifnot(all(sapply(data[, biomarker_vars], class) == "numeric"))
-  stopifnot(all(sapply(data[, biomarker_vars], function(x){all(x[!is.na(x)] > 0 & x[!is.na(x)] < 1)})))
-  
-  
-  contrasts <- colnames(contrast_matrix)
-  
-  
-  ## Fit beta mixed model for each biomarker separately
-  
-  out <- lapply(seq_along(biomarker_vars), function(i){
-    # i = 1
-    
-    data_tmp <- data[complete.cases(data[, biomarker_vars[i]]), , drop = FALSE]
-    
-    formula_tmp <- as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
-    
-    
-    fit <- betareg::betareg(formula = formula_tmp, link = "logit", data = data_tmp)
-    
-    
-    ## Fit contrasts one by one
-    out_glht <- lapply(seq_along(contrasts), function(k){
-      # k = 1
-      
-      glht_tmp <- multcomp::glht(fit, linfct = t(contrast_matrix[, k, drop = FALSE]))
-      
-      summary_tmp <- summary(glht_tmp)
-      
-      
-      pval <- summary_tmp$test$pvalues
-      
-      lfc <- as.numeric(summary_tmp$test$coefficients)
-      
-      out <- data.frame(biomarker = biomarker_vars[i], lfc = lfc, pval = pval, stringsAsFactors = FALSE)
-      colnames(out) <- c("biomarker", paste0("logOR_", contrasts[k]), paste0("P.Value_", contrasts[k]))
-      
-      out
-      
-    })
-    
-    out <- do.call(cbind, out_glht)
-    out
-    
-    
-  })
-  
-  
-  out <- plyr::rbind.fill(out)
-  
-  
-  ## Adjust the p-values
-  adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], p.adjust, method = "BH"))
-  
-  colnames(adjp) <- paste0("adj.P.Val_", contrasts)
-  
-  out <- cbind(out, adjp)
-  
-  column_order <- c("biomarker", apply(expand.grid(c("logOR_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
-  
-  out <- out[, column_order, drop = FALSE]
-  
-  out
-  
-  
-}
 
 
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_pearsons_test.R
 \name{wrapper_pearsons_test}
 \alias{wrapper_pearsons_test}
-\title{Pearson’s Chi-squared test}
+\title{Pearson's Chi-squared test}
 \usage{
 wrapper_pearsons_test(
   data,
@@ -25,5 +25,5 @@ wrapper_pearsons_test(
 \item{strat1_var}{Name of the second stratification variable.}
 }
 \description{
-Run Pearson’s Chi-squared test for multiple covariates.
+Run Pearson's Chi-squared test for multiple covariates.
 }

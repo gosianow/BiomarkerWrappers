@@ -63,7 +63,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
   ### Keep non-missing data
   
   ## We do not exclude the missing values in color_line_var
-  data <- data[complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -114,22 +114,22 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
   
   
   
-  ggpl <- ggplot(data, aes_string(x = x_var, y = y_var, group = group_var)) +
-    geom_line(aes_string(color = color_line_var), linetype = line_type, size = line_size, alpha = line_alpha, show.legend = legend_show_colors_line) +
+  ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]], group = .data[[group_var]])) +
+    geom_line(aes(color = .data[[color_line_var]]), linetype = line_type, size = line_size, alpha = line_alpha, show.legend = legend_show_colors_line) +
     scale_color_manual(name = legend_title_colors_line, values = colors_line, drop = FALSE, na.value = "grey")
   
   
   if(point_shape %in% 21:25){
     
     ggpl <- ggpl +
-      geom_point(aes_string(fill = color_line_var), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) +
+      geom_point(aes(fill = .data[[color_line_var]]), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) +
       scale_fill_manual(name = legend_title_colors_line, values = colors_line, drop = FALSE, na.value = "grey")
     
     
   }else{
     
     ggpl <- ggpl +
-      geom_point(aes_string(color = color_line_var), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) 
+      geom_point(aes(color = .data[[color_line_var]]), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) 
     
   }
   
@@ -155,14 +155,14 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
     if(is.na(color_smooth_var)){
       
       ggpl <- ggpl + 
-        geom_smooth(aes_string(group = 1),
+        geom_smooth(aes(group = 1),
           method = smooth_method, formula = smooth_formula, se = smooth_se, 
           linetype = smooth_type, size = smooth_size)
       
     }else{
       
       ggpl <- ggpl + 
-        geom_smooth(aes_string(group = color_smooth_var, color = color_smooth_var), 
+        geom_smooth(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
           method = smooth_method, formula = smooth_formula, se = smooth_se, 
           linetype = smooth_type, size = smooth_size)
       
@@ -186,7 +186,7 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
     }
     
     ggpl <- ggpl +
-      facet_wrap(as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+      facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
       theme(strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip_text_size))
     
@@ -249,7 +249,7 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(x_var, y_var, strat1_var, strat2_var)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, strat1_var, strat2_var)]), , drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

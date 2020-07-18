@@ -95,14 +95,14 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
     
     if(!is.null(color_point_var)){
       
-      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, size = "DE_in_set", color = color_point_var)) +
+      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], size = .data[["DE_in_set"]], color = .data[[color_point_var]])) +
         geom_point() +
         scale_size(name = "No. DE in set", range = size_range) +
         scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
       
     }else{
       
-      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, size = "DE_in_set")) +
+      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], size = .data[["DE_in_set"]])) +
         geom_point(color = color_point) +
         scale_size(name = "No. DE in set", range = size_range) 
       
@@ -112,13 +112,13 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
     
     if(!is.null(color_point_var)){
       
-      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var, color = color_point_var)) +
+      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], color = .data[[color_point_var]])) +
         geom_point(size = size_range[2]) +
         scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
       
     }else{
       
-      ggp <- ggplot(x, aes_string(x = "log_adjp", y = geneset_var)) +
+      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]])) +
         geom_point(color = color_point, size = size_range[2])
       
     }
@@ -230,7 +230,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observ
   
   
   data <- data_adjp %>% 
-    left_join(data_observed, by = c(geneset_var, "contrasts_and_directions")) %>% 
+    dplyr::left_join(data_observed, by = c(geneset_var, "contrasts_and_directions")) %>% 
     as.data.frame()
   
   
@@ -250,7 +250,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observ
   
   data$directions <- factor(data$directions, levels = directions, labels = directions_labels)
   
-  data <- data[complete.cases(data$directions), , drop = FALSE]
+  data <- data[stats::complete.cases(data$directions), , drop = FALSE]
   
   
   
@@ -284,13 +284,13 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observ
   
   if(!is.null(observed_var)){
     
-    ggp <- ggplot(data, aes_string(x = "log_adjp", y = geneset_var, color = "contrasts", size = "DE_in_set")) +
+    ggp <- ggplot(data, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], color = .data[["contrasts"]], size = .data[["DE_in_set"]])) +
       geom_point(alpha = point_alpha) +
       scale_size(name = "No. DE in set", range = size_range) 
     
   }else{
     
-    ggp <- ggplot(data, aes_string(x = "log_adjp", y = geneset_var, color = "contrasts")) +
+    ggp <- ggplot(data, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], color = .data[["contrasts"]])) +
       geom_point(alpha = point_alpha, size = size_range[2]) 
     
   }

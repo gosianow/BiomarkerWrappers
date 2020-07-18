@@ -17,15 +17,15 @@ wrapper_plot_logFC_heatmap(
   color_mid = "white",
   color_high = "#D70131",
   trim_limits = NULL,
-  rect_gp = gpar(col = "grey"),
+  rect_gp = grid::gpar(col = "grey"),
   point_size = 3,
   cluster_rows = FALSE,
   row_split = NULL,
   column_split = NULL,
   show_row_names = TRUE,
   show_column_names = TRUE,
-  row_names_gp = gpar(fontsize = 9),
-  column_names_gp = gpar(fontsize = 9),
+  row_names_gp = grid::gpar(fontsize = 9),
+  column_names_gp = grid::gpar(fontsize = 9),
   ...
 )
 }

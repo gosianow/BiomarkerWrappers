@@ -51,20 +51,20 @@ knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warnin
 ```{r library, results="hide", cache = FALSE}
 
 
-### Packages for data manipulations
-library(tidyverse)
-library(plyr) # rbind.fill
-library(limma) # strsplit2
-
-### Packages for plotting
-library(cowplot)
-library(RColorBrewer) # brewer.pal
-library(ggbeeswarm)
-
-### Packages for survival analysis 
-library(survival)
-library(survminer)
-library(forestplot)
+# ### Packages for data manipulations
+# library(tidyverse)
+# library(plyr) # rbind.fill
+# library(limma) # strsplit2
+# 
+# ### Packages for plotting
+# library(cowplot)
+# library(RColorBrewer) # brewer.pal
+# library(ggbeeswarm)
+# 
+# ### Packages for survival analysis 
+# library(survival)
+# library(survminer)
+# library(forestplot)
 
 
 
@@ -105,14 +105,14 @@ data(bdata)
 
 genes <- c("BCL2", "GeneA", "GeneB", "GeneC", "GeneD")
 
-data_cat2 <- mutate_all(bdata[, genes], cut_core_2groups)
+data_cat2 <- dplyr::mutate_all(bdata[, genes], cut_core_2groups)
   
 colnames(data_cat2) <- paste0(genes, "_cat2")
 
 
 ### Stratify gene expression into quartiles
 
-data_cat4 <- mutate_all(bdata[, genes], cut_core_quartiles)
+data_cat4 <- dplyr::mutate_all(bdata[, genes], cut_core_quartiles)
   
 colnames(data_cat4) <- paste0(genes, "_cat4")
 
@@ -137,7 +137,7 @@ data <- bdata
 tte_var <- "PFS"
 censor_var <- "PFS_Event"
 
-biomarker_vars <- c("GeneA", "GeneA_cat2")
+biomarker_vars <- c("GeneA_cat2", "GeneA")
 adjustment_vars <- "IPI"
 
 strat1_var = "Treatment_Arm"
@@ -169,7 +169,7 @@ tte_var <- "PFS"
 censor_var <- "PFS_Event"
 
 treatment_var = "Treatment_Arm"
-biomarker_vars <- c("GeneA", "GeneA_cat2")
+biomarker_vars <- c("GeneA_cat2", "GeneA")
 adjustment_vars <- "IPI"
 
 

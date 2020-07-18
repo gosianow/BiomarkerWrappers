@@ -3,7 +3,7 @@
 \name{wrapper_core_kruskal_test_col_cat}
 \alias{wrapper_core_kruskal_test_col_cat}
 \alias{wrapper_core_kruskal_test_col_cat_strat}
-\title{Kruskal–Wallis H test or Wilcoxon Rank-Sum test}
+\title{Kruskal-Wallis H test or Wilcoxon Rank-Sum test}
 \usage{
 wrapper_core_kruskal_test_col_cat(
   data,

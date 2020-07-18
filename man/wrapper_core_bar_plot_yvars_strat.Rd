@@ -48,6 +48,10 @@ wrapper_core_bar_plot_yvars_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{strat1_var}{Name of the firts stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
 }
 \description{
 Generate barplots for multiple variables in one faceted or dodged panel.

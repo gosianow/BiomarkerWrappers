@@ -8,7 +8,11 @@
 
 
 
-
+#' Over-representation analysis (ORA)
+#' 
+#' @param genes Vector of genes that that tested for overrepresentation.
+#' @param genesets List of gene sets.
+#' @param universe Vector of genes defining the gene universe.
 #' @export
 wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
@@ -105,7 +109,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
     
     colnames(genesets_extra_info)[1] <- "Geneset"
     
-    out <- left_join(out, genesets_extra_info, by = "Geneset")
+    out <- dplyr::left_join(out, genesets_extra_info, by = "Geneset")
     
   }
   
@@ -142,7 +146,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   
   out[, paste0("P.Value", sep, name)] <- pvalues
   
-  out[, paste0("adj.P.Val", sep, name)] <- p.adjust(pvalues, method = "BH")
+  out[, paste0("adj.P.Val", sep, name)] <- stats::p.adjust(pvalues, method = "BH")
   
   
   ### Sort by p-value

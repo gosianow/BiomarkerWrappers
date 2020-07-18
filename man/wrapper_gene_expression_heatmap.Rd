@@ -23,8 +23,8 @@ wrapper_gene_expression_heatmap(
   column_title = NULL,
   show_row_names = TRUE,
   show_column_names = FALSE,
-  row_names_gp = gpar(fontsize = 9),
-  column_names_gp = gpar(fontsize = 9),
+  row_names_gp = grid::gpar(fontsize = 9),
+  column_names_gp = grid::gpar(fontsize = 9),
   ...
 )
 }

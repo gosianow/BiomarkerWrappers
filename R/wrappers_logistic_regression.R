@@ -41,7 +41,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(response_var, covariate_vars)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, covariate_vars)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -57,7 +57,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   ## Create the formula
   formula_covariates <- paste0(covariate_vars, collapse = " + ")
-  f <- as.formula(paste0(response_var, " ~ ", formula_covariates))
+  f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
   
   
   ## Fit the logistic model
@@ -65,7 +65,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   regression_summ <- summary(regression_fit)
   
   
-  # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
+  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
   
@@ -152,12 +152,12 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   coef_info$n <- nrow(data) - length(regression_summ$na.action)
   
   coef_info <- coef_info %>% 
-    left_join(conf_int, by = "coefficient") %>% 
-    left_join(coefficients, by = "coefficient")
+    dplyr::left_join(conf_int, by = "coefficient") %>% 
+    dplyr::left_join(coefficients, by = "coefficient")
   
   
   ## Calculate adjusted p-values using the Benjamini & Hochberg method
-  coef_info$adj_pvalue <- p.adjust(coef_info$pvalue, method = "BH")
+  coef_info$adj_pvalue <- stats::p.adjust(coef_info$pvalue, method = "BH")
   
   
   # --------------------------------------------------------------------------
@@ -295,7 +295,7 @@ wrapper_core_logistic_regression_simple_strat <- function(data, response_var, co
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(response_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -378,10 +378,10 @@ wrapper_core_logistic_regression_simple_strat <- function(data, response_var, co
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -466,10 +466,10 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -608,10 +608,10 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -691,7 +691,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -708,7 +708,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   ## Create the formula
   formula_covariates <- paste0(paste0(covariate_vars, collapse = " + "), " + ", interaction1_var, " * ", interaction2_var)
-  f <- as.formula(paste0(response_var, " ~ ", formula_covariates))
+  f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
   
   
   ## Fit the logistic model
@@ -716,7 +716,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   regression_summ <- summary(regression_fit)
   
   
-  # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
+  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
   
@@ -816,12 +816,12 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   coef_info$n <- nrow(data) - length(regression_summ$na.action)
   
   coef_info <- coef_info %>% 
-    left_join(conf_int, by = "coefficient") %>% 
-    left_join(coefficients, by = "coefficient")
+    dplyr::left_join(conf_int, by = "coefficient") %>% 
+    dplyr::left_join(coefficients, by = "coefficient")
   
   
   ## Calculate adjusted p-values using the Benjamini & Hochberg method
-  coef_info$adj_pvalue <- p.adjust(coef_info$pvalue, method = "BH")
+  coef_info$adj_pvalue <- stats::p.adjust(coef_info$pvalue, method = "BH")
   
   
   # --------------------------------------------------------------------------
@@ -946,7 +946,7 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -1022,10 +1022,10 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   ### Remove dummy columns
@@ -1103,10 +1103,10 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   

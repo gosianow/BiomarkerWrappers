@@ -133,11 +133,11 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   xlab <- "Rank"
   
   
-  # ggp <-  ggplot(ggdata, aes(x = rank, xend = rank, y = Geneset, yend = statistic_fixed, color = direction))
+  # ggp <-  ggplot(ggdata, aes(x = .data$rank, xend = .data$rank, y = .data$Geneset, yend = .data$statistic_fixed, color = .data$direction))
   
-  ggp <-  ggplot(ggdata, aes(x = 0, y = Geneset, group = Geneset)) +
+  ggp <-  ggplot(ggdata, aes(x = 0, y = .data$Geneset, group = .data$Geneset)) +
     geom_line() +
-    geom_segment(aes(x = rank, xend = rank, y = Geneset_num - 0.45, yend = Geneset_num + 0.45, color = statistic)) +
+    geom_segment(aes(x = .data$rank, xend = .data$rank, y = .data$Geneset_num - 0.45, yend = .data$Geneset_num + 0.45, color = .data$statistic)) +
     ggtitle(title) +
     xlab(xlab) +
     theme_cowplot(12) +
@@ -161,7 +161,7 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   
   
-  ggp2 <- ggplot(data, aes(x = rank, xend = rank, y = 0, yend = statistic, color = statistic)) +
+  ggp2 <- ggplot(data, aes(x = .data$rank, xend = .data$rank, y = 0, yend = .data$statistic, color = .data$statistic)) +
     geom_segment() +
     xlab(xlab) +
     ylab(statistic_prefix) +

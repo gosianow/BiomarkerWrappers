@@ -3,7 +3,7 @@
 \name{wrapper_core_pearsons_test}
 \alias{wrapper_core_pearsons_test}
 \alias{wrapper_core_pearsons_test_strat}
-\title{Pearson’s Chi-squared test}
+\title{Pearson's Chi-squared test}
 \usage{
 wrapper_core_pearsons_test(
   data,
@@ -34,5 +34,5 @@ wrapper_core_pearsons_test_strat(
 \item{strat1_var}{Name of the second stratification variable.}
 }
 \description{
-Pearson’s Chi-squared test
+Pearson's Chi-squared test
 }

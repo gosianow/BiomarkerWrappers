@@ -27,7 +27,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
 
@@ -106,7 +106,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   
   ### Define the model formula
-  f <- as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
+  f <- stats::as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
   
   ### Fit the model
   fit <- survival::survfit(f, data)
@@ -219,7 +219,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

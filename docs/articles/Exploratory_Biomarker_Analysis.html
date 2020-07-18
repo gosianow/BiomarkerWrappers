@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.2</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2020-07-17</h4>
+            <h4 class="date">2020-07-18</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -102,20 +102,11 @@
 
 
 <span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="no"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html">opts_chunk</a></span>$<span class="fu">set</span>(<span class="kw">cache</span> <span class="kw">=</span> <span class="no">cache</span>, <span class="kw">cache.comments</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">echo</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">warning</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">message</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">error</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">fig.width</span> <span class="kw">=</span> <span class="fl">6</span>, <span class="kw">fig.height</span> <span class="kw">=</span> <span class="fl">5</span>, <span class="kw">fig.align</span> <span class="kw">=</span> <span class="st">"center"</span>, <span class="kw">tidy</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">tidy.opts</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">width.cutoff</span> <span class="kw">=</span> <span class="fl">80</span>))</pre></body></html></div>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co">### Packages for data manipulations</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">tidyverse</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">plyr</span>)  <span class="co"># rbind.fill</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">limma</span>)  <span class="co"># strsplit2</span>
-
-<span class="co">### Packages for plotting</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">cowplot</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">RColorBrewer</span>)  <span class="co"># brewer.pal</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggbeeswarm</span>)
-
-<span class="co">### Packages for survival analysis</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survival</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">survminer</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">forestplot</span>)
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># ### Packages for data manipulations library(tidyverse) library(plyr) #</span>
+<span class="co"># rbind.fill library(limma) # strsplit2 ### Packages for plotting</span>
+<span class="co"># library(cowplot) library(RColorBrewer) # brewer.pal library(ggbeeswarm) ###</span>
+<span class="co"># Packages for survival analysis library(survival) library(survminer)</span>
+<span class="co"># library(forestplot)</span>
 
 
 
@@ -142,19 +133,19 @@
 
 <span class="no">genes</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2"</span>, <span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>, <span class="st">"GeneD"</span>)
 
-<span class="no">data_cat2</span> <span class="kw">&lt;-</span> <span class="fu">mutate_all</span>(<span class="no">bdata</span>[, <span class="no">genes</span>], <span class="no">cut_core_2groups</span>)
+<span class="no">data_cat2</span> <span class="kw">&lt;-</span> <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="no">bdata</span>[, <span class="no">genes</span>], <span class="no">cut_core_2groups</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">data_cat2</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">genes</span>, <span class="st">"_cat2"</span>)
 
 
 <span class="co">### Stratify gene expression into quartiles</span>
 
-<span class="no">data_cat4</span> <span class="kw">&lt;-</span> <span class="fu">mutate_all</span>(<span class="no">bdata</span>[, <span class="no">genes</span>], <span class="no">cut_core_quartiles</span>)
+<span class="no">data_cat4</span> <span class="kw">&lt;-</span> <span class="kw pkg">dplyr</span><span class="kw ns">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="no">bdata</span>[, <span class="no">genes</span>], <span class="no">cut_core_quartiles</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">data_cat4</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">genes</span>, <span class="st">"_cat4"</span>)
 
 
-<span class="no">bdata</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/cbind.html">cbind</a></span>(<span class="no">bdata</span>, <span class="no">data_cat2</span>, <span class="no">data_cat4</span>)</pre></body></html></div>
+<span class="no">bdata</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">bdata</span>, <span class="no">data_cat2</span>, <span class="no">data_cat4</span>)</pre></body></html></div>
 </div>
 <div id="cox-regression" class="section level1">
 <h1 class="hasAnchor">
@@ -165,7 +156,7 @@
 <span class="no">tte_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS"</span>
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="no">biomarker_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneA_cat2"</span>)
+<span class="no">biomarker_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span>)
 <span class="no">adjustment_vars</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
 
 <span class="no">strat1_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
@@ -185,7 +176,13 @@ Treatment Arm
 Biomarker
 </th>
 <th style="text-align:left;">
+Effect
+</th>
+<th style="text-align:left;">
 Total n
+</th>
+<th style="text-align:left;">
+Subgroup n
 </th>
 <th style="text-align:left;">
 HR
@@ -199,12 +196,6 @@ P-value
 <th style="text-align:left;">
 Adj. P-value
 </th>
-<th style="text-align:left;">
-Effect
-</th>
-<th style="text-align:left;">
-Subgroup n
-</th>
 </tr></thead>
 <tbody>
 <tr>
@@ -212,26 +203,28 @@ Subgroup n
 CTRL
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-GeneA
+GeneA cat2
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+high vs low
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 204
 </td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+100 vs 104
+</td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.06
+1.00
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.86 - 1.31)
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.5723
+(0.65 - 1.55)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.9828
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+0.9828
 </td>
 </tr>
 <tr>
@@ -239,26 +232,28 @@ GeneA
 TRT
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-GeneA
+GeneA cat2
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+high vs low
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 196
 </td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+100 vs 96
+</td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-1.03
+0.91
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.82 - 1.29)
+(0.59 - 1.41)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.8129
+0.6827
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.9828
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
 </td>
 </tr>
 <tr>
@@ -266,28 +261,26 @@ GeneA
 CTRL
 </td>
 <td style="text-align:left;">
-GeneA cat2
+GeneA
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 204
 </td>
+<td style="text-align:left;">
+</td>
 <td style="text-align:left;font-weight: bold;">
-1.00
+1.06
 </td>
 <td style="text-align:left;">
-(0.65 - 1.55)
+(0.86 - 1.31)
+</td>
+<td style="text-align:left;font-weight: bold;">
+0.5723
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.9828
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.9828
-</td>
-<td style="text-align:left;">
-high vs low
-</td>
-<td style="text-align:left;">
-100 vs 104
 </td>
 </tr>
 <tr>
@@ -295,28 +288,26 @@ high vs low
 TRT
 </td>
 <td style="text-align:left;">
-GeneA cat2
+GeneA
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 196
 </td>
+<td style="text-align:left;">
+</td>
 <td style="text-align:left;font-weight: bold;">
-0.91
+1.03
 </td>
 <td style="text-align:left;">
-(0.59 - 1.41)
+(0.82 - 1.29)
 </td>
 <td style="text-align:left;font-weight: bold;">
-0.6827
+0.8129
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.9828
-</td>
-<td style="text-align:left;">
-high vs low
-</td>
-<td style="text-align:left;">
-100 vs 96
 </td>
 </tr>
 </tbody>
@@ -494,7 +485,7 @@ TRT vs CTRL
 <span class="no">censor_var</span> <span class="kw">&lt;-</span> <span class="st">"PFS_Event"</span>
 
 <span class="no">treatment_var</span> <span class="kw">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="no">biomarker_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneA_cat2"</span>)
+<span class="no">biomarker_vars</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span>)
 <span class="no">adjustment_vars</span> <span class="kw">&lt;-</span> <span class="st">"IPI"</span>
 
 
@@ -508,6 +499,9 @@ Effect of interaction between biomarker and treatment on PFS. Adjusted, unstrati
 <thead><tr>
 <th style="text-align:left;">
 Biomarker
+</th>
+<th style="text-align:left;">
+Biomarker Effect
 </th>
 <th style="text-align:left;">
 Treatment Effect
@@ -527,14 +521,14 @@ P-value
 <th style="text-align:left;">
 Adj. P-value
 </th>
-<th style="text-align:left;">
-Biomarker Effect
-</th>
 </tr></thead>
 <tbody>
 <tr>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-GeneA
+GeneA cat2
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+high vs low
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 TRT vs CTRL
@@ -543,23 +537,23 @@ TRT vs CTRL
 400
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.97
+0.92
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-(0.72 - 1.32)
+(0.50 - 1.70)
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+0.7985
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.8593
-</td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.8593
-</td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-GeneA cat2
+GeneA
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 TRT vs CTRL
@@ -568,19 +562,16 @@ TRT vs CTRL
 400
 </td>
 <td style="text-align:left;font-weight: bold;">
-0.92
+0.97
 </td>
 <td style="text-align:left;">
-(0.50 - 1.70)
-</td>
-<td style="text-align:left;font-weight: bold;">
-0.7985
+(0.72 - 1.32)
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.8593
 </td>
-<td style="text-align:left;">
-high vs low
+<td style="text-align:left;font-weight: bold;">
+0.8593
 </td>
 </tr>
 </tbody>
@@ -856,7 +847,7 @@ high vs low
 <span class="fu"><a href="../reference/wrapper_core_kruskal_test_col_cat.html">wrapper_core_kruskal_test_col_cat</a></span>(<span class="no">data</span>, <span class="kw">num_var</span> <span class="kw">=</span> <span class="no">num_var</span>, <span class="kw">cat_var</span> <span class="kw">=</span> <span class="no">cat_var</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
-Kruskal–Wallis H test.
+Kruskal-Wallis H test.
 </caption>
 <thead>
 <tr>
@@ -941,7 +932,7 @@ Median
 <span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
-Kruskal–Wallis H test.
+Kruskal-Wallis H test.
 </caption>
 <thead>
 <tr>
@@ -1064,7 +1055,7 @@ Median
 <span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="no">data</span>, <span class="kw">num_vars</span> <span class="kw">=</span> <span class="no">num_vars</span>, <span class="kw">cat_vars</span> <span class="kw">=</span> <span class="no">cat_vars</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
-Kruskal–Wallis H test.
+Kruskal-Wallis H test.
 </caption>
 <thead>
 <tr>
@@ -1328,7 +1319,7 @@ Low
 13 (14.3%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
-0.0310 *
+0.0205 *
 </td>
 </tr>
 <tr>
@@ -2294,42 +2285,31 @@ High
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] grid      stats     graphics  grDevices utils     datasets  methods  
-## [8] base     
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] BiomarkerWrappers_0.0.0.1 forestplot_1.9           
-##  [3] checkmate_1.9.4           survminer_0.4.7          
-##  [5] ggpubr_0.2.4              magrittr_1.5             
-##  [7] survival_3.1-8            ggbeeswarm_0.6.0         
-##  [9] RColorBrewer_1.1-2        cowplot_1.0.0            
-## [11] limma_3.42.0              plyr_1.8.5               
-## [13] forcats_0.4.0             stringr_1.4.0            
-## [15] dplyr_0.8.3               purrr_0.3.3              
-## [17] readr_1.3.1               tidyr_1.0.0              
-## [19] tibble_3.0.3              ggplot2_3.3.0            
-## [21] tidyverse_1.3.0           kableExtra_1.1.0         
-## [23] rmarkdown_2.0             knitr_1.26               
+## [1] BiomarkerWrappers_0.0.0.2 kableExtra_1.1.0         
+## [3] rmarkdown_2.0             knitr_1.26               
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] fs_1.3.1          lubridate_1.7.4   webshot_0.5.2     httr_1.4.1       
-##  [5] rprojroot_1.3-2   tools_3.6.2       backports_1.1.5   R6_2.4.1         
-##  [9] vipor_0.4.5       DBI_1.1.0         colorspace_1.4-1  withr_2.1.2      
-## [13] tidyselect_1.1.0  gridExtra_2.3     compiler_3.6.2    cli_2.0.0        
-## [17] rvest_0.3.5       formatR_1.7       xml2_1.3.2        desc_1.2.0       
-## [21] labeling_0.3      scales_1.1.0      survMisc_0.5.5    pkgdown_1.5.1    
-## [25] digest_0.6.23     pkgconfig_2.0.3   htmltools_0.4.0   dbplyr_1.4.2     
-## [29] highr_0.8         rlang_0.4.7       readxl_1.3.1      rstudioapi_0.10  
-## [33] generics_0.0.2    farver_2.0.1      zoo_1.8-6         jsonlite_1.6     
-## [37] Matrix_1.2-18     Rcpp_1.0.3        munsell_0.5.0     fansi_0.4.0      
-## [41] lifecycle_0.2.0   stringi_1.4.3     yaml_2.2.0        MASS_7.3-51.4    
-## [45] crayon_1.3.4      lattice_0.20-38   haven_2.2.0       splines_3.6.2    
-## [49] hms_0.5.2         pillar_1.4.6      ggsignif_0.6.0    reprex_0.3.0     
-## [53] glue_1.3.1        evaluate_0.14     data.table_1.12.8 modelr_0.1.5     
-## [57] vctrs_0.3.1       cellranger_1.1.0  gtable_0.3.0      km.ci_0.5-2      
-## [61] assertthat_0.2.1  xfun_0.11         xtable_1.8-4      broom_0.7.0      
-## [65] viridisLite_0.3.0 beeswarm_0.2.3    memoise_1.1.0     KMsurv_0.1-5     
-## [69] ellipsis_0.3.0</code></pre>
+##  [1] Rcpp_1.0.3        lattice_0.20-38   tidyr_1.0.0       zoo_1.8-6        
+##  [5] assertthat_0.2.1  rprojroot_1.3-2   digest_0.6.23     R6_2.4.1         
+##  [9] survminer_0.4.7   plyr_1.8.5        backports_1.1.5   evaluate_0.14    
+## [13] httr_1.4.1        ggplot2_3.3.0     highr_0.8         pillar_1.4.6     
+## [17] rlang_0.4.7       rstudioapi_0.10   data.table_1.12.8 Matrix_1.2-18    
+## [21] pkgdown_1.5.1     desc_1.2.0        labeling_0.3      splines_3.6.2    
+## [25] webshot_0.5.2     readr_1.3.1       stringr_1.4.0     munsell_0.5.0    
+## [29] broom_0.7.0       vipor_0.4.5       compiler_3.6.2    xfun_0.11        
+## [33] pkgconfig_2.0.3   ggbeeswarm_0.6.0  htmltools_0.4.0   tidyselect_1.1.0 
+## [37] tibble_3.0.3      gridExtra_2.3     km.ci_0.5-2       viridisLite_0.3.0
+## [41] crayon_1.3.4      dplyr_0.8.3       ggpubr_0.2.4      MASS_7.3-51.4    
+## [45] grid_3.6.2        xtable_1.8-4      gtable_0.3.0      lifecycle_0.2.0  
+## [49] magrittr_1.5      KMsurv_0.1-5      formatR_1.7       scales_1.1.0     
+## [53] stringi_1.4.3     farver_2.0.1      ggsignif_0.6.0    fs_1.3.1         
+## [57] xml2_1.3.2        ellipsis_0.3.0    survMisc_0.5.5    generics_0.0.2   
+## [61] vctrs_0.3.1       cowplot_1.0.0     tools_3.6.2       glue_1.3.1       
+## [65] beeswarm_0.2.3    purrr_0.3.3       hms_0.5.2         survival_3.1-8   
+## [69] yaml_2.2.0        colorspace_1.4-1  rvest_0.3.5       memoise_1.1.0</code></pre>
 </div>
   </div>
 

@@ -125,7 +125,7 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
     
     colnames(genesets_extra_info)[1] <- "Geneset"
     
-    out <- left_join(out, genesets_extra_info, by = "Geneset")
+    out <- dplyr::left_join(out, genesets_extra_info, by = "Geneset")
     
   }
   

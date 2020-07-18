@@ -190,12 +190,12 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   if(length(line_row) >= 1){
     hrzl_lines <- lapply(line_row, function(x){
-      gpar(col = "#b4b4b4", lwd = 0.5)
+      grid::gpar(col = "#b4b4b4", lwd = 0.5)
     })
     names(hrzl_lines) <- line_row
   }
   
-  hrzl_lines[["2"]] <- gpar(col = "#444444", lwd = 1)
+  hrzl_lines[["2"]] <- grid::gpar(col = "#444444", lwd = 1)
   
   
   ### ----------------------------------------------------------------------
@@ -205,14 +205,14 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   forestplot::forestplot(labeltext, mean = c(NA, res[, mean_var]), lower = c(NA, res[, lower_var]), upper = c(NA, res[, upper_var]), 
     is.summary = c(TRUE, rep(FALSE, nrow(res))), xlog = FALSE, xlab = xlab, zero = 1,
     title = caption,
-    col = fpColors(box = "darkblue", line = "darkblue"), 
+    col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
     boxsize = 0.3,
     hrzl_lines = hrzl_lines, 
-    graphwidth = unit(10, "cm"), colgap = unit(6, "mm"),
+    graphwidth = grid::unit(10, "cm"), colgap = grid::unit(6, "mm"),
     lineheight = lineheight,
     lwd.ci = 2, lwd.xaxis = 2, lwd.zero = 2, 
-    txt_gp = forestplot::fpTxtGp(xlab = gpar(fontsize = 20), ticks = gpar(fontsize = 18)), 
-    mar = unit(c(20, rep(5, times = 3)), "mm"), 
+    txt_gp = forestplot::fpTxtGp(xlab = grid::gpar(fontsize = 20), ticks = grid::gpar(fontsize = 18)), 
+    mar = grid::unit(c(20, rep(5, times = 3)), "mm"), 
     clip = clip, 
     ci.vertices = TRUE,
     align = "l")

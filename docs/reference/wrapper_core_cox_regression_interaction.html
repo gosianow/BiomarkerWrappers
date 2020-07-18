@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.2</span>
       </span>
     </div>
 
@@ -227,8 +227,12 @@
 <span class='no'>interaction2_var</span> <span class='kw'>&lt;-</span> <span class='st'>"Treatment_Arm"</span>
 <span class='no'>covariate_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>)
 
-<span class='fu'>wrapper_core_cox_regression_interaction</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>interaction1_var</span> <span class='kw'>=</span> <span class='no'>interaction1_var</span>, <span class='kw'>interaction2_var</span> <span class='kw'>=</span> <span class='no'>interaction2_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)</div><div class='output co'>#&gt; <span class='error'>Error in coef_info %&gt;% left_join(conf_int, by = "coefficient") %&gt;% left_join(coefficients,     by = "coefficient"): could not find function "%&gt;%"</span></div><div class='input'>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_interaction</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>interaction1_var</span> <span class='kw'>=</span> <span class='no'>interaction1_var</span>, <span class='kw'>interaction2_var</span> <span class='kw'>=</span> <span class='no'>interaction2_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)
 
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;   Covariate1     Effect1    Covariate2     Effect2 Total n   HR        95% CI
+#&gt; 1 GeneA cat2 high vs low Treatment Arm TRT vs CTRL     391 0.88 (0.48 - 1.63)
+#&gt;   P-value Adj. P-value
+#&gt; 1  0.6878       0.6878</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

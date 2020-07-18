@@ -3,7 +3,7 @@
 
 
 
-#' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
+#' Kruskal-Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' Returns a table where stratification subgroups are in columns and distribution summary statistics for the numerical variable are in rows. 
 #' 
@@ -43,7 +43,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(cat_var, num_var)]), ]
+  data <- data[stats::complete.cases(data[, c(cat_var, num_var)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -53,13 +53,13 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   # Calculate summary statistics and do testing
   # --------------------------------------------------------------------------
   
-  N = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
+  N = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
   
-  Median = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-  Mean = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  Median = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
   
-  Min = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
-  Max = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+  Min = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
   
   summdf <- data.frame(N, Median, Mean, Min, Max)
@@ -79,13 +79,13 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
       ## Wilcoxon Rank-Sum test
       levels_cat_var <- levels(data[, cat_var])
       
-      try(test_res <- wilcox.test(x = data[data[, cat_var] == levels_cat_var[1], num_var], 
+      try(test_res <- stats::wilcox.test(x = data[data[, cat_var] == levels_cat_var[1], num_var], 
         y = data[data[, cat_var] == levels_cat_var[2], num_var]), silent = TRUE)
       
     }else if(method == "kruskal"){
-      ## Kruskal–Wallis H test
+      ## Kruskal-Wallis H test
       
-      try(test_res <- kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
+      try(test_res <- stats::kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
       
     }
     
@@ -186,7 +186,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
     if(method == "wilcox"){
       caption <- paste0("Wilcoxon Rank-Sum test.")
     }else if(method == "kruskal"){
-      caption <- paste0("Kruskal–Wallis H test.")
+      caption <- paste0("Kruskal-Wallis H test.")
     }
     
     
@@ -208,7 +208,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
 
 
 
-#' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
+#' Kruskal-Wallis H test or Wilcoxon Rank-Sum test
 #' 
 #' Returns a table where stratification subgroups are in rows and distribution summary statistics for the numerical variable are in columns. 
 #' 
@@ -248,7 +248,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(num_var, cat_var)]), ]
+  data <- data[stats::complete.cases(data[, c(num_var, cat_var)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -259,13 +259,13 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   # --------------------------------------------------------------------------
   
   
-  N = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
+  N = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
   
-  Median = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-  Mean = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+  Median = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+  Mean = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
   
-  Min = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
-  Max = aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+  Min = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+  Max = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
   
   summdf <- data.frame(N, Median, Mean, Min, Max)
@@ -284,13 +284,13 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
       ## Wilcoxon Rank-Sum test
       levels_num_var <- levels(data[, cat_var])
       
-      try(test_res <- wilcox.test(x = data[data[, cat_var] == levels_num_var[1], num_var], 
+      try(test_res <- stats::wilcox.test(x = data[data[, cat_var] == levels_num_var[1], num_var], 
         y = data[data[, cat_var] == levels_num_var[2], num_var]), silent = TRUE)
       
     }else if(method == "kruskal"){
-      ## Kruskal–Wallis H test
+      ## Kruskal-Wallis H test
       
-      try(test_res <- kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
+      try(test_res <- stats::kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
       
     }
     
@@ -391,7 +391,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
     if(method == "wilcox"){
       caption <- paste0("Wilcoxon Rank-Sum test.")
     }else if(method == "kruskal"){
-      caption <- paste0("Kruskal–Wallis H test.")
+      caption <- paste0("Kruskal-Wallis H test.")
     }
     
     
@@ -448,7 +448,7 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
   
   
   ### Keep non-missing data
-  data <- data[complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -536,10 +536,10 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -614,7 +614,7 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
   
   
   ### Keep non-missing data
-  data <- data[complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -702,10 +702,10 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -748,9 +748,9 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
 
 
 
-#' Kruskal–Wallis H test or Wilcoxon Rank-Sum test
+#' Kruskal-Wallis H test or Wilcoxon Rank-Sum test
 #' 
-#' Run Kruskal–Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
+#' Run Kruskal-Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
 #' 
 #' @inheritParams wrapper_core_kruskal_test_col_cat_strat
 #' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
@@ -834,10 +834,10 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   hdr <- bheader(wrapper_res[[1]])

@@ -3,16 +3,16 @@
 
 
 
-# facet_var = NULL; 
-# colors_bar = NULL; 
-# variable_names = NULL; 
-# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL; tag = NULL; 
-# legend_title_colors_bar = NULL; facet_label_both = TRUE; 
-# skip_levels = NULL; method = "facet"; 
-# show_proportions = TRUE; show_counts = TRUE; show_total_proportions = FALSE; show_total_counts = TRUE; 
-# label_size = 3.5; label_vjust = 0.5; 
-# title_size = 12; strip_text_size = NULL; facet_scales = "fixed"; ylim = NULL; 
-# axis_text_x_angle = 0; axis_text_x_vjust = 0; axis_text_x_hjust = 0.5; 
+# facet_var = NULL;
+# colors_bar = NULL;
+# variable_names = NULL;
+# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL; tag = NULL;
+# legend_title_colors_bar = NULL; facet_label_both = TRUE;
+# skip_levels = NULL; method = "facet";
+# show_proportions = TRUE; show_counts = TRUE; show_total_proportions = FALSE; show_total_counts = TRUE;
+# label_size = 3.5; label_vjust = 0.5;
+# title_size = 12; strip_text_size = NULL; facet_scales = "fixed"; ylim = NULL;
+# axis_text_x_angle = 0; axis_text_x_vjust = 0; axis_text_x_hjust = 0.5;
 # background_grid_major = "none"
 
 
@@ -23,6 +23,19 @@
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
+#' 
+#' @examples 
+#'  
+#' data(bdata)
+#' 
+#' data <- bdata
+#' data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+#' 
+#' x_var = "GeneA_cat2"
+#' y_var = "Response"
+#' 
+#' wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
+#' 
 #' @export
 wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, 
   colors_bar = NULL, 
@@ -160,9 +173,9 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     ### Prepare data for ggplot
     
-    ggdata <- cbind(gather(propdf, key = "Subgroup", value = "Proportion", -Observation), 
-      gather(countdf, key = "Subgroup", value = "Count", -Observation)[, "Count", drop = FALSE])
-    
+    ggdata <- dplyr::left_join(tidyr::pivot_longer(propdf, cols = colnames(tbl), names_to = "Subgroup", values_to = "Proportion"),
+      tidyr::pivot_longer(countdf, cols = colnames(tbl), names_to = "Subgroup", values_to = "Count"), by = c("Observation", "Subgroup")) %>% 
+      data.frame()
     
     
     ### Prepare labels
@@ -214,7 +227,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
   # --------------------------------------------------------------------------
   
   
-  sum_count_total <- aggregate(ggdata[, "Count"], lapply(c("Subgroup", facet_var), function(x) ggdata[, x]), FUN = sum, na.rm = TRUE, drop = FALSE)
+  sum_count_total <- stats::aggregate(ggdata[, "Count"], lapply(c("Subgroup", facet_var), function(x) ggdata[, x]), FUN = sum, na.rm = TRUE, drop = FALSE)
   colnames(sum_count_total) <- c("Subgroup", facet_var, "Count_Total")
   
   ## For zero counts, there is NA. Let's fix it to zero
@@ -232,17 +245,17 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
   }
   
   
-  sum_prop <- aggregate(ggdata[, "Proportion"], lapply(c("Subgroup", facet_var), function(x) ggdata[, x]), FUN = sum, na.rm = TRUE, drop = FALSE)
+  sum_prop <- stats::aggregate(ggdata[, "Proportion"], lapply(c("Subgroup", facet_var), function(x) ggdata[, x]), FUN = sum, na.rm = TRUE, drop = FALSE)
   colnames(sum_prop) <- c("Subgroup", facet_var, "Proportion")
   
   
-  sum_count <- aggregate(ggdata[, "Count"], lapply(c("Subgroup", facet_var), function(x) ggdata[, x]), FUN = sum, na.rm = TRUE, drop = FALSE)
+  sum_count <- stats::aggregate(ggdata[, "Count"], lapply(c("Subgroup", facet_var), function(x) ggdata[, x]), FUN = sum, na.rm = TRUE, drop = FALSE)
   colnames(sum_count) <- c("Subgroup", facet_var, "Count")
   
   
   ggdata_total <- sum_count_total %>% 
-    left_join(sum_count, by = c("Subgroup", facet_var)) %>% 
-    left_join(sum_prop, by = c("Subgroup", facet_var))
+    dplyr::left_join(sum_count, by = c("Subgroup", facet_var)) %>% 
+    dplyr::left_join(sum_prop, by = c("Subgroup", facet_var))
   
   
   
@@ -277,7 +290,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes(x = Subgroup, y = Proportion, fill = Observation), color = "black") +
+      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Observation), color = "black") +
       scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE)
     
     
@@ -295,7 +308,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
       }
       
       ggpl <- ggpl +
-        facet_wrap(as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+        facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
         theme(strip.background = element_rect(colour = "white", fill = "white"),
           strip.text = element_text(size = strip_text_size))
       
@@ -307,7 +320,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     if(show_proportions){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata, aes(x = Subgroup, y = Proportion, group = Observation, label = Label), 
+        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, group = .data$Observation, label = .data$Label), 
           position = position_stack(vjust = label_vjust), size = label_size)
       
     }
@@ -315,14 +328,14 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     if(show_total_counts){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_total, aes(x = Subgroup, y = 0 - ynudge, label = Label_Total), size = label_size, vjust = 0.5)
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = 0 - ynudge, label = .data$Label_Total), size = label_size, vjust = 0.5)
       
     }
     
     if(show_total_proportions){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_total, aes(x = Subgroup, y = Proportion + ynudge, label = Label), size = label_size, vjust = 0.5)
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, vjust = 0.5)
       
     }
     
@@ -338,7 +351,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes_string(x = facet_var, y = "Proportion", fill = "Subgroup"), color = "black", position = position_dodge2(preserve = "single", width = 0.75)) +
+      geom_col(data = ggdata, aes(x = .data[[facet_var]], y = .data$Proportion, fill = .data$Subgroup), color = "black", position = position_dodge2(preserve = "single", width = 0.75)) +
       scale_fill_manual(name = legend_title_colors_bar, values = colors_bar, drop = FALSE)
     
     
@@ -354,7 +367,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     if(show_total_counts){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_total, aes_string(x = facet_var, y = "bottom_position", group = "Subgroup", label = "Label_Total"), size = label_size, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
+        geom_text(data = ggdata_total, aes(x = .data[[facet_var]], y = .data$bottom_position, group = .data$Subgroup, label = .data$Label_Total), size = label_size, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
       
     }
     
@@ -362,7 +375,7 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
     if(show_proportions || show_total_proportions){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_total, aes_string(x = facet_var, y = "top_position", group = "Subgroup", label = "Label"), 
+        geom_text(data = ggdata_total, aes(x = .data[[facet_var]], y = .data$top_position, group = .data$Subgroup, label = .data$Label), 
           size = label_size, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
       
     }
@@ -414,11 +427,10 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
 
 
 
-#' Barplot
-#' 
-#' Generate bar plots for each subgroup defined by two stratification variables.
-#' 
-#' @param data Data frame.
+
+#' @rdname wrapper_core_bar_plot
+#' @param strat1_var Name of the firts stratification variable.
+#' @param strat2_var Name of the second stratification variable.
 #' @export
 wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL,
@@ -457,7 +469,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(x_var, y_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -585,6 +597,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
 #' 
 #' Generate barplots for multiple variables in one faceted or dodged panel.
 #' 
+#' @inheritParams wrapper_core_bar_plot_strat
 #' @param data Data frame.
 #' @export
 wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, 

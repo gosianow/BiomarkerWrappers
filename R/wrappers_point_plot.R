@@ -53,7 +53,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   ### Keep non-missing data
   
   ## We do not exclude the missing values in color_point_var
-  data <- data[complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -104,13 +104,13 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   
   
   
-  ggpl <- ggplot(data, aes_string(x = x_var, y = y_var)) 
+  ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]])) 
   
   
   if(point_shape %in% 21:25){
     
     ggpl <- ggpl +
-      geom_point(aes_string(fill = color_point_var), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, 
+      geom_point(aes(fill = .data[[color_point_var]]), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, 
         show.legend = legend_show_colors_point) +
       scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey")
     
@@ -118,7 +118,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
   }else{
     
     ggpl <- ggpl +
-      geom_point(aes_string(color = color_point_var), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke,
+      geom_point(aes(color = .data[[color_point_var]]), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke,
         show.legend = legend_show_colors_point) +
       scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey")
     
@@ -146,14 +146,14 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
     if(is.na(color_smooth_var)){
       
       ggpl <- ggpl + 
-        geom_smooth(aes_string(group = 1), 
+        geom_smooth(aes(group = 1), 
           method = smooth_method, formula = smooth_formula, se = smooth_se, 
           linetype = smooth_type, size = smooth_size)
       
     }else{
       
       ggpl <- ggpl + 
-        geom_smooth(aes_string(group = color_smooth_var, color = color_smooth_var), 
+        geom_smooth(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
           method = smooth_method, formula = smooth_formula, se = smooth_se, 
           linetype = smooth_type, size = smooth_size)
       
@@ -176,7 +176,7 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
     }
     
     ggpl <- ggpl +
-      facet_wrap(as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+      facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
       theme(strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip_text_size))
     
@@ -235,7 +235,7 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(x_var, y_var, facet_var, strat1_var, strat2_var)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, facet_var, strat1_var, strat2_var)]), , drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

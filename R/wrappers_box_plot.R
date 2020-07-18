@@ -53,7 +53,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   ### Keep non-missing data
   
   ## We do not exclude the missing values in color_line_var
-  data <- data[complete.cases(data[, c(x_var, y_var, dodge_var, facet_var)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, dodge_var, facet_var)]), , drop = FALSE]
   
   stopifnot(nrow(data) > 0)
   
@@ -125,16 +125,16 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   stopifnot(sum(duplicated(subgroup_vars)) == 0)
   
   
-  N <- aggregate(data[, y_var], lapply(subgroup_vars, function(x) data[, x]), FUN = length, drop = FALSE)
+  N <- stats::aggregate(data[, y_var], lapply(subgroup_vars, function(x) data[, x]), FUN = length, drop = FALSE)
   colnames(N) <- c(subgroup_vars, "N")
   
   
-  Median <- aggregate(data[, y_var], lapply(subgroup_vars, function(x) data[, x]), FUN = median, na.rm = TRUE, drop = FALSE)
+  Median <- stats::aggregate(data[, y_var], lapply(subgroup_vars, function(x) data[, x]), FUN = median, na.rm = TRUE, drop = FALSE)
   colnames(Median) <- c(subgroup_vars, "Median")
   
   
   ggdata_summ <- N %>% 
-    left_join(Median, by = subgroup_vars)
+    dplyr::left_join(Median, by = subgroup_vars)
   
   
   ggdata_summ[, x_var] <- factor(ggdata_summ[, x_var], levels = levels(data[, x_var]))
@@ -180,8 +180,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   
   if(is.null(dodge_var)){
     
-    ggpl <- ggplot(data, aes_string(x = x_var, y = y_var)) +
-      geom_boxplot(aes_string(fill = x_var), outlier.color = NA, show.legend = FALSE) +
+    ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]])) +
+      geom_boxplot(aes(fill = .data[[x_var]]), outlier.color = NA, show.legend = FALSE) +
       scale_fill_manual(name = legend_title_colors_box, values = colors_box, drop = FALSE)
     
     
@@ -189,16 +189,16 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ggpl <- ggpl +
         ggnewscale::new_scale_fill() +
-        # geom_jitter(aes_string(fill = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes_string(fill = color_point_var), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes(fill = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
     }else{
       
       ggpl <- ggpl +
-        # geom_jitter(aes_string(color = color_point_var), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes_string(color = color_point_var), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes(color = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -207,7 +207,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   }else{
     
     
-    ggpl <- ggplot(data, aes_string(x = x_var, y = y_var, fill = dodge_var)) +
+    ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]], fill = .data[[dodge_var]])) +
       geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single", width = 0.75)) +
       scale_fill_manual(name = legend_title_colors_box, values = colors_box, drop = FALSE)
     
@@ -216,8 +216,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ggpl <- ggpl +
         ggnewscale::new_scale_fill() +
-        # geom_jitter(aes_string(fill = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes_string(fill = color_point_var, group = dodge_var), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
@@ -225,8 +225,8 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       
       ## The group determines dodging 
       ggpl <- ggpl +
-        # geom_jitter(aes_string(color = color_point_var, group = dodge_var), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes_string(color = color_point_var, group = dodge_var), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        # geom_jitter(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_title_colors_point, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -271,7 +271,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
     }
     
     ggpl <- ggpl +
-      facet_wrap(as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+      facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
       theme(strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip_text_size))
     
@@ -308,12 +308,12 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
     if(is.null(dodge_var)){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_summ, aes_string(x = x_var, y = ymin - ynudge, label = "Label"), size = label_size, vjust = 0.5)
+        geom_text(data = ggdata_summ, aes(x = .data[[x_var]], y = ymin - ynudge, label = .data[["Label"]]), size = label_size, vjust = 0.5)
       
     }else{
       
       ggpl <- ggpl +
-        geom_text(data = ggdata_summ, aes_string(x = x_var, y = ymin - ynudge, group = dodge_var, label = "Label"), size = label_size, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
+        geom_text(data = ggdata_summ, aes(x = .data[[x_var]], y = ymin - ynudge, group = .data[[dodge_var]], label = .data[["Label"]]), size = label_size, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
       
       
     }
@@ -375,7 +375,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(x_var, y_var, dodge_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(x_var, y_var, dodge_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

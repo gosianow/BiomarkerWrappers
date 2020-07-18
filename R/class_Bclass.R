@@ -232,7 +232,7 @@ setMethod("bcaption<-", "Bclass", function(x, value){
   
   x@caption <- value
   
-  validObject(x)
+  methods::validObject(x)
   
   x
   
@@ -270,7 +270,7 @@ setMethod("bheader<-", "Bclass", function(x, value){
   
   x@header <- value
   
-  validObject(x)
+  methods::validObject(x)
   
   x
   
@@ -415,7 +415,7 @@ setMethod("[", signature(x = "Bclass"), function(x, i, j){
       x@output <- new_output
       x@header <- new_header
       
-      validObject(x)
+      methods::validObject(x)
       
       return(x)
       
@@ -434,7 +434,7 @@ setMethod("[", signature(x = "Bclass"), function(x, i, j){
       x@results <- new_results
       x@output <- new_output
       
-      validObject(x)
+      methods::validObject(x)
       
       return(x)
       
@@ -462,7 +462,7 @@ setMethod("[", signature(x = "Bclass"), function(x, i, j){
       x@output <- new_output
       x@header <- new_header
       
-      validObject(x)
+      methods::validObject(x)
       
       return(x)
       
@@ -525,7 +525,7 @@ setMethod("rbind", "Bclass", function(..., deparse.level = 1){
   new_output <- do.call(rbind, lapply(listData, boutput))
   
   
-  x <- new(listData_class, results = new_results, 
+  x <- methods::new(listData_class, results = new_results, 
     output = new_output,
     caption = new_caption,
     header = new_header)
@@ -575,7 +575,7 @@ setMethod("cbind", "Bclass", function(..., deparse.level = 1){
   new_output <- do.call(cbind, lapply(listData, boutput))
   
   
-  x <- new(listData_class, results = new_results, 
+  x <- methods::new(listData_class, results = new_results, 
     output = new_output,
     caption = new_caption,
     header = new_header)

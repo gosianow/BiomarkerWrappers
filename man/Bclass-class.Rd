@@ -34,6 +34,7 @@
 \alias{colnames<-,Bclass-method}
 \alias{rownames,Bclass-method}
 \alias{rownames<-,Bclass-method}
+\alias{[[,Bclass,ANY-method}
 \alias{[[,Bclass-method}
 \alias{$,Bclass-method}
 \alias{[,Bclass,ANY,ANY,ANY-method}
@@ -111,7 +112,7 @@ bheader(x) <- value
 
 \S4method{rownames}{Bclass}(x) <- value
 
-\S4method{[[}{Bclass}(x, i, j)
+\S4method{[[}{Bclass,ANY}(x, i, j)
 
 \S4method{$}{Bclass}(x, name)
 

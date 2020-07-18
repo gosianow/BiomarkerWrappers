@@ -88,12 +88,12 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   
   if(pval_prefix == adjp_prefix){
     data <- data_lfc %>% 
-      left_join(data_pval, by = c(gene_var, "contrast")) %>% 
+      dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
       as.data.frame()
   }else{
     data <- data_lfc %>% 
-      left_join(data_pval, by = c(gene_var, "contrast")) %>% 
-      left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
+      dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
+      dplyr::left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
       as.data.frame()
   }
   
@@ -131,9 +131,9 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   # ---------------------------------------------------------------------------
   
   
-  ggp <- ggplot(data, aes_string(x = "contrast", y = gene_var, size = "pval_cut", color = lfc_prefix)) +
+  ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], size = .data[["pval_cut"]], color = .data[[lfc_prefix]])) +
     geom_point() +
-    geom_point(aes_string(size = "pval_cut", shape = "significance"), color = "black", show.legend = TRUE) +
+    geom_point(aes(size = .data[["pval_cut"]], shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
     ggtitle(title) +
     theme_cowplot(12) +
     theme(plot.title = element_text(size = title_size),
@@ -176,7 +176,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
 # point_size = 3;
 # cluster_rows = FALSE; 
 # show_row_names = TRUE; show_column_names = TRUE; 
-# row_names_gp = gpar(fontsize = 8); column_names_gp = gpar(fontsize = 8);
+# row_names_gp = grid::gpar(fontsize = 8); column_names_gp = grid::gpar(fontsize = 8);
 # row_split = NULL; column_split = NULL
 
 
@@ -190,11 +190,11 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", draw = TRUE, title = "",
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', trim_limits = NULL,
-  rect_gp = gpar(col = "grey"), point_size = 3,
+  rect_gp = grid::gpar(col = "grey"), point_size = 3,
   cluster_rows = FALSE, 
   row_split = NULL, column_split = NULL,
   show_row_names = TRUE, show_column_names = TRUE, 
-  row_names_gp = gpar(fontsize = 9), column_names_gp = gpar(fontsize = 9), ...){
+  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), ...){
   
   
   stopifnot(length(gene_var) == 1)
@@ -250,7 +250,7 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   
   
   # cell_fun <- function(j, i, x, y, width, height, fill){ 
-  #   grid.text(data_significance[i, j], x, y, gp = gpar(col = label_color, fontsize = label_size))
+  #   grid::grid.text(data_significance[i, j], x, y, gp = grid::gpar(col = label_color, fontsize = label_size))
   # }
   
   
@@ -258,19 +258,19 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   cell_fun <- function(j, i, x, y, width, height, fill){ 
     
     if(data_significance[i, j] == "***"){
-      grid.points(x, y, pch = 21, size = unit(point_size, "mm"), gp = gpar(fill = "black"))
+      grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "black"))
     }
     
     if(data_significance[i, j] == "**"){
-      grid.points(x, y, pch = 21, size = unit(point_size, "mm"), gp = gpar(fill = "dimgrey"))
+      grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "dimgrey"))
     }
     
     if(data_significance[i, j] == "*"){
-      grid.points(x, y, pch = 21, size = unit(point_size, "mm"), gp = gpar(fill = "darkgrey"))
+      grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "darkgrey"))
     }
     
     if(data_significance[i, j] == "."){
-      grid.points(x, y, pch = 21, size = unit(point_size, "mm"), gp = gpar(fill = "transparent"))
+      grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "transparent"))
     }
     
   }
@@ -308,7 +308,7 @@ wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   
   
   if(draw){
-    draw(ht, column_title = title)
+    ComplexHeatmap::draw(ht, column_title = title)
   }else{
     return(ht)  
   }
@@ -333,7 +333,7 @@ wrapper_gene_expression_heatmap <- function(x,
   row_split = NULL, column_split = NULL,
   row_title = NULL, column_title = NULL, 
   show_row_names = TRUE, show_column_names = FALSE, 
-  row_names_gp = gpar(fontsize = 9), column_names_gp = gpar(fontsize = 9), ...){
+  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), ...){
   
   ### Colors for z-score
   # color_low = 'cornflowerblue', color_mid = "black", color_high = 'orangered'

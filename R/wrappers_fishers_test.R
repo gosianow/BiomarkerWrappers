@@ -194,7 +194,7 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   
   ### Keep non-missing data
   all_vars <- c(col_var, row_var, strat1_var, strat2_var)
-  data <- data[complete.cases(data[, all_vars]), all_vars, drop = FALSE]
+  data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -283,10 +283,10 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -373,10 +373,10 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   

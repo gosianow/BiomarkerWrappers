@@ -80,7 +80,8 @@ interaction1_var <- "GeneA_cat2"
 interaction2_var <- "Treatment_Arm"
 covariate_vars <- c("IPI", "Cell_Of_Origin")
 
-wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+x <- wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
 
+boutput(x)
 
 }

@@ -32,22 +32,22 @@ eSet2csv <- function(es, file, digits = 2){
     top_table <- cbind(matrix("", nrow = ncol(pdata), ncol = ncol(fdata)), colnames(pdata), t(pdata))
   }
   
-  write.table(top_table, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = FALSE)
+  utils::write.table(top_table, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = FALSE)
   
   ## Add empty row
   if(nrow(top_table) > 0){
-    write.table("", file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
+    utils::write.table("", file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
   }
   
   ## Prepare bottom table
   
   bottom_header <- t(c(colnames(fdata), "", colnames(expr)))
   
-  write.table(bottom_header, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
+  utils::write.table(bottom_header, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
   
   bottom_table <- data.frame(fdata, "", as.data.frame.matrix(expr), stringsAsFactors = FALSE, check.names = FALSE)
   
-  write.table(bottom_table, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
+  utils::write.table(bottom_table, file = file, sep = ",", quote = TRUE, row.names = FALSE, col.names = FALSE, append = TRUE)
   
   
 }
@@ -136,17 +136,17 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
   
   
   if(is.null(subgroup_var)){
-    pData(x)$dummy_subgroup_var <- factor("dummy_subgroup_var")
+    Biobase::pData(x)$dummy_subgroup_var <- factor("dummy_subgroup_var")
     subgroup_var <- "dummy_subgroup_var"
   }
   
-  subgroup_levels <- levels(pData(x)[, subgroup_var])
+  subgroup_levels <- levels(Biobase::pData(x)[, subgroup_var])
   
-  comparison_levels <- levels(pData(x)[, comparison_var])
+  comparison_levels <- levels(Biobase::pData(x)[, comparison_var])
   
   reference_level <- comparison_levels[1]
   
-  tbl <- table(pData(x)[, comparison_var])
+  tbl <- table(Biobase::pData(x)[, comparison_var])
   
   stopifnot(tbl[reference_level] > 0)
   
@@ -154,11 +154,11 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
   expr_heatmap <- lapply(1:length(subgroup_levels), function(i){
     # i = 1
     
-    x_sub <- x[, pData(x)[, subgroup_var] == subgroup_levels[i]]
+    x_sub <- x[, Biobase::pData(x)[, subgroup_var] == subgroup_levels[i]]
     
     expr_sub <- Biobase::exprs(x_sub)
     
-    expr_lfc <- expr_sub - rowMeans(expr_sub[, pData(x_sub)[, comparison_var] == reference_level], na.rm = TRUE)
+    expr_lfc <- expr_sub - rowMeans(expr_sub[, Biobase::pData(x_sub)[, comparison_var] == reference_level], na.rm = TRUE)
     
     expr_lfc
     
@@ -175,9 +175,9 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
   
   ### Return an eSet
   
-  out <- ExpressionSet(assayData = expr_heatmap, 
-    phenoData = phenoData(x), 
-    featureData = featureData(x))
+  out <- Biobase::ExpressionSet(assayData = expr_heatmap, 
+    phenoData = Biobase::phenoData(x), 
+    featureData = Biobase::featureData(x))
   
   
   out
@@ -316,7 +316,7 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
   stopifnot(length(labels) == 2)
   
   if(is.null(cutoff)){
-    cutoff <- quantile(x, probs = probs, na.rm = TRUE)
+    cutoff <- stats::quantile(x, probs = probs, na.rm = TRUE)
   }
   
   stopifnot(length(cutoff) == 1)
@@ -791,7 +791,7 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
     variable_names <- variable_names[!duplicated(names(variable_names))]
     
     mm <- match(names(new_variable_names), names(variable_names))
-    new_variable_names[!is.na(mm)] <- variable_names[na.omit(mm)]
+    new_variable_names[!is.na(mm)] <- variable_names[stats::na.omit(mm)]
     
   }
   
@@ -863,7 +863,7 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
       
       stopifnot(length(palette) >= 2)
       
-      colors <- colorRampPalette(palette)(length(levels))
+      colors <- grDevices::colorRampPalette(palette)(length(levels))
       names(colors) <- levels
       
       

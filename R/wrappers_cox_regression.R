@@ -26,7 +26,11 @@
 #' censor_var <- "PFS_Event"
 #' covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
 #' 
-#' wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+#' x <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+#' 
+#' boutput(x)
+#' 
+#' bforest(x)
 #' 
 #' @export
 wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -54,7 +58,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_vars)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -70,7 +74,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   ## Create the formula
   formula_covariates <- paste0(covariate_vars, collapse = " + ")
-  f <- as.formula(paste0("survival::Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
+  f <- stats::as.formula(paste0("survival::Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
   
   
   ## Fit the Cox model
@@ -78,7 +82,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   regression_summ <- summary(regression_fit)
   
   
-  # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
+  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
   
@@ -271,7 +275,9 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 #' strat2_var = "Treatment_Arm"
 #' 
 #' 
-#' wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+#' x <- wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+#' 
+#' boutput(x)
 #' 
 #' @export
 wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -304,7 +310,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -387,10 +393,10 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -477,10 +483,10 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -619,10 +625,10 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
@@ -694,8 +700,9 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' interaction2_var <- "Treatment_Arm"
 #' covariate_vars <- c("IPI", "Cell_Of_Origin")
 #' 
-#' wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+#' x <- wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
 #' 
+#' boutput(x)
 #' 
 #' @export
 wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -723,7 +730,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars)]), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -740,7 +747,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   
   ## Create the formula
   formula_covariates <- paste0(paste0(covariate_vars, collapse = " + "), " + ", interaction1_var, " * ", interaction2_var)
-  f <- as.formula(paste0("survival::Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
+  f <- stats::as.formula(paste0("survival::Surv(", tte_var, ", ", censor_var, ") ~ ", formula_covariates))
   
   
   ## Fit the Cox model
@@ -748,7 +755,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   regression_summ <- summary(regression_fit)
   
   
-  # mm <- model.matrix(as.formula(paste0(" ~ ", formula_covariates)), data)
+  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
   # h(mm)
   
   
@@ -847,12 +854,12 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   coef_info$nevent <- regression_summ$nevent
   
   coef_info <- coef_info %>% 
-    left_join(conf_int, by = "coefficient") %>% 
-    left_join(coefficients, by = "coefficient")
+    dplyr::left_join(conf_int, by = "coefficient") %>% 
+    dplyr::left_join(coefficients, by = "coefficient")
   
   
   ## Calculate adjusted p-values using the Benjamini & Hochberg method
-  coef_info$adj_pvalue <- p.adjust(coef_info$pvalue, method = "BH")
+  coef_info$adj_pvalue <- stats::p.adjust(coef_info$pvalue, method = "BH")
   
   
   # --------------------------------------------------------------------------
@@ -981,7 +988,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
   
   ### Keep non-missing data
   
-  data <- data[complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -1057,10 +1064,10 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   ### Remove dummy columns
@@ -1138,10 +1145,10 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
-  res$adj_pvalue <- p.adjust(res$pvalue, method = "BH")
+  res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
   
