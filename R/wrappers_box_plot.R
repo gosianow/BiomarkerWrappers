@@ -226,7 +226,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       ggpl <- ggpl +
         ggnewscale::new_scale_fill() +
         # geom_jitter(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
       
       
@@ -235,7 +235,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       ## The group determines dodging 
       ggpl <- ggpl +
         # geom_jitter(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.3, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+        ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
         scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
@@ -550,7 +550,7 @@ wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_
   # pivot_longer the data from y_vars
   # --------------------------------------------------------------------------
   
-  data_longer <- tidyr::pivot_longer(data, y_vars, names_to = names_to, values_to = values_to) %>% 
+  data_longer <- tidyr::pivot_longer(data, cols = y_vars, names_to = names_to, values_to = values_to) %>% 
     as.data.frame()
   
   data_longer[, names_to] <- factor(data_longer[, names_to], levels = y_vars, labels = variable_names[y_vars])

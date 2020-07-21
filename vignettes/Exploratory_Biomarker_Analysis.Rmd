@@ -28,7 +28,7 @@ library(rmarkdown)
 library(kableExtra)
 
 
-font_size <- 11
+font_size <- 9
 cache <- 0
 
 
@@ -51,23 +51,6 @@ knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warnin
 ```{r library, results="hide", cache = FALSE}
 
 
-# ### Packages for data manipulations
-# library(tidyverse)
-# library(plyr) # rbind.fill
-# library(limma) # strsplit2
-# 
-# ### Packages for plotting
-# library(cowplot)
-# library(RColorBrewer) # brewer.pal
-# library(ggbeeswarm)
-# 
-# ### Packages for survival analysis 
-# library(survival)
-# library(survminer)
-# library(forestplot)
-
-
-
 ggplot2::theme_set(cowplot::theme_cowplot())
 
 
@@ -75,12 +58,7 @@ library(BiomarkerWrappers)
 
 
 # devtools::load_all()
-# devtools::check()
-# devtools::build()
-# devtools::install()
-# pkgdown::build_site()
 
-# install_github("nowickm2/BiomarkerWrappers",  host="https://github.roche.com/api/v3")
 
 
 ```
@@ -143,10 +121,12 @@ adjustment_vars <- "IPI"
 strat1_var = "Treatment_Arm"
 
 
-wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
+wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, print_nevent = TRUE, print_mst = TRUE)
 
 
-### Treatment effect 
+
+
+### Treatment effect within biomarker subgroups
 
 data <- bdata
 tte_var <- "PFS"
@@ -288,6 +268,63 @@ wrapper_KM_plot_treatment(data, tte_var = tte_var, censor_var = censor_var, biom
 
 ```
 
+
+
+
+# Logistic regression
+
+
+```{r logistic_regression, results='asis'}
+
+
+### Biomarker effect 
+
+data <- bdata
+response_var <- "ORR"
+
+biomarker_vars <- c("GeneA_cat2", "GeneA")
+adjustment_vars <- "IPI"
+
+strat1_var = "Treatment_Arm"
+
+
+wrapper_logistic_regression_biomarker(data, response_var =  response_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
+
+
+
+
+### Treatment effect within biomarker subgroups
+
+data <- bdata
+response_var <- "ORR"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
+adjustment_vars <- "IPI"
+
+
+wrapper_logistic_regression_treatment(data, response_var =  response_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars)
+  
+
+
+### Treatment-biomarker interaction effect 
+
+
+data <- bdata
+response_var <- "ORR"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("GeneA_cat2", "GeneA")
+adjustment_vars <- "IPI"
+
+
+
+wrapper_logistic_regression_interaction(data, response_var =  response_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars)
+  
+  
+
+
+```
 
 
 

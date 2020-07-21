@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Boxplots — wrapper_core_box_plot_yvars_strat • BiomarkerWrappers</title>
+<title>Paste counts and proportions corresponding to one subgroup — format_counts_and_props_core • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Boxplots — wrapper_core_box_plot_yvars_strat" />
-<meta property="og:description" content="Generate boxplots for multiple variables in one faceted or dodged panel." />
+<meta property="og:title" content="Paste counts and proportions corresponding to one subgroup — format_counts_and_props_core" />
+<meta property="og:description" content="Paste counts and proportions corresponding to one subgroup" />
 
 
 
@@ -115,75 +115,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Boxplots</h1>
+    <h1>Paste counts and proportions corresponding to one subgroup</h1>
     
-    <div class="hidden name"><code>wrapper_core_box_plot_yvars_strat.Rd</code></div>
+    <div class="hidden name"><code>format_counts_and_props_core.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Generate boxplots for multiple variables in one faceted or dodged panel.</p>
+    <p>Paste counts and proportions corresponding to one subgroup</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_core_box_plot_yvars_strat</span>(
-  <span class='no'>data</span>,
-  <span class='no'>y_vars</span>,
-  <span class='kw'>x_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>color_point_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dodge_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>facet_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>colors_box</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>colors_point</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat1_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>strat2_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>legend_colors_box_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>legend_colors_point_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>legend_position</span> <span class='kw'>=</span> <span class='st'>"right"</span>,
-  <span class='kw'>facet_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>show_total_counts</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>show_median</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>point_size</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>point_shape</span> <span class='kw'>=</span> <span class='fl'>20</span>,
-  <span class='kw'>point_alpha</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>point_stroke</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>label_size</span> <span class='kw'>=</span> <span class='fl'>3.5</span>,
-  <span class='kw'>title_size</span> <span class='kw'>=</span> <span class='fl'>12</span>,
-  <span class='kw'>strip_text_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>facet_scales</span> <span class='kw'>=</span> <span class='st'>"fixed"</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>axis_text_x_angle</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>axis_text_x_vjust</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>axis_text_x_hjust</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>background_grid_major</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
-  <span class='kw'>strat_scales</span> <span class='kw'>=</span> <span class='st'>"fixed"</span>,
-  <span class='kw'>strat1_nrow</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>strat1_ncol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_ncol</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>less_legends</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>names_to</span> <span class='kw'>=</span> <span class='st'>"name"</span>,
-  <span class='kw'>values_to</span> <span class='kw'>=</span> <span class='st'>"value"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>format_counts_and_props_core</span>(<span class='no'>counts</span>, <span class='no'>props</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>Data frame.</p></td>
+      <th>counts</th>
+      <td><p>Vector with counts.</p></td>
     </tr>
     <tr>
-      <th>strat1_var</th>
-      <td><p>Name of the firts stratification variable.</p></td>
+      <th>props</th>
+      <td><p>Vector with proportions.</p></td>
     </tr>
     <tr>
-      <th>strat2_var</th>
-      <td><p>Name of the second stratification variable.</p></td>
+      <th>digits</th>
+      <td><p>Number of decimal places when rounding proportions.</p></td>
     </tr>
     </table>
 

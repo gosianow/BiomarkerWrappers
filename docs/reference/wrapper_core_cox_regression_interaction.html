@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.3</span>
       </span>
     </div>
 
@@ -131,9 +131,9 @@
   <span class='no'>interaction1_var</span>,
   <span class='no'>interaction2_var</span>,
   <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
@@ -145,11 +145,11 @@
   <span class='no'>interaction1_var</span>,
   <span class='no'>interaction2_var</span>,
   <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
@@ -179,7 +179,11 @@
     </tr>
     <tr>
       <th>covariate_vars</th>
-      <td><p>Vector with names of covariate that should be included in the formula.</p></td>
+      <td><p>Vector with names of covariates that are included in the formula of the simple additive model.</p></td>
+    </tr>
+    <tr>
+      <th>strata_vars</th>
+      <td><p>Vector with names of covariates that are used as strata.</p></td>
     </tr>
     <tr>
       <th>variable_names</th>
@@ -188,10 +192,6 @@
     <tr>
       <th>caption</th>
       <td><p>Caption for the table with results.</p></td>
-    </tr>
-    <tr>
-      <th>print_nevent</th>
-      <td><p>Logical. Whether to print numbers of events.</p></td>
     </tr>
     <tr>
       <th>print_pvalues</th>
@@ -229,7 +229,7 @@
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_interaction</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>interaction1_var</span> <span class='kw'>=</span> <span class='no'>interaction1_var</span>, <span class='kw'>interaction2_var</span> <span class='kw'>=</span> <span class='no'>interaction2_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)
 
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;   Covariate1     Effect1    Covariate2     Effect2 Total n   HR        95% CI
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;   Covariate1     Effect1    Covariate2     Effect2 Total N   HR     HR 95% CI
 #&gt; 1 GeneA cat2 high vs low Treatment Arm TRT vs CTRL     391 0.88 (0.48 - 1.63)
 #&gt;   P-value Adj. P-value
 #&gt; 1  0.6878       0.6878</div><div class='input'>

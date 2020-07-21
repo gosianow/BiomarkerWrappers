@@ -10,11 +10,13 @@ wrapper_cox_regression_biomarker(
   censor_var,
   biomarker_vars,
   adjustment_vars = NULL,
+  strata_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_nevent = FALSE,
+  print_mst = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -29,6 +31,8 @@ wrapper_cox_regression_biomarker(
 \item{biomarker_vars}{Vector of biomaker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
+
+\item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{strat1_var}{Name of the firts stratification variable.}
 

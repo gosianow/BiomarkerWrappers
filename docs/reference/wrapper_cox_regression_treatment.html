@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.3</span>
       </span>
     </div>
 
@@ -131,10 +131,12 @@
   <span class='no'>treatment_var</span>,
   <span class='no'>biomarker_vars</span>,
   <span class='kw'>adjustment_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
@@ -160,11 +162,15 @@
     </tr>
     <tr>
       <th>biomarker_vars</th>
-      <td><p>Vector of biomaker names.</p></td>
+      <td><p>Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.</p></td>
     </tr>
     <tr>
       <th>adjustment_vars</th>
       <td><p>Vector of covariate names used for adjustment.</p></td>
+    </tr>
+    <tr>
+      <th>strata_vars</th>
+      <td><p>Vector with names of covariates that are used as strata.</p></td>
     </tr>
     <tr>
       <th>strat2_var</th>

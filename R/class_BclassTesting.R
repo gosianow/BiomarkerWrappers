@@ -144,13 +144,13 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   stopifnot(mean_var %in% colnames(res))
   
   if(is.null(lower_var)){
-    lower_var <- colnames(res)[which(colnames(res) %in% c("CI95_lower"))]
+    lower_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_lower"))]
   }
   stopifnot(length(lower_var) == 1)
   stopifnot(lower_var %in% colnames(res))
   
   if(is.null(upper_var)){
-    upper_var <- colnames(res)[which(colnames(res) %in% c("CI95_upper"))]
+    upper_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_upper"))]
   }
   stopifnot(length(upper_var) == 1)
   stopifnot(upper_var %in% colnames(res))

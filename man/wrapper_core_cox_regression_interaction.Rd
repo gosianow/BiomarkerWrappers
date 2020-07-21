@@ -12,9 +12,9 @@ wrapper_core_cox_regression_interaction(
   interaction1_var,
   interaction2_var,
   covariate_vars = NULL,
+  strata_vars = NULL,
   variable_names = NULL,
   caption = NULL,
-  print_nevent = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -26,11 +26,11 @@ wrapper_core_cox_regression_interaction_strat(
   interaction1_var,
   interaction2_var,
   covariate_vars = NULL,
+  strata_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
-  print_nevent = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -46,13 +46,13 @@ wrapper_core_cox_regression_interaction_strat(
 
 \item{interaction2_var}{Name of the second interaction variable.}
 
-\item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
+\item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model.}
+
+\item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
 \item{caption}{Caption for the table with results.}
-
-\item{print_nevent}{Logical. Whether to print numbers of events.}
 
 \item{print_pvalues}{Logical. Whether to print p-values.}
 

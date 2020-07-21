@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.3</span>
       </span>
     </div>
 
@@ -131,11 +131,11 @@
   <span class='no'>treatment_var</span>,
   <span class='no'>biomarker_vars</span>,
   <span class='kw'>adjustment_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
@@ -168,6 +168,10 @@
       <td><p>Vector of covariate names used for adjustment.</p></td>
     </tr>
     <tr>
+      <th>strata_vars</th>
+      <td><p>Vector with names of covariates that are used as strata.</p></td>
+    </tr>
+    <tr>
       <th>strat1_var</th>
       <td><p>Name of the second stratification variable.</p></td>
     </tr>
@@ -182,10 +186,6 @@
     <tr>
       <th>caption</th>
       <td><p>Caption for the table with results.</p></td>
-    </tr>
-    <tr>
-      <th>print_nevent</th>
-      <td><p>Logical. Whether to print numbers of events.</p></td>
     </tr>
     <tr>
       <th>print_pvalues</th>

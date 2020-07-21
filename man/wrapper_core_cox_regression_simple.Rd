@@ -10,10 +10,12 @@ wrapper_core_cox_regression_simple(
   tte_var,
   censor_var,
   covariate_vars,
+  strata_vars = NULL,
   return_vars = NULL,
   variable_names = NULL,
   caption = NULL,
   print_nevent = FALSE,
+  print_mst = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -23,12 +25,14 @@ wrapper_core_cox_regression_simple_strat(
   tte_var,
   censor_var,
   covariate_vars,
+  strata_vars = NULL,
   return_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_nevent = FALSE,
+  print_mst = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -40,7 +44,9 @@ wrapper_core_cox_regression_simple_strat(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
+\item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model.}
+
+\item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{return_vars}{Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.}
 
@@ -71,13 +77,24 @@ data(bdata)
 data <- bdata
 tte_var <- "PFS"
 censor_var <- "PFS_Event"
-covariate_vars <- c("Treatment_Arm", "IPI", "Cell_Of_Origin", "GeneA")
+covariate_vars <- c("Treatment_Arm", "GeneA", "IPI", "Cell_Of_Origin")
 
 x <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
 
 boutput(x)
 
 bforest(x)
+
+
+### Fit a stratified model 
+
+covariate_vars <- c("Treatment_Arm", "GeneA")
+strata_vars <- c("IPI", "Cell_Of_Origin")
+
+x <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars)
+
+boutput(x)
+
 
 
 data(bdata)

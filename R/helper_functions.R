@@ -667,6 +667,33 @@ format_vs <- function(level, reference){
 }
 
 
+
+
+
+#' Paste counts and proportions corresponding to one subgroup
+#' 
+#' @param counts Vector with counts.
+#' @param props Vector with proportions.
+#' @param digits Number of decimal places when rounding proportions.
+#' @keywords internal
+format_counts_and_props_core <- function(counts, props, digits = 2){
+  
+  
+  out <- paste0(ifelse(is.na(counts), "", counts), ifelse(is.na(props), "", paste0(" (", formatC(as.numeric(props), format = "f", digits = digits, drop0trailing = FALSE), "%)")))
+  
+  # Remove white spaces from the beginning and the end of a string
+  
+  out <- stringr::str_trim(out, side = "both")
+  
+  out
+  
+  
+  
+}
+
+
+
+
 #' Paste counts and proportions corresponding to one subgroup
 #' 
 #' @param counts Data frame with counts.
@@ -686,11 +713,7 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
   output <- lapply(1:nrow(counts), function(i){
     # i = 1
     
-    out <- paste0(ifelse(is.na(counts[i, ]), "", counts[i, ]), ifelse(is.na(props[i, ]), "", paste0(" (", formatC(as.numeric(props[i, ]), format = "f", digits = digits, drop0trailing = FALSE), "%)")))
-    
-    # Remove white spaces from the beginning and the end of a string
-    
-    out <- stringr::str_trim(out, side = "both")
+    out <- format_counts_and_props_core(counts = counts[i, ], props = props[i, ], digits = digits)
     
     return(out)
     

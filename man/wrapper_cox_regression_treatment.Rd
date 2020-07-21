@@ -11,10 +11,12 @@ wrapper_cox_regression_treatment(
   treatment_var,
   biomarker_vars,
   adjustment_vars = NULL,
+  strata_vars = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_nevent = FALSE,
+  print_mst = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -28,9 +30,11 @@ wrapper_cox_regression_treatment(
 
 \item{treatment_var}{Name of column with treatment information.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
+
+\item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 
