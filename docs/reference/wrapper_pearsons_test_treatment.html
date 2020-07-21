@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_core_pearsons_test • BiomarkerWrappers</title>
+<title>Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_pearsons_test_treatment • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_core_pearsons_test" />
-<meta property="og:description" content="Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test" />
+<meta property="og:title" content="Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_pearsons_test_treatment" />
+<meta property="og:description" content="Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test" />
 
 
 
@@ -115,36 +115,24 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</h1>
+    <h1>Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</h1>
     
-    <div class="hidden name"><code>wrapper_core_pearsons_test.Rd</code></div>
+    <div class="hidden name"><code>wrapper_pearsons_test_treatment.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</p>
+    <p>Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_core_pearsons_test</span>(
+    <pre class="usage"><span class='fu'>wrapper_pearsons_test_treatment</span>(
   <span class='no'>data</span>,
   <span class='no'>response_var</span>,
-  <span class='no'>covariate_var</span>,
+  <span class='no'>treatment_var</span>,
   <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
-)
-
-<span class='fu'>wrapper_core_pearsons_test_strat</span>(
-  <span class='no'>data</span>,
-  <span class='no'>response_var</span>,
-  <span class='no'>covariate_var</span>,
-  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>biomarker_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
@@ -161,16 +149,16 @@
       <td><p>Name of categorical variable defining successes and failures where the first level corresponds to failure and the second level corresponds to success.</p></td>
     </tr>
     <tr>
-      <th>covariate_var</th>
-      <td><p>Name of categorical variable defining subgroups.</p></td>
+      <th>treatment_var</th>
+      <td><p>Name of column with treatment information.</p></td>
     </tr>
     <tr>
       <th>strata_vars</th>
       <td><p>Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.</p></td>
     </tr>
     <tr>
-      <th>strat1_var</th>
-      <td><p>Name of the second stratification variable.</p></td>
+      <th>biomarker_vars</th>
+      <td><p>Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.</p></td>
     </tr>
     </table>
 

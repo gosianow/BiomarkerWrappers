@@ -370,6 +370,26 @@ wrapper_logistic_regression_interaction(data, response_var =  response_var, trea
 
 
 
+# Pearson's test
+
+
+```{r pearsons_test, results='asis'}
+
+
+data <- bdata
+response_var <- "ORR"
+treatment_var = "Treatment_Arm"
+
+
+wrapper_pearsons_test_treatment(data, response_var = response_var, treatment_var = treatment_var)
+
+
+
+
+```
+
+
+
 
 
 # Barplot
@@ -694,8 +714,8 @@ wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
 
 data <- bdata
 
-col_var <- "Cell_Of_Origin"
-row_var <- "IPI"
+col_var <- "ORR"
+row_var <- "Treatment_Arm"
 
 
 wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var)
@@ -704,6 +724,10 @@ wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var)
 
 
 ```
+
+
+
+
 
 
 

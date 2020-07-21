@@ -6,11 +6,6 @@
 
 
 
-# response_var = "Response_by_pCR"; covariate_vars = c("Treatment_Arm", "AKT.S473.D9E"); return_vars = NULL; variable_names = NULL; caption = NULL; print_pvalues = TRUE; print_adjpvalues = TRUE
-
-
-
-
 #' Logistic regression with simple additive model
 #' 
 #' @param data Data frame.
