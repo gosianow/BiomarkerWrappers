@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>KM plots with biomarker effect per treatment arm — wrapper_KM_plot_biomarker • BiomarkerWrappers</title>
+<title>Log-rank test testinging treatment effect within biomaker subgroups — wrapper_log_rank_test_treatment • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="KM plots with biomarker effect per treatment arm — wrapper_KM_plot_biomarker" />
-<meta property="og:description" content="KM plots with biomarker effect per treatment arm" />
+<meta property="og:title" content="Log-rank test testinging treatment effect within biomaker subgroups — wrapper_log_rank_test_treatment" />
+<meta property="og:description" content="Log-rank test testinging treatment effect within biomaker subgroups" />
 
 
 
@@ -115,43 +115,29 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>KM plots with biomarker effect per treatment arm</h1>
+    <h1>Log-rank test testinging treatment effect within biomaker subgroups</h1>
     
-    <div class="hidden name"><code>wrapper_KM_plot_biomarker.Rd</code></div>
+    <div class="hidden name"><code>wrapper_log_rank_test_treatment.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>KM plots with biomarker effect per treatment arm</p>
+    <p>Log-rank test testinging treatment effect within biomaker subgroups</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_KM_plot_biomarker</span>(
+    <pre class="usage"><span class='fu'>wrapper_log_rank_test_treatment</span>(
   <span class='no'>data</span>,
   <span class='no'>tte_var</span>,
   <span class='no'>censor_var</span>,
-  <span class='no'>biomarker_var</span>,
-  <span class='kw'>treatment_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>treatment_var</span>,
+  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>biomarker_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>colors</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat1_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>strat2_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>legend_colors_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>legend_position</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.03</span>, <span class='fl'>0.03</span>),
-  <span class='kw'>legend_justification</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-  <span class='kw'>break_time_by</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>max_tte</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>risk_table</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>conf_int</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>title_size</span> <span class='kw'>=</span> <span class='fl'>12</span>,
-  <span class='kw'>label_size</span> <span class='kw'>=</span> <span class='fl'>3</span>,
-  <span class='kw'>rel_heights</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>1</span>),
-  <span class='kw'>background_grid_major</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
-  <span class='kw'>strat_scales</span> <span class='kw'>=</span> <span class='st'>"fixed"</span>,
-  <span class='kw'>strat1_nrow</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>strat1_ncol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_ncol</span> <span class='kw'>=</span> <span class='fl'>1</span>
+  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -163,19 +149,51 @@
     </tr>
     <tr>
       <th>tte_var</th>
-      <td><p>Name of the variable containing time-to-event data.</p></td>
+      <td><p>Name of the time-to-event variable. This variable must be numeric.</p></td>
     </tr>
     <tr>
       <th>censor_var</th>
-      <td><p>Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.</p></td>
+      <td><p>Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.</p></td>
+    </tr>
+    <tr>
+      <th>treatment_var</th>
+      <td><p>Name of column with treatment information.</p></td>
+    </tr>
+    <tr>
+      <th>strata_vars</th>
+      <td><p>Vector with names of covariates that are used as strata.</p></td>
+    </tr>
+    <tr>
+      <th>biomarker_vars</th>
+      <td><p>Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.</p></td>
     </tr>
     <tr>
       <th>strat2_var</th>
       <td><p>Name of the second stratification variable.</p></td>
     </tr>
     <tr>
-      <th>colors</th>
-      <td><p>If treatment = NULL, then a vector. Otherwise, a list of length equal to tratment levels.</p></td>
+      <th>variable_names</th>
+      <td><p>Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.</p></td>
+    </tr>
+    <tr>
+      <th>caption</th>
+      <td><p>Caption for the table with results.</p></td>
+    </tr>
+    <tr>
+      <th>print_nevent</th>
+      <td><p>Logical. Whether to print numbers of events.</p></td>
+    </tr>
+    <tr>
+      <th>print_mst</th>
+      <td><p>Logical. Whether to print median survival time (MST).</p></td>
+    </tr>
+    <tr>
+      <th>print_pvalues</th>
+      <td><p>Logical. Whether to print p-values.</p></td>
+    </tr>
+    <tr>
+      <th>print_adjpvalues</th>
+      <td><p>Logical. Whether to print adjusted p-values.</p></td>
     </tr>
     </table>
 

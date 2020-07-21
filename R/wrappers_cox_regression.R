@@ -15,6 +15,7 @@
 #' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
 #' @param caption Caption for the table with results.
 #' @param print_nevent Logical. Whether to print numbers of events.
+#' @param print_mst Logical. Whether to print median survival time (MST).
 #' @param print_pvalues Logical. Whether to print p-values.
 #' @param print_adjpvalues Logical. Whether to print adjusted p-values.
 #' @details 
@@ -121,7 +122,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     
     if(covariate_class[i] %in% c("numeric", "integer")){
       
-      out <- data.frame(covariate = covariate_vars[i], subgroup = "", reference = "", reference_indx = 0, N = NA, nevent = NA, propevent = NA, MST = NA, MST_CI95_lower = NA, MST_CI95_upper = NA,
+      out <- data.frame(covariate = covariate_vars[i], subgroup = "", reference = "", reference_indx = 0, n = NA, nevent = NA, propevent = NA, MST = NA, MST_CI95_lower = NA, MST_CI95_upper = NA,
         stringsAsFactors = FALSE)
       
     }else{
@@ -147,9 +148,10 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
       tbl_event <- table(data[data[, censor_var] == 1, covariate_vars[i]])
       
       
-      out <- data.frame(covariate = covariate_vars[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), N = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(tbl_event/tbl) * 100,
+      out <- data.frame(covariate = covariate_vars[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(tbl_event/tbl) * 100,
         stringsAsFactors = FALSE)
       
+      ## Replace NaN with NA
       out$propevent[is.na(out$propevent)] <- NA
       
       out$coefficient <- paste0(out$covariate, "=", out$subgroup)
@@ -248,10 +250,10 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
     `Total Events` = as.character(res$nevent_total),
-    `N` = as.character(res$N),
+    `N` = as.character(res$n),
     `Events` = format_counts_and_props_core(counts = res$nevent, props = res$propevent, digits = 1),
-    `MST` = format_or(res$MST),
-    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper),
+    `MST` = format_or(res$MST, digits = 1),
+    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1),
     `HR` = format_or(res$HR),
     `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
@@ -375,7 +377,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   
   ### Keep non-missing data
   
-  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var, strata_vars)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -518,7 +520,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   stopifnot(length(intersect(biomarker_vars, adjustment_vars)) == 0)
   
   ### Model variables cannot include strata variables
-  stopifnot(length(intersect(c(biomarker_vars, adjustment_vars), c(strat1_var, strat2_var))) == 0)
+  stopifnot(length(intersect(c(biomarker_vars, adjustment_vars), c(strata_vars, strat1_var, strat2_var))) == 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -626,7 +628,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, adjustment_vars = NULL, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -961,7 +963,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
   coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
   colnames(coefficients) <- c("coefficient", "pvalue")
   
-  coef_info$N <- regression_summ$n
+  coef_info$n_total <- regression_summ$n
   
   coef_info <- coef_info %>% 
     dplyr::left_join(conf_int, by = "coefficient") %>% 
@@ -996,7 +998,7 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
     Effect1 = format_vs(res$subgroup1, res$reference1),
     Covariate2 = variable_names[res$covariate2], 
     Effect2 = format_vs(res$subgroup2, res$reference2),
-    `Total N` = as.character(res$N),
+    `Total N` = as.character(res$n_total),
     `HR` = format_or(res$HR),
     `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper),
     `P-value` = format_pvalues(res$pvalue),

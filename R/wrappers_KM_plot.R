@@ -121,7 +121,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   
   ### Define the model formula
-  f <- stats::as.formula(paste0("survival::Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
+  f <- stats::as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
   
   ### Fit the model
   fit <- survival::survfit(f, data)

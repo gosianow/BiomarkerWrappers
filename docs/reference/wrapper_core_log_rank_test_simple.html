@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Cox regression estimating treatment effect within biomaker subgroups — wrapper_cox_regression_treatment • BiomarkerWrappers</title>
+<title>Log-rank test — wrapper_core_log_rank_test_simple • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Cox regression estimating treatment effect within biomaker subgroups — wrapper_cox_regression_treatment" />
-<meta property="og:description" content="Cox regression estimating treatment effect within biomaker subgroups" />
+<meta property="og:title" content="Log-rank test — wrapper_core_log_rank_test_simple" />
+<meta property="og:description" content="Log-rank test" />
 
 
 
@@ -115,28 +115,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Cox regression estimating treatment effect within biomaker subgroups</h1>
+    <h1>Log-rank test</h1>
     
-    <div class="hidden name"><code>wrapper_cox_regression_treatment.Rd</code></div>
+    <div class="hidden name"><code>wrapper_core_log_rank_test_simple.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Cox regression estimating treatment effect within biomaker subgroups</p>
+    <p>Log-rank test</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_cox_regression_treatment</span>(
+    <pre class="usage"><span class='fu'>wrapper_core_log_rank_test_simple</span>(
   <span class='no'>data</span>,
   <span class='no'>tte_var</span>,
   <span class='no'>censor_var</span>,
-  <span class='no'>treatment_var</span>,
-  <span class='kw'>adjustment_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>covariate_var</span>,
   <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>biomarker_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)
+
+<span class='fu'>wrapper_core_log_rank_test_simple_strat</span>(
+  <span class='no'>data</span>,
+  <span class='no'>tte_var</span>,
+  <span class='no'>censor_var</span>,
+  <span class='no'>covariate_var</span>,
+  <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
@@ -157,24 +169,12 @@
       <td><p>Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.</p></td>
     </tr>
     <tr>
-      <th>treatment_var</th>
-      <td><p>Name of column with treatment information.</p></td>
-    </tr>
-    <tr>
-      <th>adjustment_vars</th>
-      <td><p>Vector of covariate names used for adjustment.</p></td>
+      <th>covariate_var</th>
+      <td><p>Name of covariate that defines subgroups where the survival is estimated.</p></td>
     </tr>
     <tr>
       <th>strata_vars</th>
       <td><p>Vector with names of covariates that are used as strata.</p></td>
-    </tr>
-    <tr>
-      <th>biomarker_vars</th>
-      <td><p>Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.</p></td>
-    </tr>
-    <tr>
-      <th>strat2_var</th>
-      <td><p>Name of the second stratification variable.</p></td>
     </tr>
     <tr>
       <th>variable_names</th>
@@ -197,12 +197,79 @@
       <td><p>Logical. Whether to print p-values.</p></td>
     </tr>
     <tr>
+      <th>strat1_var</th>
+      <td><p>Name of the firts stratification variable.</p></td>
+    </tr>
+    <tr>
+      <th>strat2_var</th>
+      <td><p>Name of the second stratification variable.</p></td>
+    </tr>
+    <tr>
       <th>print_adjpvalues</th>
       <td><p>Logical. Whether to print adjusted p-values.</p></td>
     </tr>
     </table>
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
+
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='no'>bdata</span>
+<span class='no'>tte_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS"</span>
+<span class='no'>censor_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS_Event"</span>
+<span class='no'>covariate_var</span> <span class='kw'>&lt;-</span> <span class='st'>"Treatment_Arm"</span>
+
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_log_rank_test_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_var</span> <span class='kw'>=</span> <span class='no'>covariate_var</span>)
+
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N      Events  MST  MST 95% CI
+#&gt; 1 Treatment Arm     CTRL     500          214 252 109 (43.3%) 83.1 (80.3 - NA)
+#&gt; 2                    TRT     500          214 248 105 (42.3%) 99.9 (88.7 - NA)
+#&gt;    P-value
+#&gt; 1 0.0806 .
+#&gt; 2         </div><div class='input'>
+
+<span class='co'>### Fit a stratified model </span>
+
+<span class='no'>strata_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>)
+
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_log_rank_test_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_var</span> <span class='kw'>=</span> <span class='no'>covariate_var</span>, <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='no'>strata_vars</span>)
+
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N     Events   MST  MST 95% CI
+#&gt; 1 Treatment Arm     CTRL     445          185 223 95 (42.6%)  83.3 (80.4 - NA)
+#&gt; 2                    TRT     445          185 222 90 (40.5%) 100.3 (89.6 - NA)
+#&gt;    P-value
+#&gt; 1 0.0167 *
+#&gt; 2         </div><div class='input'>
+
+
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
+
+<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='no'>bdata</span>
+<span class='no'>tte_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS"</span>
+<span class='no'>censor_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS_Event"</span>
+<span class='no'>covariate_var</span> <span class='kw'>&lt;-</span> <span class='st'>"Treatment_Arm"</span>
+
+<span class='no'>strat1_var</span> <span class='kw'>=</span> <span class='st'>"Cell_Of_Origin"</span>
+
+
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_log_rank_test_simple_strat</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_var</span> <span class='kw'>=</span> <span class='no'>covariate_var</span>, <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='no'>strat1_var</span>)
+
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;   Cell Of Origin     Covariate Subgroup Total N Total Events   N     Events
+#&gt; 1            GCB Treatment Arm     CTRL     252           91 135 56 (41.5%)
+#&gt; 2                                   TRT     252           91 117 35 (29.9%)
+#&gt; 3   UNCLASSIFIED Treatment Arm     CTRL      69           37  32 15 (46.9%)
+#&gt; 4                                   TRT      69           37  37 22 (59.5%)
+#&gt; 5            ABC Treatment Arm     CTRL     124           57  56 24 (42.9%)
+#&gt; 6                                   TRT     124           57  68 33 (48.5%)
+#&gt;    MST   MST 95% CI   P-value Adj. P-value
+#&gt; 1 85.6  (80.3 - NA) 0.0090 **     0.0269 *
+#&gt; 2      (100.3 - NA)                       
+#&gt; 3 83.3  (56.7 - NA)    0.6926       0.6926
+#&gt; 4 82.1  (57.6 - NA)                       
+#&gt; 5 82.6  (63.6 - NA)    0.5822       0.6926
+#&gt; 6 92.0  (71.9 - NA)                       </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -56,6 +56,8 @@ wrapper_core_cox_regression_simple_strat(
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 
+\item{print_mst}{Logical. Whether to print median survival time (MST).}
+
 \item{print_pvalues}{Logical. Whether to print p-values.}
 
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}

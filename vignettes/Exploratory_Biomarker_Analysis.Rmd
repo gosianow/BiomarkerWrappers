@@ -102,6 +102,48 @@ bdata <- cbind(bdata, data_cat2, data_cat4)
 ```
 
 
+# Log-rank test
+
+
+```{r log_rank_test, results='asis'}
+
+
+### Biomarker effect 
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
+
+strat1_var = "Treatment_Arm"
+
+
+wrapper_log_rank_test_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, strat1_var = strat1_var, print_nevent = TRUE, print_mst = TRUE)
+
+
+
+
+### Treatment effect within biomarker subgroups
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
+
+
+wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars)
+  
+
+
+
+```
+
+
+
+
 
 # Cox regression
 

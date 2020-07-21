@@ -9,9 +9,9 @@ wrapper_cox_regression_treatment(
   tte_var,
   censor_var,
   treatment_var,
-  biomarker_vars,
   adjustment_vars = NULL,
   strata_vars = NULL,
+  biomarker_vars = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -30,11 +30,11 @@ wrapper_cox_regression_treatment(
 
 \item{treatment_var}{Name of column with treatment information.}
 
-\item{biomarker_vars}{Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.}
-
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
+
+\item{biomarker_vars}{Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 
@@ -43,6 +43,8 @@ wrapper_cox_regression_treatment(
 \item{caption}{Caption for the table with results.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
+
+\item{print_mst}{Logical. Whether to print median survival time (MST).}
 
 \item{print_pvalues}{Logical. Whether to print p-values.}
 
