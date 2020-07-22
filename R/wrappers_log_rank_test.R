@@ -1,4 +1,5 @@
-
+#' @include wrappers_cox_regression.R
+NULL
 
 
 
@@ -13,6 +14,7 @@
 #' @param caption Caption for the table with results.
 #' @param print_nevent Logical. Whether to print numbers of events.
 #' @param print_mst Logical. Whether to print median survival time (MST).
+#' @param print_hr Logical. Whether to print hazard rations estimated with Cox regression.
 #' @param print_pvalues Logical. Whether to print p-values.
 #' 
 #' @examples
@@ -39,7 +41,7 @@
 #' 
 #' 
 #' @export
-wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_pvalues = TRUE){
+wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_pvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -82,54 +84,25 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
   
   
   # -----------------------------------
-  # Number of events
+  # Fit Cox regression to obtain Number of Events, MST and HR
   # -----------------------------------
   
-  ## We use this way of calculating number of events because survfit does not return results for levels with zero counts.
+  covariate_vars <- covariate_var
+  return_vars <- covariate_var
   
-  ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-  ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
-  tbl <- table(data[, covariate_var])
-  
-  ## Calculate nevent 
-  tbl_event <- table(data[data[, censor_var] == 1, covariate_var])
+  wrapper_res <- wrapper_core_cox_regression_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
   
   
-  res <- data.frame(covariate = covariate_var, subgroup = levels(data[, covariate_var]), n = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(tbl_event/tbl) * 100,
-    stringsAsFactors = FALSE)
+  res <- bresults(wrapper_res)
+  out <- boutput(wrapper_res)
   
-  ## Replace NaN with NA
-  res$propevent[is.na(res$propevent)] <- NA
-  
-  res$coefficient <- paste0(res$covariate, "=", res$subgroup)
-  
-  
-  # -----------------------------------
-  # MST
-  # -----------------------------------
-  
-  ## Use the survfit function to calculate n.start, events and median when the biomarker variable is categorical
-  ## The median and its confidence interval are defined by drawing a horizontal line at 0.5 on the plot of the survival curve and its confidence bands. The intersection of the line with the lower CI band defines the lower limit for the median's interval, and similarly for the upper band. If any of the intersections is not a point the we use the center of the intersection interval, e.g., if the survival curve were exactly equal to 0.5 over an interval. When data is uncensored this agrees with the usual definition of a median.
-  
-  f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", covariate_var))
-  
-  survfit_fit <- survival::survfit(f, data)
-  survfit_summ <- summary(survfit_fit)
-  
-  survfit_out <- as.data.frame.matrix(survfit_summ$table[, c("median", "0.95LCL", "0.95UCL")])
-  colnames(survfit_out) <- c("MST", "MST_CI95_lower", "MST_CI95_upper")
-  survfit_out$coefficient <- rownames(survfit_out)
-  
-  
-  res <- dplyr::left_join(res, survfit_out, by = "coefficient")
-  res$coefficient <- NULL
   
   
   # -----------------------------------
   # Log-rank test
   # -----------------------------------
   
-  if(sum(tbl > 0) >= 2){
+  if(sum(res$n > 0) >= 2){
     ## Create the formula
     
     formula_covariates <- paste0(covariate_var, collapse = " + ")
@@ -165,26 +138,17 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
   }
   
   
-  ### Add p-value
+  ### Add pvalue
   res$pvalue <- c(pvalue, rep(NA, nrow(res) - 1))
+  ### Remove adj_pvalue
+  res$adj_pvalue <- NULL
   
-  res$n_total <- sum(res$n)
-  res$nevent_total <- sum(res$nevent)
   
   # --------------------------------------------------------------------------
   # Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Covariate = variable_names[res$covariate], 
-    Subgroup = as.character(res$subgroup),
-    `Total N` = as.character(res$n_total),
-    `Total Events` = as.character(res$nevent_total),
-    `N` = format_difference(res$n, digits = 0),
-    `Events` = format_counts_and_props_core(counts = res$nevent, props = res$propevent, digits = 1),
-    `MST` = format_or(res$MST, digits = 1, non_empty = rep(TRUE, nrow(res))),
-    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = rep(TRUE, nrow(res))),
-    `P-value` = format_pvalues(res$pvalue),
-    check.names = FALSE, stringsAsFactors = FALSE)
+  out$`P-value` <- format_pvalues(res$pvalue)
   
   stopifnot(all(sapply(out, class) == "character"))
   
@@ -199,14 +163,16 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
     out$`MST 95% CI` <- NULL
   }
   
+  if(!print_hr){
+    out$`HR` <- NULL
+    out$`HR 95% CI` <- NULL
+  }
+  
   if(!print_pvalues){
     out$`P-value` <- NULL
   }
   
-  
-  ### Set repeating Covariate names to empty
-  out$Covariate[indicate_blocks(out, block_vars = "Covariate", return = "empty")] <- ""
-  
+
   
   # --------------------------------------------------------------------------
   ### Generate caption
@@ -215,9 +181,9 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
   
   if(is.null(caption)){
     
-    caption <- paste0("Covariate effect on ", variable_names[tte_var], ". ", 
+    caption <- paste0(variable_names[covariate_var], " effect on ", variable_names[tte_var], ". ", 
       ifelse(is.null(strata_vars), "Unstratified ", "Stratified "),
-      "log-rank test. Subgroups defined by ", paste0(variable_names[covariate_var], collapse = ", "), ".")
+      "log-rank test.")
     
     if(!is.null(strata_vars)){
       caption <- paste0(caption, 
@@ -268,7 +234,7 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
 #' boutput(x)
 #' 
 #' @export
-wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -328,7 +294,7 @@ wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, c
       }
       
       
-      wrapper_res <- wrapper_core_log_rank_test_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_core_log_rank_test_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -427,7 +393,7 @@ wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, c
 #' @inheritParams wrapper_core_log_rank_test_simple_strat
 #' @param biomarker_vars Vector of biomaker names.
 #' @export
-wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -450,7 +416,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_log_rank_test_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_log_rank_test_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -488,11 +454,11 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
     
     if(is.null(strata_vars)){
       
-      caption <- paste0(caption, "Unstratified log-rank test. Subgroups defined by the biomarker.")
+      caption <- paste0(caption, "Unstratified log-rank test.")
       
     }else{
       
-      caption <- paste0(caption, "Stratified log-rank test. Subgroups defined by the biomarker. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Stratified log-rank test. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
       
     }
     
@@ -523,7 +489,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -558,7 +524,7 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_log_rank_test_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_log_rank_test_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
@@ -630,11 +596,11 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
     
     if(is.null(strata_vars)){
       
-      caption <- paste0(caption, "Unstratified log-rank test. Subgroups defined by the treatment.")
+      caption <- paste0(caption, "Unstratified log-rank test.")
       
     }else{
       
-      caption <- paste0(caption, "Stratified log-rank test. Subgroups defined by the treatment. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Stratified log-rank test. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
       
     }
     

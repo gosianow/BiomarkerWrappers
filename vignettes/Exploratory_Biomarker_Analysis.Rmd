@@ -390,6 +390,25 @@ wrapper_pearsons_test_treatment(data, response_var = response_var, treatment_var
 
 
 
+# Cochran-Mantel-Haenszel Chi-Squared Test
+
+
+```{r mantel_test, results='asis'}
+
+
+data <- bdata
+response_var <- "ORR"
+treatment_var = "Treatment_Arm"
+strata_vars <- "IPI"
+
+wrapper_pearsons_test_treatment(data, response_var = response_var, treatment_var = treatment_var, strata_vars = strata_vars)
+
+
+
+
+```
+
+
 
 
 # Barplot

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.6</span>
       </span>
     </div>
 
@@ -134,6 +134,7 @@
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_hr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
@@ -149,6 +150,7 @@
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>print_hr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )</pre>
@@ -193,6 +195,10 @@
       <td><p>Logical. Whether to print median survival time (MST).</p></td>
     </tr>
     <tr>
+      <th>print_hr</th>
+      <td><p>Logical. Whether to print hazard rations estimated with Cox regression.</p></td>
+    </tr>
+    <tr>
       <th>print_pvalues</th>
       <td><p>Logical. Whether to print p-values.</p></td>
     </tr>
@@ -225,9 +231,9 @@
 <span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N      Events  MST  MST 95% CI
 #&gt; 1 Treatment Arm     CTRL     500          214 252 109 (43.3%) 83.1 (80.3 - NA)
 #&gt; 2                    TRT     500          214 248 105 (42.3%) 99.9 (88.7 - NA)
-#&gt;    P-value
-#&gt; 1 0.0806 .
-#&gt; 2         </div><div class='input'>
+#&gt;     HR     HR 95% CI  P-value
+#&gt; 1                    0.0806 .
+#&gt; 2 0.79 (0.60 - 1.03)         </div><div class='input'>
 
 <span class='co'>### Fit a stratified model </span>
 
@@ -238,9 +244,9 @@
 <span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N     Events   MST  MST 95% CI
 #&gt; 1 Treatment Arm     CTRL     445          185 223 95 (42.6%)  83.3 (80.4 - NA)
 #&gt; 2                    TRT     445          185 222 90 (40.5%) 100.3 (89.6 - NA)
-#&gt;    P-value
-#&gt; 1 0.0167 *
-#&gt; 2         </div><div class='input'>
+#&gt;     HR     HR 95% CI  P-value
+#&gt; 1                    0.0167 *
+#&gt; 2 0.70 (0.52 - 0.94)         </div><div class='input'>
 
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
@@ -262,13 +268,13 @@
 #&gt; 4                                   TRT      69           37  37 22 (59.5%)
 #&gt; 5            ABC Treatment Arm     CTRL     124           57  56 24 (42.9%)
 #&gt; 6                                   TRT     124           57  68 33 (48.5%)
-#&gt;    MST   MST 95% CI   P-value Adj. P-value
-#&gt; 1 85.6  (80.3 - NA) 0.0090 **     0.0269 *
-#&gt; 2   NA (100.3 - NA)                       
-#&gt; 3 83.3  (56.7 - NA)    0.6926       0.6926
-#&gt; 4 82.1  (57.6 - NA)                       
-#&gt; 5 82.6  (63.6 - NA)    0.5822       0.6926
-#&gt; 6 92.0  (71.9 - NA)                       </div><div class='input'>
+#&gt;    MST   MST 95% CI   HR     HR 95% CI   P-value Adj. P-value
+#&gt; 1 85.6  (80.3 - NA)                    0.0090 **     0.0269 *
+#&gt; 2      (100.3 - NA) 0.57 (0.37 - 0.87)                       
+#&gt; 3 83.3  (56.7 - NA)                       0.6926       0.6926
+#&gt; 4 82.1  (57.6 - NA) 1.14 (0.59 - 2.20)                       
+#&gt; 5 82.6  (63.6 - NA)                       0.5822       0.6926
+#&gt; 6 92.0  (71.9 - NA) 0.86 (0.51 - 1.46)                       </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
