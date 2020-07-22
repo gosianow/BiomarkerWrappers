@@ -86,9 +86,15 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
     }else{
       
       ### Using Cochran-Mantel-Haenszel Chi-Squared Test
-      mantelhaen_test_res <- mantelhaen.test(x = data[, response_var], y = data[, covariate_var], z = interaction(data[, strata_vars]), correct = TRUE, exact = FALSE)
+      mantelhaen_test_res <- NULL
       
-      pvalue <- mantelhaen_test_res$p.value
+      try(mantelhaen_test_res <- mantelhaen.test(x = data[, response_var], y = data[, covariate_var], z = interaction(data[, strata_vars]), correct = TRUE, exact = FALSE), silent = TRUE)
+      
+      if(is.null(mantelhaen_test_res)){
+        pvalue <- NA
+      }else{
+        pvalue <- mantelhaen_test_res$p.value
+      }
       
     }
     
@@ -103,7 +109,10 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   }
   
   
-  ### Calculate CIs for proportions of success 
+  # --------------------------------------------------------------------------
+  # Calculate CIs for proportions of success 
+  # --------------------------------------------------------------------------
+  
   
   response_CI <- lapply(1:nrow(tbl_test), function(k){
     # k = 1
@@ -149,7 +158,7 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
     `Response 95% CI` = format_CIs(res$response_CI95_lower, res$response_CI95_upper),
     Difference = format_difference(res$difference, digits = 2),
     `Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2),
-    `P-value` = format_pvalues(res$pvalue), 
+    `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
   
   

@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_functions.R
 \name{format_pvalues2}
 \alias{format_pvalues2}
-\title{Format p-values}
+\title{Format p-values using scientific format}
 \usage{
 format_pvalues2(x, digits = 4, asterisk = TRUE)
 }
@@ -14,6 +14,6 @@ format_pvalues2(x, digits = 4, asterisk = TRUE)
 \item{asterisk}{Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.}
 }
 \description{
-Format p-values
+Format p-values using scientific format
 }
 \keyword{internal}

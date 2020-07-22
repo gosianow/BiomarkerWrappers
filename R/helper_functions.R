@@ -483,22 +483,47 @@ indicate_blocks <- function(d, block_vars, return = "block"){
 #' @param x Vector of p-values to be formatted.
 #' @param digits Number of digits after decimial to display.
 #' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal 
-format_pvalues <- function(x, digits = 4, asterisk = TRUE){
+format_pvalues <- function(x, digits = 4, asterisk = TRUE, non_empty = NULL){
+  
+  
+  if(!is.null(non_empty)){
+    if(is.logical(non_empty)){
+      stopifnot(length(non_empty) == length(x))
+    }else{
+      non_empty_logical <- rep(FALSE, length(x))
+      non_empty_logical[non_empty] <- TRUE
+      non_empty <- non_empty_logical
+    }
+  }
+  
   
   # digits = 4
   # asterisk <- TRUE
   # x <- c(0.2, 0.05, 0.034534, 1.366332e-05, 1.366332e-04, NA)
   
-  if(sum(is.na(x)) == length(x)){
-    return(rep("", length(x)))
+  
+  if(sum(is.na(x)) == length(x) && is.null(non_empty)){
+    output <- rep("", length(x))
+    return(output)
+  }else if(sum(is.na(x)) == length(x) && !is.null(non_empty)){
+    output <- rep("", length(x))
+    output[non_empty] <- "NA"
+    return(output)
   }
   
   min_pval <- 1/10^digits
   
   output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[x < min_pval] <- paste0("<", formatC(min_pval, format = "f", digits = digits))
-  output[is.na(x)] <- ""
+  output[is.na(x)] <- "NA"
+  
+  if(is.null(non_empty)){
+    output[output == "NA"] <- ""
+  }else{
+    output[output == "NA" & !non_empty] <- ""
+  }
   
   
   if(asterisk){
@@ -511,20 +536,21 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE){
     
   }
   
-  
   return(output)
   
 }
 
 
 
-#' Format p-values
+#' Format p-values using scientific format
 #' 
 #' @param x Vector of p-values to be formatted.
 #' @param digits Number of digits after decimial to display.
 #' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
 #' @keywords internal 
 format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
+  
+  
   
   # digits = 4
   # asterisk <- TRUE
@@ -578,6 +604,16 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
 #' @keywords internal 
 format_or <- function(x, digits = 2, non_empty = NULL){
   
+  if(!is.null(non_empty)){
+    if(is.logical(non_empty)){
+      stopifnot(length(non_empty) == length(x))
+    }else{
+      non_empty_logical <- rep(FALSE, length(x))
+      non_empty_logical[non_empty] <- TRUE
+      non_empty <- non_empty_logical
+    }
+  }
+  
   
   if(sum(is.na(x)) == length(x) && is.null(non_empty)){
     output <- rep("", length(x))
@@ -616,6 +652,16 @@ format_or <- function(x, digits = 2, non_empty = NULL){
 format_difference <- function(x, digits = 2, non_empty = NULL){
   
   
+  if(!is.null(non_empty)){
+    if(is.logical(non_empty)){
+      stopifnot(length(non_empty) == length(x))
+    }else{
+      non_empty_logical <- rep(FALSE, length(x))
+      non_empty_logical[non_empty] <- TRUE
+      non_empty <- non_empty_logical
+    }
+  }
+  
   if(sum(is.na(x)) == length(x) && is.null(non_empty)){
     output <- rep("", length(x))
     return(output)
@@ -653,6 +699,15 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
   
   stopifnot(length(CI_lower) == length(CI_upper))
   
+  if(!is.null(non_empty)){
+    if(is.logical(non_empty)){
+      stopifnot(length(non_empty) == length(CI_lower))
+    }else{
+      non_empty_logical <- rep(FALSE, length(CI_lower))
+      non_empty_logical[non_empty] <- TRUE
+      non_empty <- non_empty_logical
+    }
+  }
   
   if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper) && is.null(non_empty)){
     output <- rep("", length(CI_lower))

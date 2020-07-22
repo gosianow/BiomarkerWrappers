@@ -4,7 +4,7 @@
 \alias{format_pvalues}
 \title{Format p-values}
 \usage{
-format_pvalues(x, digits = 4, asterisk = TRUE)
+format_pvalues(x, digits = 4, asterisk = TRUE, non_empty = NULL)
 }
 \arguments{
 \item{x}{Vector of p-values to be formatted.}
@@ -12,6 +12,8 @@ format_pvalues(x, digits = 4, asterisk = TRUE)
 \item{digits}{Number of digits after decimial to display.}
 
 \item{asterisk}{Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.}
+
+\item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }
 \description{
 Format p-values

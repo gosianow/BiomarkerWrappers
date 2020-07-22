@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.7</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@
     <p>Format p-values</p>
     </div>
 
-    <pre class="usage"><span class='fu'>format_pvalues</span>(<span class='no'>x</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>asterisk</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>format_pvalues</span>(<span class='no'>x</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>asterisk</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>non_empty</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,6 +140,10 @@
     <tr>
       <th>asterisk</th>
       <td><p>Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.</p></td>
+    </tr>
+    <tr>
+      <th>non_empty</th>
+      <td><p>Vector defining which values should be displayed despite being NAs.</p></td>
     </tr>
     </table>
 

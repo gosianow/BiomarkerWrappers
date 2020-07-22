@@ -129,9 +129,16 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
     
     
     ## Test Survival Curve Differences with Log-rank test
-    survdiff_fit <- survival::survdiff(f, data)
+    survdiff_fit <- NULL
     
-    pvalue <- pchisq(survdiff_fit$chisq, length(survdiff_fit$n) - 1, lower.tail = FALSE)
+    try(survdiff_fit <- survival::survdiff(f, data), silent = TRUE)
+    
+    if(is.null(survdiff_fit)){
+      pvalue <- NA
+    }else{
+      pvalue <- pchisq(survdiff_fit$chisq, length(survdiff_fit$n) - 1, lower.tail = FALSE)
+    }
+    
     
   }else{
     pvalue <- NA
@@ -148,7 +155,7 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
   # Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
   
-  out$`P-value` <- format_pvalues(res$pvalue)
+  out$`P-value` <- format_pvalues(res$pvalue, non_empty = 1)
   
   stopifnot(all(sapply(out, class) == "character"))
   
@@ -172,7 +179,7 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
     out$`P-value` <- NULL
   }
   
-
+  
   
   # --------------------------------------------------------------------------
   ### Generate caption

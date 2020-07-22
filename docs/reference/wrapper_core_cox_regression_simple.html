@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.7</span>
       </span>
     </div>
 
@@ -226,8 +226,7 @@
 <span class='no'>censor_var</span> <span class='kw'>&lt;-</span> <span class='st'>"PFS_Event"</span>
 <span class='no'>covariate_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span>, <span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>)
 
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)
-
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
 <span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;         Covariate          Subgroup Total N Total Events   N     Events   HR
 #&gt; 1   Treatment Arm              CTRL     391          165 200 85 (42.5%)     
 #&gt; 2                               TRT     391          165 191 80 (41.9%) 0.73
@@ -257,8 +256,7 @@
 <span class='no'>covariate_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span>)
 <span class='no'>strata_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>)
 
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='no'>strata_vars</span>)
-
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='no'>strata_vars</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
 <span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N     Events   HR     HR 95% CI
 #&gt; 1 Treatment Arm     CTRL     391          165 200 85 (42.5%)                   
 #&gt; 2                    TRT     391          165 191 80 (41.9%) 0.74 (0.54 - 1.01)
@@ -280,8 +278,7 @@
 <span class='no'>strat2_var</span> <span class='kw'>=</span> <span class='st'>"Treatment_Arm"</span>
 
 
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple_strat</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='no'>strat1_var</span>, <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='no'>strat2_var</span>)
-
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple_strat</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='no'>strat1_var</span>, <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='no'>strat2_var</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
 <span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;    Treatment Arm Cell Of Origin Covariate          Subgroup Total N
 #&gt; 1           CTRL            GCB       IPI               Low     121
 #&gt; 2                                          Low-Intermediate     121

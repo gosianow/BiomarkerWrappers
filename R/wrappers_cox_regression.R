@@ -121,7 +121,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     
     if(covariate_class[i] %in% c("numeric", "integer")){
       
-      out <- data.frame(covariate = covariate_vars[i], subgroup = "", reference = "", reference_indx = 0, n = NA, nevent = NA, propevent = NA, MST = NA, MST_CI95_lower = NA, MST_CI95_upper = NA,
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = "", reference = "", reference_indx = 0, n = NA, nevent = NA, propevent = NA, MST = NA, MST_CI95_lower = NA, MST_CI95_upper = NA, HR_non_empty = TRUE,
         stringsAsFactors = FALSE)
       
     }else{
@@ -147,8 +147,11 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
       tbl_event <- table(data[data[, censor_var] == 1, covariate_vars[i]])
       
       
-      out <- data.frame(covariate = covariate_vars[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(tbl_event/tbl) * 100,
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(tbl_event/tbl) * 100,
         stringsAsFactors = FALSE)
+      
+      out$HR_non_empty <- c(FALSE, rep(TRUE, nrow(out) - 1))
+      
       
       ## Replace NaN with NA
       out$propevent[is.na(out$propevent)] <- NA
@@ -168,7 +171,16 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
       survfit_fit <- survival::survfit(f, data)
       survfit_summ <- summary(survfit_fit)
       
-      survfit_out <- as.data.frame.matrix(survfit_summ$table[, c("median", "0.95LCL", "0.95UCL")])
+      
+      if(is.matrix(survfit_summ$table)){
+        survfit_out <- as.data.frame.matrix(survfit_summ$table[, c("median", "0.95LCL", "0.95UCL")])
+      }else{
+        survfit_out <- data.frame(MST = survfit_summ$table["median"],
+          MST_CI95_lower = survfit_summ$table["0.95LCL"],
+          MST_CI95_upper = survfit_summ$table["0.95UCL"], row.names = out$coefficient[out$n > 0])
+      }
+      
+      
       colnames(survfit_out) <- c("MST", "MST_CI95_lower", "MST_CI95_upper")
       survfit_out$coefficient <- rownames(survfit_out)
       
@@ -251,10 +263,10 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     `Total Events` = as.character(res$nevent_total),
     `N` = format_difference(res$n, digits = 0),
     `Events` = format_counts_and_props_core(counts = res$nevent, props = res$propevent, digits = 1),
-    `MST` = format_or(res$MST, digits = 1),
-    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1),
-    `HR` = format_or(res$HR),
-    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper),
+    `MST` = format_or(res$MST, digits = 1, non_empty = res$covariate_class == "factor"),
+    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = res$covariate_class == "factor"),
+    `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
+    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -686,7 +698,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     
     res[, "covariate"] <- NULL
     out[, "Covariate"] <- NULL
-
+    
     
     res <- dplyr::select(res, c(strat2_var, "biomarker", "biomarker_subgroup"), everything())
     out <- dplyr::select(out, c(variable_names[strat2_var], "Biomarker", "Biomarker Subgroup"), everything())
