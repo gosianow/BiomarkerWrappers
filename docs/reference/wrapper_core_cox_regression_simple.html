@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.5</span>
       </span>
     </div>
 
@@ -133,7 +133,7 @@
   <span class='kw'>return_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
@@ -150,7 +150,7 @@
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>print_nevent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_mst</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
@@ -192,10 +192,6 @@
       <td><p>Caption for the table with results.</p></td>
     </tr>
     <tr>
-      <th>print_nevent</th>
-      <td><p>Logical. Whether to print numbers of events.</p></td>
-    </tr>
-    <tr>
       <th>print_mst</th>
       <td><p>Logical. Whether to print median survival time (MST).</p></td>
     </tr>
@@ -232,28 +228,28 @@
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)
 
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;         Covariate          Subgroup Total N    N   HR     HR 95% CI    P-value
-#&gt; 1   Treatment Arm              CTRL     391  200                              
-#&gt; 2                               TRT     391  191 0.73 (0.53 - 0.99)   0.0444 *
-#&gt; 3           GeneA                       391 &lt;NA&gt; 1.03 (0.89 - 1.20)     0.6919
-#&gt; 4             IPI               Low     391   78                              
-#&gt; 5                  Low-Intermediate     391  144 1.17 (0.72 - 1.91)     0.5157
-#&gt; 6                 High-Intermediate     391  103 1.79 (1.10 - 2.93)   0.0202 *
-#&gt; 7                              High     391   66 2.70 (1.62 - 4.51) 0.0001 ***
-#&gt; 8  Cell Of Origin               GCB     391  218                              
-#&gt; 9                      UNCLASSIFIED     391   62 1.62 (1.07 - 2.44)   0.0214 *
-#&gt; 10                              ABC     391  111 1.23 (0.86 - 1.75)     0.2659
-#&gt;    Adj. P-value
-#&gt; 1              
-#&gt; 2      0.0777 .
-#&gt; 3        0.6919
-#&gt; 4              
-#&gt; 5        0.6017
-#&gt; 6      0.0500 *
-#&gt; 7    0.0010 ***
-#&gt; 8              
-#&gt; 9      0.0500 *
-#&gt; 10       0.3723</div><div class='input'>
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;         Covariate          Subgroup Total N Total Events   N     Events   HR
+#&gt; 1   Treatment Arm              CTRL     391          165 200 85 (42.5%)     
+#&gt; 2                               TRT     391          165 191 80 (41.9%) 0.73
+#&gt; 3           GeneA                       391          165                1.03
+#&gt; 4             IPI               Low     391          165  78 25 (32.1%)     
+#&gt; 5                  Low-Intermediate     391          165 144 51 (35.4%) 1.17
+#&gt; 6                 High-Intermediate     391          165 103 49 (47.6%) 1.79
+#&gt; 7                              High     391          165  66 40 (60.6%) 2.70
+#&gt; 8  Cell Of Origin               GCB     391          165 218 80 (36.7%)     
+#&gt; 9                      UNCLASSIFIED     391          165  62 34 (54.8%) 1.62
+#&gt; 10                              ABC     391          165 111 51 (45.9%) 1.23
+#&gt;        HR 95% CI    P-value Adj. P-value
+#&gt; 1                                       
+#&gt; 2  (0.53 - 0.99)   0.0444 *     0.0777 .
+#&gt; 3  (0.89 - 1.20)     0.6919       0.6919
+#&gt; 4                                       
+#&gt; 5  (0.72 - 1.91)     0.5157       0.6017
+#&gt; 6  (1.10 - 2.93)   0.0202 *     0.0500 *
+#&gt; 7  (1.62 - 4.51) 0.0001 ***   0.0010 ***
+#&gt; 8                                       
+#&gt; 9  (1.07 - 2.44)   0.0214 *     0.0500 *
+#&gt; 10 (0.86 - 1.75)     0.2659       0.3723</div><div class='input'>
 <span class='fu'><a href='Bclass-class.html'>bforest</a></span>(<span class='no'>x</span>)</div><div class='img'><img src='wrapper_core_cox_regression_simple-1.png' alt='' width='700' height='433' /></div><div class='input'>
 
 <span class='co'>### Fit a stratified model </span>
@@ -263,10 +259,14 @@
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='no'>strata_vars</span>)
 
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N    N   HR     HR 95% CI  P-value Adj. P-value
-#&gt; 1 Treatment Arm     CTRL     391  200                                         
-#&gt; 2                    TRT     391  191 0.74 (0.54 - 1.01) 0.0555 .       0.1110
-#&gt; 3         GeneA              391 &lt;NA&gt; 0.99 (0.85 - 1.16)   0.9334       0.9334</div><div class='input'>
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N     Events   HR     HR 95% CI
+#&gt; 1 Treatment Arm     CTRL     391          165 200 85 (42.5%)                   
+#&gt; 2                    TRT     391          165 191 80 (41.9%) 0.74 (0.54 - 1.01)
+#&gt; 3         GeneA              391          165                0.99 (0.85 - 1.16)
+#&gt;    P-value Adj. P-value
+#&gt; 1                      
+#&gt; 2 0.0555 .       0.1110
+#&gt; 3   0.9334       0.9334</div><div class='input'>
 
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
@@ -282,68 +282,68 @@
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple_strat</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='no'>strat1_var</span>, <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='no'>strat2_var</span>)
 
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;    Treatment Arm Cell Of Origin Covariate          Subgroup Total N    N    HR
-#&gt; 1           CTRL            GCB       IPI               Low     121   32      
-#&gt; 2                                          Low-Intermediate     121   44  0.97
-#&gt; 3                                         High-Intermediate     121   32  2.22
-#&gt; 4                                                      High     121   13  1.89
-#&gt; 5           CTRL            GCB     GeneA                       121 &lt;NA&gt;  0.99
-#&gt; 6           CTRL   UNCLASSIFIED       IPI               Low      28    7      
-#&gt; 7                                          Low-Intermediate      28   10  1.65
-#&gt; 8                                         High-Intermediate      28    7  1.29
-#&gt; 9                                                      High      28    4  1.74
-#&gt; 10          CTRL   UNCLASSIFIED     GeneA                        28 &lt;NA&gt;  0.93
-#&gt; 11          CTRL            ABC       IPI               Low      51    5      
-#&gt; 12                                         Low-Intermediate      51   17  0.23
-#&gt; 13                                        High-Intermediate      51   18  0.91
-#&gt; 14                                                     High      51   11  2.91
-#&gt; 15          CTRL            ABC     GeneA                        51 &lt;NA&gt;  1.68
-#&gt; 16           TRT            GCB       IPI               Low      97   23      
-#&gt; 17                                         Low-Intermediate      97   36  2.19
-#&gt; 18                                        High-Intermediate      97   20  3.06
-#&gt; 19                                                     High      97   18  6.13
-#&gt; 20           TRT            GCB     GeneA                        97 &lt;NA&gt;  1.08
-#&gt; 21           TRT   UNCLASSIFIED       IPI               Low      34    5      
-#&gt; 22                                         Low-Intermediate      34   14  3.53
-#&gt; 23                                        High-Intermediate      34   10  4.07
-#&gt; 24                                                     High      34    5 10.54
-#&gt; 25           TRT   UNCLASSIFIED     GeneA                        34 &lt;NA&gt;  1.02
-#&gt; 26           TRT            ABC       IPI               Low      60    6      
-#&gt; 27                                         Low-Intermediate      60   23  0.70
-#&gt; 28                                        High-Intermediate      60   16  0.63
-#&gt; 29                                                     High      60   15  1.03
-#&gt; 30           TRT            ABC     GeneA                        60 &lt;NA&gt;  0.81
-#&gt;          HR 95% CI   P-value Adj. P-value
-#&gt; 1                                        
-#&gt; 2    (0.45 - 2.11)    0.9439       0.9676
-#&gt; 3    (1.05 - 4.70)  0.0374 *       0.2777
-#&gt; 4    (0.74 - 4.82)    0.1860       0.5209
-#&gt; 5    (0.73 - 1.34)    0.9417       0.9676
-#&gt; 6                                        
-#&gt; 7    (0.37 - 7.43)    0.5120       0.8292
-#&gt; 8    (0.25 - 6.61)    0.7592       0.9590
-#&gt; 9   (0.28 - 10.74)    0.5528       0.8292
-#&gt; 10   (0.59 - 1.45)    0.7359       0.9590
-#&gt; 11                                       
-#&gt; 12   (0.03 - 1.53)    0.1271       0.5085
-#&gt; 13   (0.18 - 4.62)    0.9130       0.9676
-#&gt; 14  (0.59 - 14.20)    0.1874       0.5209
-#&gt; 15   (1.01 - 2.79)  0.0463 *       0.2777
-#&gt; 16                                       
-#&gt; 17   (0.59 - 8.13)    0.2396       0.5229
-#&gt; 18  (0.79 - 11.86)    0.1065       0.5085
-#&gt; 19  (1.70 - 22.09) 0.0055 **       0.1328
-#&gt; 20   (0.71 - 1.64)    0.7348       0.9590
-#&gt; 21                                       
-#&gt; 22  (0.44 - 28.27)    0.2346       0.5229
-#&gt; 23  (0.49 - 34.00)    0.1954       0.5209
-#&gt; 24 (1.07 - 103.38)  0.0433 *       0.2777
-#&gt; 25   (0.67 - 1.54)    0.9268       0.9676
-#&gt; 26                                       
-#&gt; 27   (0.22 - 2.20)    0.5411       0.8292
-#&gt; 28   (0.18 - 2.15)    0.4583       0.8292
-#&gt; 29   (0.31 - 3.42)    0.9676       0.9676
-#&gt; 30   (0.53 - 1.25)    0.3499       0.6999</div><div class='input'>
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;    Treatment Arm Cell Of Origin Covariate          Subgroup Total N
+#&gt; 1           CTRL            GCB       IPI               Low     121
+#&gt; 2                                          Low-Intermediate     121
+#&gt; 3                                         High-Intermediate     121
+#&gt; 4                                                      High     121
+#&gt; 5           CTRL            GCB     GeneA                       121
+#&gt; 6           CTRL   UNCLASSIFIED       IPI               Low      28
+#&gt; 7                                          Low-Intermediate      28
+#&gt; 8                                         High-Intermediate      28
+#&gt; 9                                                      High      28
+#&gt; 10          CTRL   UNCLASSIFIED     GeneA                        28
+#&gt; 11          CTRL            ABC       IPI               Low      51
+#&gt; 12                                         Low-Intermediate      51
+#&gt; 13                                        High-Intermediate      51
+#&gt; 14                                                     High      51
+#&gt; 15          CTRL            ABC     GeneA                        51
+#&gt; 16           TRT            GCB       IPI               Low      97
+#&gt; 17                                         Low-Intermediate      97
+#&gt; 18                                        High-Intermediate      97
+#&gt; 19                                                     High      97
+#&gt; 20           TRT            GCB     GeneA                        97
+#&gt; 21           TRT   UNCLASSIFIED       IPI               Low      34
+#&gt; 22                                         Low-Intermediate      34
+#&gt; 23                                        High-Intermediate      34
+#&gt; 24                                                     High      34
+#&gt; 25           TRT   UNCLASSIFIED     GeneA                        34
+#&gt; 26           TRT            ABC       IPI               Low      60
+#&gt; 27                                         Low-Intermediate      60
+#&gt; 28                                        High-Intermediate      60
+#&gt; 29                                                     High      60
+#&gt; 30           TRT            ABC     GeneA                        60
+#&gt;    Total Events  N     Events    HR       HR 95% CI   P-value Adj. P-value
+#&gt; 1            50 32 12 (37.5%)                                             
+#&gt; 2            50 44 14 (31.8%)  0.97   (0.45 - 2.11)    0.9439       0.9676
+#&gt; 3            50 32 17 (53.1%)  2.22   (1.05 - 4.70)  0.0374 *       0.2777
+#&gt; 4            50 13  7 (53.8%)  1.89   (0.74 - 4.82)    0.1860       0.5209
+#&gt; 5            50                0.99   (0.73 - 1.34)    0.9417       0.9676
+#&gt; 6            14  7  3 (42.9%)                                             
+#&gt; 7            14 10  6 (60.0%)  1.65   (0.37 - 7.43)    0.5120       0.8292
+#&gt; 8            14  7  3 (42.9%)  1.29   (0.25 - 6.61)    0.7592       0.9590
+#&gt; 9            14  4  2 (50.0%)  1.74  (0.28 - 10.74)    0.5528       0.8292
+#&gt; 10           14                0.93   (0.59 - 1.45)    0.7359       0.9590
+#&gt; 11           21  5  2 (40.0%)                                             
+#&gt; 12           21 17  3 (17.6%)  0.23   (0.03 - 1.53)    0.1271       0.5085
+#&gt; 13           21 18  9 (50.0%)  0.91   (0.18 - 4.62)    0.9130       0.9676
+#&gt; 14           21 11  7 (63.6%)  2.91  (0.59 - 14.20)    0.1874       0.5209
+#&gt; 15           21                1.68   (1.01 - 2.79)  0.0463 *       0.2777
+#&gt; 16           30 23  3 (13.0%)                                             
+#&gt; 17           30 36  9 (25.0%)  2.19   (0.59 - 8.13)    0.2396       0.5229
+#&gt; 18           30 20  7 (35.0%)  3.06  (0.79 - 11.86)    0.1065       0.5085
+#&gt; 19           30 18 11 (61.1%)  6.13  (1.70 - 22.09) 0.0055 **       0.1328
+#&gt; 20           30                1.08   (0.71 - 1.64)    0.7348       0.9590
+#&gt; 21           20  5  1 (20.0%)                                             
+#&gt; 22           20 14  8 (57.1%)  3.53  (0.44 - 28.27)    0.2346       0.5229
+#&gt; 23           20 10  6 (60.0%)  4.07  (0.49 - 34.00)    0.1954       0.5209
+#&gt; 24           20  5 5 (100.0%) 10.54 (1.07 - 103.38)  0.0433 *       0.2777
+#&gt; 25           20                1.02   (0.67 - 1.54)    0.9268       0.9676
+#&gt; 26           30  6  4 (66.7%)                                             
+#&gt; 27           30 23 11 (47.8%)  0.70   (0.22 - 2.20)    0.5411       0.8292
+#&gt; 28           30 16  7 (43.8%)  0.63   (0.18 - 2.15)    0.4583       0.8292
+#&gt; 29           30 15  8 (53.3%)  1.03   (0.31 - 3.42)    0.9676       0.9676
+#&gt; 30           30                0.81   (0.53 - 1.25)    0.3499       0.6999</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

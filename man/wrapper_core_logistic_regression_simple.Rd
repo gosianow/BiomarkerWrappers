@@ -12,6 +12,7 @@ wrapper_core_logistic_regression_simple(
   return_vars = NULL,
   variable_names = NULL,
   caption = NULL,
+  force_empty_cols = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -25,6 +26,7 @@ wrapper_core_logistic_regression_simple_strat(
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
+  force_empty_cols = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -44,5 +46,5 @@ wrapper_core_logistic_regression_simple_strat(
 Logistic regression with simple additive model
 }
 \details{
-If for a factor covariate that should be returned the reference level has zero count, results are set to NA becasue this levels is not used as a reference which means that it is not possible to fit a model that we want.
+If for a factor covariate that should be returned the reference level has zero counts, results are set to NA becasue this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 }

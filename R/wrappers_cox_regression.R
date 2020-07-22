@@ -14,7 +14,6 @@
 #' @param return_vars Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.
 #' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
 #' @param caption Caption for the table with results.
-#' @param print_nevent Logical. Whether to print numbers of events.
 #' @param print_mst Logical. Whether to print median survival time (MST).
 #' @param print_pvalues Logical. Whether to print p-values.
 #' @param print_adjpvalues Logical. Whether to print adjusted p-values.
@@ -47,7 +46,7 @@
 #' 
 #' 
 #' @export
-wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -113,8 +112,8 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   
   # --------------------------------------------------------------------------
-  ### Parce the regression summary
-  ## Generate data frame with coefficient names and levels and information about reference groups
+  # Parce the regression summary
+  # Generate data frame with coefficient names and levels and information about reference groups
   # --------------------------------------------------------------------------
   
   coef_info <- lapply(1:length(covariate_vars), function(i){
@@ -232,7 +231,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     res <- coef_info[coef_info$covariate %in% return_vars, , drop = FALSE]
     
     ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA becasue this level is not used as a reference in the fitted model.
-    if(any(res$reference_indx > 1)){
+    if(all(res$reference_indx > 1)){
       
       res[, colnames(res) %in% c("HR", "HR_CI95_lower", "HR_CI95_upper", "pvalue", "adj_pvalue")] <- NA
       
@@ -250,7 +249,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
     `Total Events` = as.character(res$nevent_total),
-    `N` = as.character(res$n),
+    `N` = format_difference(res$n, digits = 0),
     `Events` = format_counts_and_props_core(counts = res$nevent, props = res$propevent, digits = 1),
     `MST` = format_or(res$MST, digits = 1),
     `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1),
@@ -263,12 +262,14 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   stopifnot(all(sapply(out, class) == "character"))
   
   
-  if(!print_nevent){
-    out$`Total Events` <- NULL
+  ### When all covariates are numerical, some outputs are empty, and we remove them
+  if(all(out$Subgroup == "") && !force_empty_cols){
+    out$Subgroup <- NULL
+    out$N <- NULL
     out$`Events` <- NULL
   }
   
-  if(!print_mst){
+  if(!print_mst && !force_empty_cols){
     out$`MST` <- NULL
     out$`MST 95% CI` <- NULL
   }
@@ -347,7 +348,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 #' boutput(x)
 #' 
 #' @export
-wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -407,7 +408,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
       }
       
       
-      wrapper_res <- wrapper_core_cox_regression_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_core_cox_regression_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       
@@ -508,7 +509,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -536,7 +537,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -559,12 +560,10 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   }
   
   
-  ### Replace NAs with "" for columns that are missing for numerical biomarkers
-  missing_columns <- c("Subgroup", "N")
-  
-  for(i in 1:length(missing_columns)){
-    if(missing_columns[i] %in% colnames(out)){
-      out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
+  ### When all covariates are numerical, some outputs are empty, and we remove them
+  for(i in seq_len(ncol(out))){
+    if(all(out[, i] %in% "")){
+      out[, i] <- NULL
     }
   }
   
@@ -628,7 +627,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, adjustment_vars = NULL, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, adjustment_vars = NULL, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -667,7 +666,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = print_mst, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.5</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@
     <p>Format CIs (confidence intervals)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>format_CIs</span>(<span class='no'>CI_lower</span>, <span class='no'>CI_upper</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>format_CIs</span>(<span class='no'>CI_lower</span>, <span class='no'>CI_upper</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>non_empty</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -136,6 +136,14 @@
     <tr>
       <th>CI_upper</th>
       <td><p>Vector with upper CIs.</p></td>
+    </tr>
+    <tr>
+      <th>digits</th>
+      <td><p>Number of decimal places.</p></td>
+    </tr>
+    <tr>
+      <th>non_empty</th>
+      <td><p>Vector defining which values should be displayed despite being NAs.</p></td>
     </tr>
     </table>
 

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.5</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2020-07-21</h4>
+            <h4 class="date">2020-07-22</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -215,6 +215,7 @@ low
 41 (39.4%)
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
+NA
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 (76.9 - NA)
@@ -412,6 +413,7 @@ low
 38 (36.5%)
 </td>
 <td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 (91.0 - NA)
@@ -531,6 +533,7 @@ CTRL
 41 (39.4%)
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
+NA
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 (76.9 - NA)
@@ -695,6 +698,7 @@ TRT
 38 (36.5%)
 </td>
 <td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 (91.0 - NA)
@@ -789,8 +793,7 @@ TRT
 
 
 <span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="no">data</span>, <span class="kw">tte_var</span> <span class="kw">=</span> <span class="no">tte_var</span>, <span class="kw">censor_var</span> <span class="kw">=</span> <span class="no">censor_var</span>,
-    <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>,
-    <span class="kw">print_nevent</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">print_mst</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+    <span class="kw">biomarker_vars</span> <span class="kw">=</span> <span class="no">biomarker_vars</span>, <span class="kw">adjustment_vars</span> <span class="kw">=</span> <span class="no">adjustment_vars</span>, <span class="kw">strat1_var</span> <span class="kw">=</span> <span class="no">strat1_var</span>)</pre></body></html></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Biomarker effect on PFS. Adjusted, unstratified analysis. Cox regression model includes the biomarker and IPI.
@@ -1093,7 +1096,19 @@ Treatment Subgroup
 Total N
 </th>
 <th style="text-align:left;">
+Total Events
+</th>
+<th style="text-align:left;">
 N
+</th>
+<th style="text-align:left;">
+Events
+</th>
+<th style="text-align:left;">
+MST
+</th>
+<th style="text-align:left;">
+MST 95% CI
 </th>
 <th style="text-align:left;">
 HR
@@ -1123,7 +1138,18 @@ CTRL
 200
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
+81
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
 104
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+41 (39.4%)
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+(76.9 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 </td>
@@ -1146,7 +1172,19 @@ TRT
 200
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
+81
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
 96
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+40 (41.7%)
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+99.9
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+(87.1 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.83
@@ -1175,7 +1213,19 @@ CTRL
 200
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
+87
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
 100
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+44 (44.0%)
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+83.1
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+(82.1 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 </td>
@@ -1198,7 +1248,19 @@ TRT
 200
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
+87
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
 100
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+43 (43.0%)
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+100.3
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+(82.2 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.75
@@ -1227,7 +1289,19 @@ CTRL
 200
 </td>
 <td style="text-align:left;">
+73
+</td>
+<td style="text-align:left;">
 96
+</td>
+<td style="text-align:left;">
+35 (36.5%)
+</td>
+<td style="text-align:left;">
+98.3
+</td>
+<td style="text-align:left;">
+(82.6 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;">
 </td>
@@ -1250,7 +1324,18 @@ TRT
 200
 </td>
 <td style="text-align:left;">
+73
+</td>
+<td style="text-align:left;">
 104
+</td>
+<td style="text-align:left;">
+38 (36.5%)
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+(91.0 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.92
@@ -1279,7 +1364,19 @@ CTRL
 200
 </td>
 <td style="text-align:left;">
+95
+</td>
+<td style="text-align:left;">
 108
+</td>
+<td style="text-align:left;">
+50 (46.3%)
+</td>
+<td style="text-align:left;">
+80.4
+</td>
+<td style="text-align:left;">
+(65.7 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;">
 </td>
@@ -1302,7 +1399,19 @@ TRT
 200
 </td>
 <td style="text-align:left;">
+95
+</td>
+<td style="text-align:left;">
 92
+</td>
+<td style="text-align:left;">
+45 (48.9%)
+</td>
+<td style="text-align:left;">
+87.5
+</td>
+<td style="text-align:left;">
+(82.1 - NA)
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.63
@@ -1506,22 +1615,22 @@ Treatment Arm
 Biomarker
 </th>
 <th style="text-align:left;">
-Effect
+Subgroup
 </th>
 <th style="text-align:left;">
-Total n
+Total N
 </th>
 <th style="text-align:left;">
-Subgroup n
+N
 </th>
 <th style="text-align:left;">
-Response n (%)
+Response
 </th>
 <th style="text-align:left;">
 OR
 </th>
 <th style="text-align:left;">
-95% CI
+OR 95% CI
 </th>
 <th style="text-align:left;">
 P-value
@@ -1539,16 +1648,42 @@ CTRL
 GeneA cat2
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-high vs low
+low
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 204
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100 vs 104
+104
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-83 (83.0%) vs 90 (86.5%)
+90 (86.5%)
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+high
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+204
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+100
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+83 (83.0%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.83
@@ -1571,16 +1706,42 @@ TRT
 GeneA cat2
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-high vs low
+low
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 196
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100 vs 96
+96
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-85 (85.0%) vs 78 (81.2%)
+78 (81.2%)
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+high
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+196
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+100
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+85 (85.0%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 1.32
@@ -1610,7 +1771,6 @@ GeneA
 <td style="text-align:left;">
 </td>
 <td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.86
@@ -1640,7 +1800,6 @@ GeneA
 <td style="text-align:left;">
 </td>
 <td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;font-weight: bold;">
 1.21
@@ -1681,22 +1840,22 @@ Biomarker
 Biomarker Subgroup
 </th>
 <th style="text-align:left;">
-Treatment Effect
+Treatment Subgroup
 </th>
 <th style="text-align:left;">
-Total n
+Total N
 </th>
 <th style="text-align:left;">
-Subgroup n
+N
 </th>
 <th style="text-align:left;">
-Response n (%)
+Response
 </th>
 <th style="text-align:left;">
 OR
 </th>
 <th style="text-align:left;">
-95% CI
+OR 95% CI
 </th>
 <th style="text-align:left;">
 P-value
@@ -1714,16 +1873,42 @@ GeneA cat2
 low
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT vs CTRL
+CTRL
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 200
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-96 vs 104
+104
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-78 (81.2%) vs 90 (86.5%)
+90 (86.5%)
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+TRT
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+200
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+96
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+78 (81.2%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 0.67
@@ -1746,16 +1931,42 @@ GeneA cat2
 high
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-TRT vs CTRL
+CTRL
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 200
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100 vs 100
+100
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-85 (85.0%) vs 83 (83.0%)
+83 (83.0%)
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+TRT
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+200
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+100
+</td>
+<td style="text-align:left;background-color: #F2F4F4 !important;">
+85 (85.0%)
 </td>
 <td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
 1.27
@@ -1778,16 +1989,42 @@ GeneB cat2
 low
 </td>
 <td style="text-align:left;">
-TRT vs CTRL
+CTRL
 </td>
 <td style="text-align:left;">
 200
 </td>
 <td style="text-align:left;">
-104 vs 96
+96
 </td>
 <td style="text-align:left;">
-89 (85.6%) vs 88 (91.7%)
+88 (91.7%)
+</td>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;font-weight: bold;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+TRT
+</td>
+<td style="text-align:left;">
+200
+</td>
+<td style="text-align:left;">
+104
+</td>
+<td style="text-align:left;">
+89 (85.6%)
 </td>
 <td style="text-align:left;font-weight: bold;">
 0.57
@@ -1810,16 +2047,42 @@ GeneB cat2
 high
 </td>
 <td style="text-align:left;">
-TRT vs CTRL
+CTRL
 </td>
 <td style="text-align:left;">
 200
 </td>
 <td style="text-align:left;">
-92 vs 108
+108
 </td>
 <td style="text-align:left;">
-74 (80.4%) vs 85 (78.7%)
+85 (78.7%)
+</td>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;font-weight: bold;">
+</td>
+<td style="text-align:left;font-weight: bold;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+TRT
+</td>
+<td style="text-align:left;">
+200
+</td>
+<td style="text-align:left;">
+92
+</td>
+<td style="text-align:left;">
+74 (80.4%)
 </td>
 <td style="text-align:left;font-weight: bold;">
 1.17
@@ -3186,7 +3449,7 @@ High
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] BiomarkerWrappers_0.0.0.4 kableExtra_1.1.0         
+## [1] BiomarkerWrappers_0.0.0.5 kableExtra_1.1.0         
 ## [3] rmarkdown_2.0             knitr_1.26               
 ## 
 ## loaded via a namespace (and not attached):

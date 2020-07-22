@@ -4,12 +4,14 @@
 \alias{format_difference}
 \title{Format difference}
 \usage{
-format_difference(x, digits = 2)
+format_difference(x, digits = 2, non_empty = NULL)
 }
 \arguments{
 \item{x}{Vector with differences.}
 
 \item{digits}{Number of decimal places.}
+
+\item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }
 \description{
 Format difference

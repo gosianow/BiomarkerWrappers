@@ -574,18 +574,32 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
 #' 
 #' @param x Vector with odds ratios.
 #' @param digits Number of decimal places.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal 
-format_or <- function(x, digits = 2){
+format_or <- function(x, digits = 2, non_empty = NULL){
   
-  if(sum(is.na(x)) == length(x)){
-    return(rep("", length(x)))
+  
+  if(sum(is.na(x)) == length(x) && is.null(non_empty)){
+    output <- rep("", length(x))
+    return(output)
+  }else if(sum(is.na(x)) == length(x) && !is.null(non_empty)){
+    output <- rep("", length(x))
+    output[non_empty] <- "NA"
+    return(output)
   }
   
   min_val <- 1/10^digits
   
   output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[x < min_val] <- paste0("<", formatC(min_val, format = "f", digits = digits))
-  output[is.na(x)] <- ""
+  output[is.na(x)] <- "NA"
+  
+  if(is.null(non_empty)){
+    output[output == "NA"] <- ""
+  }else{
+    output[output == "NA" & !non_empty] <- ""
+  }
+  
   
   return(output)
   
@@ -597,15 +611,30 @@ format_or <- function(x, digits = 2){
 #' 
 #' @param x Vector with differences.
 #' @param digits Number of decimal places.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_difference <- function(x, digits = 2){
+format_difference <- function(x, digits = 2, non_empty = NULL){
   
-  if(sum(is.na(x)) == length(x)){
-    return(rep("", length(x)))
+  
+  if(sum(is.na(x)) == length(x) && is.null(non_empty)){
+    output <- rep("", length(x))
+    return(output)
+  }else if(sum(is.na(x)) == length(x) && !is.null(non_empty)){
+    output <- rep("", length(x))
+    output[non_empty] <- "NA"
+    return(output)
   }
   
+  min_val <- 1/10^digits
+  
   output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
-  output[is.na(x)] <- ""
+  output[is.na(x)] <- "NA"
+  
+  if(is.null(non_empty)){
+    output[output == "NA"] <- ""
+  }else{
+    output[output == "NA" & !non_empty] <- ""
+  }
   
   return(output)
   
@@ -617,19 +646,32 @@ format_difference <- function(x, digits = 2){
 #' 
 #' @param CI_lower Vector with lower CIs.
 #' @param CI_upper Vector with upper CIs.
+#' @param digits Number of decimal places.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs <- function(CI_lower, CI_upper, digits = 2){
+format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
   
   stopifnot(length(CI_lower) == length(CI_upper))
   
   
-  if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper)){
-    return(rep("", length(CI_lower)))
+  if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper) && is.null(non_empty)){
+    output <- rep("", length(CI_lower))
+    return(output)
+  }else if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper) && !is.null(non_empty)){
+    output <- rep("", length(CI_lower))
+    output[non_empty] <- "NA"
+    return(output)
   }
   
   output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
   
-  output[is.na(CI_lower) & is.na(CI_upper)] <- ""
+  output[is.na(CI_lower) & is.na(CI_upper)] <- "NA"
+  
+  if(is.null(non_empty)){
+    output[output == "NA"] <- ""
+  }else{
+    output[output == "NA" & !non_empty] <- ""
+  }
   
   return(output)
   
@@ -639,11 +681,14 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2){
 #' Format CIs (confidence intervals)
 #' 
 #' @param x Data frame.
+#' @param digits Number of decimal places.
+#' @param colnames New colnames.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs.data.frame <- function(x, digits = 2, colname = NULL){
+format_CIs.data.frame <- function(x, digits = 2, colnames = NULL, non_empty = NULL){
   
-  output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits), stringsAsFactors = FALSE)
-  colnames(output) <- colname
+  output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty), stringsAsFactors = FALSE)
+  colnames(output) <- colnames
   
   return(output)
   
@@ -661,6 +706,8 @@ format_vs <- function(level, reference){
   
   output[level == "" & reference == ""] <- ""
   output[level == 0 & reference == 0] <- ""
+  output[is.na(level) & is.na(reference)] <- ""
+  
   
   return(output)
   

@@ -4,12 +4,16 @@
 \alias{format_CIs}
 \title{Format CIs (confidence intervals)}
 \usage{
-format_CIs(CI_lower, CI_upper, digits = 2)
+format_CIs(CI_lower, CI_upper, digits = 2, non_empty = NULL)
 }
 \arguments{
 \item{CI_lower}{Vector with lower CIs.}
 
 \item{CI_upper}{Vector with upper CIs.}
+
+\item{digits}{Number of decimal places.}
+
+\item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }
 \description{
 Format CIs (confidence intervals)

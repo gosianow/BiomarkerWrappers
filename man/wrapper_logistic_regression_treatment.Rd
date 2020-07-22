@@ -8,8 +8,8 @@ wrapper_logistic_regression_treatment(
   data,
   response_var,
   treatment_var,
-  biomarker_vars,
   adjustment_vars = NULL,
+  biomarker_vars = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -24,9 +24,9 @@ wrapper_logistic_regression_treatment(
 
 \item{treatment_var}{Name of column with treatment information.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
-
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
+
+\item{biomarker_vars}{Vector of biomaker names.}
 }
 \description{
 Logistic regression estimating treatment effect within biomaker subgroups

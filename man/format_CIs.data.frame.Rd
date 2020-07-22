@@ -4,10 +4,16 @@
 \alias{format_CIs.data.frame}
 \title{Format CIs (confidence intervals)}
 \usage{
-format_CIs.data.frame(x, digits = 2, colname = NULL)
+format_CIs.data.frame(x, digits = 2, colnames = NULL, non_empty = NULL)
 }
 \arguments{
 \item{x}{Data frame.}
+
+\item{digits}{Number of decimal places.}
+
+\item{colnames}{New colnames.}
+
+\item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }
 \description{
 Format CIs (confidence intervals)

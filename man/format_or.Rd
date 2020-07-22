@@ -4,12 +4,14 @@
 \alias{format_or}
 \title{Format Odds Ratios}
 \usage{
-format_or(x, digits = 2)
+format_or(x, digits = 2, non_empty = NULL)
 }
 \arguments{
 \item{x}{Vector with odds ratios.}
 
 \item{digits}{Number of decimal places.}
+
+\item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }
 \description{
 Format Odds Ratios

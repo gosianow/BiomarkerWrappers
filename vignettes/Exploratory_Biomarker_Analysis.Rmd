@@ -163,7 +163,7 @@ adjustment_vars <- "IPI"
 strat1_var = "Treatment_Arm"
 
 
-wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, print_nevent = TRUE, print_mst = TRUE)
+wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
 
 
 

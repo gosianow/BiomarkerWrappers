@@ -179,10 +179,10 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
     `Total Events` = as.character(res$nevent_total),
-    `N` = as.character(res$n),
+    `N` = format_difference(res$n, digits = 0),
     `Events` = format_counts_and_props_core(counts = res$nevent, props = res$propevent, digits = 1),
-    `MST` = format_or(res$MST, digits = 1),
-    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1),
+    `MST` = format_or(res$MST, digits = 1, non_empty = rep(TRUE, nrow(res))),
+    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = rep(TRUE, nrow(res))),
     `P-value` = format_pvalues(res$pvalue),
     check.names = FALSE, stringsAsFactors = FALSE)
   
