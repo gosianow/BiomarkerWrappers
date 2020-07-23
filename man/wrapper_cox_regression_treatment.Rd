@@ -15,7 +15,7 @@ wrapper_cox_regression_treatment(
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
-  print_mst = FALSE,
+  print_mst = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )

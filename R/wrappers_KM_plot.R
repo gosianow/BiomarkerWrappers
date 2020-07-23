@@ -44,6 +44,8 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
   
+  stopifnot(nrow(data) > 0)
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
 
   

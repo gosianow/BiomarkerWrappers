@@ -15,7 +15,7 @@ wrapper_core_cox_regression_simple(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
-  print_mst = FALSE,
+  print_mst = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -32,7 +32,7 @@ wrapper_core_cox_regression_simple_strat(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
-  print_mst = FALSE,
+  print_mst = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )

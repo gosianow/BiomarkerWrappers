@@ -41,6 +41,8 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   
   data <- data[stats::complete.cases(data[, c(response_var, covariate_var, strata_vars)]), ]
   
+  stopifnot(nrow(data) > 0)
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
@@ -156,8 +158,8 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
     `N` = as.character(res$n),
     Response = format_counts_and_props_core(counts = res$nresponse, props = res$propresponse),
     `Response 95% CI` = format_CIs(res$response_CI95_lower, res$response_CI95_upper),
-    Difference = format_difference(res$difference, digits = 2),
-    `Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2),
+    Difference = format_difference(res$difference, digits = 2, non_empty = 1),
+    `Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2, non_empty = 1),
     `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
   
@@ -171,7 +173,7 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   
   
   ### If all Difference are empty, do not display that column.
-  if(all(out$Difference == "") && !force_empty_cols){
+  if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
     out$Difference <- NULL
     out$`Difference 95% CI` <- NULL
   }
@@ -442,11 +444,11 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
     
     if(is.null(strata_vars)){
       
-      caption <- paste0(caption, "Unstratified Pearson's Chi-squared test. Subgroups defined by the biomarker.")
+      caption <- paste0(caption, "Unstratified Pearson's Chi-squared test.")
       
     }else{
       
-      caption <- paste0(caption, "Stratified Cochran-Mantel-Haenszel Chi-squared test. Subgroups defined by the biomarker. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Stratified Cochran-Mantel-Haenszel Chi-squared test. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
       
     }
     
@@ -590,11 +592,11 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
     
     if(is.null(strata_vars)){
       
-      caption <- paste0(caption, "Unstratified Pearson's Chi-squared test. Subgroups defined by the treatment.")
+      caption <- paste0(caption, "Unstratified Pearson's Chi-squared test.")
       
     }else{
       
-      caption <- paste0(caption, "Stratified Cochran-Mantel-Haenszel Chi-squared test. Subgroups defined by the treatment. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Stratified Cochran-Mantel-Haenszel Chi-squared test. Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
       
     }
     

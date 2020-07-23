@@ -73,6 +73,7 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var, strata_vars)]), ]
   
+  stopifnot(nrow(data) > 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

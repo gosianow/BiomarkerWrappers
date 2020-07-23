@@ -46,7 +46,7 @@
 #' 
 #' 
 #' @export
-wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -78,41 +78,12 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strata_vars)]), ]
   
+  stopifnot(nrow(data) > 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
-  
   # --------------------------------------------------------------------------
-  # Cox regression
-  # --------------------------------------------------------------------------
-  
-  ## Create the formula
-  
-  formula_covariates <- paste0(covariate_vars, collapse = " + ")
-  
-  if(!is.null(strata_vars)){
-    formula_strata <- paste0("strata(", paste0(strata_vars, collapse = ", "), ")")
-    formula_model <- paste0(formula_covariates, " + ", formula_strata)
-  }else{
-    formula_model <- formula_covariates
-  }
-  
-  
-  f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
-  
-  
-  ## Fit the Cox model
-  regression_fit <- survival::coxph(f, data)
-  regression_summ <- summary(regression_fit)
-  
-  
-  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-  # h(mm)
-  
-  
-  # --------------------------------------------------------------------------
-  # Parce the regression summary
   # Generate data frame with coefficient names and levels and information about reference groups
   # --------------------------------------------------------------------------
   
@@ -198,23 +169,74 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   
   coef_info <- plyr::rbind.fill(coef_info)
   
+  
+  coef_info$n_total <- nrow(data)
+  coef_info$nevent_total <- sum(data[, censor_var])
+  
   coef_info$coefficient <- paste0(coef_info$covariate, coef_info$subgroup)
   
   rownames(coef_info) <- coef_info$coefficient
   
   
   # --------------------------------------------------------------------------
-  ## Append results from regression
+  # Cox regression
   # --------------------------------------------------------------------------
   
-  conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
+  ## Create the formula
   
-  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(coefficients) <- c("coefficient", "pvalue")
+  formula_covariates <- paste0(covariate_vars, collapse = " + ")
   
-  coef_info$n_total <- regression_summ$n
-  coef_info$nevent_total <- regression_summ$nevent
+  if(!is.null(strata_vars)){
+    formula_strata <- paste0("strata(", paste0(strata_vars, collapse = ", "), ")")
+    formula_model <- paste0(formula_covariates, " + ", formula_strata)
+  }else{
+    formula_model <- formula_covariates
+  }
+  
+  
+  f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
+  
+  
+  ## Fit the Cox model
+  regression_fit <- NULL
+  
+  try(regression_fit <- survival::coxph(f, data), silent = TRUE)
+  
+  if(is.null(regression_fit)){
+    regression_summ <- NULL
+  }else{
+    regression_summ <- summary(regression_fit)
+  }
+  
+  
+  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
+  # h(mm)
+  
+  
+  # --------------------------------------------------------------------------
+  # Parce the regression summary
+  # --------------------------------------------------------------------------
+  
+  
+  if(is.null(regression_summ)){
+    
+    conf_int <- data.frame(coefficient = coef_info$coefficient, HR = NA, HR_CI95_lower = NA, HR_CI95_upper = NA, stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = coef_info$coefficient, pvalue = NA, stringsAsFactors = FALSE)
+    
+  }else{
+    
+    conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
+    colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
+    
+    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+    colnames(coefficients) <- c("coefficient", "pvalue")
+    
+  }
+  
+  
+  # --------------------------------------------------------------------------
+  # Append results from regression
+  # --------------------------------------------------------------------------
   
   
   coef_info <- coef_info %>% 
@@ -257,6 +279,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
   # Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
   
+  
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
@@ -267,8 +290,8 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = res$covariate_class == "factor"),
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
     `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
-    `P-value` = format_pvalues(res$pvalue),
-    `Adj. P-value` = format_pvalues(res$adj_pvalue),
+    `P-value` = format_pvalues(res$pvalue, non_empty = res$HR_non_empty),
+    `Adj. P-value` = format_pvalues(res$adj_pvalue, non_empty = res$HR_non_empty),
     check.names = FALSE, stringsAsFactors = FALSE)
   
   stopifnot(all(sapply(out, class) == "character"))
@@ -360,7 +383,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 #' boutput(x)
 #' 
 #' @export
-wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -403,7 +426,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   wrapper_res <- lapply(1:length(strata2_levels), function(j){
     # j = 1
     
-    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
+    data_strata2 <- data[data[, strat2_var] %in% strata2_levels[j], ]
     
     if(nrow(data_strata2) == 0){
       return(NULL)
@@ -411,9 +434,9 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
     
     
     wrapper_res <- lapply(1:length(strata1_levels), function(i){
-      # i = 1
+      # i = 3
       
-      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
+      data_strata1 <- data_strata2[data_strata2[, strat1_var] %in% strata1_levels[i], ]
       
       if(nrow(data_strata1) == 0){
         return(NULL)
@@ -521,7 +544,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
 #' @param biomarker_vars Vector of biomaker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -639,7 +662,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, adjustment_vars = NULL, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, adjustment_vars = NULL, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
