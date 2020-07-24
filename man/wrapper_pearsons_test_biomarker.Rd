@@ -11,6 +11,7 @@ wrapper_pearsons_test_biomarker(
   strata_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  method = "pearson",
   variable_names = NULL,
   caption = NULL,
   print_pvalues = TRUE,

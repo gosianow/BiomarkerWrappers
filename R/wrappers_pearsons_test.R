@@ -1,18 +1,19 @@
+#' @include wrappers_logistic_regression.R
+NULL
 
 
 
 
-
-
-
-#' Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test 
+#' Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test 
 #' 
 #' @param data Data frame.
 #' @param response_var Name of categorical variable defining successes and failures where the first level corresponds to failure and the second level corresponds to success.
 #' @param covariate_var Name of categorical variable defining subgroups.
-#' @param strata_vars Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied. 
+#' @param strata_vars Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.
+#' @param print_or Logical. Whether to print odds rations estimated with logistic regression.
+#'  
 #' @export
-wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata_vars = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_or = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -29,12 +30,11 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   stopifnot(nlevels(data[, covariate_var]) >= 2)
   
   
-  method <- "pearson"
+  stopifnot(method %in% c("pearson", "fisher"))
   
   if(!is.null(strata_vars)){
     strata_class <- sapply(data[, strata_vars], class)
     stopifnot(all(strata_class %in% c("factor")))
-    method <- "mantelhaen"
   }
   
   ### Keep non-missing data
@@ -46,16 +46,35 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
+  # --------------------------------------------------------------------------
+  # Prepare data frame with results
+  # --------------------------------------------------------------------------
+  
+  # -----------------------------------
+  # Fit logistic regression to obtain Response rates
+  # -----------------------------------
+  
+  covariate_vars <- covariate_var
+  return_vars <- covariate_var
+  
+  wrapper_res <- wrapper_core_logistic_regression_simple(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  
+  
+  res <- bresults(wrapper_res)
+  out <- boutput(wrapper_res)
+  
+  ### Remove OR
+  if(!print_or){
+    res <- res[, -grep("^OR", colnames(res))]
+    out <- out[, -grep("^OR", colnames(out))]
+  }
+  
   
   # --------------------------------------------------------------------------
-  # Calculate counts and proportions and do testing
+  # Testing
   # --------------------------------------------------------------------------
   
   tbl <- table(data[, covariate_var], data[, response_var])
-  
-  margin <- 1
-  
-  prop <- prop.table(tbl, margin = margin) * 100
   
   tbl_test <- tbl[, rev(seq_len(ncol(tbl)))]
   
@@ -63,42 +82,109 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   
   
   if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
-    ## Pearson's Chi-squared test: get difference of proportions of succeses and CI for difference
-    ## Success category is defined by the first column
-    
-    prop_test_res <- prop.test(tbl_test, correct = TRUE)
     
     
-    if(!is.null(prop_test_res$conf.int)){
-      difference <- (prop_test_res$estimate[2] - prop_test_res$estimate[1]) * 100
-      difference_CI95_upper <- -prop_test_res$conf.int[1] * 100
-      difference_CI95_lower <- -prop_test_res$conf.int[2] * 100
-    }else{
-      difference <- NA
-      difference_CI95_upper <- NA
-      difference_CI95_lower <- NA
-    }
-    
-    ### Calculate p-values
     if(method == "pearson"){
       
-      ## Using Pearson's Chi-squared test
-      pvalue <- prop_test_res$p.value
+      ## Pearson's Chi-squared test
+      ## Success category is defined by the first column
+      prop_test_res <- prop.test(tbl_test, correct = TRUE)
+      
+      
+      if(!is.null(prop_test_res$conf.int)){
+        difference <- (prop_test_res$estimate[2] - prop_test_res$estimate[1]) * 100
+        difference_CI95_upper <- -prop_test_res$conf.int[1] * 100
+        difference_CI95_lower <- -prop_test_res$conf.int[2] * 100
+      }else{
+        difference <- NA
+        difference_CI95_upper <- NA
+        difference_CI95_lower <- NA
+      }
+      
+      
+      ### Calculate p-values
+      if(is.null(strata_vars)){
+        
+        ## Using Pearson's Chi-squared test
+        pvalue <- prop_test_res$p.value
+        
+      }else{
+        
+        ### Using Cochran-Mantel-Haenszel Chi-Squared Test
+        mantelhaen_test_res <- NULL
+        
+        try(mantelhaen_test_res <- mantelhaen.test(x = data[, response_var], y = data[, covariate_var], z = interaction(data[, strata_vars]), correct = TRUE, exact = FALSE), silent = TRUE)
+        
+        if(is.null(mantelhaen_test_res)){
+          pvalue <- NA
+        }else{
+          pvalue <- mantelhaen_test_res$p.value
+        }
+        
+      }
+      
       
     }else{
       
-      ### Using Cochran-Mantel-Haenszel Chi-Squared Test
-      mantelhaen_test_res <- NULL
+      ### Calculate OR and p-values 
       
-      try(mantelhaen_test_res <- mantelhaen.test(x = data[, response_var], y = data[, covariate_var], z = interaction(data[, strata_vars]), correct = TRUE, exact = FALSE), silent = TRUE)
-      
-      if(is.null(mantelhaen_test_res)){
-        pvalue <- NA
+      if(is.null(strata_vars)){
+        
+        ## Using Fisher's test
+        fisher_test_res <- NULL
+        try(fisher_test_res <- fisher.test(tbl), silent = TRUE)
+        if(is.null(fisher_test_res)){
+          try(fisher_test_res <- fisher.test(tbl, simulate.p.value = TRUE), silent = TRUE)
+        }
+        
+        if(is.null(fisher_test_res)){
+          pvalue <- NA
+          OR <- NA
+          OR_CI95_lower <- NA
+          OR_CI95_upper <- NA
+        }else{
+          pvalue <- fisher_test_res$p.value
+          OR <- fisher_test_res$estimate
+          OR_CI95_lower <- fisher_test_res$conf.int[1]
+          OR_CI95_upper <- fisher_test_res$conf.int[2]
+          if(is.null(OR)){
+            OR <- NA
+            OR_CI95_lower <- NA
+            OR_CI95_upper <- NA
+          }
+        }
+        
+        
       }else{
-        pvalue <- mantelhaen_test_res$p.value
+        
+        ### Using Cochran-Mantel-Haenszel Chi-Squared Test
+        mantelhaen_test_res <- NULL
+        
+        try(mantelhaen_test_res <- mantelhaen.test(x = data[, response_var], y = data[, covariate_var], z = interaction(data[, strata_vars]), correct = TRUE, exact = FALSE), silent = TRUE)
+        
+        if(is.null(mantelhaen_test_res)){
+          OR <- NA
+          OR_CI95_lower <- NA
+          OR_CI95_upper <- NA
+          pvalue <- NA
+        }else{
+          OR <- mantelhaen_test_res$estimate
+          OR_CI95_lower <- mantelhaen_test_res$conf.int[1]
+          OR_CI95_upper <- mantelhaen_test_res$conf.int[2]
+          pvalue <- mantelhaen_test_res$p.value
+          if(is.null(OR)){
+            OR <- NA
+            OR_CI95_lower <- NA
+            OR_CI95_upper <- NA
+          }
+        }
+        
       }
       
+      
     }
+    
+    
     
     
   }else{
@@ -106,76 +192,69 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
     difference <- NA
     difference_CI95_lower <- NA
     difference_CI95_upper <- NA
+    
+    OR <- NA
+    OR_CI95_lower <- NA
+    OR_CI95_upper <- NA
+    
     pvalue <- NA
     
   }
   
   
-  # --------------------------------------------------------------------------
-  # Calculate CIs for proportions of success 
-  # --------------------------------------------------------------------------
+  ### Add statistics
+  
+  if(method == "pearson"){
+    res$difference = c(difference, rep(NA, nrow(tbl) - 1))
+    res$difference_CI95_lower = c(difference_CI95_lower, rep(NA, nrow(tbl) - 1))
+    res$difference_CI95_upper = c(difference_CI95_upper, rep(NA, nrow(tbl) - 1))
+  }else{
+    res$OR = c(OR, rep(NA, nrow(tbl) - 1))
+    res$OR_CI95_lower = c(OR_CI95_lower, rep(NA, nrow(tbl) - 1))
+    res$OR_CI95_upper = c(OR_CI95_upper, rep(NA, nrow(tbl) - 1))
+  }
   
   
-  response_CI <- lapply(1:nrow(tbl_test), function(k){
-    # k = 1
-    
-    binom_test_res <- binom.test(as.numeric(tbl_test[k, ]))
-    
-    out <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
-    
-  })
+  ### Add pvalue 
+  res$pvalue <- c(pvalue, rep(NA, nrow(res) - 1))
   
-  response_CI <- rbind.fill(response_CI)
-  colnames(response_CI) <- paste0("response_", c("CI95_lower", "CI95_upper"))
-  
-  
-  # --------------------------------------------------------------------------
-  # Prepare 'res' data frame
-  # --------------------------------------------------------------------------
-  
-  
-  res <- data.frame(covariate = covariate_var,
-    subgroup = rownames(tbl),
-    n_total = sum(tbl),
-    n = as.numeric(margin.table(tbl, margin = 1)),
-    nresponse = as.numeric(tbl[, success_level]),
-    propresponse = as.numeric(prop[, success_level]),
-    response_CI,
-    difference = c(difference, rep(NA, nrow(tbl) - 1)),
-    difference_CI95_lower = c(difference_CI95_lower, rep(NA, nrow(tbl) - 1)),
-    difference_CI95_upper = c(difference_CI95_upper, rep(NA, nrow(tbl) - 1)),
-    pvalue = c(pvalue, rep(NA, nrow(tbl) - 1)), 
-    stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+  ### Remove adj_pvalue
+  res$adj_pvalue <- NULL
   
   
   # --------------------------------------------------------------------------
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Covariate = variable_names[res$covariate], 
-    Subgroup = res$subgroup, 
-    `Total N` = as.character(res$n_total),
-    `N` = as.character(res$n),
-    Response = format_counts_and_props_core(counts = res$nresponse, props = res$propresponse),
-    `Response 95% CI` = format_CIs(res$response_CI95_lower, res$response_CI95_upper),
-    Difference = format_difference(res$difference, digits = 2, non_empty = 1),
-    `Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2, non_empty = 1),
-    `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
-    check.names = FALSE, stringsAsFactors = FALSE)
+  if(method == "pearson"){
+    out$Difference = format_difference(res$difference, digits = 2, non_empty = 1)
+    out$`Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2, non_empty = 1)
+    ### If all Difference are empty, do not display that column.
+    if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
+      out$Difference <- NULL
+      out$`Difference 95% CI` <- NULL
+    }
+    
+  }else{
+    out$OR = format_or(res$OR, digits = 2, non_empty = 1)
+    out$`OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper, digits = 2, non_empty = 1)
+    
+    ### If all OR are empty, do not display that column.
+    if(all(out$OR %in% c("", "NA")) && !force_empty_cols){
+      out$OR <- NULL
+      out$`OR 95% CI` <- NULL
+    }
+    
+  }
   
+  
+  out$`P-value` <- format_pvalues(res$pvalue, non_empty = 1)
   
   stopifnot(all(sapply(out, class) == "character"))
   
   
   if(!print_pvalues){
     out$`P-value` <- NULL
-  }
-  
-  
-  ### If all Difference are empty, do not display that column.
-  if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
-    out$Difference <- NULL
-    out$`Difference 95% CI` <- NULL
   }
   
   
@@ -190,8 +269,10 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   
   if(is.null(caption)){
     
-    if(method == "pearson"){
+    if(method == "pearson" && is.null(strata_vars)){
       caption <- paste0("Unstratified analysis with Pearson's Chi-squared test.")
+    }else if(method == "fisher" && is.null(strata_vars)){
+      caption <- paste0("Unstratified analysis with Fisher's exact test.")
     }else{
       caption <- paste0("Stratified analysis with Cochran-Mantel-Haenszel Chi-squared test.", " Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ".")
     }
@@ -219,7 +300,7 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -247,6 +328,9 @@ wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, 
   ### Strata cannot include response_var, covariate_var
   stopifnot(length(intersect(c(strata_vars, strat1_var, strat2_var), c(response_var, covariate_var))) == 0)
   
+  if(print_adjpvalues){
+    print_pvalues <- TRUE
+  }
   
   ### Keep non-missing data
   data <- data[complete.cases(data[, c(response_var, covariate_var, strata_vars, strat1_var, strat2_var)]), , drop = FALSE]
@@ -284,7 +368,7 @@ wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, 
       }
       
       
-      wrapper_res <- wrapper_core_pearsons_test(data = data_strata1, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_core_pearsons_test(data = data_strata1, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, method = method, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -377,7 +461,7 @@ wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, 
 #' @inheritParams wrapper_core_pearsons_test_strat
 #' @param biomarker_vars Vector of biomaker names.
 #' @export
-wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -400,7 +484,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -442,9 +526,13 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
     
     caption <- paste0("Biomarker effect on ", variable_names[response_var], ". ")
     
-    if(is.null(strata_vars)){
+    if(method == "pearson" && is.null(strata_vars)){
       
       caption <- paste0(caption, "Unstratified Pearson's Chi-squared test.")
+      
+    }else if(method == "fisher" && is.null(strata_vars)){
+      
+      caption <- paste0(caption, "Unstratified Fisher's exact test.")
       
     }else{
       
@@ -479,7 +567,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -513,7 +601,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
     covariate_var <- treatment_var
     strat1_var <- biomarker_vars[i]
     
-    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     res <- bresults(wrapper_res)
@@ -590,9 +678,13 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
     
     caption <- paste0("Treatment effect on ", variable_names[response_var], ". ")
     
-    if(is.null(strata_vars)){
+    if(method == "pearson" && is.null(strata_vars)){
       
       caption <- paste0(caption, "Unstratified Pearson's Chi-squared test.")
+      
+    }else if(method == "fisher" && is.null(strata_vars)){
+      
+      caption <- paste0(caption, "Unstratified Fisher's exact test.")
       
     }else{
       

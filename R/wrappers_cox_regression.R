@@ -116,16 +116,15 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
       
       ## Calculate nevent 
       tbl_event <- table(data[data[, censor_var] == 1, covariate_vars[i]])
-      
-      
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(tbl_event/tbl) * 100,
+      prop_event <- tbl_event / tbl * 100
+      ## Replace NaN with NA
+      prop_event[is.na(prop_event)] <- NA
+
+
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event), propevent = as.numeric(prop_event),
         stringsAsFactors = FALSE)
       
       out$HR_non_empty <- c(FALSE, rep(TRUE, nrow(out) - 1))
-      
-      
-      ## Replace NaN with NA
-      out$propevent[is.na(out$propevent)] <- NA
       
       out$coefficient <- paste0(out$covariate, "=", out$subgroup)
       
@@ -414,7 +413,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
   ### Keep non-missing data
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strat1_var, strat2_var, strata_vars)]), ]
-  
+  stopifnot(nrow(data) > 0)
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   

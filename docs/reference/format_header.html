@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Paste counts and proportions corresponding to one subgroup — format_counts_and_props_core • BiomarkerWrappers</title>
+<title>Format header for kable — format_header • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Paste counts and proportions corresponding to one subgroup — format_counts_and_props_core" />
-<meta property="og:description" content="Paste counts and proportions corresponding to one subgroup" />
+<meta property="og:title" content="Format header for kable — format_header" />
+<meta property="og:description" content="Format header for kable" />
 
 
 
@@ -115,35 +115,49 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Paste counts and proportions corresponding to one subgroup</h1>
+    <h1>Format header for kable</h1>
     
-    <div class="hidden name"><code>format_counts_and_props_core.Rd</code></div>
+    <div class="hidden name"><code>format_header.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Paste counts and proportions corresponding to one subgroup</p>
+    <p>Format header for kable</p>
     </div>
 
-    <pre class="usage"><span class='fu'>format_counts_and_props_core</span>(<span class='no'>counts</span>, <span class='no'>props</span>, <span class='kw'>digits</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
+    <pre class="usage"><span class='fu'>format_header</span>(<span class='no'>all_colnames</span>, <span class='no'>header_colnames</span>, <span class='no'>header_name</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>counts</th>
-      <td><p>Vector with counts.</p></td>
+      <th>all_colnames</th>
+      <td><p>All column names</p></td>
     </tr>
     <tr>
-      <th>props</th>
-      <td><p>Vector with proportions.</p></td>
+      <th>header_colnames</th>
+      <td><p>Column names where the header should be placed.</p></td>
     </tr>
     <tr>
-      <th>digits</th>
-      <td><p>Number of decimal places when rounding proportions.</p></td>
+      <th>header_name</th>
+      <td><p>Name of the header.</p></td>
     </tr>
     </table>
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='no'>all_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Covariate"</span>, <span class='st'>"Subgroup"</span>, <span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"OR"</span>, <span class='st'>"P-value"</span>)
+<span class='no'>header_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>)
+<span class='no'>header_name</span> <span class='kw'>&lt;-</span> <span class='st'>"Gene A"</span>
+
+<span class='fu'>format_header</span>(<span class='no'>all_colnames</span>, <span class='no'>header_colnames</span>, <span class='no'>header_name</span>)</div><div class='output co'>#&gt; <span class='error'>Error in format_header(all_colnames, header_colnames, header_name): could not find function "format_header"</span></div><div class='input'>
+
+<span class='no'>all_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"OR"</span>, <span class='st'>"P-value"</span>)
+<span class='no'>header_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>)
+<span class='no'>header_name</span> <span class='kw'>&lt;-</span> <span class='st'>"Gene A"</span>
+
+<span class='fu'>format_header</span>(<span class='no'>all_colnames</span>, <span class='no'>header_colnames</span>, <span class='no'>header_name</span>)</div><div class='output co'>#&gt; <span class='error'>Error in format_header(all_colnames, header_colnames, header_name): could not find function "format_header"</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

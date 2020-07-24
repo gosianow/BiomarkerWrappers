@@ -471,7 +471,84 @@ indicate_blocks <- function(d, block_vars, return = "block"){
 
 
 
-
+#' Format header for kable
+#' 
+#' @param all_colnames All column names 
+#' @param header_colnames Column names where the header should be placed.
+#' @param header_name Name of the header.
+#' 
+#' @examples 
+#' 
+#' all_colnames <- c("Covariate", "Subgroup", "A", "B", "C", "OR", "P-value")
+#' header_colnames <- c("A", "B", "C")
+#' header_name <- "Gene A"
+#' 
+#' format_header(all_colnames, header_colnames, header_name)
+#' 
+#' 
+#' all_colnames <- c("A", "B", "C", "OR", "P-value")
+#' header_colnames <- c("A", "B", "C")
+#' header_name <- "Gene A"
+#' 
+#' format_header(all_colnames, header_colnames, header_name)
+#' 
+#' @keywords internal 
+format_header <- function(all_colnames, header_colnames, header_name){
+  
+  
+  header_indx <- which(all_colnames %in% header_colnames)
+  num_mid_cols <- length(header_indx)
+  stopifnot(num_mid_cols > 0)
+  
+  
+  if(header_indx[1] > 1){
+    
+    num_start_cols <- header_indx[1] - 1
+    
+    if(header_indx[num_mid_cols] < length(all_colnames)){
+      
+      num_end_cols <- length(all_colnames) - header_indx[num_mid_cols]
+      
+      header <- c(num_start_cols, num_mid_cols, num_end_cols)
+      header <- as.integer(header)
+      names(header) <- c(" ", header_name, " ") 
+      
+    }else{
+      
+      header <- c(num_start_cols, num_mid_cols)
+      header <- as.integer(header)
+      names(header) <- c(" ", header_name)
+      
+    }
+    
+  }else{
+    
+    
+    if(header_indx[num_mid_cols] < length(all_colnames)){
+      
+      num_end_cols <- length(all_colnames) - header_indx[num_mid_cols]
+      
+      header <- c(num_mid_cols, num_end_cols)
+      header <- as.integer(header)
+      names(header) <- c(header_name, " ") 
+      
+    }else{
+      
+      header <- c(num_mid_cols)
+      header <- as.integer(header)
+      names(header) <- c(header_name)
+      
+    }
+    
+    
+  }
+  
+  stopifnot(sum(header) == length(all_colnames))
+  
+  header
+  
+  
+}
 
 
 
@@ -831,29 +908,65 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
 
 
 
+
+
+#' Format summary statistics such as N, mean, median, min, max
+#' 
+#' @param summ Vector with values to format.
+#' @param digits Vector with digits used in formatC.
+#' 
+#' @examples 
+#' 
+#' summ <- c(10, 23.6442)
+#' digits <- c(0, 2)
+#' 
+#' format_summ_core(summ, digits)
+#' 
+#' 
+#' @keywords internal
+format_summ_core <- function(summ, digits = 2){
+  
+  summ <- as.numeric(summ)
+  
+  if(length(digits) == 1){
+    digits <- rep(digits, times = length(summ))
+  }else{
+    stopifnot(length(digits) == length(summ))
+  }
+  
+  out <- sapply(seq_along(summ), function(i){
+    
+    out <- ifelse(is.na(summ[i]), "", formatC(summ[i], format = "f", digits = digits[i], drop0trailing = FALSE))
+    
+  })
+  
+  
+  return(out)
+  
+}
+
+
+
+
 #' Format summary statistics such as N, mean, median, min, max
 #' 
 #' @param summ Data frame.
+#' @param per Whether to lapply per row or per column.
+#' @param digits Vector with digits used in formatC.
 #' @keywords internal
 format_summ <- function(summ, per = "row", digits = 2){
+  
+  stopifnot(is.data.frame(summ) || is.matrix(summ))
   
   stopifnot(per %in% c("row", "col"))
   
   
-  
   if(per == "row"){
-    
-    if(length(digits) == 1){
-      digits <- rep(digits, times = nrow(summ))
-    }
     
     output <- lapply(1:nrow(summ), function(i){
       # i = 1
       
-      out <- ifelse(is.na(summ[i, ]), "", formatC(as.numeric(summ[i, ]), format = "f", digits = digits[i], drop0trailing = FALSE))
-      
-      
-      return(out)
+      out <- format_summ_core(summ[i, ], digits = digits)
       
     })
     
@@ -861,24 +974,16 @@ format_summ <- function(summ, per = "row", digits = 2){
     
   }else{
     
-    if(length(digits) == 1){
-      digits <- rep(digits, times = ncol(summ))
-    }
-    
     output <- lapply(1:ncol(summ), function(i){
       # i = 1
       
-      out <- ifelse(is.na(summ[, i]), "", formatC(as.numeric(summ[, i]), format = "f", digits = digits[i], drop0trailing = FALSE))
-      
-      
-      return(out)
+      out <- format_summ_core(summ[, i], digits = digits)
       
     })
     
     output <- data.frame(do.call("cbind", output), stringsAsFactors = FALSE)
     
   }
-  
   
   colnames(output) <- colnames(summ)
   

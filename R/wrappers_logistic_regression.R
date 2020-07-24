@@ -38,7 +38,85 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   data <- data[stats::complete.cases(data[, c(response_var, covariate_vars)]), ]
   
+  stopifnot(nrow(data) > 0)
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  
+  # --------------------------------------------------------------------------
+  # Generate data frame with coefficient names and levels and information about reference groups
+  # --------------------------------------------------------------------------
+  
+  coef_info <- lapply(1:length(covariate_vars), function(i){
+    # i = 1
+    
+    if(covariate_class[i] %in% c("numeric", "integer")){
+      
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = "", reference = "", reference_indx = 0, n = NA, n_reference = NA, nresponse = NA, nresponse_reference = NA, propresponse = NA, propresponse_reference = NA, response_CI95_lower = NA, response_CI95_upper = NA, OR_non_empty = TRUE,
+        stringsAsFactors = FALSE)
+      
+      return(out)
+      
+    }else{
+      
+      ## Check if the first level has non zero counts so it can be used as a reference group in the regression
+      ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
+      tbl <- table(data[, covariate_vars[i]])
+      
+      reference_indx <- which(tbl > 0)[1]
+      
+      ## Calculate nresponse and propresponse
+      tbl_response <- table(data[data[, response_var] == levels(data[, response_var])[2], covariate_vars[i]])
+      prop_response <- tbl_response / tbl * 100
+      ## Replace NaN with NA
+      prop_response[is.na(prop_response)] <- NA
+      
+      
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), n_reference = as.numeric(tbl[reference_indx]), nresponse = as.numeric(tbl_response), nresponse_reference = as.numeric(tbl_response[reference_indx]), propresponse = as.numeric(prop_response), propresponse_reference = as.numeric(prop_response[reference_indx]),
+        stringsAsFactors = FALSE)
+      
+      out$OR_non_empty <- c(FALSE, rep(TRUE, nrow(out) - 1))
+      
+      
+      # --------------------------------------------------------------------------
+      # Calculate CIs for proportions of success 
+      # --------------------------------------------------------------------------
+      
+      tbl <- table(data[, covariate_vars[i]], data[, response_var])
+
+      tbl_test <- tbl[, rev(seq_len(ncol(tbl)))]
+      
+      
+      response_CI <- lapply(1:nrow(tbl_test), function(k){
+        # k = 1
+        
+        binom_test_res <- binom.test(as.numeric(tbl_test[k, ]))
+        
+        out <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
+        
+      })
+      
+      response_CI <- rbind.fill(response_CI)
+      colnames(response_CI) <- paste0("response_", c("CI95_lower", "CI95_upper"))
+      
+      
+      out <- cbind(out, response_CI)
+      
+      return(out) 
+      
+    }
+    
+    
+  })
+  
+  coef_info <- plyr::rbind.fill(coef_info)
+  
+  coef_info$n_total <- nrow(data)
+  
+  coef_info$coefficient <- paste0(coef_info$covariate, coef_info$subgroup)
+  
+  rownames(coef_info) <- coef_info$coefficient
   
   
   # --------------------------------------------------------------------------
@@ -59,54 +137,9 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   # h(mm)
   
   
-  # --------------------------------------------------------------------------
-  # Parce the regression summary
-  # Generate data frame with coefficient names and levels and information about reference groups
-  # --------------------------------------------------------------------------
-  
-  coef_info <- lapply(1:length(covariate_vars), function(i){
-    # i = 1
-    
-    if(covariate_class[i] %in% c("numeric", "integer")){
-      
-      out <- data.frame(covariate = covariate_vars[i], subgroup = "", reference = "", reference_indx = 0, n = NA, n_reference = NA, nresponse = NA, nresponse_reference = NA, propresponse = NA, propresponse_reference = NA,
-        stringsAsFactors = FALSE)
-      
-      return(out)
-      
-    }else{
-      
-      ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-      ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
-      tbl <- table(data[, covariate_vars[i]])
-      
-      reference_indx <- which(tbl > 0)[1]
-      
-      ## Calculate nresponse and propresponse
-      tbl_response <- table(data[data[, response_var] == levels(data[, response_var])[2], covariate_vars[i]])
-      prop_response <- tbl_response / tbl * 100
-      
-      
-      out <- data.frame(covariate = covariate_vars[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), n_reference = as.numeric(tbl[reference_indx]), nresponse = as.numeric(tbl_response), nresponse_reference = as.numeric(tbl_response[reference_indx]), propresponse = as.numeric(prop_response), propresponse_reference = as.numeric(prop_response[reference_indx]),
-        stringsAsFactors = FALSE)
-      
-      
-      return(out) 
-      
-    }
-    
-    
-  })
-  
-  coef_info <- plyr::rbind.fill(coef_info)
-  
-  coef_info$coefficient <- paste0(coef_info$covariate, coef_info$subgroup)
-  
-  rownames(coef_info) <- coef_info$coefficient
-  
   
   # --------------------------------------------------------------------------
-  ## Calculate confidence intervals
+  # Calculate confidence intervals
   # --------------------------------------------------------------------------
   
   
@@ -127,7 +160,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   
   # --------------------------------------------------------------------------
-  ## Append results from regression
+  # Parce the regression summary
   # --------------------------------------------------------------------------
   
   
@@ -140,7 +173,12 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   colnames(coefficients) <- c("coefficient", "OR", "pvalue")
   coefficients$OR <- exp(coefficients$OR)
   
-  coef_info$n_total <- nrow(data) - length(regression_summ$na.action)
+
+  # --------------------------------------------------------------------------
+  # Append results from regression
+  # --------------------------------------------------------------------------
+  
+  
   
   coef_info <- coef_info %>% 
     dplyr::left_join(conf_int, by = "coefficient") %>% 
@@ -178,21 +216,31 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   
   # --------------------------------------------------------------------------
-  ### Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
+  # Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
+  
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
     `N` = format_difference(res$n, digits = 0),
     `Response` = format_counts_and_props_core(counts = res$nresponse, props = res$propresponse, digits = 1),
-    `OR` = format_or(res$OR),
-    `OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper),
-    `P-value` = format_pvalues(res$pvalue),
-    `Adj. P-value` = format_pvalues(res$adj_pvalue),
+    `Response 95% CI` = format_CIs(res$response_CI95_lower, res$response_CI95_upper, non_empty = res$covariate_class == "factor"),
+    `OR` = format_or(res$OR, non_empty = res$OR_non_empty),
+    `OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper, non_empty = res$OR_non_empty),
+    `P-value` = format_pvalues(res$pvalue, non_empty = res$OR_non_empty),
+    `Adj. P-value` = format_pvalues(res$adj_pvalue, non_empty = res$OR_non_empty),
     check.names = FALSE, stringsAsFactors = FALSE)
   
   stopifnot(all(sapply(out, class) == "character"))
+  
+  
+  ### When all covariates are numerical, some outputs are empty, and we remove them
+  if(all(out$Subgroup == "") && !force_empty_cols){
+    out$Subgroup <- NULL
+    out$N <- NULL
+    out$Response <- NULL
+  }
   
   
   if(!print_pvalues){
@@ -202,14 +250,6 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   if(!print_adjpvalues){
     out$`Adj. P-value` <- NULL
-  }
-  
-  
-  ### When all covariates are numerical, some outputs are empty, and we remove them
-  if(all(out$Subgroup == "") && !force_empty_cols){
-    out$Subgroup <- NULL
-    out$N <- NULL
-    out$Response <- NULL
   }
   
   

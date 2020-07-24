@@ -25,10 +25,6 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   stopifnot(is.data.frame(data))
   stopifnot(nrow(data) > 0)
   
-  ### Keep only those variables that are used for the analysis
-  data <- data[, c(cat_var, num_var), drop = FALSE]
-  
-  
   stopifnot(length(cat_var) == 1)
   stopifnot(is.factor(data[, cat_var]))
   stopifnot(nlevels(data[, cat_var]) >= 2)
@@ -42,8 +38,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   stopifnot(is.numeric(data[, num_var]) || is.integer(data[, num_var]))
   
   ### Keep non-missing data
-  
-  data <- data[stats::complete.cases(data[, c(cat_var, num_var)]), ]
+  data <- data[stats::complete.cases(data[, c(cat_var, num_var)]), c(cat_var, num_var), ]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -135,15 +130,10 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Statistic = res$statistic, 
-    
-    format_summ(summ = summdf, digits = digits),
-    
-    Difference = format_difference(res$difference, digits = 2),
-    
-    `P-value` = format_pvalues(res$pvalue), 
-    
+    format_summ(summ = summdf, digits = digits, per = "col"),
+    Difference = format_difference(res$difference, digits = 2, non_empty = 1),
+    `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
-  
   
   
   stopifnot(all(sapply(out, class) == "character"))
@@ -154,7 +144,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   }
   
   ### If all Difference are empty, do not display that column.
-  if(all(out$Difference == "") && !force_empty_cols){
+  if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
     out$Difference <- NULL
   }
   
@@ -167,13 +157,8 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   # Prepare 'header' data frame
   # --------------------------------------------------------------------------
   
-  num_start_cols <- 2
-  num_end_cols <- sum(c("Difference", "P-value") %in% colnames(out))
   
-  
-  header <- c(num_start_cols, ncol(summdf), num_end_cols)
-  header <- as.integer(header)
-  names(header) <- c(" ", variable_names[cat_var], " ")
+  header <- format_header(all_colnames = colnames(out), header_colnames = colnames(summdf), header_name = variable_names[cat_var])
   
   
   # --------------------------------------------------------------------------
@@ -340,15 +325,10 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = res$subgroup, 
-    
-    format_summ(summ = summdf, per = "col", digits = digits),
-    
-    Difference = format_difference(res$difference, digits = 2),
-    
-    `P-value` = format_pvalues(res$pvalue), 
-    
+    format_summ(summ = summdf, per = "row", digits = digits),
+    Difference = format_difference(res$difference, digits = 2, non_empty = 1),
+    `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
-  
   
   
   stopifnot(all(sapply(out, class) == "character"))
@@ -359,7 +339,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   }
   
   ### If all Difference are empty, do not display that column.
-  if(all(out$Difference == "") && !force_empty_cols){
+  if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
     out$Difference <- NULL
   }
   
@@ -372,15 +352,10 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   # Prepare 'header' data frame
   # --------------------------------------------------------------------------
   
-  num_start_cols <- 2
-  num_end_cols <- sum(c("Difference", "P-value") %in% colnames(out))
+  header <- format_header(all_colnames = colnames(out), header_colnames = colnames(summdf), header_name = variable_names[num_var])
   
   
-  header <- c(num_start_cols, ncol(summdf), num_end_cols)
-  header <- as.integer(header)
-  names(header) <- c(" ", variable_names[num_var], " ")
-  
-  
+
   # --------------------------------------------------------------------------
   ### Generate caption
   # --------------------------------------------------------------------------
@@ -446,6 +421,9 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
   ### Strata cannot include cat_vars
   stopifnot(length(intersect(c(strat1_var, strat2_var), cat_var)) == 0)
   
+  if(!print_pvalues){
+    print_adjpvalues <- FALSE
+  }
   
   ### Keep non-missing data
   data <- data[stats::complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
@@ -487,6 +465,7 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
       
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
+      hdr <- bheader(wrapper_res)
       
       ## Add info about the strata to the data frames
       
@@ -501,7 +480,6 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
       out <- cbind(prefix_df, out)
       
       ## Update header by adding 2 corresponding to the two strat variables to the first position
-      hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
       rownames(res) <- NULL
@@ -533,15 +511,19 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
   
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+  hdr <- bheader(wrapper_res[[1]])
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
-  if("Adj. P-value" %in% colnames(out)){
+  if(print_adjpvalues){
     out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
+    ## Update header
+    hdr[3] <- hdr[3] + 1
   }
   
+
   
   ### Set repeating Strata names to empty
   out[out$Covariate == "", variable_names[strat1_var]] <- ""
@@ -562,8 +544,7 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
     hdr_shift <- hdr_shift + 1
   }
   
-  ## Update header by adding 2 corresponding to the two strat variables to the first position
-  hdr <- bheader(wrapper_res[[1]])
+  ## Update header 
   hdr[1] <- hdr[1] - hdr_shift
   
   rownames(res) <- NULL
@@ -612,6 +593,9 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
   ### Strata cannot include cat_vars
   stopifnot(length(intersect(c(strat1_var, strat2_var), cat_var)) == 0)
   
+  if(!print_pvalues){
+    print_adjpvalues <- FALSE
+  }
   
   ### Keep non-missing data
   data <- data[stats::complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
@@ -653,6 +637,7 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
       
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
+      hdr <- bheader(wrapper_res)
       
       ## Add info about the strata to the data frames
       
@@ -667,7 +652,6 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
       out <- cbind(prefix_df, out)
       
       ## Update header by adding 2 corresponding to the two strat variables to the first position
-      hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
       rownames(res) <- NULL
@@ -699,13 +683,15 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
   
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
-  
+  hdr <- bheader(wrapper_res[[1]])
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
-  if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
+  if(print_adjpvalues){
+    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue)
+    ## Update header
+    hdr[3] <- hdr[3] + 1
   }
   
   
@@ -728,8 +714,7 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
     hdr_shift <- hdr_shift + 1
   }
   
-  ## Update header by adding 2 corresponding to the two strat variables to the first position
-  hdr <- bheader(wrapper_res[[1]])
+  ## Update header
   hdr[1] <- hdr[1] - hdr_shift
   
   rownames(res) <- NULL
@@ -831,6 +816,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+  hdr <- bheader(wrapper_res[[1]])
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -840,22 +826,18 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
     out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
   }
   
-  hdr <- bheader(wrapper_res[[1]])
-  
-  ### Replace NAs with "" for Difference
-  missing_columns <- c("Difference")
-  
-  for(i in 1:length(missing_columns)){
-    if(missing_columns[i] %in% colnames(out)){
-      out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
-      ### If all Difference are empty, do not display that column.
-      if(all(out[, missing_columns[i]] == "") && !force_empty_cols){
-        out[, missing_columns[i]] <- NULL
-        ### Update header
-        hdr[length(hdr)] <- hdr[length(hdr)] - 1
-      }
+ 
+  ### If all Difference are empty, do not display that column.
+  if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
+    out$Difference <- NULL
+    ### Update header
+    if(hdr[3] == 1){
+      hdr <- hdr[-3]
+    }else{
+      hdr[3] <- hdr[3] - 1
     }
   }
+  
   
   rownames(res) <- NULL
   rownames(out) <- NULL

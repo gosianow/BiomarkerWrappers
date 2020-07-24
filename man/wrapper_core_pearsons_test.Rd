@@ -3,16 +3,18 @@
 \name{wrapper_core_pearsons_test}
 \alias{wrapper_core_pearsons_test}
 \alias{wrapper_core_pearsons_test_strat}
-\title{Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test}
+\title{Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test}
 \usage{
 wrapper_core_pearsons_test(
   data,
   response_var,
   covariate_var,
   strata_vars = NULL,
+  method = "pearson",
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
+  print_or = FALSE,
   print_pvalues = TRUE
 )
 
@@ -23,6 +25,7 @@ wrapper_core_pearsons_test_strat(
   strata_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  method = "pearson",
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
@@ -39,8 +42,10 @@ wrapper_core_pearsons_test_strat(
 
 \item{strata_vars}{Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.}
 
+\item{print_or}{Logical. Whether to print odds rations estimated with logistic regression.}
+
 \item{strat1_var}{Name of the second stratification variable.}
 }
 \description{
-Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test
+Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test
 }

@@ -24,6 +24,12 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   stopifnot(is.factor(data[, row_var]))
   stopifnot(nlevels(data[, row_var]) >= 2)
   
+  
+  ### Keep non-missing data
+  all_vars <- c(col_var, row_var)
+  data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
+  stopifnot(nrow(data) > 0)
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
@@ -42,23 +48,23 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
     test_res <- NULL
     try(test_res <- fisher.test(tbl), silent = TRUE)
     if(is.null(test_res)){
-      test_res <- fisher.test(tbl, simulate.p.value = TRUE)
+      try(test_res <- fisher.test(tbl, simulate.p.value = TRUE), silent = TRUE)
     }
     
     if(is.null(test_res)){
       pvalue <- NA
-      or <- NA
+      OR <- NA
     }else{
       pvalue <- test_res$p.value
-      or <- test_res$estimate
-      if(is.null(or)){
-        or <- NA
+      OR <- test_res$estimate
+      if(is.null(OR)){
+        OR <- NA
       }
     }
     
   }else{
     pvalue <- NA
-    or <- NA
+    OR <- NA
   }
   
   
@@ -77,7 +83,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   res <- data.frame(covariate = row_var,
     subgroup = rownames(tbl),
     countdf, propdf,
-    or = c(or, rep(NA, nrow(tbl) - 1)),
+    OR = c(OR, rep(NA, nrow(tbl) - 1)),
     pvalue = c(pvalue, rep(NA, nrow(tbl) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -90,11 +96,9 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = res$subgroup, 
-    
     format_counts_and_props(counts = countdf, props = propdf, digits = 1),
-    
-    OR = format_or(res$or, digits = 2),
-    `P-value` = format_pvalues(res$pvalue), 
+    OR = format_or(res$OR, digits = 2, non_empty = 1),
+    `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
   
   
@@ -107,7 +111,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   
   ### If all OR are empty, do not display that column.
-  if(all(out$OR == "") && !force_empty_cols){
+  if(all(out$OR %in% c("", "NA")) && !force_empty_cols){
     out$OR <- NULL
   }
   
@@ -120,13 +124,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   # Prepare 'header' data frame
   # --------------------------------------------------------------------------
   
-  num_start_cols <- 2
-  num_end_cols <- sum(c("OR", "P-value") %in% colnames(out))
-  
-  
-  header <- c(num_start_cols, nlevels(data[, col_var]), num_end_cols)
-  header <- as.integer(header)
-  names(header) <- c(" ", variable_names[col_var], " ")
+  header <- format_header(all_colnames = colnames(out), header_colnames = levels(data[, col_var]), header_name = variable_names[col_var])
   
   
   # --------------------------------------------------------------------------
@@ -191,10 +189,14 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   ### Strata cannot include col_var, row_var
   stopifnot(length(intersect(c(strat1_var, strat2_var), c(col_var, row_var))) == 0)
   
+  if(!print_pvalues){
+    print_adjpvalues <- FALSE
+  }
   
   ### Keep non-missing data
   all_vars <- c(col_var, row_var, strat1_var, strat2_var)
   data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
+  stopifnot(nrow(data) > 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -234,6 +236,8 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
+      hdr <- bheader(wrapper_res)
+      
       
       ## Add info about the strata to the data frames
       
@@ -248,7 +252,6 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       out <- cbind(prefix_df, out)
       
       ## Update header by adding 2 corresponding to the two strat variables to the first position
-      hdr <- bheader(wrapper_res)
       hdr[1] <- hdr[1] + 2
       
       rownames(res) <- NULL
@@ -280,13 +283,16 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+  hdr <- bheader(wrapper_res[[1]])
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
-  if("Adj. P-value" %in% colnames(out)){
+  if(print_adjpvalues){
     out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
+    ## Update header
+    hdr[3] <- hdr[3] + 1
   }
   
   
@@ -309,9 +315,9 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
     hdr_shift <- hdr_shift + 1
   }
   
-  ## Update header by adding 2 corresponding to the two strat variables to the first position
-  hdr <- bheader(wrapper_res[[1]])
+  ## Update header
   hdr[1] <- hdr[1] - hdr_shift
+  
   
   rownames(res) <- NULL
   rownames(out) <- NULL
@@ -370,32 +376,28 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
+  hdr <- bheader(wrapper_res[[1]])
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
+    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue)
   }
   
   
-  hdr <- bheader(wrapper_res[[1]])
-  
-  ### Replace NAs with "" for OR
-  missing_columns <- c("OR")
-  
-  for(i in 1:length(missing_columns)){
-    if(missing_columns[i] %in% colnames(out)){
-      out[is.na(out[, missing_columns[i]]), missing_columns[i]] <- ""
-      ### If all FC are empty, do not display that column.
-      if(all(out[, missing_columns[i]] == "") && !force_empty_cols){
-        out[, missing_columns[i]] <- NULL
-        ### Update header
-        hdr[length(hdr)] <- hdr[length(hdr)] - 1
-      }
+  ### If all OR are empty, do not display that column.
+  if(all(out$OR %in% c("", "NA")) && !force_empty_cols){
+    out$OR <- NULL
+    ### Update header
+    if(hdr[3] == 1){
+      hdr <- hdr[-3]
+    }else{
+      hdr[3] <- hdr[3] - 1
     }
   }
+  
   
   rownames(res) <- NULL
   rownames(out) <- NULL

@@ -695,6 +695,8 @@ wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_v
 
 ```{r kruskal_test, results='asis'}
 
+devtools::load_all()
+
 
 data <- bdata
 

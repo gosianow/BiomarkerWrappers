@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_core_pearsons_test • BiomarkerWrappers</title>
+<title>Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_core_pearsons_test • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_core_pearsons_test" />
-<meta property="og:description" content="Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test" />
+<meta property="og:title" content="Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_core_pearsons_test" />
+<meta property="og:description" content="Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9</span>
       </span>
     </div>
 
@@ -115,13 +115,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</h1>
+    <h1>Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test</h1>
     
     <div class="hidden name"><code>wrapper_core_pearsons_test.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</p>
+    <p>Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test</p>
     </div>
 
     <pre class="usage"><span class='fu'>wrapper_core_pearsons_test</span>(
@@ -129,9 +129,11 @@
   <span class='no'>response_var</span>,
   <span class='no'>covariate_var</span>,
   <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"pearson"</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>print_or</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
@@ -142,6 +144,7 @@
   <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"pearson"</span>,
   <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -167,6 +170,10 @@
     <tr>
       <th>strata_vars</th>
       <td><p>Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.</p></td>
+    </tr>
+    <tr>
+      <th>print_or</th>
+      <td><p>Logical. Whether to print odds rations estimated with logistic regression.</p></td>
     </tr>
     <tr>
       <th>strat1_var</th>

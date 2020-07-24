@@ -269,6 +269,9 @@ wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, c
   ### Covariates cannot include strata
   stopifnot(length(intersect(c(strat1_var, strat2_var), covariate_var)) == 0)
   
+  if(!print_pvalues){
+    print_adjpvalues <- FALSE
+  }
   
   ### Keep non-missing data
   
