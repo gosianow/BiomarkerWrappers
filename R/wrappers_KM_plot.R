@@ -29,7 +29,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   variable_names = NULL, 
   title = NULL, subtitle = NULL,
   legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
-  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
+  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none"){
   
@@ -126,9 +126,9 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   f <- stats::as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
   
   ### Fit the model
-  fit <- survival::survfit(f, data)
+  fit <- survival::survfit(f, data, conf.type = "plain")
   
-  ## Fix a bug. Otherwise, it does not work!!! 
+  ## Overwrite the formula. Otherwise, it does not work!!! 
   fit$call$formula <- f
   
   
@@ -139,7 +139,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
   
   ## palette must be a non-named vector. Otherwise, it does not work. For each subplot has to have unique values. If a level has zero counts, it is not plotted. Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts.
   
-  ggpl <- survminer::ggsurvplot(fit, data = data, palette = colors, linetype = 1, conf.int = conf_int, risk.table = risk_table, ggtheme = ggplot2::theme_classic(), xlab = xlab, break.time.by = break_time_by, xlim = c(0, max_tte), fontsize = label_size) 
+  ggpl <- survminer::ggsurvplot(fit, data = data, palette = colors, linetype = 1, conf.int = conf_int, surv.median.line = surv_median_line, risk.table = risk_table, ggtheme = ggplot2::theme_classic(), xlab = xlab, break.time.by = break_time_by, xlim = c(0, max_tte), fontsize = label_size) 
   
   
   ### Customize the plot
@@ -221,7 +221,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
   variable_names = NULL, 
   title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
-  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
+  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
@@ -336,7 +336,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
         variable_names = variable_names, 
         title = title, subtitle = subtitle,
         legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
-        break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
+        break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
         title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
         background_grid_major = background_grid_major)
       
@@ -381,7 +381,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   variable_names = NULL, 
   title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
-  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
+  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(4, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
@@ -459,7 +459,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     variable_names = variable_names, 
     title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
-    break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
+    break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
@@ -485,7 +485,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   variable_names = NULL, 
   title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
-  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
+  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
@@ -575,7 +575,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     variable_names = variable_names, 
     title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
-    break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
+    break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
@@ -609,7 +609,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
   variable_names = NULL, 
   title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
-  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, 
+  break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
@@ -698,7 +698,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
     variable_names = variable_names, 
     title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
-    break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, 
+    break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)

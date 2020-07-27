@@ -134,11 +134,12 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
       # -----------------------------------
       
       ## Use the survfit function to calculate n.start, events and median when the biomarker variable is categorical
-      ## The median and its confidence interval are defined by drawing a horizontal line at 0.5 on the plot of the survival curve and its confidence bands. The intersection of the line with the lower CI band defines the lower limit for the median's interval, and similarly for the upper band. If any of the intersections is not a point the we use the center of the intersection interval, e.g., if the survival curve were exactly equal to 0.5 over an interval. When data is uncensored this agrees with the usual definition of a median.
+      ## ?print.survfit The median and its confidence interval are defined by drawing a horizontal line at 0.5 on the plot of the survival curve and its confidence bands. The intersection of the line with the lower CI band defines the lower limit for the median's interval, and similarly for the upper band. If any of the intersections is not a point the we use the center of the intersection interval, e.g., if the survival curve were exactly equal to 0.5 over an interval. When data is uncensored this agrees with the usual definition of a median.
+      ## Using conf.type = "plain" to obtain the same results as computed by Biostats.
       
       f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", covariate_vars[i]))
       
-      survfit_fit <- survival::survfit(f, data)
+      survfit_fit <- survival::survfit(f, data, conf.type = "plain")
       survfit_summ <- summary(survfit_fit)
       
       

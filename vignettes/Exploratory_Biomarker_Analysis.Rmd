@@ -706,8 +706,10 @@ num_vars <- c("GeneA", "GeneB")
 
 wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
   
-
+wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars, print_pvalues = FALSE)
   
+
+
 data <- bdata
 
 cat_vars <- c("Cell_Of_Origin", "IPI", "Treatment_Arm")

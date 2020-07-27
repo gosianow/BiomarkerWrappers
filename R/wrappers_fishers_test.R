@@ -233,11 +233,8 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       
       wrapper_res <- wrapper_core_fishers_test(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
-      
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
-      hdr <- bheader(wrapper_res)
-      
       
       ## Add info about the strata to the data frames
       
@@ -251,13 +248,10 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       colnames(prefix_df) <- variable_names[c(strat2_var, strat1_var)]
       out <- cbind(prefix_df, out)
       
-      ## Update header by adding 2 corresponding to the two strat variables to the first position
-      hdr[1] <- hdr[1] + 2
-      
       rownames(res) <- NULL
       rownames(out) <- NULL
       
-      wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res), header = hdr)
+      wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res))
       
       return(wrapper_res)
       
@@ -272,7 +266,7 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
     rownames(res) <- NULL
     rownames(out) <- NULL
     
-    wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]), header = bheader(wrapper_res[[1]]))
+    wrapper_res <- BclassTesting(results = res, output = out, caption = bcaption(wrapper_res[[1]]))
     
     return(wrapper_res)
     
@@ -283,7 +277,6 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
-  hdr <- bheader(wrapper_res[[1]])
   
   
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
@@ -291,8 +284,6 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   
   if(print_adjpvalues){
     out$`Adj. P-value` <- format_pvalues(stats::p.adjust(res$pvalue, method = "BH"))
-    ## Update header
-    hdr[3] <- hdr[3] + 1
   }
   
   
@@ -301,22 +292,17 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
   out[out$Covariate == "", variable_names[strat2_var]] <- ""
   
   ### Remove dummy columns
-  
-  hdr_shift <- 0
-  
   if(strat2_var == "strat2_dummy"){
     res$strat2_dummy <- NULL
     out$`strat2 dummy` <- NULL
-    hdr_shift <- hdr_shift + 1
   }
   if(strat1_var == "strat1_dummy"){
     res$strat1_dummy <- NULL
     out$`strat1 dummy` <- NULL
-    hdr_shift <- hdr_shift + 1
   }
   
   ## Update header
-  hdr[1] <- hdr[1] - hdr_shift
+  hdr <- format_header(all_colnames = colnames(out), header_colnames = levels(data[, col_var]), header_name = variable_names[col_var])
   
   
   rownames(res) <- NULL
