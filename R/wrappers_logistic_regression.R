@@ -123,14 +123,22 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   # Logistic regression
   # --------------------------------------------------------------------------
   
+  
   ## Create the formula
   formula_covariates <- paste0(covariate_vars, collapse = " + ")
   f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
   
   
   ## Fit the logistic model
-  regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data)
-  regression_summ <- summary(regression_fit)
+  regression_fit <- NULL
+  
+  try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data), silent = TRUE)
+  
+  if(is.null(regression_fit)){
+    regression_summ <- NULL
+  }else{
+    regression_summ <- summary(regression_fit)
+  }
   
   
   # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
@@ -146,17 +154,19 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   ## Note: When MASS is loaded, the 95% CIs are calculated (using confint) based on profile likelihood
   ## To compute 95% Wald CIs (based on asymptotic normality), one needs to use confint.default()
   
-  
   ## There can be an error from confint when all samples have the same response
-  # conf.int <- NULL
-  # try(conf.int <- exp(stats::confint(regression_fit)), silent = TRUE)
-  # if(is.null(conf.int)){
-  #   conf.int <- exp(stats::confint.default(regression_fit))
+  # confint_res <- NULL
+  # try(confint_res <- exp(stats::confint(regression_fit)), silent = TRUE)
+  # if(is.null(confint_res)){
+  #   confint_res <- exp(stats::confint.default(regression_fit))
   # }
   
   ## I use the Wald CIs because they are in concordance with p-values i.e. they contain 1 when p-value is not significant
-  conf.int <- exp(stats::confint.default(regression_fit))
   
+  
+  if(!is.null(regression_fit)){
+    confint_res <- exp(stats::confint.default(regression_fit))
+  }
   
   
   # --------------------------------------------------------------------------
@@ -164,20 +174,29 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   # --------------------------------------------------------------------------
   
   
-  conf_int <- data.frame(coefficient = rownames(conf.int), conf.int[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(conf_int) <- c("coefficient", "OR_CI95_lower", "OR_CI95_upper")
-  
-  
-  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
-  
-  colnames(coefficients) <- c("coefficient", "OR", "pvalue")
-  coefficients$OR <- exp(coefficients$OR)
+  if(is.null(regression_summ)){
+    
+    conf_int <- data.frame(coefficient = coef_info$coefficient, OR_CI95_lower = NA, OR_CI95_upper = NA, stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = coef_info$coefficient, OR = NA, pvalue = NA, stringsAsFactors = FALSE)
+    
+  }else{
+    
+    conf_int <- data.frame(coefficient = rownames(confint_res), confint_res[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
+    colnames(conf_int) <- c("coefficient", "OR_CI95_lower", "OR_CI95_upper")
+    
+    
+    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+    
+    colnames(coefficients) <- c("coefficient", "OR", "pvalue")
+    
+    coefficients$OR <- exp(coefficients$OR)
+    
+  }
   
 
   # --------------------------------------------------------------------------
   # Append results from regression
   # --------------------------------------------------------------------------
-  
   
   
   coef_info <- coef_info %>% 
@@ -836,21 +855,21 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   
   ## There can be an error from confint when all samples have the same response
-  # conf.int <- NULL
-  # try(conf.int <- exp(stats::confint(regression_fit)), silent = TRUE)
-  # if(is.null(conf.int)){
-  #   conf.int <- exp(stats::confint.default(regression_fit))
+  # confint_res <- NULL
+  # try(confint_res <- exp(stats::confint(regression_fit)), silent = TRUE)
+  # if(is.null(confint_res)){
+  #   confint_res <- exp(stats::confint.default(regression_fit))
   # }
   
   ## I use the Wald CIs because they are in concordance with p-values i.e. they contain 1 when p-value is not significant
-  conf.int <- exp(stats::confint.default(regression_fit))
+  confint_res <- exp(stats::confint.default(regression_fit))
   
   
   # --------------------------------------------------------------------------
   ## Append results from regression
   # --------------------------------------------------------------------------
   
-  conf_int <- data.frame(coefficient = rownames(conf.int), conf.int[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
+  conf_int <- data.frame(coefficient = rownames(confint_res), confint_res[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
   colnames(conf_int) <- c("coefficient", "CI95_lower", "CI95_upper")
   
   coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)

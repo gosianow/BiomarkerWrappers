@@ -60,12 +60,12 @@ wrapper_core_characteristics_cat <- function(data, covariate_var, strat_var = NU
   
   propdf <- as.data.frame.matrix(prop)
   
-  countm <- rbind.fill.matrix(empty_row, tbl_isna, countdf)
+  countm <- plyr::rbind.fill.matrix(empty_row, tbl_isna, countdf)
   colnames(countm) <- paste0("counts_", colnames(countm))
   
   stopifnot(ncol(countm) == ncol(tbl_isna))
   
-  propm <- rbind.fill.matrix(empty_row, empty_row, empty_row, propdf)
+  propm <- plyr::rbind.fill.matrix(empty_row, empty_row, empty_row, propdf)
   colnames(propm) <- paste0("proportions_", colnames(propm))
   
   stopifnot(ncol(propm) == ncol(tbl_isna))
@@ -197,7 +197,7 @@ wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NU
   # --------------------------------------------------------------------------
   
   
-  summm <- rbind.fill.matrix(empty_row, tbl_isna, summdf)
+  summm <- plyr::rbind.fill.matrix(empty_row, tbl_isna, summdf)
   
   stopifnot(ncol(summm) == ncol(tbl_isna))
   
@@ -215,7 +215,7 @@ wrapper_core_characteristics_num <- function(data, covariate_var, strat_var = NU
   
   out <- data.frame(Covariate = c(variable_names[covariate_var], "Total (non-NA)", "NAs", rownames(summdf)), 
     
-    format_summ(summ = summm),
+    format_summ(summ = summm, digits = c(rep(0, 3), rep(2, nrow(summdf))), per = "col"),
     
     check.names = FALSE, stringsAsFactors = FALSE)
   
