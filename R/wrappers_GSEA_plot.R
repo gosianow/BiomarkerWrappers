@@ -140,14 +140,13 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
     geom_segment(aes(x = .data$rank, xend = .data$rank, y = .data$Geneset_num - 0.45, yend = .data$Geneset_num + 0.45, color = .data$statistic)) +
     ggtitle(title) +
     xlab(xlab) +
-    theme_cowplot(12) +
     theme(axis.line = element_blank(), 
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
       # axis.title.x = element_blank(), 
       # axis.text.x = element_blank(),
       # axis.ticks.x = element_blank(),
-      plot.title = element_text(size = title_size, hjust = 1),
+      plot.title = element_text(size = title_size, hjust = 0.5),
       legend.position = "none") +
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
@@ -165,7 +164,6 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
     geom_segment() +
     xlab(xlab) +
     ylab(statistic_prefix) +
-    theme_cowplot(12) +
     theme(axis.line = element_blank(), 
       # axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),

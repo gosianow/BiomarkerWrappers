@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.11</span>
       </span>
     </div>
 
@@ -227,28 +227,28 @@
 <span class='no'>covariate_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span>, <span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>)
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;         Covariate          Subgroup Total N Total Events   N     Events   MST
-#&gt; 1   Treatment Arm              CTRL     391          165 200 85 (42.5%)  83.0
-#&gt; 2                               TRT     391          165 191 80 (41.9%) 100.3
-#&gt; 3           GeneA                       391          165                     
-#&gt; 4             IPI               Low     391          165  78 25 (32.1%)    NA
-#&gt; 5                  Low-Intermediate     391          165 144 51 (35.4%)  92.0
-#&gt; 6                 High-Intermediate     391          165 103 49 (47.6%)  83.1
-#&gt; 7                              High     391          165  66 40 (60.6%)  63.6
-#&gt; 8  Cell Of Origin               GCB     391          165 218 80 (36.7%)    NA
-#&gt; 9                      UNCLASSIFIED     391          165  62 34 (54.8%)  80.4
-#&gt; 10                              ABC     391          165 111 51 (45.9%)  84.5
-#&gt;       MST 95% CI   HR     HR 95% CI    P-value Adj. P-value
-#&gt; 1    (80.3 - NA)                                           
-#&gt; 2    (84.6 - NA) 0.73 (0.53 - 0.99)   0.0444 *     0.0777 .
-#&gt; 3                1.03 (0.89 - 1.20)     0.6919       0.6919
-#&gt; 4    (99.9 - NA)                                           
-#&gt; 5    (84.5 - NA) 1.17 (0.72 - 1.91)     0.5157       0.6017
-#&gt; 6    (63.4 - NA) 1.79 (1.10 - 2.93)   0.0202 *     0.0500 *
-#&gt; 7  (27.3 - 82.2) 2.70 (1.62 - 4.51) 0.0001 ***   0.0010 ***
-#&gt; 8    (87.1 - NA)                                           
-#&gt; 9  (57.6 - 88.7) 1.62 (1.07 - 2.44)   0.0214 *     0.0500 *
-#&gt; 10   (74.7 - NA) 1.23 (0.86 - 1.75)     0.2659       0.3723</div><div class='input'>
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;         Covariate          Subgroup Total N Total Events   N     Events   HR
+#&gt; 1   Treatment Arm              CTRL     391          165 200 85 (42.5%)     
+#&gt; 2                               TRT     391          165 191 80 (41.9%) 0.73
+#&gt; 3           GeneA                       391          165                1.03
+#&gt; 4             IPI               Low     391          165  78 25 (32.1%)     
+#&gt; 5                  Low-Intermediate     391          165 144 51 (35.4%) 1.17
+#&gt; 6                 High-Intermediate     391          165 103 49 (47.6%) 1.79
+#&gt; 7                              High     391          165  66 40 (60.6%) 2.70
+#&gt; 8  Cell Of Origin               GCB     391          165 218 80 (36.7%)     
+#&gt; 9                      UNCLASSIFIED     391          165  62 34 (54.8%) 1.62
+#&gt; 10                              ABC     391          165 111 51 (45.9%) 1.23
+#&gt;        HR 95% CI    P-value Adj. P-value
+#&gt; 1                                       
+#&gt; 2  (0.53 - 0.99)   0.0444 *     0.0777 .
+#&gt; 3  (0.89 - 1.20)     0.6919       0.6919
+#&gt; 4                                       
+#&gt; 5  (0.72 - 1.91)     0.5157       0.6017
+#&gt; 6  (1.10 - 2.93)   0.0202 *     0.0500 *
+#&gt; 7  (1.62 - 4.51) 0.0001 ***   0.0010 ***
+#&gt; 8                                       
+#&gt; 9  (1.07 - 2.44)   0.0214 *     0.0500 *
+#&gt; 10 (0.86 - 1.75)     0.2659       0.3723</div><div class='input'>
 <span class='fu'><a href='Bclass-class.html'>bforest</a></span>(<span class='no'>x</span>)</div><div class='img'><img src='wrapper_core_cox_regression_simple-1.png' alt='' width='700' height='433' /></div><div class='input'>
 
 <span class='co'>### Fit a stratified model </span>
@@ -257,14 +257,14 @@
 <span class='no'>strata_vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span>)
 
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>wrapper_core_cox_regression_simple</span>(<span class='no'>data</span>, <span class='kw'>tte_var</span> <span class='kw'>=</span> <span class='no'>tte_var</span>, <span class='kw'>censor_var</span> <span class='kw'>=</span> <span class='no'>censor_var</span>, <span class='kw'>covariate_vars</span> <span class='kw'>=</span> <span class='no'>covariate_vars</span>, <span class='kw'>strata_vars</span> <span class='kw'>=</span> <span class='no'>strata_vars</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N     Events   MST  MST 95% CI
-#&gt; 1 Treatment Arm     CTRL     391          165 200 85 (42.5%)  83.0 (80.3 - NA)
-#&gt; 2                    TRT     391          165 191 80 (41.9%) 100.3 (84.6 - NA)
-#&gt; 3         GeneA              391          165                                 
-#&gt;     HR     HR 95% CI  P-value Adj. P-value
-#&gt; 1                                         
-#&gt; 2 0.74 (0.54 - 1.01) 0.0555 .       0.1110
-#&gt; 3 0.99 (0.85 - 1.16)   0.9334       0.9334</div><div class='input'>
+<span class='fu'><a href='Bclass-class.html'>boutput</a></span>(<span class='no'>x</span>)</div><div class='output co'>#&gt;       Covariate Subgroup Total N Total Events   N     Events   HR     HR 95% CI
+#&gt; 1 Treatment Arm     CTRL     391          165 200 85 (42.5%)                   
+#&gt; 2                    TRT     391          165 191 80 (41.9%) 0.74 (0.54 - 1.01)
+#&gt; 3         GeneA              391          165                0.99 (0.85 - 1.16)
+#&gt;    P-value Adj. P-value
+#&gt; 1                      
+#&gt; 2 0.0555 .       0.1110
+#&gt; 3   0.9334       0.9334</div><div class='input'>
 
 
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>bdata</span>)
@@ -310,68 +310,37 @@
 #&gt; 28                                        High-Intermediate      60
 #&gt; 29                                                     High      60
 #&gt; 30           TRT            ABC     GeneA                        60
-#&gt;    Total Events  N     Events   MST  MST 95% CI    HR       HR 95% CI   P-value
-#&gt; 1            50 32 12 (37.5%)    NA (76.9 - NA)                                
-#&gt; 2            50 44 14 (31.8%)    NA (78.3 - NA)  0.97   (0.45 - 2.11)    0.9439
-#&gt; 3            50 32 17 (53.1%)  65.7 (36.5 - NA)  2.22   (1.05 - 4.70)  0.0374 *
-#&gt; 4            50 13  7 (53.8%)  98.3 (19.6 - NA)  1.89   (0.74 - 4.82)    0.1860
-#&gt; 5            50                                  0.99   (0.73 - 1.34)    0.9417
-#&gt; 6            14  7  3 (42.9%)    NA (32.1 - NA)                                
-#&gt; 7            14 10  6 (60.0%)  80.4 (15.1 - NA)  1.65   (0.37 - 7.43)    0.5120
-#&gt; 8            14  7  3 (42.9%)    NA  (1.6 - NA)  1.29   (0.25 - 6.61)    0.7592
-#&gt; 9            14  4  2 (50.0%)  28.8 (13.7 - NA)  1.74  (0.28 - 10.74)    0.5528
-#&gt; 10           14                                  0.93   (0.59 - 1.45)    0.7359
-#&gt; 11           21  5  2 (40.0%)    NA  (4.0 - NA)                                
-#&gt; 12           21 17  3 (17.6%)    NA (83.0 - NA)  0.23   (0.03 - 1.53)    0.1271
-#&gt; 13           21 18  9 (50.0%)  82.6 (33.3 - NA)  0.91   (0.18 - 4.62)    0.9130
-#&gt; 14           21 11  7 (63.6%)  23.4  (9.9 - NA)  2.91  (0.59 - 14.20)    0.1874
-#&gt; 15           21                                  1.68   (1.01 - 2.79)  0.0463 *
-#&gt; 16           30 23  3 (13.0%)    NA          NA                                
-#&gt; 17           30 36  9 (25.0%)    NA (91.0 - NA)  2.19   (0.59 - 8.13)    0.2396
-#&gt; 18           30 20  7 (35.0%) 100.3 (72.4 - NA)  3.06  (0.79 - 11.86)    0.1065
-#&gt; 19           30 18 11 (61.1%)  75.5 (27.3 - NA)  6.13  (1.70 - 22.09) 0.0055 **
-#&gt; 20           30                                  1.08   (0.71 - 1.64)    0.7348
-#&gt; 21           20  5  1 (20.0%)    NA (31.9 - NA)                                
-#&gt; 22           20 14  8 (57.1%)  82.1 (31.2 - NA)  3.53  (0.44 - 28.27)    0.2346
-#&gt; 23           20 10  6 (60.0%)  72.7 (48.8 - NA)  4.07  (0.49 - 34.00)    0.1954
-#&gt; 24           20  5 5 (100.0%)  21.9  (8.9 - NA) 10.54 (1.07 - 103.38)  0.0433 *
-#&gt; 25           20                                  1.02   (0.67 - 1.54)    0.9268
-#&gt; 26           30  6  4 (66.7%)  76.1 (33.6 - NA)                                
-#&gt; 27           30 23 11 (47.8%)  84.5 (74.7 - NA)  0.70   (0.22 - 2.20)    0.5411
-#&gt; 28           30 16  7 (43.8%)    NA (40.7 - NA)  0.63   (0.18 - 2.15)    0.4583
-#&gt; 29           30 15  8 (53.3%)  67.6 (15.9 - NA)  1.03   (0.31 - 3.42)    0.9676
-#&gt; 30           30                                  0.81   (0.53 - 1.25)    0.3499
-#&gt;    Adj. P-value
-#&gt; 1              
-#&gt; 2        0.9676
-#&gt; 3        0.2777
-#&gt; 4        0.5209
-#&gt; 5        0.9676
-#&gt; 6              
-#&gt; 7        0.8292
-#&gt; 8        0.9590
-#&gt; 9        0.8292
-#&gt; 10       0.9590
-#&gt; 11             
-#&gt; 12       0.5085
-#&gt; 13       0.9676
-#&gt; 14       0.5209
-#&gt; 15       0.2777
-#&gt; 16             
-#&gt; 17       0.5229
-#&gt; 18       0.5085
-#&gt; 19       0.1328
-#&gt; 20       0.9590
-#&gt; 21             
-#&gt; 22       0.5229
-#&gt; 23       0.5209
-#&gt; 24       0.2777
-#&gt; 25       0.9676
-#&gt; 26             
-#&gt; 27       0.8292
-#&gt; 28       0.8292
-#&gt; 29       0.9676
-#&gt; 30       0.6999</div><div class='input'>
+#&gt;    Total Events  N     Events    HR       HR 95% CI   P-value Adj. P-value
+#&gt; 1            50 32 12 (37.5%)                                             
+#&gt; 2            50 44 14 (31.8%)  0.97   (0.45 - 2.11)    0.9439       0.9676
+#&gt; 3            50 32 17 (53.1%)  2.22   (1.05 - 4.70)  0.0374 *       0.2777
+#&gt; 4            50 13  7 (53.8%)  1.89   (0.74 - 4.82)    0.1860       0.5209
+#&gt; 5            50                0.99   (0.73 - 1.34)    0.9417       0.9676
+#&gt; 6            14  7  3 (42.9%)                                             
+#&gt; 7            14 10  6 (60.0%)  1.65   (0.37 - 7.43)    0.5120       0.8292
+#&gt; 8            14  7  3 (42.9%)  1.29   (0.25 - 6.61)    0.7592       0.9590
+#&gt; 9            14  4  2 (50.0%)  1.74  (0.28 - 10.74)    0.5528       0.8292
+#&gt; 10           14                0.93   (0.59 - 1.45)    0.7359       0.9590
+#&gt; 11           21  5  2 (40.0%)                                             
+#&gt; 12           21 17  3 (17.6%)  0.23   (0.03 - 1.53)    0.1271       0.5085
+#&gt; 13           21 18  9 (50.0%)  0.91   (0.18 - 4.62)    0.9130       0.9676
+#&gt; 14           21 11  7 (63.6%)  2.91  (0.59 - 14.20)    0.1874       0.5209
+#&gt; 15           21                1.68   (1.01 - 2.79)  0.0463 *       0.2777
+#&gt; 16           30 23  3 (13.0%)                                             
+#&gt; 17           30 36  9 (25.0%)  2.19   (0.59 - 8.13)    0.2396       0.5229
+#&gt; 18           30 20  7 (35.0%)  3.06  (0.79 - 11.86)    0.1065       0.5085
+#&gt; 19           30 18 11 (61.1%)  6.13  (1.70 - 22.09) 0.0055 **       0.1328
+#&gt; 20           30                1.08   (0.71 - 1.64)    0.7348       0.9590
+#&gt; 21           20  5  1 (20.0%)                                             
+#&gt; 22           20 14  8 (57.1%)  3.53  (0.44 - 28.27)    0.2346       0.5229
+#&gt; 23           20 10  6 (60.0%)  4.07  (0.49 - 34.00)    0.1954       0.5209
+#&gt; 24           20  5 5 (100.0%) 10.54 (1.07 - 103.38)  0.0433 *       0.2777
+#&gt; 25           20                1.02   (0.67 - 1.54)    0.9268       0.9676
+#&gt; 26           30  6  4 (66.7%)                                             
+#&gt; 27           30 23 11 (47.8%)  0.70   (0.22 - 2.20)    0.5411       0.8292
+#&gt; 28           30 16  7 (43.8%)  0.63   (0.18 - 2.15)    0.4583       0.8292
+#&gt; 29           30 15  8 (53.3%)  1.03   (0.31 - 3.42)    0.9676       0.9676
+#&gt; 30           30                0.81   (0.53 - 1.25)    0.3499       0.6999</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -53,7 +53,7 @@
 #' 
 #' @param x TopTable
 #' @export
-wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
+wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", pval = 0.05, title = "", 
   axis_text_x_angle = 30, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
   axis_text_y_size = 10, title_size = 12,
@@ -76,13 +76,13 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   contrasts <- colnames(data_lfc)
   
   
-  data_lfc <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_lfc, stringsAsFactors = FALSE), 
+  data_lfc <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_lfc, stringsAsFactors = FALSE, check.names = FALSE), 
     cols = contrasts, names_to = "contrast", values_to = lfc_prefix)
   
-  data_pval <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_pval, stringsAsFactors = FALSE), 
+  data_pval <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_pval, stringsAsFactors = FALSE, check.names = FALSE), 
     cols = contrasts, names_to = "contrast", values_to = pval_prefix)
   
-  data_adjp <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE), 
+  data_adjp <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE, check.names = FALSE), 
     cols = contrasts, names_to = "contrast", values_to = adjp_prefix)
   
   
@@ -133,7 +133,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
   
   ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], size = .data[["pval_cut"]], color = .data[[lfc_prefix]])) +
     geom_point() +
-    geom_point(aes(size = .data[["pval_cut"]], shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
+    geom_point(aes(size = .data[["pval_cut"]] + 1, shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
     ggtitle(title) +
     theme_cowplot(12) +
     theme(plot.title = element_text(size = title_size),
@@ -186,7 +186,7 @@ wrapper_plot_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix =
 #' 
 #' @param x TopTable
 #' @export
-wrapper_plot_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
+wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", draw = TRUE, title = "",
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', trim_limits = NULL,

@@ -15,7 +15,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   size_range = c(2, 10),
-  title = "", title_size = 10, title_width = 200, axis_text_y_size = 8, axis_text_y_width = 150){
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 150){
   
   
   stopifnot(length(geneset_var) == 1)
@@ -135,11 +135,10 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
     geom_vline(xintercept = xintercept, linetype = 2, color = "lightgrey") +
     ggtitle(title) +
     xlab(xlab) +
-    theme_cowplot(12) +
     theme(axis.line = element_blank(), 
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
-      plot.title = element_text(size = title_size, hjust = 1),
+      plot.title = element_text(size = title_size, hjust = 0.5),
       legend.position = "right") +
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
@@ -177,7 +176,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
 #' @param x TopTable with ORA results.
 #' @export
 wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observed_prefix = "Observed", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
-  title = "", title_size = 10, title_width = 140, axis_text_y_size = 8, axis_text_y_width = 70, 
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70, 
   colors_point = NULL, size_range = c(2, 10), point_alpha = 0.8){
   
   
@@ -309,7 +308,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observ
     theme(axis.line = element_blank(), 
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
-      plot.title = element_text(size = title_size, hjust = 1),
+      plot.title = element_text(size = title_size, hjust = 0.5),
       strip.background = element_rect(colour = "white", fill = "white")) +
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +

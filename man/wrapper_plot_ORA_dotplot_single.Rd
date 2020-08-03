@@ -19,7 +19,7 @@ wrapper_plot_ORA_dotplot_single(
   size_range = c(2, 10),
   title = "",
   title_size = 10,
-  title_width = 200,
+  title_width = 100,
   axis_text_y_size = 8,
   axis_text_y_width = 150
 )

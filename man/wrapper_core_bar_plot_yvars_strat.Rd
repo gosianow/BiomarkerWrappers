@@ -25,7 +25,7 @@ wrapper_core_bar_plot_yvars_strat(
   show_proportions = TRUE,
   show_counts = TRUE,
   show_total_proportions = FALSE,
-  show_total_counts = TRUE,
+  show_total_counts = FALSE,
   label_size = 3.5,
   label_vjust = 0.5,
   title_size = 12,

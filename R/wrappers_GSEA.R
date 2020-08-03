@@ -108,9 +108,11 @@ wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, g
   ## fgsea sorts the statistic in the descending order
   fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic)
   
+  
   ### Make the same order as in genesets
   fgsea_out <- fgsea_out[match(names(genesets), fgsea_out$pathway), , drop = FALSE]
   
+
   stopifnot(all(fgsea_out$pathway == names(genesets)))
   
   

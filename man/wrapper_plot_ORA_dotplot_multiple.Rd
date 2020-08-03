@@ -13,7 +13,7 @@ wrapper_plot_ORA_dotplot_multiple(
   directions = c("both", "up", "down"),
   title = "",
   title_size = 10,
-  title_width = 140,
+  title_width = 100,
   axis_text_y_size = 8,
   axis_text_y_width = 70,
   colors_point = NULL,

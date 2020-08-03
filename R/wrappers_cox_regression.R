@@ -304,7 +304,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     out$`Events` <- NULL
   }
   
-  if(!print_mst && !force_empty_cols){
+  if(!print_mst || !force_empty_cols){
     out$`MST` <- NULL
     out$`MST 95% CI` <- NULL
   }

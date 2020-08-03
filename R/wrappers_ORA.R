@@ -341,7 +341,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
   
   if(!contrast %in% contrasts){
     
-    caption <- paste0("There was no or too few ", direction_print, " genes corresponding to ", contrast, ", and the ORA analysis was not possible.")
+    caption <- paste0("There was no or too few ", direction_print, " genes when comparing ", contrast, ", and the ORA analysis was not possible.")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -385,12 +385,12 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
   }
   
   ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] < pval, , drop = FALSE]
+  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval, , drop = FALSE]
   
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, " genes corresponding to ", contrast, ".")
+    caption <- paste0("There are no gene sets over-represented (", adjp_prefix, " <= ", pval, ") by ", direction_print, " genes when comparing ", contrast, ".")
     
     ## Remove all undescores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
@@ -415,111 +415,11 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of over-represented gene sets (", adjp_prefix, " < ", pval, ") by ", direction_print, " genes corresponding to ", contrast, ".")
+    caption <- paste0("List of gene sets over-represented (", adjp_prefix, " <= ", pval, ") by ", direction_print, " genes when comparing ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " gene sets.")
     }
-    
-  }
-  
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
-  caption <- gsub("_", " ", caption)
-  
-  rownames(res) <- NULL
-  rownames(out) <- NULL
-  
-  bout <- BclassDE(results = res, output = out, caption = caption)
-  
-  
-  return(bout)
-  
-  
-}
-
-
-
-
-
-# directions = c("up", "down"); 
-# geneset_vars = "Geneset"; genes_prefix = "Genes"; sep = "_"; 
-# caption = NULL
-
-
-
-
-#' Display DE genes that are present in the selected gene sets
-#' 
-#' @param x TopTable with ORA results for gene sets that should be displayed.
-#' @param contrast Name of the contrasts that should be displayed.
-#' @param directions Names of gene regulation directions that should be displayed.  
-#' @export
-wrapper_dispaly_ora_genes <- function(x, contrast, directions = c("up", "down"), 
-  geneset_vars = "Geneset", genes_prefix = "Genes", sep = "_", 
-  caption = NULL){
-  
-  
-  # -------------------------------------------------------------------------
-  # Checks
-  # -------------------------------------------------------------------------
-  
-  stopifnot(nrow(x) > 0)
-  
-  stopifnot(length(geneset_vars) >= 1)
-  stopifnot(all(geneset_vars %in% colnames(x)))
-  
-  
-  if(all(directions %in% c("up", "down"))){
-    directions_print <- paste0(directions, "-regulated") 
-  }else{
-    directions_print <- directions
-  }
-  
-  
-  # -------------------------------------------------------------------------
-  # Preprocessing
-  # -------------------------------------------------------------------------
-  
-  contrast_and_directions <- paste0(contrast, sep, directions)
-  
-  ## We add '^' because we want to match expression at the beginning of the string
-  contrasts_and_directions <- gsub(paste0("^", genes_prefix, sep), "", grep(paste0("^", genes_prefix, sep), colnames(x), value = TRUE))
-  ## We add '$' because we want to match expression at the end of the string
-  contrasts <- lapply(seq_along(directions), function(i){
-    # i = 1
-    direction <- directions[i]
-    gsub(paste0(sep, direction, "$"), "", grep(paste0(sep, direction, "$"), contrasts_and_directions, value = TRUE))
-  })
-  contrasts <- unique(unlist(contrasts))
-  
-  
-  if(!(contrast %in% contrasts && any(contrast_and_directions %in% contrasts_and_directions))){
-    
-    caption <- paste0("There was no or too few genes corresponding to ", contrast, ", and the ORA analysis was not possible.")
-    
-    ## Remove all undescores from the caption because they are problematic when rendering to PDF
-    caption <- gsub("_", " ", caption)
-    
-    return(BclassDE(caption = caption))
-    
-  }
-  
-  
-  ## Find columns corresponding to the contrast and directions
-  
-  res <- out <- x[, c(geneset_vars, paste0(genes_prefix, sep, contrast_and_directions)), drop = FALSE]
-  
-  colnames(out) <- c(geneset_vars, paste0(genes_prefix, ":", directions_print))
-  
-  
-  # --------------------------------------------------------------------------
-  # Generate caption
-  # --------------------------------------------------------------------------
-  
-  
-  if(is.null(caption)){
-    
-    caption <- paste0("List of genes corresponding to ", contrast, ".")
     
   }
   
