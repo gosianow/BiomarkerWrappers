@@ -124,7 +124,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = c(0, 5), lineheight = "auto"){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, lineheight = "auto"){
   
   # lineheight = unit(1, "cm")
   
@@ -138,27 +138,40 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   ### ----------------------------------------------------------------------
   
   if(is.null(mean_var)){
-    mean_var <- colnames(res)[which(colnames(res) %in% c("HR", "OR"))]
+    mean_var <- colnames(res)[which(colnames(res) %in% c("HR", "OR", "difference"))]
   }
   stopifnot(length(mean_var) == 1)
-  stopifnot(mean_var %in% colnames(res))
+
   
   if(is.null(lower_var)){
-    lower_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_lower", "OR_CI95_lower"))]
+    lower_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_lower", "OR_CI95_lower", "difference_CI95_lower"))]
   }
   stopifnot(length(lower_var) == 1)
-  stopifnot(lower_var %in% colnames(res))
+
   
   if(is.null(upper_var)){
-    upper_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_upper", "OR_CI95_upper"))]
+    upper_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_upper", "OR_CI95_upper", "difference_CI95_upper"))]
   }
   stopifnot(length(upper_var) == 1)
-  stopifnot(upper_var %in% colnames(res))
   
   
   if(is.null(xlab)){
     xlab <- mean_var
   }
+  
+  
+  if(mean_var %in% c("HR", "OR") && is.null(clip)){
+    clip = c(0, 5)
+  }else if(is.null(clip)){
+    clip = c(-20, 20)
+  }
+  
+  if(mean_var %in% c("HR", "OR")){
+    zero = 1
+  }else{
+    zero = 0
+  }
+
   
   
   ### ----------------------------------------------------------------------
@@ -203,7 +216,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   forestplot::forestplot(labeltext, mean = c(NA, res[, mean_var]), lower = c(NA, res[, lower_var]), upper = c(NA, res[, upper_var]), 
-    is.summary = c(TRUE, rep(FALSE, nrow(res))), xlog = FALSE, xlab = xlab, zero = 1,
+    is.summary = c(TRUE, rep(FALSE, nrow(res))), xlog = FALSE, xlab = xlab, zero = zero,
     title = caption,
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
     boxsize = 0.3,
@@ -212,7 +225,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     lineheight = lineheight,
     lwd.ci = 2, lwd.xaxis = 2, lwd.zero = 2, 
     txt_gp = forestplot::fpTxtGp(xlab = grid::gpar(fontsize = 20), ticks = grid::gpar(fontsize = 18)), 
-    mar = grid::unit(c(20, rep(5, times = 3)), "mm"), 
+    mar = grid::unit(c(5, rep(5, times = 3)), "mm"), # grid::unit(rep(5, times = 4)
     clip = clip, 
     ci.vertices = TRUE,
     align = "l")

@@ -142,7 +142,7 @@ bheader(x) <- value
   upper_var = NULL,
   block_vars = NULL,
   xlab = NULL,
-  clip = c(0, 5),
+  clip = NULL,
   lineheight = "auto"
 )
 }

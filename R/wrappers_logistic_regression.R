@@ -42,7 +42,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  
+  response_level <- levels(data[, response_var])[2]
   
   # --------------------------------------------------------------------------
   # Generate data frame with coefficient names and levels and information about reference groups
@@ -282,7 +282,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   if(is.null(caption)){
     
-    caption <- paste0("Covariate effect on ", variable_names[response_var], ". ", 
+    caption <- paste0("Covariate effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ", 
       "Logistic regression model includes ", paste0(variable_names[covariate_vars], collapse = ", "), ".")
     
   }
@@ -488,6 +488,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
+  response_level <- levels(data[, response_var])[2]
   
   # --------------------------------------------------------------------------
   # Generate the results
@@ -542,7 +543,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   
   if(is.null(caption)){
     
-    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". ")
+    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
     
     
     if(is.null(adjustment_vars)){
@@ -608,7 +609,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  
+  response_level <- levels(data[, response_var])[2]
   
   
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
@@ -688,7 +689,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
   
   if(is.null(caption)){
     
-    caption <- paste0("Treatment effect on ", variable_names[response_var], ". ")
+    caption <- paste0("Treatment effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
     
     if(is.null(adjustment_vars)){
       
@@ -763,6 +764,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
     print_pvalues <- TRUE
   }
   
+  response_level <- levels(data[, response_var])[2]
   
   # --------------------------------------------------------------------------
   # Logistic regression
@@ -947,7 +949,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[response_var], ". ")
+    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
     
     if(!is.null(covariate_vars)){
       caption <- paste0(caption, paste0("Logistic regression model additionally includes ", paste0(variable_names[covariate_vars], collapse = ", "), ". "))
@@ -1013,7 +1015,7 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  
+
   strata1_levels <- levels(data[, strat1_var])
   strata2_levels <- levels(data[, strat2_var])
   
@@ -1142,7 +1144,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  
+  response_level <- levels(data[, response_var])[2]
   
   
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
@@ -1198,7 +1200,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", "biomarker", " and ", "treatment", " on ", variable_names[response_var], ". ")
+    caption <- paste0("Effect of interaction between ", "biomarker", " and ", "treatment", " on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
     
     
     if(is.null(adjustment_vars)){
