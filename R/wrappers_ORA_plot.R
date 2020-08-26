@@ -15,7 +15,7 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   size_range = c(2, 10),
-  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 150){
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70){
   
   
   stopifnot(length(geneset_var) == 1)
@@ -26,31 +26,13 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
   }
   
   
-  
-  ## Add gene lists to the gene set names 
-  ## TODO Display genes with geom_text in a separate plot 
-  
-  if(!is.na(genes_prefix)){
-    
-    
-    genes_vars <- setdiff(grep(paste0("^", genes_prefix), colnames(x), value = TRUE), "Geneset")
-    if(genes_vars > 1){
-      for(i in seq_along(genes_vars)){
-        x[, genes_vars[i]] <- ifelse(x[, genes_vars[i]] == "", "", paste0(gsub(paste0(genes_prefix, ":"), "", genes_vars[i]), ": ", x[, genes_vars[i]]))
-        
-      }
-    }
-    
-    gene_list_suffix <- paste0(" [", unlist(apply(x[, genes_vars, drop = FALSE], 1, paste0, collapse = " ")), "]") 
-    gene_list_suffix <- stringr::str_wrap(gene_list_suffix, width = axis_text_y_width)
-    
-    x[, geneset_var] <- paste0(x[, geneset_var], "\n", gene_list_suffix)
-    
-    
-  }
-  
+  ## Wrap the gene set names so they can be nicely displayed in the plots
+  x[, geneset_var] <- stringr::str_wrap(x[, geneset_var], width = axis_text_y_width)
   
   x[, geneset_var] <- factor(x[, geneset_var], levels = rev(x[, geneset_var]))
+  
+  
+  ## TODO Display genes with geom_text in a separate plot 
   
   
   ## To avoid p-values equal to zero
@@ -97,14 +79,14 @@ wrapper_plot_ORA_dotplot_single <- function(x, geneset_var = "Geneset", observed
       
       ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], size = .data[["DE_in_set"]], color = .data[[color_point_var]])) +
         geom_point() +
-        scale_size(name = "No. DE in set", range = size_range) +
+        scale_size_area(name = "No. DE in set", max_size = size_range[2]) +
         scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
       
     }else{
       
       ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], size = .data[["DE_in_set"]])) +
         geom_point(color = color_point) +
-        scale_size(name = "No. DE in set", range = size_range) 
+        scale_size_area(name = "No. DE in set", max_size = size_range[2]) 
       
     }
     
@@ -285,7 +267,7 @@ wrapper_plot_ORA_dotplot_multiple <- function(x, geneset_var = "Geneset", observ
     
     ggp <- ggplot(data, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], color = .data[["contrasts"]], size = .data[["DE_in_set"]])) +
       geom_point(alpha = point_alpha) +
-      scale_size(name = "No. DE in set", range = size_range) 
+      scale_size_area(name = "No. DE in set", max_size = size_range[2]) 
     
   }else{
     
