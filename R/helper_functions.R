@@ -284,13 +284,20 @@ cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 7
   
   stopifnot(length(labels) == 4)
   
-  out <- ggplot2::cut_number(x, n = 4)
+  out <- NULL
   
-  out <- factor(out, labels = labels)
+  try(out <- ggplot2::cut_number(x, n = 4), silent = TRUE)
+  
+  if(!is.null(out)){
+    out <- factor(out, labels = labels)
+  }else{
+    out <- rep(NA, length(x))
+  }
   
   return(out)
   
 }
+
 
 #' Dichotomize data by median 
 #' 
