@@ -712,6 +712,7 @@ format_or <- function(x, digits = 2, non_empty = NULL){
   
   output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[x < min_val] <- paste0("<", formatC(min_val, format = "f", digits = digits))
+  output[x %in% 0] <- "0"
   output[is.na(x)] <- "NA"
   
   if(is.null(non_empty)){
