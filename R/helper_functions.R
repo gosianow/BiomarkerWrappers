@@ -212,6 +212,51 @@ duplicated2 <- function(x, value = FALSE, na.rm = FALSE){
 }
 
 
+
+#' My version of order for data frame
+#' 
+#' @param x Data frame
+#' @export
+order2 <- function(x, na.last = TRUE, decreasing = FALSE){
+  
+  stopifnot(is.data.frame(x))
+  
+  n <- ncol(x)
+  
+  if(length(na.last) == 1){
+    na.last <- rep(na.last, n)
+  }else{
+    stopifnot(length(na.last) == n)  
+  }
+  
+  if(length(decreasing) == 1){
+    decreasing <- rep(decreasing, n)
+  }else{
+    stopifnot(length(decreasing) == n)  
+  }
+  
+  
+  new_order <- seq_len(nrow(x))
+  
+  for(i in rev(seq_len(n))){
+    # i = 1
+    
+    oo <- order(x[new_order, i], na.last = na.last[i], decreasing = decreasing[i])
+    
+    new_order <- new_order[oo]
+    
+  }
+  
+  return(new_order)
+  
+}
+
+
+
+
+
+
+
 #' Calculate number of non-NA elements in a vector 
 #' 
 #' @keywords internal
