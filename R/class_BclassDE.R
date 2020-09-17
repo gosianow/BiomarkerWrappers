@@ -85,7 +85,11 @@ setMethod("show", "BclassDE", function(object){
     message <- paste0("\n", bcaption(object), "\n\n")
     cat(message)
   }else{
-    print(bkable(object))
+    if(interactive()){
+      print(bkable(object))
+    }else{
+      cat(bkable(object))
+    }
   }
   
   

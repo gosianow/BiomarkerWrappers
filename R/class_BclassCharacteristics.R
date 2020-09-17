@@ -102,7 +102,11 @@ setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header 
 
 setMethod("show", "BclassCharacteristics", function(object){
   
-  print(bkable(object))
+  if(interactive()){
+    print(bkable(object))
+  }else{
+    cat(bkable(object))
+  }
   
 })
 

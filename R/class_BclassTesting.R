@@ -110,8 +110,12 @@ setMethod("bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
 
 
 setMethod("show", "BclassTesting", function(object){
-  
-  print(bkable(object))
+
+  if(interactive()){
+    print(bkable(object))
+  }else{
+    cat(bkable(object))
+  }
   
 })
 
