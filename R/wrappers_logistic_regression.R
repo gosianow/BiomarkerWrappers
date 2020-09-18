@@ -11,9 +11,9 @@
 #' @param data Data frame.
 #' @param response_var Name of the response variable. This variable must be a factor where 'success' is interpreted as the factor not having the first level.
 #' @param covariate_vars Vector with names of covariate that should be included in the formula.
-#' @param return_vars Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.
+#' @param return_vars Vector with names of covariate that for which the statistics should be returned. If NULL, statistics for all covariates are returned.
 #' @details 
-#' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA becasue this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
+#' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 #' @export
 wrapper_core_logistic_regression_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -42,7 +42,8 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  response_level <- levels(data[, response_var])[2]
+  response_levels <- levels(data[, response_var])
+  
   
   # --------------------------------------------------------------------------
   # Generate data frame with coefficient names and levels and information about reference groups
@@ -53,10 +54,20 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
     
     if(covariate_class[i] %in% c("numeric", "integer")){
       
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = "", reference = "", reference_indx = 0, n = NA, n_reference = NA, nresponse = NA, nresponse_reference = NA, propresponse = NA, propresponse_reference = NA, response_CI95_lower = NA, response_CI95_upper = NA, OR_non_empty = TRUE,
-        stringsAsFactors = FALSE)
+      
+      out_dummy <- as.data.frame.matrix(matrix(NA, nrow = 1, ncol = 2 * length(response_levels) + 2))
+      colnames(out_dummy) <- c(paste0("n_", response_levels), paste0("prop_", response_levels), paste0(response_levels[2], c("_CI95_lower", "_CI95_upper")))
+      
+      
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
+        subgroup = "", reference = "", reference_indx = 0, n = NA, 
+        out_dummy,
+        OR_non_empty = TRUE,
+        stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+      
       
       return(out)
+      
       
     }else{
       
@@ -67,25 +78,34 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
       reference_indx <- which(tbl > 0)[1]
       
       ## Calculate nresponse and propresponse
-      tbl_response <- table(data[data[, response_var] == levels(data[, response_var])[2], covariate_vars[i]])
-      prop_response <- tbl_response / tbl * 100
+      tbl_response <- table(data[, covariate_vars[i]], data[, response_var])
+      prop_response <- prop.table(tbl_response, margin = 1) * 100
       ## Replace NaN with NA
       prop_response[is.na(prop_response)] <- NA
       
       
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), n_reference = as.numeric(tbl[reference_indx]), nresponse = as.numeric(tbl_response), nresponse_reference = as.numeric(tbl_response[reference_indx]), propresponse = as.numeric(prop_response), propresponse_reference = as.numeric(prop_response[reference_indx]),
-        stringsAsFactors = FALSE)
+      ndf <- as.data.frame.matrix(tbl_response)
+      colnames(ndf) <- paste0("n_", colnames(tbl_response))
+      
+      propdf <- as.data.frame.matrix(prop_response)
+      colnames(propdf) <- paste0("prop_", colnames(prop_response))
+      
+      
+      
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
+        subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), 
+        ndf, propdf,
+        stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
       
       out$OR_non_empty <- c(FALSE, rep(TRUE, nrow(out) - 1))
       
       
       # --------------------------------------------------------------------------
-      # Calculate CIs for proportions of success 
+      # Calculate CIs for proportions of response/success 
       # --------------------------------------------------------------------------
-      
-      tbl <- table(data[, covariate_vars[i]], data[, response_var])
 
-      tbl_test <- tbl[, rev(seq_len(ncol(tbl)))]
+      
+      tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response)))]
       
       
       response_CI <- lapply(1:nrow(tbl_test), function(k){
@@ -98,7 +118,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
       })
       
       response_CI <- rbind.fill(response_CI)
-      colnames(response_CI) <- paste0("response_", c("CI95_lower", "CI95_upper"))
+      colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
       
       
       out <- cbind(out, response_CI)
@@ -170,7 +190,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   
   # --------------------------------------------------------------------------
-  # Parce the regression summary
+  # Parse the regression summary
   # --------------------------------------------------------------------------
   
   
@@ -224,7 +244,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
     
     res <- coef_info[coef_info$covariate %in% return_vars, , drop = FALSE]
     
-    ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA becasue eventually this level is not used as a reference in the fitted model.
+    ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA because eventually this level is not used as a reference in the fitted model.
     if(all(res$reference_indx > 1)){
       
       res[, colnames(res) %in% c("OR", "OR_CI95_lower", "OR_CI95_upper", "pvalue", "adj_pvalue")] <- NA
@@ -235,7 +255,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   
   # --------------------------------------------------------------------------
-  # Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
+  # Prepare the output data frame that will be displayed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
   
   
@@ -243,8 +263,10 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
     `N` = format_difference(res$n, digits = 0),
-    `Response` = format_counts_and_props_core(counts = res$nresponse, props = res$propresponse, digits = 1),
-    `Response 95% CI` = format_CIs(res$response_CI95_lower, res$response_CI95_upper, non_empty = res$covariate_class == "factor"),
+    format_counts_and_props(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
+    
+    as.data.frame(matrix(format_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")], non_empty = res$covariate_class == "factor"), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
+
     `OR` = format_or(res$OR, non_empty = res$OR_non_empty),
     `OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper, non_empty = res$OR_non_empty),
     `P-value` = format_pvalues(res$pvalue, non_empty = res$OR_non_empty),
@@ -255,10 +277,12 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   
   ### When all covariates are numerical, some outputs are empty, and we remove them
-  if(all(out$Subgroup == "") && !force_empty_cols){
-    out$Subgroup <- NULL
-    out$N <- NULL
-    out$Response <- NULL
+  if(!force_empty_cols){
+    for(i in seq_len(ncol(out))){
+      if(all(out[, i] %in% "")){
+        out[, i] <- NULL
+      }
+    }
   }
   
   
@@ -282,12 +306,12 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
   
   if(is.null(caption)){
     
-    caption <- paste0("Covariate effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ", 
-      "Logistic regression model includes ", paste0(variable_names[covariate_vars], collapse = ", "), ".")
+    caption <- paste0("Covariate effect on ", variable_names[response_var], 
+      ". Logistic regression model includes ", paste0(variable_names[covariate_vars], collapse = ", "), ".")
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   
@@ -310,7 +334,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
 
 #' @rdname wrapper_core_logistic_regression_simple
 #' @inheritParams wrapper_core_logistic_regression_simple
-#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
 wrapper_core_logistic_regression_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -469,7 +493,7 @@ wrapper_core_logistic_regression_simple_strat <- function(data, response_var, co
 #' Logistic regression estimating biomarker effect 
 #' 
 #' @inheritParams wrapper_core_logistic_regression_simple_strat
-#' @param biomarker_vars Vector of biomaker names.
+#' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
 wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -488,7 +512,6 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  response_level <- levels(data[, response_var])[2]
   
   # --------------------------------------------------------------------------
   # Generate the results
@@ -543,7 +566,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   
   if(is.null(caption)){
     
-    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
+    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". ")
     
     
     if(is.null(adjustment_vars)){
@@ -558,7 +581,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -608,8 +631,6 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
-  
-  response_level <- levels(data[, response_var])[2]
   
   
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
@@ -689,7 +710,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
   
   if(is.null(caption)){
     
-    caption <- paste0("Treatment effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
+    caption <- paste0("Treatment effect on ", variable_names[response_var], ". ")
     
     if(is.null(adjustment_vars)){
       
@@ -704,7 +725,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -763,8 +784,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   if(print_adjpvalues){
     print_pvalues <- TRUE
   }
-  
-  response_level <- levels(data[, response_var])[2]
+
   
   # --------------------------------------------------------------------------
   # Logistic regression
@@ -786,7 +806,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   
   # --------------------------------------------------------------------------
-  ### Parce the regression summary for the interaction terms
+  ### Parse the regression summary for the interaction terms
   # --------------------------------------------------------------------------
   
   ## Generate data frame with coefficient names and levels and information about reference groups
@@ -896,7 +916,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   res <- coef_info[coef_info$coefficient %in% rownames(regression_summ$coefficients), , drop = FALSE]
   
-  ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA becasue eventually this level is not used as a reference in the fitted model.
+  ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA because eventually this level is not used as a reference in the fitted model.
   if(any(c(res$reference1_indx > 1, res$reference2_indx > 1))){
     
     res[, -which(colnames(res) %in% c("covariate1", "levels1", "reference1", "reference1_indx", "covariate2", "levels2", "reference2", "reference2_indx", "coefficient", "n"))] <- NA
@@ -906,7 +926,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   
   # --------------------------------------------------------------------------
-  ### Prepare the output data frame that will be dispalyed. All columns in `out` are characters.
+  ### Prepare the output data frame that will be displayed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
   
   out <- data.frame(Covariate1 = variable_names[res$covariate1], 
@@ -949,7 +969,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
+    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[response_var], ".")
     
     if(!is.null(covariate_vars)){
       caption <- paste0(caption, paste0("Logistic regression model additionally includes ", paste0(variable_names[covariate_vars], collapse = ", "), ". "))
@@ -958,7 +978,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   
@@ -978,7 +998,7 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
 #' @rdname wrapper_core_logistic_regression_interaction
 #' 
 #' @inheritParams wrapper_core_logistic_regression_interaction
-#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
 wrapper_core_logistic_regression_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -1116,11 +1136,11 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
 
 
 
-#' Logistic regression estimating effect of interaction between biomaker and treatment
+#' Logistic regression estimating effect of interaction between biomarker and treatment
 #' 
 #' @inheritParams wrapper_core_logistic_regression_interaction_strat
 #' @param treatment_var Name of the variable with treatment information.
-#' @param biomarker_vars Vector of biomaker names.
+#' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
 wrapper_logistic_regression_interaction <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -1143,8 +1163,6 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
-  
-  response_level <- levels(data[, response_var])[2]
   
   
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
@@ -1200,7 +1218,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", "biomarker", " and ", "treatment", " on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
+    caption <- paste0("Effect of interaction between ", "biomarker", " and ", "treatment", " on ", variable_names[response_var], ".")
     
     
     if(is.null(adjustment_vars)){
@@ -1215,7 +1233,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL

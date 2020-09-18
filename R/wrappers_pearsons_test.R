@@ -45,9 +45,7 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  response_level <- levels(data[, response_var])[2]
-  
-  
+
   # --------------------------------------------------------------------------
   # Prepare data frame with results
   # --------------------------------------------------------------------------
@@ -277,11 +275,9 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
       caption <- paste0("Stratified analysis with Cochran-Mantel-Haenszel Chi-squared test.", " Stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ".")
     }
     
-    caption <- paste0(caption, " Response defined by ", response_level, ".")
-    
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -475,8 +471,6 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  response_level <- levels(data[, response_var])[2]
-  
   # --------------------------------------------------------------------------
   # Generate the results
   # --------------------------------------------------------------------------
@@ -527,7 +521,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
   
   if(is.null(caption)){
     
-    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
+    caption <- paste0("Biomarker effect on ", variable_names[response_var], ". ")
     
     if(method == "pearson" && is.null(strata_vars)){
       
@@ -595,11 +589,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
-  
-  response_level <- levels(data[, response_var])[2]
-  
-  
-  
+
   
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
     # i = 1
@@ -682,7 +672,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
   
   if(is.null(caption)){
     
-    caption <- paste0("Treatment effect on ", variable_names[response_var], ". Response defined by ", response_level, ". ")
+    caption <- paste0("Treatment effect on ", variable_names[response_var], ". ")
     
     if(method == "pearson" && is.null(strata_vars)){
       

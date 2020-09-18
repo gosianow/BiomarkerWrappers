@@ -38,7 +38,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   # --------------------------------------------------------------------------
   
   tbl <- table(data[, row_var], data[, col_var])
-  
+
   prop <- prop.table(tbl, margin = margin) * 100
   
   
@@ -138,7 +138,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -158,7 +158,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
 
 #' @rdname wrapper_core_fishers_test
 #' @inheritParams wrapper_core_fishers_test
-#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
 wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
