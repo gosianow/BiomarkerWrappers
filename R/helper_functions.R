@@ -468,7 +468,7 @@ cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)),
 
 #' Internal function used in bkable to highlight the rows 
 #' 
-#' @keywords internal 
+#' @keywords internal
 indicate_blocks <- function(d, block_vars, return = "block"){
   
   stopifnot(length(return) == 1)
@@ -531,6 +531,7 @@ indicate_blocks <- function(d, block_vars, return = "block"){
 #' 
 #' @examples 
 #' 
+#' \dontrun{
 #' all_colnames <- c("Covariate", "Subgroup", "A", "B", "C", "OR", "P-value")
 #' header_colnames <- c("A", "B", "C")
 #' header_name <- "Gene A"
@@ -543,8 +544,8 @@ indicate_blocks <- function(d, block_vars, return = "block"){
 #' header_name <- "Gene A"
 #' 
 #' format_header(all_colnames, header_colnames, header_name)
-#' 
-#' @keywords internal 
+#' }
+#' @keywords internal
 format_header <- function(all_colnames, header_colnames, header_name){
   
   
@@ -970,11 +971,12 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
 #' 
 #' @examples 
 #' 
+#' \dontrun{
 #' summ <- c(10, 23.6442)
 #' digits <- c(0, 2)
 #' 
 #' format_summ_core(summ, digits)
-#' 
+#' }
 #' 
 #' @keywords internal
 format_summ_core <- function(summ, digits = 2){
@@ -1189,11 +1191,11 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
 #' @param x Vector with time-to-event data.
 #' @param n_breaks Number of breaks.
 #' @examples 
-#' 
+#' \dontrun{
 #' data(bdata)
 #' 
 #' calculate_break_time(bdata$PFS)
-#' 
+#' }
 #' @keywords internal
 calculate_break_time <- function(x, n_breaks = 10){
   

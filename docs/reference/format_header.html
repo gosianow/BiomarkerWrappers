@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.14</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@
     <p>Format header for kable</p>
     </div>
 
-    <pre class="usage"><span class='fu'>format_header</span>(<span class='no'>all_colnames</span>, <span class='no'>header_colnames</span>, <span class='no'>header_name</span>)</pre>
+    <pre class="usage"><span class='fu'>format_header</span>(<span class='kw'>all_colnames</span>, <span class='kw'>header_colnames</span>, <span class='kw'>header_name</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,17 +146,20 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>all_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Covariate"</span>, <span class='st'>"Subgroup"</span>, <span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"OR"</span>, <span class='st'>"P-value"</span>)
-<span class='no'>header_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>)
-<span class='no'>header_name</span> <span class='kw'>&lt;-</span> <span class='st'>"Gene A"</span>
+<span class='co'>if</span> (<span class='fl'>FALSE</span>) {
+<span class='kw'>all_colnames</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Covariate"</span>, <span class='st'>"Subgroup"</span>, <span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"OR"</span>, <span class='st'>"P-value"</span>)
+<span class='kw'>header_colnames</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>)
+<span class='kw'>header_name</span> <span class='op'>&lt;-</span> <span class='st'>"Gene A"</span>
 
-<span class='fu'>format_header</span>(<span class='no'>all_colnames</span>, <span class='no'>header_colnames</span>, <span class='no'>header_name</span>)</div><div class='output co'>#&gt; <span class='error'>Error in format_header(all_colnames, header_colnames, header_name): could not find function "format_header"</span></div><div class='input'>
+<span class='fu'>format_header</span>(<span class='kw'>all_colnames</span>, <span class='kw'>header_colnames</span>, <span class='kw'>header_name</span>)
 
-<span class='no'>all_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"OR"</span>, <span class='st'>"P-value"</span>)
-<span class='no'>header_colnames</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>)
-<span class='no'>header_name</span> <span class='kw'>&lt;-</span> <span class='st'>"Gene A"</span>
 
-<span class='fu'>format_header</span>(<span class='no'>all_colnames</span>, <span class='no'>header_colnames</span>, <span class='no'>header_name</span>)</div><div class='output co'>#&gt; <span class='error'>Error in format_header(all_colnames, header_colnames, header_name): could not find function "format_header"</span></div><div class='input'>
+<span class='kw'>all_colnames</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>, <span class='st'>"OR"</span>, <span class='st'>"P-value"</span>)
+<span class='kw'>header_colnames</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>, <span class='st'>"B"</span>, <span class='st'>"C"</span>)
+<span class='kw'>header_name</span> <span class='op'>&lt;-</span> <span class='st'>"Gene A"</span>
+
+<span class='fu'>format_header</span>(<span class='kw'>all_colnames</span>, <span class='kw'>header_colnames</span>, <span class='kw'>header_name</span>)
+}
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -173,7 +176,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

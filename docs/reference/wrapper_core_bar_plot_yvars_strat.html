@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.14</span>
       </span>
     </div>
 
@@ -125,45 +125,45 @@
     </div>
 
     <pre class="usage"><span class='fu'>wrapper_core_bar_plot_yvars_strat</span>(
-  <span class='no'>data</span>,
-  <span class='no'>x_var</span>,
-  <span class='no'>y_vars</span>,
-  <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>colors_bar</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat1_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>strat2_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>legend_colors_title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>legend_position</span> <span class='kw'>=</span> <span class='st'>"right"</span>,
-  <span class='kw'>facet_label_both</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>skip_levels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"facet"</span>,
-  <span class='kw'>show_proportions</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>show_counts</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>show_total_proportions</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>show_total_counts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>label_size</span> <span class='kw'>=</span> <span class='fl'>3.5</span>,
-  <span class='kw'>label_vjust</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>title_size</span> <span class='kw'>=</span> <span class='fl'>12</span>,
-  <span class='kw'>strip_text_size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>facet_scales</span> <span class='kw'>=</span> <span class='st'>"fixed"</span>,
-  <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>axis_text_x_angle</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>axis_text_x_vjust</span> <span class='kw'>=</span> <span class='fl'>0</span>,
-  <span class='kw'>axis_text_x_hjust</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>background_grid_major</span> <span class='kw'>=</span> <span class='st'>"none"</span>,
-  <span class='kw'>strat_scales</span> <span class='kw'>=</span> <span class='st'>"fixed"</span>,
-  <span class='kw'>strat1_nrow</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>strat1_ncol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_nrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_ncol</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>less_legends</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>names_to</span> <span class='kw'>=</span> <span class='st'>"name"</span>,
-  <span class='kw'>values_to</span> <span class='kw'>=</span> <span class='st'>"value"</span>
+  <span class='kw'>data</span>,
+  <span class='kw'>x_var</span>,
+  <span class='kw'>y_vars</span>,
+  strat1_var = <span class='kw'>NULL</span>,
+  strat2_var = <span class='kw'>NULL</span>,
+  colors_bar = <span class='kw'>NULL</span>,
+  variable_names = <span class='kw'>NULL</span>,
+  xlab = <span class='kw'>NULL</span>,
+  ylab = <span class='kw'>NULL</span>,
+  title = <span class='kw'>NULL</span>,
+  strat1_label_both = <span class='fl'>TRUE</span>,
+  strat2_label_both = <span class='fl'>TRUE</span>,
+  legend_colors_title = <span class='kw'>NULL</span>,
+  legend_position = <span class='st'>"right"</span>,
+  facet_label_both = <span class='fl'>TRUE</span>,
+  skip_levels = <span class='kw'>NULL</span>,
+  method = <span class='st'>"facet"</span>,
+  show_proportions = <span class='fl'>TRUE</span>,
+  show_counts = <span class='fl'>TRUE</span>,
+  show_total_proportions = <span class='fl'>FALSE</span>,
+  show_total_counts = <span class='fl'>FALSE</span>,
+  label_size = <span class='fl'>3.5</span>,
+  label_vjust = <span class='fl'>0.5</span>,
+  title_size = <span class='fl'>12</span>,
+  strip_text_size = <span class='kw'>NULL</span>,
+  facet_scales = <span class='st'>"fixed"</span>,
+  ylim = <span class='kw'>NULL</span>,
+  axis_text_x_angle = <span class='fl'>0</span>,
+  axis_text_x_vjust = <span class='fl'>0</span>,
+  axis_text_x_hjust = <span class='fl'>0.5</span>,
+  background_grid_major = <span class='st'>"none"</span>,
+  strat_scales = <span class='st'>"fixed"</span>,
+  strat1_nrow = <span class='fl'>1</span>,
+  strat1_ncol = <span class='kw'>NULL</span>,
+  strat2_nrow = <span class='kw'>NULL</span>,
+  strat2_ncol = <span class='fl'>1</span>,
+  less_legends = <span class='fl'>FALSE</span>,
+  names_to = <span class='st'>"name"</span>,
+  values_to = <span class='st'>"value"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -199,7 +199,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

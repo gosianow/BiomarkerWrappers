@@ -38,7 +38,7 @@ wrapper_core_logistic_regression_simple_strat(
 
 \item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
 
-\item{return_vars}{Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.}
+\item{return_vars}{Vector with names of covariate that for which the statistics should be returned. If NULL, statistics for all covariates are returned.}
 
 \item{strat1_var}{Name of the second stratification variable.}
 }
@@ -46,5 +46,5 @@ wrapper_core_logistic_regression_simple_strat(
 Logistic regression with simple additive model
 }
 \details{
-If for a factor covariate that should be returned the reference level has zero counts, results are set to NA becasue this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
+If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 }

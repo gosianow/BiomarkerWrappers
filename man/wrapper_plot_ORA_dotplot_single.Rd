@@ -21,7 +21,7 @@ wrapper_plot_ORA_dotplot_single(
   title_size = 10,
   title_width = 100,
   axis_text_y_size = 8,
-  axis_text_y_width = 150
+  axis_text_y_width = 70
 )
 }
 \arguments{

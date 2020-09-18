@@ -18,6 +18,7 @@ Format header for kable
 }
 \examples{
 
+\dontrun{
 all_colnames <- c("Covariate", "Subgroup", "A", "B", "C", "OR", "P-value")
 header_colnames <- c("A", "B", "C")
 header_name <- "Gene A"
@@ -30,6 +31,6 @@ header_colnames <- c("A", "B", "C")
 header_name <- "Gene A"
 
 format_header(all_colnames, header_colnames, header_name)
-
+}
 }
 \keyword{internal}

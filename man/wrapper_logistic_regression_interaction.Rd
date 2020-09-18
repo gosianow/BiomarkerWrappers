@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_logistic_regression.R
 \name{wrapper_logistic_regression_interaction}
 \alias{wrapper_logistic_regression_interaction}
-\title{Logistic regression estimating effect of interaction between biomaker and treatment}
+\title{Logistic regression estimating effect of interaction between biomarker and treatment}
 \usage{
 wrapper_logistic_regression_interaction(
   data,
@@ -25,12 +25,12 @@ wrapper_logistic_regression_interaction(
 
 \item{treatment_var}{Name of the variable with treatment information.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 
 \item{strat1_var}{Name of the second stratification variable.}
 }
 \description{
-Logistic regression estimating effect of interaction between biomaker and treatment
+Logistic regression estimating effect of interaction between biomarker and treatment
 }

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.14</span>
       </span>
     </div>
 
@@ -125,29 +125,29 @@
     </div>
 
     <pre class="usage"><span class='fu'>wrapper_core_logistic_regression_simple</span>(
-  <span class='no'>data</span>,
-  <span class='no'>response_var</span>,
-  <span class='no'>covariate_vars</span>,
-  <span class='kw'>return_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>data</span>,
+  <span class='kw'>response_var</span>,
+  <span class='kw'>covariate_vars</span>,
+  return_vars = <span class='kw'>NULL</span>,
+  variable_names = <span class='kw'>NULL</span>,
+  caption = <span class='kw'>NULL</span>,
+  force_empty_cols = <span class='fl'>FALSE</span>,
+  print_pvalues = <span class='fl'>TRUE</span>,
+  print_adjpvalues = <span class='fl'>TRUE</span>
 )
 
 <span class='fu'>wrapper_core_logistic_regression_simple_strat</span>(
-  <span class='no'>data</span>,
-  <span class='no'>response_var</span>,
-  <span class='no'>covariate_vars</span>,
-  <span class='kw'>return_vars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat1_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>strat2_var</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>variable_names</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>caption</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>force_empty_cols</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>print_pvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>print_adjpvalues</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>data</span>,
+  <span class='kw'>response_var</span>,
+  <span class='kw'>covariate_vars</span>,
+  return_vars = <span class='kw'>NULL</span>,
+  strat1_var = <span class='kw'>NULL</span>,
+  strat2_var = <span class='kw'>NULL</span>,
+  variable_names = <span class='kw'>NULL</span>,
+  caption = <span class='kw'>NULL</span>,
+  force_empty_cols = <span class='fl'>FALSE</span>,
+  print_pvalues = <span class='fl'>TRUE</span>,
+  print_adjpvalues = <span class='fl'>TRUE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -167,7 +167,7 @@
     </tr>
     <tr>
       <th>return_vars</th>
-      <td><p>Vector with names of covariate that for which the statistics should be returned. If NULL, sattistics for all covariates are returned.</p></td>
+      <td><p>Vector with names of covariate that for which the statistics should be returned. If NULL, statistics for all covariates are returned.</p></td>
     </tr>
     <tr>
       <th>strat1_var</th>
@@ -177,7 +177,7 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If for a factor covariate that should be returned the reference level has zero counts, results are set to NA becasue this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.</p>
+    <p>If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -194,7 +194,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

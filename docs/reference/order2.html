@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Logistic regression with additive model with interaction — wrapper_core_logistic_regression_interaction • BiomarkerWrappers</title>
+<title>My version of order for data frame — order2 • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Logistic regression with additive model with interaction — wrapper_core_logistic_regression_interaction" />
-<meta property="og:description" content="Logistic regression with additive model with interaction" />
+<meta property="og:title" content="My version of order for data frame — order2" />
+<meta property="og:description" content="My version of order for data frame" />
 
 
 
@@ -115,67 +115,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Logistic regression with additive model with interaction</h1>
+    <h1>My version of order for data frame</h1>
     
-    <div class="hidden name"><code>wrapper_core_logistic_regression_interaction.Rd</code></div>
+    <div class="hidden name"><code>order2.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Logistic regression with additive model with interaction</p>
+    <p>My version of order for data frame</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_core_logistic_regression_interaction</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>response_var</span>,
-  <span class='kw'>interaction1_var</span>,
-  <span class='kw'>interaction2_var</span>,
-  covariate_vars = <span class='kw'>NULL</span>,
-  variable_names = <span class='kw'>NULL</span>,
-  caption = <span class='kw'>NULL</span>,
-  print_pvalues = <span class='fl'>TRUE</span>,
-  print_adjpvalues = <span class='fl'>TRUE</span>
-)
-
-<span class='fu'>wrapper_core_logistic_regression_interaction_strat</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>response_var</span>,
-  <span class='kw'>interaction1_var</span>,
-  <span class='kw'>interaction2_var</span>,
-  covariate_vars = <span class='kw'>NULL</span>,
-  strat1_var = <span class='kw'>NULL</span>,
-  strat2_var = <span class='kw'>NULL</span>,
-  variable_names = <span class='kw'>NULL</span>,
-  caption = <span class='kw'>NULL</span>,
-  print_pvalues = <span class='fl'>TRUE</span>,
-  print_adjpvalues = <span class='fl'>TRUE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>order2</span>(<span class='kw'>x</span>, na.last = <span class='fl'>TRUE</span>, decreasing = <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>Data frame.</p></td>
-    </tr>
-    <tr>
-      <th>response_var</th>
-      <td><p>Name of the response variable. This variable must be a factor where 'success' is interpreted as the factor not having the first level.</p></td>
-    </tr>
-    <tr>
-      <th>interaction1_var</th>
-      <td><p>Name of the first interaction variable.</p></td>
-    </tr>
-    <tr>
-      <th>interaction2_var</th>
-      <td><p>Name of the second interaction variable.</p></td>
-    </tr>
-    <tr>
-      <th>covariate_vars</th>
-      <td><p>Vector with names of covariate that should be included in the formula.</p></td>
-    </tr>
-    <tr>
-      <th>strat1_var</th>
-      <td><p>Name of the second stratification variable.</p></td>
+      <th>x</th>
+      <td><p>Data frame</p></td>
     </tr>
     </table>
 

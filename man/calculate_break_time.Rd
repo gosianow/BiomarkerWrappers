@@ -15,10 +15,10 @@ calculate_break_time(x, n_breaks = 10)
 Calculate break time used in KM plots
 }
 \examples{
-
+\dontrun{
 data(bdata)
 
 calculate_break_time(bdata$PFS)
-
+}
 }
 \keyword{internal}

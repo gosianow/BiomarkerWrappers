@@ -22,7 +22,7 @@ wrapper_logistic_regression_biomarker(
 
 \item{response_var}{Name of the response variable. This variable must be a factor where 'success' is interpreted as the factor not having the first level.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 
