@@ -675,7 +675,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     
     
     res <- dplyr::select(res, c(strat2_var, "biomarker", "biomarker_subgroup"), everything())
-    out <- dplyr::select(out, c(variable_names[strat2_var], "Biomarker", "Biomarker Subgroup"), everything())
+    out <- dplyr::select(out, c(as.character(variable_names[strat2_var]), "Biomarker", "Biomarker Subgroup"), everything())
     
     
     bresults(wrapper_res) <- res

@@ -25,7 +25,7 @@
 #' 
 #' @export
 wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, 
-  colors = NULL, 
+  colors = NULL,
   variable_names = NULL, 
   title = NULL, subtitle = NULL,
   legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),

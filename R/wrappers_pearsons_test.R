@@ -554,7 +554,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -635,7 +635,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
     
     
     res <- dplyr::select(res, c(strat2_var, "biomarker", "biomarker_subgroup"), everything())
-    out <- dplyr::select(out, c(variable_names[strat2_var], "Biomarker", "Biomarker Subgroup"), everything())
+    out <- dplyr::select(out, c(as.character(variable_names[strat2_var]), "Biomarker", "Biomarker Subgroup"), everything())
     
     
     bresults(wrapper_res) <- res

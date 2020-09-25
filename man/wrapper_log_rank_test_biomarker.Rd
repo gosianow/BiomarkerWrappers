@@ -29,7 +29,7 @@ wrapper_log_rank_test_biomarker(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 

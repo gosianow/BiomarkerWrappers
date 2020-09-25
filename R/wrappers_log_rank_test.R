@@ -412,7 +412,7 @@ wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, c
 #' Log-rank test testing biomarker effect 
 #' 
 #' @inheritParams wrapper_core_log_rank_test_simple_strat
-#' @param biomarker_vars Vector of biomaker names.
+#' @param biomarker_vars Vector of biomarker names.
 #' @export
 wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
@@ -568,7 +568,7 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
     
     
     res <- dplyr::select(res, c(strat2_var, "biomarker", "biomarker_subgroup"), everything())
-    out <- dplyr::select(out, c(variable_names[strat2_var], "Biomarker", "Biomarker Subgroup"), everything())
+    out <- dplyr::select(out, c(as.character(variable_names[strat2_var]), "Biomarker", "Biomarker Subgroup"), everything())
     
     
     bresults(wrapper_res) <- res
@@ -628,7 +628,7 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
