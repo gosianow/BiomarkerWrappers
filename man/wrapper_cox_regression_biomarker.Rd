@@ -16,6 +16,7 @@ wrapper_cox_regression_biomarker(
   variable_names = NULL,
   caption = NULL,
   print_mst = TRUE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -42,6 +43,8 @@ wrapper_cox_regression_biomarker(
 \item{caption}{Caption for the table with results.}
 
 \item{print_mst}{Logical. Whether to print median survival time (MST).}
+
+\item{print_total}{Logical. Whether to print total number of samples and total number of events.}
 
 \item{print_pvalues}{Logical. Whether to print p-values.}
 

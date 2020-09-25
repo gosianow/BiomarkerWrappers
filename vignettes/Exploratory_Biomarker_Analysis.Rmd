@@ -57,11 +57,18 @@ ggplot2::theme_set(cowplot::theme_cowplot())
 library(BiomarkerWrappers)
 
 
+```
+
+
+
+
+```{r library2, echo = FALSE}
+
 # devtools::load_all()
 
 
-
 ```
+
 
 
 
@@ -148,7 +155,7 @@ wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var
 # Cox regression
 
 
-```{r cox_regression, results='asis'}
+```{r cox_regression, results='asis', fig.width=20, fig.height=4}
 
 
 ### Biomarker effect 
@@ -166,6 +173,13 @@ strat1_var = "Treatment_Arm"
 wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
 
 
+## To represent the results with a forest plot
+
+x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, print_total = FALSE, print_adjpvalues = FALSE)
+
+bforest(x)
+
+
 
 
 ### Treatment effect within biomarker subgroups
@@ -181,6 +195,15 @@ adjustment_vars <- "IPI"
 
 wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars)
   
+
+## To represent the results with a forest plot
+
+x <- wrapper_cox_regression_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, print_total = FALSE, print_adjpvalues = FALSE)
+
+
+bforest(x)
+
+
 
 
 ### Treatment-biomarker interaction effect 

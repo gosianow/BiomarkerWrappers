@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.15</span>
       </span>
     </div>
 
@@ -135,6 +135,7 @@
   caption = <span class='kw'>NULL</span>,
   force_empty_cols = <span class='fl'>FALSE</span>,
   print_mst = <span class='fl'>TRUE</span>,
+  print_total = <span class='fl'>TRUE</span>,
   print_pvalues = <span class='fl'>TRUE</span>,
   print_adjpvalues = <span class='fl'>TRUE</span>
 )
@@ -152,6 +153,7 @@
   caption = <span class='kw'>NULL</span>,
   force_empty_cols = <span class='fl'>FALSE</span>,
   print_mst = <span class='fl'>TRUE</span>,
+  print_total = <span class='fl'>TRUE</span>,
   print_pvalues = <span class='fl'>TRUE</span>,
   print_adjpvalues = <span class='fl'>TRUE</span>
 )</pre>
@@ -181,7 +183,7 @@
     </tr>
     <tr>
       <th>return_vars</th>
-      <td><p>Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.</p></td>
+      <td><p>Vector with names of covariates for which the statistics should be returned. If NULL, statistics are returned for all covariates.</p></td>
     </tr>
     <tr>
       <th>variable_names</th>
@@ -192,8 +194,16 @@
       <td><p>Caption for the table with results.</p></td>
     </tr>
     <tr>
+      <th>force_empty_cols</th>
+      <td><p>Logical. Whether to display output columns which are all empty.</p></td>
+    </tr>
+    <tr>
       <th>print_mst</th>
       <td><p>Logical. Whether to print median survival time (MST).</p></td>
+    </tr>
+    <tr>
+      <th>print_total</th>
+      <td><p>Logical. Whether to print total number of samples and total number of events.</p></td>
     </tr>
     <tr>
       <th>print_pvalues</th>
@@ -215,7 +225,7 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If for a factor covariate that should be returned the reference level has zero count, results are set to NAs becasue this levels is not used as a reference which means that it is not possible to fit the model that we want.</p>
+    <p>If for a factor covariate that should be returned the reference level has zero count, results are set to NAs because this levels is not used as a reference which means that it is not possible to fit the model that we want.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>

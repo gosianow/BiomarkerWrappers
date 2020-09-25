@@ -388,6 +388,12 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   
   
   
+  ## biomarker_var and treatment_var must be factors for the color definition
+  stopifnot(length(biomarker_var) == 1)
+  stopifnot(is.factor(data[, biomarker_var]))
+  stopifnot(length(treatment_var) == 1)
+  stopifnot(is.factor(data[, treatment_var]))
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   if(is.null(title)){
@@ -426,7 +432,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
       stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
     }
     
-    default_colors_per_treatment <- list(c("#FFD700", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+    default_colors_per_treatment <- list(c("#FFC100", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
     
     # palette <- unlist(default_colors_per_treatment)
     # barplot(rep(1, length(palette)), col = palette)
@@ -493,6 +499,14 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   
   ### TODO Do not display treatment in the legend
   
+
+  ## biomarker_var and treatment_var must be factors for the color definition
+  stopifnot(length(biomarker_var) == 1)
+  stopifnot(is.factor(data[, biomarker_var]))
+  stopifnot(length(treatment_var) == 1)
+  stopifnot(is.factor(data[, treatment_var]))
+  
+
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   if(is.null(title)){
@@ -534,7 +548,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
         stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
       }
       
-      default_colors_per_treatment <- list(c("#FFD700", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+      default_colors_per_treatment <- list(c("#FFC100", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
         format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
@@ -617,6 +631,14 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
   
   ### TODO Do not display biomarker in the legend
   
+  
+  ## biomarker_var and treatment_var must be factors for the color definition
+  stopifnot(length(biomarker_var) == 1)
+  stopifnot(is.factor(data[, biomarker_var]))
+  stopifnot(length(treatment_var) == 1)
+  stopifnot(is.factor(data[, treatment_var]))
+  
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   if(is.null(title)){
@@ -658,7 +680,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
         stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
       }
       
-      default_colors_per_treatment <- list(c("#FFD700", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+      default_colors_per_treatment <- list(c("#FFC100", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
         format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)

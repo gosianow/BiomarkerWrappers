@@ -30,6 +30,14 @@ wrapper_logistic_regression_interaction(
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 
 \item{strat1_var}{Name of the second stratification variable.}
+
+\item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
+
+\item{caption}{Caption for the table with results.}
+
+\item{print_pvalues}{Logical. Whether to print p-values.}
+
+\item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
 Logistic regression estimating effect of interaction between biomarker and treatment

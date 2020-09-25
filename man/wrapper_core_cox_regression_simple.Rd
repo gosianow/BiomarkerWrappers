@@ -16,6 +16,7 @@ wrapper_core_cox_regression_simple(
   caption = NULL,
   force_empty_cols = FALSE,
   print_mst = TRUE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -33,6 +34,7 @@ wrapper_core_cox_regression_simple_strat(
   caption = NULL,
   force_empty_cols = FALSE,
   print_mst = TRUE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -48,13 +50,17 @@ wrapper_core_cox_regression_simple_strat(
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 
-\item{return_vars}{Vector with names of covariates for which the statistics should be returned. If NULL, sattistics are returned for all covariates.}
+\item{return_vars}{Vector with names of covariates for which the statistics should be returned. If NULL, statistics are returned for all covariates.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
 \item{caption}{Caption for the table with results.}
 
+\item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
+
 \item{print_mst}{Logical. Whether to print median survival time (MST).}
+
+\item{print_total}{Logical. Whether to print total number of samples and total number of events.}
 
 \item{print_pvalues}{Logical. Whether to print p-values.}
 
@@ -68,7 +74,7 @@ wrapper_core_cox_regression_simple_strat(
 This function can be used if one is interested in effects of multiple covariates in a multivariate model.
 }
 \details{
-If for a factor covariate that should be returned the reference level has zero count, results are set to NAs becasue this levels is not used as a reference which means that it is not possible to fit the model that we want.
+If for a factor covariate that should be returned the reference level has zero count, results are set to NAs because this levels is not used as a reference which means that it is not possible to fit the model that we want.
 }
 \examples{
 

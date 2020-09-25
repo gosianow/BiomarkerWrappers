@@ -13,6 +13,7 @@ wrapper_core_logistic_regression_simple(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -27,6 +28,7 @@ wrapper_core_logistic_regression_simple_strat(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -39,6 +41,18 @@ wrapper_core_logistic_regression_simple_strat(
 \item{covariate_vars}{Vector with names of covariate that should be included in the formula.}
 
 \item{return_vars}{Vector with names of covariate that for which the statistics should be returned. If NULL, statistics for all covariates are returned.}
+
+\item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
+
+\item{caption}{Caption for the table with results.}
+
+\item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
+
+\item{print_total}{Logical. Whether to print total number of samples.}
+
+\item{print_pvalues}{Logical. Whether to print p-values.}
+
+\item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 
 \item{strat1_var}{Name of the second stratification variable.}
 }
