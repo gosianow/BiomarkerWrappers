@@ -10,10 +10,15 @@ NULL
 #' @param response_var Name of categorical variable defining successes and failures where the first level corresponds to failure and the second level corresponds to success.
 #' @param covariate_var Name of categorical variable defining subgroups.
 #' @param strata_vars Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.
-#' @param print_or Logical. Whether to print odds rations estimated with logistic regression.
+#' @param method Method 'pearson' or 'fisher' test.
+#' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
+#' @param caption Caption for the table with results.
+#' @param force_empty_cols Logical. Whether to display output columns which are all empty.
+#' @param print_total Logical. Whether to print total number of samples.
+#' @param print_pvalues Logical. Whether to print p-values.
 #'  
 #' @export
-wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata_vars = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_or = FALSE, print_pvalues = TRUE){
+wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata_vars = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -57,17 +62,17 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   covariate_vars <- covariate_var
   return_vars <- covariate_var
   
-  wrapper_res <- wrapper_core_logistic_regression_simple(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  wrapper_res <- wrapper_core_logistic_regression_simple(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
   
   
   res <- bresults(wrapper_res)
   out <- boutput(wrapper_res)
   
   ### Remove OR
-  if(!print_or){
-    res <- res[, -grep("^OR", colnames(res))]
-    out <- out[, -grep("^OR", colnames(out))]
-  }
+  
+  res <- res[, -grep("^OR", colnames(res))]
+  out <- out[, -grep("^OR", colnames(out))]
+  
   
   
   # --------------------------------------------------------------------------
@@ -251,6 +256,14 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
   stopifnot(all(sapply(out, class) == "character"))
   
   
+  
+  if(!print_total){
+    col_total <- grep("^Total", colnames(out), value = TRUE)
+    for(i in seq_along(col_total)){
+      out[, col_total[i]] <- NULL
+    }
+  }
+  
   if(!print_pvalues){
     out$`P-value` <- NULL
   }
@@ -295,10 +308,11 @@ wrapper_core_pearsons_test <- function(data, response_var, covariate_var, strata
 
 #' @rdname wrapper_core_pearsons_test
 #' @inheritParams wrapper_core_pearsons_test
-#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
+#' @param print_adjpvalues Logical. Whether to print adjusted p-values.
 #' @export
-wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -366,7 +380,7 @@ wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, 
       }
       
       
-      wrapper_res <- wrapper_core_pearsons_test(data = data_strata1, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, method = method, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_core_pearsons_test(data = data_strata1, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, method = method, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -459,7 +473,7 @@ wrapper_core_pearsons_test_strat <- function(data, response_var, covariate_var, 
 #' @inheritParams wrapper_core_pearsons_test_strat
 #' @param biomarker_vars Vector of biomaker names.
 #' @export
-wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -481,7 +495,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -564,7 +578,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -597,7 +611,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
     covariate_var <- treatment_var
     strat1_var <- biomarker_vars[i]
     
-    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_core_pearsons_test_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     res <- bresults(wrapper_res)
@@ -691,7 +705,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL

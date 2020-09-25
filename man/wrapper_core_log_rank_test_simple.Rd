@@ -16,6 +16,7 @@ wrapper_core_log_rank_test_simple(
   print_nevent = TRUE,
   print_mst = TRUE,
   print_hr = TRUE,
+  print_total = FALSE,
   print_pvalues = TRUE
 )
 
@@ -32,6 +33,7 @@ wrapper_core_log_rank_test_simple_strat(
   print_nevent = TRUE,
   print_mst = TRUE,
   print_hr = TRUE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -56,6 +58,8 @@ wrapper_core_log_rank_test_simple_strat(
 \item{print_mst}{Logical. Whether to print median survival time (MST).}
 
 \item{print_hr}{Logical. Whether to print hazard rations estimated with Cox regression.}
+
+\item{print_total}{Logical. Whether to print total number of samples and total number of events.}
 
 \item{print_pvalues}{Logical. Whether to print p-values.}
 

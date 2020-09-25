@@ -14,7 +14,7 @@ wrapper_core_pearsons_test(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
-  print_or = FALSE,
+  print_total = TRUE,
   print_pvalues = TRUE
 )
 
@@ -29,6 +29,7 @@ wrapper_core_pearsons_test_strat(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -42,9 +43,21 @@ wrapper_core_pearsons_test_strat(
 
 \item{strata_vars}{Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.}
 
-\item{print_or}{Logical. Whether to print odds rations estimated with logistic regression.}
+\item{method}{Method 'pearson' or 'fisher' test.}
+
+\item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
+
+\item{caption}{Caption for the table with results.}
+
+\item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
+
+\item{print_total}{Logical. Whether to print total number of samples.}
+
+\item{print_pvalues}{Logical. Whether to print p-values.}
 
 \item{strat1_var}{Name of the second stratification variable.}
+
+\item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
 Pearson's Chi-squared test or Fisher's exact test or Cochran-Mantel-Haenszel Chi-Squared Test

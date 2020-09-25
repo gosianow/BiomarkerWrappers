@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_log_rank_test.R
 \name{wrapper_log_rank_test_treatment}
 \alias{wrapper_log_rank_test_treatment}
-\title{Log-rank test testinging treatment effect within biomaker subgroups}
+\title{Log-rank test testing treatment effect within biomarker subgroups}
 \usage{
 wrapper_log_rank_test_treatment(
   data,
@@ -17,6 +17,7 @@ wrapper_log_rank_test_treatment(
   print_nevent = TRUE,
   print_mst = TRUE,
   print_hr = TRUE,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -46,10 +47,12 @@ wrapper_log_rank_test_treatment(
 
 \item{print_hr}{Logical. Whether to print hazard rations estimated with Cox regression.}
 
+\item{print_total}{Logical. Whether to print total number of samples and total number of events.}
+
 \item{print_pvalues}{Logical. Whether to print p-values.}
 
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
-Log-rank test testinging treatment effect within biomaker subgroups
+Log-rank test testing treatment effect within biomarker subgroups
 }

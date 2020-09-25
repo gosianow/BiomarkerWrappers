@@ -14,6 +14,7 @@ wrapper_pearsons_test_biomarker(
   method = "pearson",
   variable_names = NULL,
   caption = NULL,
+  print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -28,6 +29,18 @@ wrapper_pearsons_test_biomarker(
 \item{strata_vars}{Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.}
 
 \item{strat1_var}{Name of the second stratification variable.}
+
+\item{method}{Method 'pearson' or 'fisher' test.}
+
+\item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
+
+\item{caption}{Caption for the table with results.}
+
+\item{print_total}{Logical. Whether to print total number of samples.}
+
+\item{print_pvalues}{Logical. Whether to print p-values.}
+
+\item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
 Testing biomarker effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test
