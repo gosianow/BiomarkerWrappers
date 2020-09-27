@@ -432,15 +432,39 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
       stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
     }
     
-    default_colors_per_treatment <- list(c("#FFC100", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+    if(nlevels_biomarker > 4){
+      stop("There are no default colors available when number of biomarker levels is higher than 4. Please, provide the colors.")
+    }
     
+    
+    # default_colors_per_treatment <- list(c("#ffa600", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
     # palette <- unlist(default_colors_per_treatment)
     # barplot(rep(1, length(palette)), col = palette)
+    # 
+    # colors <- unlist(lapply(1:nlevels_treatment, function(i){
+    #   format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
+    # }))
     
     
-    colors <- unlist(lapply(1:nlevels_treatment, function(i){
-      format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
+    
+    
+    default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
+    
+    # levels_treatment <- 1:4
+    # levels_biomarker <- 1:2
+    
+    
+    colors <- unlist(lapply(seq_along(levels_treatment), function(i){
+      
+      palette <- rev(RColorBrewer::brewer.pal(9, default_pals_per_treatment[i]))
+      colors <- rev(palette[2 * seq_along(levels_biomarker)])
+      
+      format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), colors = colors, allow_duplicated = FALSE)
+      
     }))
+    
+    
+    # barplot(rep(1, length(colors)), col = colors)
     
     
   }else{
@@ -548,11 +572,39 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
         stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
       }
       
-      default_colors_per_treatment <- list(c("#FFC100", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+      if(nlevels_biomarker > 4){
+        stop("There are no default colors available when number of biomarker levels is higher than 4. Please, provide the colors.")
+      }
       
-      colors <- unlist(lapply(1:nlevels_treatment, function(i){
-        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
+      
+      # default_colors_per_treatment <- list(c("#ffa600", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+      # palette <- unlist(default_colors_per_treatment)
+      # barplot(rep(1, length(palette)), col = palette)
+      # 
+      # colors <- unlist(lapply(1:nlevels_treatment, function(i){
+      #   format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
+      # }))
+      
+      
+      
+      
+      default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
+      
+      # levels_treatment <- 1:4
+      # levels_biomarker <- 1:2
+      
+      
+      colors <- unlist(lapply(seq_along(levels_treatment), function(i){
+        
+        palette <- rev(RColorBrewer::brewer.pal(9, default_pals_per_treatment[i]))
+        colors <- rev(palette[2 * seq_along(levels_biomarker)])
+        
+        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), colors = colors, allow_duplicated = FALSE)
+        
       }))
+      
+      
+      # barplot(rep(1, length(colors)), col = colors)
       
       
     }else{
@@ -680,11 +732,39 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
         stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
       }
       
-      default_colors_per_treatment <- list(c("#FFC100", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+      if(nlevels_biomarker > 4){
+        stop("There are no default colors available when number of biomarker levels is higher than 4. Please, provide the colors.")
+      }
       
-      colors <- unlist(lapply(1:nlevels_treatment, function(i){
-        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
+      
+      # default_colors_per_treatment <- list(c("#ffa600", "#B22222"), c("#56B4E9", "#104E8B"), c("#84d44b", "#007800"), c("#836FFF", "#50449d"))
+      # palette <- unlist(default_colors_per_treatment)
+      # barplot(rep(1, length(palette)), col = palette)
+      # 
+      # colors <- unlist(lapply(1:nlevels_treatment, function(i){
+      #   format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_colors_per_treatment[[i]], allow_duplicated = FALSE)
+      # }))
+      
+      
+      
+      
+      default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
+      
+      # levels_treatment <- 1:4
+      # levels_biomarker <- 1:2
+      
+      
+      colors <- unlist(lapply(seq_along(levels_treatment), function(i){
+        
+        palette <- rev(RColorBrewer::brewer.pal(9, default_pals_per_treatment[i]))
+        colors <- rev(palette[2 * seq_along(levels_biomarker)])
+        
+        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), colors = colors, allow_duplicated = FALSE)
+        
       }))
+      
+      
+      # barplot(rep(1, length(colors)), col = colors)
       
       
     }else{
