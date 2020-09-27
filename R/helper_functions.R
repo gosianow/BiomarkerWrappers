@@ -1124,7 +1124,7 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 #' 
 #' @param levels Vector of factor levels for which we want to specify colors.
 #' @param colors Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.
-#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette'. 
+#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges".
 #' @return Named vector of unique colors for all levels.
 #' @export
 format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicated = TRUE){
@@ -1146,10 +1146,19 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
       
     }else{
       
-      stopifnot(length(palette) >= 2)
-      
-      colors <- grDevices::colorRampPalette(palette)(length(levels))
-      names(colors) <- levels
+      if(length(palette) == 1){
+        
+        if(length(levels) <= 4){
+          palette <- rev(RColorBrewer::brewer.pal(9, palette))
+          colors <- rev(palette[2 * seq_along(levels)])
+        }else{
+          colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(9, palette)[-1])(length(levels))
+        }
+        
+      }else{
+        colors <- grDevices::colorRampPalette(palette)(length(levels))
+        names(colors) <- levels
+      }
       
       
     }
