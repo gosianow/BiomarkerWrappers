@@ -11,7 +11,7 @@ format_colors(levels, colors = NULL, palette = NULL, allow_duplicated = TRUE)
 
 \item{colors}{Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.}
 
-\item{palette}{Vector of at least two colors used to create a color palette.}
+\item{palette}{Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges".}
 }
 \value{
 Named vector of unique colors for all levels.
