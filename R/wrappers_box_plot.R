@@ -24,7 +24,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
   legend_colors_box_title = NULL, legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
-  label_size = 3.5, 
+  label_size = 3.5, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none"){
@@ -308,7 +308,7 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
       yrange <- range(data[, y_var], na.rm = TRUE)  
     }
     yrange <- yrange[2] - yrange[1]
-    ynudge <- yrange * 0.025
+    ynudge <- yrange * label_nudge
     
     
     if(is.null(dodge_var)){
@@ -352,7 +352,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
   legend_colors_box_title = NULL, legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
-  label_size = 3.5,
+  label_size = 3.5, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
@@ -463,7 +463,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
-        label_size = label_size, 
+        label_size = label_size, label_nudge = label_nudge, 
         background_grid_major = background_grid_major)
       
       
@@ -524,7 +524,7 @@ wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_
   legend_colors_box_title = NULL, legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
-  label_size = 3.5, 
+  label_size = 3.5, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
@@ -575,7 +575,7 @@ wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_
     point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
-    label_size = label_size, 
+    label_size = label_size, label_nudge = label_nudge, 
     background_grid_major = background_grid_major, 
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
   

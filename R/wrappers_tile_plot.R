@@ -49,7 +49,7 @@ wrapper_core_tile_plot1 <- function(data, x_var, y_vars, colors = NULL, variable
         plot.margin = margin(t = 1, r = 7, b = 1, l = 7, unit = "pt")) +
       scale_fill_manual(values = colors_tmp, na.value = "gray95") +
       scale_y_discrete(expand = c(0,0)) +
-      guides(fill = guide_legend(nrow = 2))
+      guides(fill = guide_legend(nrow = 4, reverse = TRUE))
     
     
   })
@@ -157,7 +157,7 @@ wrapper_core_tile_plot2 <- function(data, x_var, y_vars, colors = NULL, variable
       scale_fill_manual(values = colors_tmp) +
       scale_y_discrete(expand = c(0,0)) +
       scale_x_discrete(expand = c(0,0)) +
-      guides(fill = guide_legend(nrow = 2))
+      guides(fill = guide_legend(nrow = 4, reverse = TRUE))
     
     
   })
