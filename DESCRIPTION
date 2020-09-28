@@ -45,3 +45,4 @@ Collate:
     'wrappers_logistic_regression.R'
     'wrappers_pearsons_test.R'
     'wrappers_point_plot.R'
+    'wrappers_tile_plot.R'
