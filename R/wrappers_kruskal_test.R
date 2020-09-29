@@ -11,7 +11,7 @@
 #' @param num_var Name of a numerical variable.
 #' @param cat_var Name of a categorical variable. That variable must be a factor with at least two levels.
 #' @export
-wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -130,7 +130,7 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Statistic = res$statistic, 
-    format_summ(summ = summdf, digits = digits, per = "col"),
+    format_summ_df(summ = summdf, digits = digits, per = "col"),
     Difference = format_difference(res$difference, digits = 2, non_empty = 1),
     `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -197,9 +197,9 @@ wrapper_core_kruskal_test_col_cat <- function(data, num_var, cat_var, method = "
 #' 
 #' Returns a table where stratification subgroups are in rows and distribution summary statistics for the numerical variable are in columns. 
 #' 
-#' @inheritParams wrapper_core_kruskal_test_col_cat
+#' @inheritParams wrapper_kruskal_test_core_col_cat
 #' @export
-wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -325,7 +325,7 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = res$subgroup, 
-    format_summ(summ = summdf, per = "row", digits = digits),
+    format_summ_df(summ = summdf, per = "row", digits = digits),
     Difference = format_difference(res$difference, digits = 2, non_empty = 1),
     `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -388,12 +388,12 @@ wrapper_core_kruskal_test_col_num <- function(data, num_var, cat_var, method = "
 
 
 
-#' @rdname wrapper_core_kruskal_test_col_cat
-#' @inheritParams wrapper_core_kruskal_test_col_cat
-#' @param strat1_var Name of the firts stratification variable.
+#' @rdname wrapper_kruskal_test_core_col_cat
+#' @inheritParams wrapper_kruskal_test_core_col_cat
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -460,7 +460,7 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
       }
       
       
-      wrapper_res <- wrapper_core_kruskal_test_col_cat(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_kruskal_test_core_col_cat(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -547,12 +547,12 @@ wrapper_core_kruskal_test_col_cat_strat <- function(data, num_var, cat_var, stra
 
 
 
-#' @rdname wrapper_core_kruskal_test_col_num
-#' @inheritParams wrapper_core_kruskal_test_col_num
-#' @param strat1_var Name of the firts stratification variable.
+#' @rdname wrapper_kruskal_test_core_col_num
+#' @inheritParams wrapper_kruskal_test_core_col_num
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -619,7 +619,7 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
       }
       
       
-      wrapper_res <- wrapper_core_kruskal_test_col_num(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_kruskal_test_core_col_num(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -713,7 +713,7 @@ wrapper_core_kruskal_test_col_num_strat <- function(data, num_var, cat_var, stra
 #' 
 #' Run Kruskal-Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
 #' 
-#' @inheritParams wrapper_core_kruskal_test_col_cat_strat
+#' @inheritParams wrapper_kruskal_test_core_col_cat_strat
 #' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
 #' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
 #' @export
@@ -764,7 +764,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
       num_var <- num_vars
       cat_var <- cat_vars[i]
       
-      wrapper_res <- wrapper_core_kruskal_test_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_kruskal_test_core_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       return(wrapper_res)
       
@@ -780,7 +780,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
       num_var <- num_vars[i]
       cat_var <- cat_vars
       
-      wrapper_res <- wrapper_core_kruskal_test_col_cat_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_kruskal_test_core_col_cat_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       return(wrapper_res)
       

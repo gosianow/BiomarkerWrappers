@@ -30,7 +30,7 @@
 #' censor_var <- "PFS_Event"
 #' covariate_vars <- c("Treatment_Arm", "GeneA", "IPI", "Cell_Of_Origin")
 #' 
-#' x <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
+#' x <- wrapper_cox_regression_core_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars)
 #' 
 #' boutput(x)
 #' 
@@ -42,13 +42,13 @@
 #' covariate_vars <- c("Treatment_Arm", "GeneA")
 #' strata_vars <- c("IPI", "Cell_Of_Origin")
 #' 
-#' x <- wrapper_core_cox_regression_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars)
+#' x <- wrapper_cox_regression_core_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars)
 #' 
 #' boutput(x)
 #' 
 #' 
 #' @export
-wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -266,7 +266,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     
     res <- coef_info[coef_info$covariate %in% return_vars, , drop = FALSE]
     
-    ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA becasue this level is not used as a reference in the fitted model.
+    ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA because this level is not used as a reference in the fitted model.
     if(all(res$reference_indx > 1)){
       
       res[, colnames(res) %in% c("HR", "HR_CI95_lower", "HR_CI95_upper", "pvalue", "adj_pvalue")] <- NA
@@ -287,7 +287,7 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
     `Total N` = as.character(res$n_total),
     `Total Events` = as.character(res$nevent_total),
     `N` = format_difference(res$n, digits = 0),
-    `Events` = format_counts_and_props_core(counts = res$nevent, props = res$propevent, digits = 1),
+    `Events` = format_counts_and_props(counts = res$nevent, props = res$propevent, digits = 1),
     `MST` = format_or(res$MST, digits = 1, non_empty = res$covariate_class == "factor"),
     `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = res$covariate_class == "factor"),
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
@@ -372,9 +372,9 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 
 
 
-#' @rdname wrapper_core_cox_regression_simple 
+#' @rdname wrapper_cox_regression_core_simple 
 #' 
-#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' 
 #' @examples 
@@ -390,12 +390,12 @@ wrapper_core_cox_regression_simple <- function(data, tte_var, censor_var, covari
 #' strat2_var = "Treatment_Arm"
 #' 
 #' 
-#' x <- wrapper_core_cox_regression_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
+#' x <- wrapper_cox_regression_core_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var)
 #' 
 #' boutput(x)
 #' 
 #' @export
-wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -455,7 +455,7 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
       }
       
       
-      wrapper_res <- wrapper_core_cox_regression_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_cox_regression_core_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       
@@ -552,8 +552,8 @@ wrapper_core_cox_regression_simple_strat <- function(data, tte_var, censor_var, 
 
 #' Cox regression estimating biomarker effect 
 #' 
-#' @inheritParams wrapper_core_cox_regression_simple_strat
-#' @param biomarker_vars Vector of biomaker names.
+#' @inheritParams wrapper_cox_regression_core_simple_strat
+#' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
 wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -584,7 +584,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -669,9 +669,9 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 
 
 
-#' Cox regression estimating treatment effect within biomaker subgroups
+#' Cox regression estimating treatment effect within biomarker subgroups
 #' 
-#' @inheritParams wrapper_core_cox_regression_simple_strat
+#' @inheritParams wrapper_cox_regression_core_simple_strat
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @param adjustment_vars Vector of covariate names used for adjustment.
@@ -715,7 +715,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_cox_regression_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
@@ -830,7 +830,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 
 #' Cox regression with additive model with interaction
 #' 
-#' @inheritParams wrapper_core_cox_regression_simple
+#' @inheritParams wrapper_cox_regression_core_simple
 #' @param interaction1_var Name of the first interaction variable.
 #' @param interaction2_var Name of the second interaction variable.
 #' 
@@ -840,7 +840,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' 
 #' data <- bdata
 #' 
-#' data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+#' data$GeneA_cat2 <- wrapper_cut_2groups(data$GeneA)
 #' 
 #' tte_var <- "PFS"
 #' censor_var <- "PFS_Event"
@@ -849,12 +849,12 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' interaction2_var <- "Treatment_Arm"
 #' covariate_vars <- c("IPI", "Cell_Of_Origin")
 #' 
-#' x <- wrapper_core_cox_regression_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+#' x <- wrapper_cox_regression_core_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
 #' 
 #' boutput(x)
 #' 
 #' @export
-wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strata_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strata_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -1115,13 +1115,13 @@ wrapper_core_cox_regression_interaction <- function(data, tte_var, censor_var, i
 
 
 
-#' @rdname wrapper_core_cox_regression_interaction
+#' @rdname wrapper_cox_regression_core_interaction
 #' 
-#' @inheritParams wrapper_core_cox_regression_interaction
-#' @param strat1_var Name of the firts stratification variable.
+#' @inheritParams wrapper_cox_regression_core_interaction
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_core_interaction_strat <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -1180,7 +1180,7 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
       }
       
       
-      wrapper_res <- wrapper_core_cox_regression_interaction(data = data_strata1, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_cox_regression_core_interaction(data = data_strata1, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       res <- bresults(wrapper_res)
@@ -1258,9 +1258,9 @@ wrapper_core_cox_regression_interaction_strat <- function(data, tte_var, censor_
 
 #' Cox regression estimating interaction effect between biomaker and treatment
 #' 
-#' @inheritParams wrapper_core_cox_regression_interaction_strat
+#' @inheritParams wrapper_cox_regression_core_interaction_strat
 #' @param treatment_var Name of column with treatment information.
-#' @param biomarker_vars Vector of biomaker names.
+#' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
 wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL,  print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -1294,7 +1294,7 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
     interaction2_var <- treatment_var
     
     
-    wrapper_res <- wrapper_core_cox_regression_interaction_strat(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_cox_regression_core_interaction_strat(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     

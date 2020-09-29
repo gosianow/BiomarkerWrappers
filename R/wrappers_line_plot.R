@@ -20,7 +20,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
+wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
@@ -203,11 +203,11 @@ wrapper_core_line_plot <- function(data, x_var, y_var, group_var, color_line_var
 
 
 
-#' @rdname wrapper_core_line_plot
-#' @param strat1_var Name of the firts stratification variable.
+#' @rdname wrapper_line_plot_core
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
+wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
@@ -323,7 +323,7 @@ wrapper_core_line_plot_strat <- function(data, x_var, y_var, group_var, color_li
       }
       
       
-      ggpl <- wrapper_core_line_plot(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, color_smooth_var = color_smooth_var, facet_var = facet_var, 
+      ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, color_smooth_var = color_smooth_var, facet_var = facet_var, 
         colors_line = colors_line, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,

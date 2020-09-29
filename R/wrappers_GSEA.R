@@ -28,7 +28,7 @@ NULL
 #' 
 #' @param statistic Named vector of t statistics from limma or logFC.
 #' @export
-wrapper_core_gsea <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
+wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
   min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
   
@@ -241,7 +241,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
     
     name <- contrast
 
-    res_gsea <- wrapper_core_gsea(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
+    res_gsea <- wrapper_gsea_core(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
       name = name, sep = sep,
       min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn, statistic_name = statistic_prefix)
     

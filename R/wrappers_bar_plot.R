@@ -29,15 +29,15 @@
 #' data(bdata)
 #' 
 #' data <- bdata
-#' data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+#' data$GeneA_cat2 <- wrapper_cut_2groups(data$GeneA)
 #' 
 #' x_var = "GeneA_cat2"
 #' y_var = "Response"
 #' 
-#' wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
+#' wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var)
 #' 
 #' @export
-wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL, 
+wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, 
   colors_bar = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
@@ -428,11 +428,11 @@ wrapper_core_bar_plot <- function(data, x_var, y_var, facet_var = NULL,
 
 
 
-#' @rdname wrapper_core_bar_plot
-#' @param strat1_var Name of the firts stratification variable.
+#' @rdname wrapper_bar_plot_core
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL, 
+wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
@@ -540,7 +540,7 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
         subtitle <- NULL
       }
       
-      ggpl <- wrapper_core_bar_plot(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+      ggpl <- wrapper_bar_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, 
         colors_bar = colors_bar, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
@@ -601,9 +601,9 @@ wrapper_core_bar_plot_strat <- function(data, x_var, y_var, facet_var = NULL,
 #' 
 #' Generate barplots for multiple variables in one faceted or dodged panel.
 #' 
-#' @inheritParams wrapper_core_bar_plot_strat
+#' @inheritParams wrapper_bar_plot_core_strat
 #' @export
-wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars, 
+wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
@@ -656,7 +656,7 @@ wrapper_core_bar_plot_yvars_strat <- function(data, x_var, y_vars,
   facet_label_both <- FALSE
   
   
-  ggpl <- wrapper_core_bar_plot_strat(data = data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+  ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, 
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, 
     variable_names = variable_names, 

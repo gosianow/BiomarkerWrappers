@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_logistic_regression.R
 \name{wrapper_logistic_regression_treatment}
 \alias{wrapper_logistic_regression_treatment}
-\title{Logistic regression estimating treatment effect within biomaker subgroups}
+\title{Logistic regression estimating treatment effect within biomarker subgroups}
 \usage{
 wrapper_logistic_regression_treatment(
   data,
@@ -27,7 +27,7 @@ wrapper_logistic_regression_treatment(
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
@@ -40,5 +40,5 @@ wrapper_logistic_regression_treatment(
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
-Logistic regression estimating treatment effect within biomaker subgroups
+Logistic regression estimating treatment effect within biomarker subgroups
 }

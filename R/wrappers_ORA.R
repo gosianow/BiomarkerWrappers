@@ -10,11 +10,11 @@
 
 #' Over-representation analysis (ORA)
 #' 
-#' @param genes Vector of genes that that tested for overrepresentation.
+#' @param genes Vector of genes that that tested for over-representation.
 #' @param genesets List of gene sets.
 #' @param universe Vector of genes defining the gene universe.
 #' @export
-wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
+wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, display_topn = 20){
   
@@ -38,7 +38,7 @@ wrapper_core_ora <- function(genes, genesets, universe, genesets_extra_info = NU
   
   
   # -------------------------------------------------------------------------
-  # Preprocessing
+  # Pre-processing
   # -------------------------------------------------------------------------
   
   genes <- unique(genes)
@@ -192,7 +192,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
   
   
   # -------------------------------------------------------------------------
-  # Preprocessing
+  # Pre-processing
   # -------------------------------------------------------------------------
   
   ### Define the universe
@@ -246,7 +246,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
       
       ### Run ORA
       
-      res_ora <- wrapper_core_ora(genes, genesets = genesets, universe = universe, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
+      res_ora <- wrapper_ora_core(genes, genesets = genesets, universe = universe, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
         name = name, sep = sep,
         method = method, min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn)
       

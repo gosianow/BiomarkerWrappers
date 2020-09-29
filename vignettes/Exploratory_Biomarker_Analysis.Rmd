@@ -90,14 +90,14 @@ data(bdata)
 
 genes <- c("BCL2", "GeneA", "GeneB", "GeneC", "GeneD")
 
-data_cat2 <- dplyr::mutate_all(bdata[, genes], cut_core_2groups)
+data_cat2 <- dplyr::mutate_all(bdata[, genes], wrapper_cut_2groups)
   
 colnames(data_cat2) <- paste0(genes, "_cat2")
 
 
 ### Stratify gene expression into quartiles
 
-data_cat4 <- dplyr::mutate_all(bdata[, genes], cut_core_quartiles)
+data_cat4 <- dplyr::mutate_all(bdata[, genes], wrapper_cut_quartiles)
   
 colnames(data_cat4) <- paste0(genes, "_cat4")
 
@@ -245,7 +245,7 @@ censor_var <- "PFS_Event"
 covariate_var <- "Treatment_Arm"
 
 
-wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+wrapper_KM_plot_core(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
 
 
 
@@ -267,7 +267,7 @@ strat1_var = "Treatment_Arm"
 strat2_var = "Cell_Of_Origin"
   
 
-wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
+wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
 
@@ -446,7 +446,7 @@ x_var = "GeneA_cat2"
 y_var = "Response"
 
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var)
+wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var)
 
 
 
@@ -458,7 +458,7 @@ y_var = "Response"
 facet_var <- "Treatment_Arm"
   
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var)
+wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var)
 
 
 
@@ -469,7 +469,7 @@ y_var = "Response"
 skip_levels <- c("NE", "PD", "SD")
 show_total_proportions <- TRUE
 
-wrapper_core_bar_plot(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, skip_levels = skip_levels, ylim = c(0, 100))
+wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, skip_levels = skip_levels, ylim = c(0, 100))
 
 
 
@@ -488,10 +488,10 @@ strat1_var = "Treatment_Arm"
 strat2_var = "Cell_Of_Origin"
 
 
-wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
+wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var)
 
 
-wrapper_core_bar_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, less_legends = TRUE)
+wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var, strat2_var = strat2_var, less_legends = TRUE)
 
 
 
@@ -512,7 +512,7 @@ x_var <- "Cell_Of_Origin"
 y_vars <- c("GeneA_cat2", "GeneB_cat2", "GeneC_cat2")
 
 
-wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, values_to = "Gene expression")
+wrapper_bar_plot_yvars_core_strat(data, x_var = x_var, y_vars = y_vars, values_to = "Gene expression")
 
 
 
@@ -526,7 +526,7 @@ skip_levels <- "low"
 method <- "dodge"
 
 
-wrapper_core_bar_plot_yvars_strat(data, x_var = x_var, y_vars = y_vars, skip_levels = skip_levels, method = method, values_to = "Gene expression", names_to = "Gene")
+wrapper_bar_plot_yvars_core_strat(data, x_var = x_var, y_vars = y_vars, skip_levels = skip_levels, method = method, values_to = "Gene expression", names_to = "Gene")
 
 
 
@@ -548,7 +548,7 @@ x_var <- "Cell_Of_Origin"
 y_var <- "GeneA"
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
+wrapper_box_plot_core(data = data, x_var = x_var, y_var = y_var)
 
 
 
@@ -570,7 +570,7 @@ facet_var <- "Treatment_Arm"
 dodge_var = NULL
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, dodge_var = dodge_var)
+wrapper_box_plot_core(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, dodge_var = dodge_var)
 
 
 
@@ -583,7 +583,7 @@ facet_var <- NULL
 dodge_var = "Cell_Of_Origin"
 
 
-wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, dodge_var = dodge_var)
+wrapper_box_plot_core(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, dodge_var = dodge_var)
 
 
 
@@ -597,7 +597,7 @@ y_var <- "GeneA"
 strat1_var = "Treatment_Arm"
 
 
-wrapper_core_box_plot_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var)
+wrapper_box_plot_core_strat(data = data, x_var = x_var, y_var = y_var, strat1_var = strat1_var)
 
 
 
@@ -619,7 +619,7 @@ data <- bdata
 y_vars <- c("GeneA", "GeneB", "GeneC")
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars)
+wrapper_box_plot_yvars_core_strat(data, y_vars = y_vars)
 
 
 
@@ -632,7 +632,7 @@ facet_var = NULL
 dodge_var = NULL
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var)
+wrapper_box_plot_yvars_core_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var)
 
 
 
@@ -644,7 +644,7 @@ facet_var = NULL
 dodge_var = "Cell_Of_Origin"
 
 
-wrapper_core_box_plot_yvars_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var)
+wrapper_box_plot_yvars_core_strat(data, y_vars = y_vars, x_var = x_var, facet_var = facet_var, dodge_var = dodge_var)
 
 
 
@@ -669,7 +669,7 @@ x_var <- "GeneA"
 y_var <- "GeneB"
 
 
-wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
+wrapper_point_plot_core(data = data, x_var = x_var, y_var = y_var)
 
 
 
@@ -688,7 +688,7 @@ facet_var <- "Treatment_Arm"
 color_point_var <- "Cell_Of_Origin"
 
 
-wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var)
+wrapper_point_plot_core(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, color_point_var = color_point_var)
 
 
 
@@ -701,7 +701,7 @@ facet_var <- "Treatment_Arm"
 strat1_var <- "Cell_Of_Origin"
 
 
-wrapper_core_point_plot_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
+wrapper_point_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, strat1_var =  strat1_var)
 
 
 
@@ -764,7 +764,7 @@ col_var <- "ORR"
 row_var <- "Treatment_Arm"
 
 
-wrapper_core_fishers_test(data, col_var = col_var, row_var = row_var)
+wrapper_fishers_test_core(data, col_var = col_var, row_var = row_var)
 
 
 
@@ -791,7 +791,7 @@ strat_var <- "Treatment_Arm"
 covariate_vars <- c("Age", "IPI")
 
 
-wrapper_core_characteristics(data, strat_var = strat_var, covariate_vars = covariate_vars)
+wrapper_characteristics_core(data, strat_var = strat_var, covariate_vars = covariate_vars)
   
   
 

@@ -28,13 +28,13 @@ wrapper_cox_regression_biomarker(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 
-\item{strat1_var}{Name of the firts stratification variable.}
+\item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 

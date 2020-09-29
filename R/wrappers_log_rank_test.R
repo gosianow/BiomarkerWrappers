@@ -27,7 +27,7 @@ NULL
 #' censor_var <- "PFS_Event"
 #' covariate_var <- "Treatment_Arm"
 #' 
-#' x <- wrapper_core_log_rank_test_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+#' x <- wrapper_log_rank_test_core_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
 #' 
 #' boutput(x)
 #' 
@@ -36,13 +36,13 @@ NULL
 #' 
 #' strata_vars <- c("IPI", "Cell_Of_Origin")
 #' 
-#' x <- wrapper_core_log_rank_test_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars)
+#' x <- wrapper_log_rank_test_core_simple(data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars)
 #' 
 #' boutput(x)
 #' 
 #' 
 #' @export
-wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = FALSE, print_pvalues = TRUE){
+wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = FALSE, print_pvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -92,7 +92,7 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
   covariate_vars <- covariate_var
   return_vars <- covariate_var
   
-  wrapper_res <- wrapper_core_cox_regression_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
   
   
   res <- bresults(wrapper_res)
@@ -229,7 +229,7 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
 
 
 
-#' @rdname wrapper_core_log_rank_test_simple 
+#' @rdname wrapper_log_rank_test_core_simple 
 #' 
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat2_var Name of the second stratification variable.
@@ -247,12 +247,12 @@ wrapper_core_log_rank_test_simple <- function(data, tte_var, censor_var, covaria
 #' strat1_var = "Cell_Of_Origin"
 #' 
 #' 
-#' x <- wrapper_core_log_rank_test_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var)
+#' x <- wrapper_log_rank_test_core_simple_strat(data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var)
 #' 
 #' boutput(x)
 #' 
 #' @export
-wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -315,7 +315,7 @@ wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, c
       }
       
       
-      wrapper_res <- wrapper_core_log_rank_test_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_log_rank_test_core_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -411,7 +411,7 @@ wrapper_core_log_rank_test_simple_strat <- function(data, tte_var, censor_var, c
 
 #' Log-rank test testing biomarker effect 
 #' 
-#' @inheritParams wrapper_core_log_rank_test_simple_strat
+#' @inheritParams wrapper_log_rank_test_core_simple_strat
 #' @param biomarker_vars Vector of biomarker names.
 #' @export
 wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -437,7 +437,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_log_rank_test_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -506,7 +506,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
 
 #' Log-rank test testing treatment effect within biomarker subgroups
 #' 
-#' @inheritParams wrapper_core_log_rank_test_simple_strat
+#' @inheritParams wrapper_log_rank_test_core_simple_strat
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
@@ -545,7 +545,7 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_log_rank_test_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)

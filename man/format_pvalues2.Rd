@@ -11,7 +11,7 @@ format_pvalues2(x, digits = 4, asterisk = TRUE)
 
 \item{digits}{Number of digits after decimial to display.}
 
-\item{asterisk}{Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.}
+\item{asterisk}{Logical, whether to indicate significance levels with asterisks. Encoding: `***` p-value < 0.001, `**` p-value < 0.01, `*` p-value < 0.05, `.` p-value < 0.1.}
 }
 \description{
 Format p-values using scientific format

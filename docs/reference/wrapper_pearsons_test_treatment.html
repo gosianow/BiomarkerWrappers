@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_pearsons_test_treatment • BiomarkerWrappers</title>
+<title>Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_pearsons_test_treatment • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_pearsons_test_treatment" />
-<meta property="og:description" content="Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test" />
+<meta property="og:title" content="Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test — wrapper_pearsons_test_treatment" />
+<meta property="og:description" content="Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.16</span>
       </span>
     </div>
 
@@ -115,13 +115,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</h1>
+    <h1>Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</h1>
     
     <div class="hidden name"><code>wrapper_pearsons_test_treatment.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</p>
+    <p>Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test</p>
     </div>
 
     <pre class="usage"><span class='fu'>wrapper_pearsons_test_treatment</span>(
@@ -134,6 +134,7 @@
   method = <span class='st'>"pearson"</span>,
   variable_names = <span class='kw'>NULL</span>,
   caption = <span class='kw'>NULL</span>,
+  print_total = <span class='fl'>TRUE</span>,
   print_pvalues = <span class='fl'>TRUE</span>,
   print_adjpvalues = <span class='fl'>TRUE</span>
 )</pre>
@@ -160,6 +161,30 @@
     <tr>
       <th>biomarker_vars</th>
       <td><p>Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>Method 'pearson' or 'fisher' test.</p></td>
+    </tr>
+    <tr>
+      <th>variable_names</th>
+      <td><p>Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.</p></td>
+    </tr>
+    <tr>
+      <th>caption</th>
+      <td><p>Caption for the table with results.</p></td>
+    </tr>
+    <tr>
+      <th>print_total</th>
+      <td><p>Logical. Whether to print total number of samples.</p></td>
+    </tr>
+    <tr>
+      <th>print_pvalues</th>
+      <td><p>Logical. Whether to print p-values.</p></td>
+    </tr>
+    <tr>
+      <th>print_adjpvalues</th>
+      <td><p>Logical. Whether to print adjusted p-values.</p></td>
     </tr>
     </table>
 

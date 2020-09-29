@@ -4,12 +4,12 @@
 \alias{format_counts_and_props}
 \title{Paste counts and proportions corresponding to one subgroup}
 \usage{
-format_counts_and_props(counts, props, digits = 2, prefix_counts = "counts_")
+format_counts_and_props(counts, props, digits = 2)
 }
 \arguments{
-\item{counts}{Data frame with counts.}
+\item{counts}{Vector with counts.}
 
-\item{props}{Data frame with proportions.}
+\item{props}{Vector with proportions.}
 
 \item{digits}{Number of decimal places when rounding proportions.}
 }

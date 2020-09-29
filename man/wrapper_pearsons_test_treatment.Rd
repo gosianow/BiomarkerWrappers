@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_pearsons_test.R
 \name{wrapper_pearsons_test_treatment}
 \alias{wrapper_pearsons_test_treatment}
-\title{Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test}
+\title{Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test}
 \usage{
 wrapper_pearsons_test_treatment(
   data,
@@ -43,5 +43,5 @@ wrapper_pearsons_test_treatment(
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
-Testinging treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test
+Testing treatment effect on response with Pearson's Chi-squared test or Cochran-Mantel-Haenszel Chi-Squared Test
 }

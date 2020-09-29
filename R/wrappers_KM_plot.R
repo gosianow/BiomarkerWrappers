@@ -21,10 +21,10 @@
 #' covariate_var <- "Treatment_Arm"
 #' 
 #' 
-#' wrapper_core_KM_plot(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
+#' wrapper_KM_plot_core(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
 #' 
 #' @export
-wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var, 
+wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var, 
   colors = NULL,
   variable_names = NULL, 
   title = NULL, subtitle = NULL,
@@ -194,7 +194,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
 
 
 
-#' @rdname wrapper_core_KM_plot
+#' @rdname wrapper_KM_plot_core
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @examples 
@@ -202,7 +202,7 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
 #' data(bdata)
 #' 
 #' data <- bdata
-#' data$GeneA_cat2 <- cut_core_2groups(data$GeneA)
+#' data$GeneA_cat2 <- wrapper_cut_2groups(data$GeneA)
 #' 
 #' tte_var <- "PFS"
 #' censor_var <- "PFS_Event"
@@ -212,10 +212,10 @@ wrapper_core_KM_plot <- function(data, tte_var, censor_var, covariate_var,
 #' strat2_var = "Cell_Of_Origin"
 #' 
 #' 
-#' wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
+#' wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
 #' 
 #' @export
-wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var, 
+wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var, 
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
@@ -331,7 +331,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
         subtitle <- NULL
       }
       
-      ggpl <- wrapper_core_KM_plot(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
+      ggpl <- wrapper_KM_plot_core(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
         colors = colors, 
         variable_names = variable_names, 
         title = title, subtitle = subtitle,
@@ -372,7 +372,7 @@ wrapper_core_KM_plot_strat <- function(data, tte_var, censor_var, covariate_var,
 
 #' KM plot with curves per biomarker and treatment in a single panel
 #' 
-#' @inheritParams wrapper_core_KM_plot_strat
+#' @inheritParams wrapper_KM_plot_core_strat
 #' @param colors A list of length equal to the number of treatment levels.
 #' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
@@ -464,7 +464,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
+  ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
@@ -588,7 +588,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
+  ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
@@ -719,7 +719,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_core_KM_plot_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
+  ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 

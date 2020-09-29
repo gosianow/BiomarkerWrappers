@@ -324,8 +324,10 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
 
 #' Stratify data into quartiles
 #' 
+#' @param x Vector of continuous values to cut.
+#' 
 #' @export
-cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+wrapper_cut_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
   stopifnot(length(labels) == 4)
   
@@ -346,8 +348,10 @@ cut_core_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 7
 
 #' Dichotomize data by median 
 #' 
+#' @param x Vector of continuous values to cut.
+#' 
 #' @export
-cut_core_median <- function(x, labels = c("<=MED", ">MED")){
+wrapper_cut_median <- function(x, labels = c("<=MED", ">MED")){
   
   stopifnot(length(labels) == 2)
   
@@ -361,8 +365,10 @@ cut_core_median <- function(x, labels = c("<=MED", ">MED")){
 
 #' Stratify data into two groups
 #' 
+#' @param x Vector of continuous values to cut.
+#' 
 #' @export
-cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
+wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
   
   stopifnot(length(probs) == 1)
   stopifnot(length(labels) == 2)
@@ -379,9 +385,10 @@ cut_core_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "h
   
 }
 
-#' @rdname cut_core_quartiles
+
+#' @rdname wrapper_cut_quartiles
 #' @export
-cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+wrapper_cut_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
   
   stopifnot(is.factor(strata))
   
@@ -394,7 +401,7 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 5
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- cut_core_quartiles(x[indx_sub], labels = labels)
+    out[indx_sub] <- wrapper_cut_quartiles(x[indx_sub], labels = labels)
     
   }
   
@@ -404,9 +411,9 @@ cut_core_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 5
 
 
 
-#' @rdname cut_core_median
+#' @rdname wrapper_cut_median
 #' @export
-cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
+wrapper_cut_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
   
   stopifnot(is.factor(strata))
   
@@ -419,7 +426,7 @@ cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- cut_core_median(x[indx_sub], labels = labels)
+    out[indx_sub] <- wrapper_cut_median(x[indx_sub], labels = labels)
     
   }
   
@@ -429,9 +436,9 @@ cut_core_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
 
 
 
-#' @rdname cut_core_2groups
+#' @rdname wrapper_cut_2groups
 #' @export
-cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high")){
+wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high")){
   
   stopifnot(is.factor(strata))
   
@@ -450,7 +457,7 @@ cut_core_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)),
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- cut_core_2groups(x[indx_sub], probs = probs[i], cutoff = cutoff[i], labels = labels) 
+    out[indx_sub] <- wrapper_cut_2groups(x[indx_sub], probs = probs[i], cutoff = cutoff[i], labels = labels) 
     
   }
   
@@ -611,8 +618,8 @@ format_header <- function(all_colnames, header_colnames, header_name){
 #' Format p-values
 #' 
 #' @param x Vector of p-values to be formatted.
-#' @param digits Number of digits after decimial to display.
-#' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
+#' @param digits Number of digits after decimal to display.
+#' @param asterisk Logical, whether to indicate significance levels with asterisks. Encoding: `***` p-value < 0.001, `**` p-value < 0.01, `*` p-value < 0.05, `.` p-value < 0.1.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal 
 format_pvalues <- function(x, digits = 4, asterisk = TRUE, non_empty = NULL){
@@ -676,7 +683,7 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE, non_empty = NULL){
 #' 
 #' @param x Vector of p-values to be formatted.
 #' @param digits Number of digits after decimial to display.
-#' @param asterisk Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.
+#' @param asterisk Logical, whether to indicate significance levels with asterisks. Encoding: `***` p-value < 0.001, `**` p-value < 0.01, `*` p-value < 0.05, `.` p-value < 0.1.
 #' @keywords internal 
 format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
   
@@ -871,7 +878,7 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
 #' @param colnames New colnames.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs.data.frame <- function(x, digits = 2, colnames = NULL, non_empty = NULL){
+format_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL){
   
   output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty), stringsAsFactors = FALSE)
   colnames(output) <- colnames
@@ -879,6 +886,8 @@ format_CIs.data.frame <- function(x, digits = 2, colnames = NULL, non_empty = NU
   return(output)
   
 }
+
+
 
 
 #' Format versus
@@ -909,7 +918,7 @@ format_vs <- function(level, reference){
 #' @param props Vector with proportions.
 #' @param digits Number of decimal places when rounding proportions.
 #' @keywords internal
-format_counts_and_props_core <- function(counts, props, digits = 2){
+format_counts_and_props <- function(counts, props, digits = 2){
   
   
   out <- paste0(ifelse(is.na(counts), "", counts), ifelse(is.na(props), "", paste0(" (", formatC(as.numeric(props), format = "f", digits = digits, drop0trailing = FALSE), "%)")))
@@ -933,9 +942,9 @@ format_counts_and_props_core <- function(counts, props, digits = 2){
 #' @param props Data frame with proportions.
 #' @param digits Number of decimal places when rounding proportions.
 #' @keywords internal
-format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "counts_"){
+format_counts_and_props_df <- function(counts, props, digits = 2, prefix_counts = "counts_"){
   
-  ### Match parrern at the beginning
+  ### Match pattern at the beginning
   pattern <- paste0("^", prefix_counts)
   
   output_names <- gsub(pattern, "", colnames(counts))
@@ -946,7 +955,7 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
   output <- lapply(1:nrow(counts), function(i){
     # i = 1
     
-    out <- format_counts_and_props_core(counts = counts[i, ], props = props[i, ], digits = digits)
+    out <- format_counts_and_props(counts = counts[i, ], props = props[i, ], digits = digits)
     
     return(out)
     
@@ -975,11 +984,11 @@ format_counts_and_props <- function(counts, props, digits = 2, prefix_counts = "
 #' summ <- c(10, 23.6442)
 #' digits <- c(0, 2)
 #' 
-#' format_summ_core(summ, digits)
+#' format_summ(summ, digits)
 #' }
 #' 
 #' @keywords internal
-format_summ_core <- function(summ, digits = 2){
+format_summ <- function(summ, digits = 2){
   
   summ <- as.numeric(summ)
   
@@ -1009,7 +1018,7 @@ format_summ_core <- function(summ, digits = 2){
 #' @param per Whether to lapply per row or per column.
 #' @param digits Vector with digits used in formatC.
 #' @keywords internal
-format_summ <- function(summ, per = "row", digits = 2){
+format_summ_df <- function(summ, per = "row", digits = 2){
   
   stopifnot(is.data.frame(summ) || is.matrix(summ))
   
@@ -1021,7 +1030,7 @@ format_summ <- function(summ, per = "row", digits = 2){
     output <- lapply(1:nrow(summ), function(i){
       # i = 1
       
-      out <- format_summ_core(summ[i, ], digits = digits)
+      out <- format_summ(summ[i, ], digits = digits)
       
     })
     
@@ -1032,7 +1041,7 @@ format_summ <- function(summ, per = "row", digits = 2){
     output <- lapply(1:ncol(summ), function(i){
       # i = 1
       
-      out <- format_summ_core(summ[, i], digits = digits)
+      out <- format_summ(summ[, i], digits = digits)
       
     })
     

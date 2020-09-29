@@ -21,7 +21,7 @@
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 #' @export
-wrapper_core_logistic_regression_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -269,7 +269,7 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
     Subgroup = as.character(res$subgroup),
     `Total N` = as.character(res$n_total),
     `N` = format_difference(res$n, digits = 0),
-    format_counts_and_props(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
+    format_counts_and_props_df(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
     
     as.data.frame(matrix(format_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")], non_empty = res$covariate_class == "factor"), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
 
@@ -344,12 +344,12 @@ wrapper_core_logistic_regression_simple <- function(data, response_var, covariat
 
 
 
-#' @rdname wrapper_core_logistic_regression_simple
-#' @inheritParams wrapper_core_logistic_regression_simple
+#' @rdname wrapper_logistic_regression_core_simple
+#' @inheritParams wrapper_logistic_regression_core_simple
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_logistic_regression_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -409,7 +409,7 @@ wrapper_core_logistic_regression_simple_strat <- function(data, response_var, co
       }
       
       
-      wrapper_res <- wrapper_core_logistic_regression_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       
@@ -504,7 +504,7 @@ wrapper_core_logistic_regression_simple_strat <- function(data, response_var, co
 
 #' Logistic regression estimating biomarker effect 
 #' 
-#' @inheritParams wrapper_core_logistic_regression_simple_strat
+#' @inheritParams wrapper_logistic_regression_core_simple_strat
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
@@ -536,7 +536,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_logistic_regression_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -611,11 +611,11 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 
 
 
-#' Logistic regression estimating treatment effect within biomaker subgroups
+#' Logistic regression estimating treatment effect within biomarker subgroups
 #' 
-#' @inheritParams wrapper_core_logistic_regression_simple_strat
+#' @inheritParams wrapper_logistic_regression_core_simple_strat
 #' @param treatment_var Name of column with treatment information.
-#' @param biomarker_vars Vector of biomaker names.
+#' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
 wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, adjustment_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -653,7 +653,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_core_logistic_regression_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
@@ -763,11 +763,11 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
 
 #' Logistic regression with additive model with interaction
 #' 
-#' @inheritParams wrapper_core_logistic_regression_simple
+#' @inheritParams wrapper_logistic_regression_core_simple
 #' @param interaction1_var Name of the first interaction variable. 
 #' @param interaction2_var Name of the second interaction variable.
 #' @export
-wrapper_core_logistic_regression_interaction <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_interaction <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -1007,13 +1007,13 @@ wrapper_core_logistic_regression_interaction <- function(data, response_var, int
 
 
 
-#' @rdname wrapper_core_logistic_regression_interaction
+#' @rdname wrapper_logistic_regression_core_interaction
 #' 
-#' @inheritParams wrapper_core_logistic_regression_interaction
+#' @inheritParams wrapper_logistic_regression_core_interaction
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_logistic_regression_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -1072,7 +1072,7 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
       }
       
       
-      wrapper_res <- wrapper_core_logistic_regression_interaction(data = data_strata1, response_var = response_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_logistic_regression_core_interaction(data = data_strata1, response_var = response_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       res <- bresults(wrapper_res)
@@ -1150,7 +1150,7 @@ wrapper_core_logistic_regression_interaction_strat <- function(data, response_va
 
 #' Logistic regression estimating effect of interaction between biomarker and treatment
 #' 
-#' @inheritParams wrapper_core_logistic_regression_interaction_strat
+#' @inheritParams wrapper_logistic_regression_core_interaction_strat
 #' @param treatment_var Name of the variable with treatment information.
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
@@ -1184,7 +1184,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
     interaction2_var <- treatment_var
     covariate_vars <- adjustment_vars
     
-    wrapper_res <- wrapper_core_logistic_regression_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     

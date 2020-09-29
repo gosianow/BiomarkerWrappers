@@ -8,7 +8,7 @@
 
 
 
-#' Scatterplot
+#' Scatter plot
 #' 
 #' @param data Data frame.
 #' @examples 
@@ -20,10 +20,10 @@
 #' y_var <- "GeneB"
 #' 
 #' 
-#' wrapper_core_point_plot(data = data, x_var = x_var, y_var = y_var)
+#' wrapper_point_plot_core(data = data, x_var = x_var, y_var = y_var)
 #' 
 #' @export
-wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
+wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   colors_point = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, 
@@ -199,11 +199,11 @@ wrapper_core_point_plot <- function(data, x_var, y_var, color_point_var = NULL, 
 
 
 
-#' @rdname wrapper_core_point_plot
-#' @param strat1_var Name of the firts stratification variable.
+#' @rdname wrapper_point_plot_core
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
+wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_point = NULL, 
   variable_names = NULL, 
@@ -320,7 +320,7 @@ wrapper_core_point_plot_strat <- function(data, x_var, y_var, color_point_var = 
       }
       
       
-      ggpl <- wrapper_core_point_plot(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, color_smooth_var = color_smooth_var, facet_var = facet_var, 
+      ggpl <- wrapper_point_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, color_smooth_var = color_smooth_var, facet_var = facet_var, 
         colors_point = colors_point, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 

@@ -6,7 +6,7 @@
 
 #' Merge topTable results for multiple contrasts
 #' 
-#' @param fit Fit should be an object of class MArrayLM as produced by lmFit and eBayes where we can apply topTable.
+#' @param fit Fit should be an object of class `MArrayLM` as produced by `lmFit` and `eBayes` where we can apply `topTable`.
 #' @export
 wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), res_vars = c("logFC", "AveExpr", "t", "P.Value", "adj.P.Val"), sep = "_", pval = 0.05, lfc = c(0, 1)){
   

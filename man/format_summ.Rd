@@ -4,16 +4,24 @@
 \alias{format_summ}
 \title{Format summary statistics such as N, mean, median, min, max}
 \usage{
-format_summ(summ, per = "row", digits = 2)
+format_summ(summ, digits = 2)
 }
 \arguments{
-\item{summ}{Data frame.}
-
-\item{per}{Whether to lapply per row or per column.}
+\item{summ}{Vector with values to format.}
 
 \item{digits}{Vector with digits used in formatC.}
 }
 \description{
 Format summary statistics such as N, mean, median, min, max
+}
+\examples{
+
+\dontrun{
+summ <- c(10, 23.6442)
+digits <- c(0, 2)
+
+format_summ(summ, digits)
+}
+
 }
 \keyword{internal}

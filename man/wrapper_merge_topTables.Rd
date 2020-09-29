@@ -15,7 +15,7 @@ wrapper_merge_topTables(
 )
 }
 \arguments{
-\item{fit}{Fit should be an object of class MArrayLM as produced by lmFit and eBayes where we can apply topTable.}
+\item{fit}{Fit should be an object of class `MArrayLM` as produced by `lmFit` and `eBayes` where we can apply `topTable`.}
 }
 \description{
 Merge topTable results for multiple contrasts

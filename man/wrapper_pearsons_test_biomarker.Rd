@@ -24,7 +24,7 @@ wrapper_pearsons_test_biomarker(
 
 \item{response_var}{Name of categorical variable defining successes and failures where the first level corresponds to failure and the second level corresponds to success.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{strata_vars}{Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.}
 

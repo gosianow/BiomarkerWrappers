@@ -29,7 +29,7 @@ wrapper_cox_regression_interaction(
 
 \item{treatment_var}{Name of column with treatment information.}
 
-\item{biomarker_vars}{Vector of biomaker names.}
+\item{biomarker_vars}{Vector of biomarker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
 

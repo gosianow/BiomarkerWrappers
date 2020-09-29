@@ -8,7 +8,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -96,7 +96,7 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
   
   out <- data.frame(Covariate = variable_names[res$covariate], 
     Subgroup = res$subgroup, 
-    format_counts_and_props(counts = countdf, props = propdf, digits = 1),
+    format_counts_and_props_df(counts = countdf, props = propdf, digits = 1),
     OR = format_or(res$OR, digits = 2, non_empty = 1),
     `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -156,12 +156,12 @@ wrapper_core_fishers_test <- function(data, col_var, row_var, variable_names = N
 
 
 
-#' @rdname wrapper_core_fishers_test
-#' @inheritParams wrapper_core_fishers_test
+#' @rdname wrapper_fishers_test_core
+#' @inheritParams wrapper_fishers_test_core
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -231,7 +231,7 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
       }
       
       
-      wrapper_res <- wrapper_core_fishers_test(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_fishers_test_core(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
@@ -324,7 +324,7 @@ wrapper_core_fishers_test_strat <- function(data, col_var, row_var, strat1_var =
 #' 
 #' Run Fisher's test for multiple covariates.
 #' 
-#' @inheritParams wrapper_core_fishers_test_strat
+#' @inheritParams wrapper_fishers_test_core_strat
 #' @param row_vars Vector with names of categorical variables.
 #' @export
 wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
@@ -351,7 +351,7 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
     
     row_var <- row_vars[i]
     
-    wrapper_res <- wrapper_core_fishers_test_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_fishers_test_core_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     

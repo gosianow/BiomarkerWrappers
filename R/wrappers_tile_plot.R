@@ -9,7 +9,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_core_tile_plot1 <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+wrapper_tile_plot1_core <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -69,7 +69,7 @@ wrapper_core_tile_plot1 <- function(data, x_var, y_vars, colors = NULL, variable
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_core_tile_plot2 <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)

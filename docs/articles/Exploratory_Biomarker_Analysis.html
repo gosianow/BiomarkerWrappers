@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.16</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2020-09-25</h4>
+            <h4 class="date">2020-09-29</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -123,14 +123,14 @@
 
 <span class="kw">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2"</span>, <span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>, <span class="st">"GeneD"</span>)
 
-<span class="kw">data_cat2</span> <span class="op">&lt;-</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="kw">bdata</span>[, <span class="kw">genes</span>], <span class="kw">cut_core_2groups</span>)
+<span class="kw">data_cat2</span> <span class="op">&lt;-</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="kw">bdata</span>[, <span class="kw">genes</span>], <span class="kw">wrapper_cut_2groups</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">data_cat2</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">genes</span>, <span class="st">"_cat2"</span>)
 
 
 <span class="co">### Stratify gene expression into quartiles</span>
 
-<span class="kw">data_cat4</span> <span class="op">&lt;-</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="kw">bdata</span>[, <span class="kw">genes</span>], <span class="kw">cut_core_quartiles</span>)
+<span class="kw">data_cat4</span> <span class="op">&lt;-</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="kw">bdata</span>[, <span class="kw">genes</span>], <span class="kw">wrapper_cut_quartiles</span>)
 
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">data_cat4</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">genes</span>, <span class="st">"_cat4"</span>)
 
@@ -1176,7 +1176,7 @@ GeneA
 
 <span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span>(<span class="kw">x</span>)
 </pre></div>
-<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-1.png" width="1344" style="display: block; margin: auto;"></p>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-1.png" width="1920" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="co">### Treatment effect within biomarker subgroups</span>
 
@@ -1554,7 +1554,7 @@ TRT
 
 <span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span>(<span class="kw">x</span>)
 </pre></div>
-<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-2.png" width="1344" style="display: block; margin: auto;"></p>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-2.png" width="1920" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="co">### Treatment-biomarker interaction effect</span>
 
@@ -1668,7 +1668,7 @@ TRT vs CTRL
 <span class="kw">covariate_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_KM_plot.html">wrapper_core_KM_plot</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, covariate_var = <span class="kw">covariate_var</span>)
+<span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, covariate_var = <span class="kw">covariate_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
@@ -1681,7 +1681,7 @@ TRT vs CTRL
 <span class="kw">strat2_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_KM_plot.html">wrapper_core_KM_plot_strat</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
+<span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core_strat</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
     covariate_var = <span class="kw">covariate_var</span>, strat1_var = <span class="kw">strat1_var</span>, strat2_var = <span class="kw">strat2_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
@@ -2668,7 +2668,7 @@ TRT
 <span class="kw">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
@@ -2679,7 +2679,7 @@ TRT
 <span class="kw">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>)
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-2.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb23"><pre class="downlit">
@@ -2690,7 +2690,7 @@ TRT
 <span class="kw">skip_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"NE"</span>, <span class="st">"PD"</span>, <span class="st">"SD"</span>)
 <span class="kw">show_total_proportions</span> <span class="op">&lt;-</span> <span class="fl">TRUE</span>
 
-<span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, show_total_proportions = <span class="kw">show_total_proportions</span>, 
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, show_total_proportions = <span class="kw">show_total_proportions</span>, 
     skip_levels = <span class="kw">skip_levels</span>, ylim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">100</span>))
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-3.png" width="576" style="display: block; margin: auto;"></p>
@@ -2704,12 +2704,12 @@ TRT
 <span class="kw">strat2_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
     strat2_var = <span class="kw">strat2_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="fu"><a href="../reference/wrapper_core_bar_plot.html">wrapper_core_bar_plot_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
     strat2_var = <span class="kw">strat2_var</span>, less_legends = <span class="fl">TRUE</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-2.png" width="960" style="display: block; margin: auto;"></p>
@@ -2724,7 +2724,7 @@ TRT
 <span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span>)
 
 
-<span class="fu"><a href="../reference/wrapper_core_bar_plot_yvars_strat.html">wrapper_core_bar_plot_yvars_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, values_to = <span class="st">"Gene expression"</span>)
+<span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, values_to = <span class="st">"Gene expression"</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-1.png" width="960" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit">
@@ -2737,7 +2737,7 @@ TRT
 <span class="kw">method</span> <span class="op">&lt;-</span> <span class="st">"dodge"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_bar_plot_yvars_strat.html">wrapper_core_bar_plot_yvars_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, skip_levels = <span class="kw">skip_levels</span>, 
+<span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, skip_levels = <span class="kw">skip_levels</span>, 
     method = <span class="kw">method</span>, values_to = <span class="st">"Gene expression"</span>, names_to = <span class="st">"Gene"</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-2.png" width="960" style="display: block; margin: auto;"></p>
@@ -2752,7 +2752,7 @@ TRT
 <span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-1.png" width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb29"><pre class="downlit">
@@ -2764,7 +2764,7 @@ TRT
 <span class="kw">dodge_var</span> <span class="op">=</span> <span class="kw">NULL</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-1.png" width="768" style="display: block; margin: auto;"></p>
@@ -2777,7 +2777,7 @@ TRT
 <span class="kw">dodge_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-2.png" width="768" style="display: block; margin: auto;"></p>
@@ -2791,7 +2791,7 @@ TRT
 <span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot.html">wrapper_core_box_plot_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>)
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-3.png" width="768" style="display: block; margin: auto;"></p>
 </div>
@@ -2803,7 +2803,7 @@ TRT
 <span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot_yvars_strat.html">wrapper_core_box_plot_yvars_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>)
+<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-1.png" width="960" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb33"><pre class="downlit">
@@ -2815,7 +2815,7 @@ TRT
 <span class="kw">dodge_var</span> <span class="op">=</span> <span class="kw">NULL</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot_yvars_strat.html">wrapper_core_box_plot_yvars_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>, x_var = <span class="kw">x_var</span>, facet_var = <span class="kw">facet_var</span>, 
+<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>, x_var = <span class="kw">x_var</span>, facet_var = <span class="kw">facet_var</span>, 
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-2.png" width="960" style="display: block; margin: auto;"></p>
@@ -2828,7 +2828,7 @@ TRT
 <span class="kw">dodge_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_box_plot_yvars_strat.html">wrapper_core_box_plot_yvars_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>, x_var = <span class="kw">x_var</span>, facet_var = <span class="kw">facet_var</span>, 
+<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>, x_var = <span class="kw">x_var</span>, facet_var = <span class="kw">facet_var</span>, 
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-3.png" width="960" style="display: block; margin: auto;"></p>
@@ -2843,7 +2843,7 @@ TRT
 <span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_point_plot.html">wrapper_core_point_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
+<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb36"><pre class="downlit">
@@ -2855,7 +2855,7 @@ TRT
 <span class="kw">color_point_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_point_plot.html">wrapper_core_point_plot</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
+<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
     color_point_var = <span class="kw">color_point_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot_strat-1.png" width="1152" style="display: block; margin: auto;"></p>
@@ -2868,7 +2868,7 @@ TRT
 <span class="kw">strat1_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_point_plot.html">wrapper_core_point_plot_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
+<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
     strat1_var = <span class="kw">strat1_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot_strat-2.png" width="1152" style="display: block; margin: auto;"></p>
@@ -3367,7 +3367,7 @@ TRT
 <span class="kw">row_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_core_fishers_test.html">wrapper_core_fishers_test</a></span>(<span class="kw">data</span>, col_var = <span class="kw">col_var</span>, row_var = <span class="kw">row_var</span>)
+<span class="fu"><a href="../reference/wrapper_fishers_test_core.html">wrapper_fishers_test_core</a></span>(<span class="kw">data</span>, col_var = <span class="kw">col_var</span>, row_var = <span class="kw">row_var</span>)
 </pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
@@ -3457,7 +3457,7 @@ TRT
 <span class="kw">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Age"</span>, <span class="st">"IPI"</span>)
 
 
-<span class="fu"><a href="../reference/wrapper_core_characteristics.html">wrapper_core_characteristics</a></span>(<span class="kw">data</span>, strat_var = <span class="kw">strat_var</span>, covariate_vars = <span class="kw">covariate_vars</span>)
+<span class="fu"><a href="../reference/wrapper_characteristics_core.html">wrapper_characteristics_core</a></span>(<span class="kw">data</span>, strat_var = <span class="kw">strat_var</span>, covariate_vars = <span class="kw">covariate_vars</span>)
 </pre></div>
 <table class="table table table-condensed table-bordered">
 <thead>
@@ -4001,7 +4001,7 @@ High
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] BiomarkerWrappers_0.0.0.15 testthat_2.3.2            
+## [1] BiomarkerWrappers_0.0.0.16 testthat_2.3.2            
 ## [3] kableExtra_1.2.1           rmarkdown_2.3             
 ## [5] knitr_1.29                
 ## 

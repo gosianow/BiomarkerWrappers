@@ -14,10 +14,10 @@
 #' x_var <- "Cell_Of_Origin"
 #' y_var <- "GeneA"
 #' 
-#' wrapper_core_box_plot(data = data, x_var = x_var, y_var = y_var)
+#' wrapper_box_plot_core(data = data, x_var = x_var, y_var = y_var)
 #' 
 #' @export
-wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
+wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
@@ -339,12 +339,12 @@ wrapper_core_box_plot <- function(data, x_var, y_var, color_point_var = NULL, do
 
 
 
-#' @rdname wrapper_core_box_plot
+#' @rdname wrapper_box_plot_core
 #' 
-#' @param strat1_var Name of the firts stratification variable.
+#' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL,
+wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL,
   variable_names = NULL, 
@@ -454,7 +454,7 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
       }
       
       
-      ggpl <- wrapper_core_box_plot(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, dodge_var = dodge_var, facet_var = facet_var, 
+      ggpl <- wrapper_box_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, dodge_var = dodge_var, facet_var = facet_var, 
         colors_box = colors_box, colors_point = colors_point, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,  
@@ -514,9 +514,9 @@ wrapper_core_box_plot_strat <- function(data, x_var, y_var, color_point_var = NU
 #' 
 #' Generate boxplots for multiple variables in one faceted or dodged panel.
 #' 
-#' @inheritParams wrapper_core_box_plot_strat
+#' @inheritParams wrapper_box_plot_core_strat
 #' @export
-wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
+wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
@@ -565,7 +565,7 @@ wrapper_core_box_plot_yvars_strat <- function(data, y_vars, x_var = NULL, color_
   }
   
   
-  ggpl <- wrapper_core_box_plot_strat(data = data_longer, x_var = x_var, y_var = y_var, color_point_var = color_point_var, dodge_var = dodge_var, facet_var = facet_var, 
+  ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, color_point_var = color_point_var, dodge_var = dodge_var, facet_var = facet_var, 
     colors_box = colors_box, colors_point = colors_point, 
     strat1_var = strat1_var, strat2_var = strat2_var, 
     variable_names = variable_names, 

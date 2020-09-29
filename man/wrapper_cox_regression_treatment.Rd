@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_cox_regression.R
 \name{wrapper_cox_regression_treatment}
 \alias{wrapper_cox_regression_treatment}
-\title{Cox regression estimating treatment effect within biomaker subgroups}
+\title{Cox regression estimating treatment effect within biomarker subgroups}
 \usage{
 wrapper_cox_regression_treatment(
   data,
@@ -51,5 +51,5 @@ wrapper_cox_regression_treatment(
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
-Cox regression estimating treatment effect within biomaker subgroups
+Cox regression estimating treatment effect within biomarker subgroups
 }

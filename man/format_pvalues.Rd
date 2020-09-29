@@ -9,9 +9,9 @@ format_pvalues(x, digits = 4, asterisk = TRUE, non_empty = NULL)
 \arguments{
 \item{x}{Vector of p-values to be formatted.}
 
-\item{digits}{Number of digits after decimial to display.}
+\item{digits}{Number of digits after decimal to display.}
 
-\item{asterisk}{Signif. codes:  0 `***` 0.001 `**` 0.01 `*` 0.05 `.` 0.1.}
+\item{asterisk}{Logical, whether to indicate significance levels with asterisks. Encoding: `***` p-value < 0.001, `**` p-value < 0.01, `*` p-value < 0.05, `.` p-value < 0.1.}
 
 \item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }

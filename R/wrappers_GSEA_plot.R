@@ -17,7 +17,7 @@
 #' 
 #' @param x TopTable with DGE results, for example, from limma.
 #' @export
-wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
+wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
   gsea_results = NULL, geneset_var = "Geneset", adjp_var = "adj.P.Val", color_point_var = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
@@ -188,7 +188,7 @@ wrapper_plot_GSEA <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
       
       ### Use a trick with the title. Otherwise, the plots are not aligned :/
       
-      ggp3 <- wrapper_plot_ORA_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = color_point_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5)) +
+      ggp3 <- wrapper_ora_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = color_point_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5)) +
         theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank())
       
