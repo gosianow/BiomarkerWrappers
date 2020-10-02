@@ -15,6 +15,7 @@ wrapper_cox_regression_biomarker(
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
+  print_nevent = TRUE,
   print_mst = TRUE,
   print_total = TRUE,
   print_pvalues = TRUE,
@@ -41,6 +42,8 @@ wrapper_cox_regression_biomarker(
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
 \item{caption}{Caption for the table with results.}
+
+\item{print_nevent}{Logical. Whether to print numbers of events.}
 
 \item{print_mst}{Logical. Whether to print median survival time (MST).}
 

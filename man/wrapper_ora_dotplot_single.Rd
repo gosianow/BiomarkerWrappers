@@ -6,7 +6,7 @@
 \usage{
 wrapper_ora_dotplot_single(
   x,
-  geneset_var = "Geneset",
+  geneset_var = "GenesetID",
   observed_var = "Observed",
   adjp_var = "adj.P.Val",
   genes_prefix = NA,

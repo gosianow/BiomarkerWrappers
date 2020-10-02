@@ -11,7 +11,7 @@ wrapper_dispaly_significant_camera(
   sort_by = "pval",
   topn = 20,
   pval = 0.05,
-  geneset_vars = "Geneset",
+  geneset_vars = "GenesetID",
   direction_prefix = "Direction",
   pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",

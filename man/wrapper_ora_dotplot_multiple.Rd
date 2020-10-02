@@ -6,7 +6,7 @@
 \usage{
 wrapper_ora_dotplot_multiple(
   x,
-  geneset_var = "Geneset",
+  geneset_var = "GenesetID",
   observed_prefix = "Observed",
   adjp_prefix = "adj.P.Val",
   sep = "_",

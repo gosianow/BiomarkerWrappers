@@ -12,7 +12,7 @@ wrapper_gsea_plot(
   statistic_prefix = "t",
   sep = "_",
   gsea_results = NULL,
-  geneset_var = "Geneset",
+  geneset_var = "GenesetID",
   adjp_var = "adj.P.Val",
   color_point_var = "NES",
   trim_limits = 0.01,
