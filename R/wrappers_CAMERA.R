@@ -106,13 +106,13 @@ wrapper_cameraPR_core <- function(statistic, genesets, genesets_extra_info = NUL
   # -------------------------------------------------------------------------
   
   
-  out <- data.frame(Geneset = names(genesets), stringsAsFactors = FALSE)
+  out <- data.frame(GenesetID = names(genesets), stringsAsFactors = FALSE)
   
   if(!is.null(genesets_extra_info)){
     
-    colnames(genesets_extra_info)[1] <- "Geneset"
+    colnames(genesets_extra_info)[1] <- "GenesetID"
     
-    out <- dplyr::left_join(out, genesets_extra_info, by = "Geneset")
+    out <- dplyr::left_join(out, genesets_extra_info, by = "GenesetID")
     
   }
   
@@ -198,10 +198,10 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
   # Preprocessing
   # -------------------------------------------------------------------------
   
-  geneset_vars <- "Geneset"
+  geneset_vars <- "GenesetID"
   
   if(!is.null(genesets_extra_info)){
-    colnames(genesets_extra_info)[1] <- "Geneset"
+    colnames(genesets_extra_info)[1] <- "GenesetID"
     geneset_vars <- colnames(genesets_extra_info)
   }
   
@@ -248,7 +248,7 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 # 
 # direction = "up"
 # topn = 20; pval = 0.05; 
-# geneset_vars = "Geneset"; direction_prefix = "Direction"; pval_prefix = "P.Value"; adjp_prefix = "adj.P.Val"; 
+# geneset_vars = "GenesetID"; direction_prefix = "Direction"; pval_prefix = "P.Value"; adjp_prefix = "adj.P.Val"; 
 # stats_prefixes = c("NGenes", "Genes", "Mean.t"); sep = "_"; 
 # caption = NULL
 
@@ -260,7 +260,7 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 #' @export
 wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
-  geneset_vars = "Geneset", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  geneset_vars = "GenesetID", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   stats_prefixes = c("NGenes", "Genes", "Median.t"), sep = "_", 
   caption = NULL){
   

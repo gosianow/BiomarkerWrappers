@@ -2,7 +2,7 @@
 
 
 
-# geneset_var = "Geneset"; observed_var = "Observed"; adjp_var = "adj.P.Val";  
+# geneset_var = "GenesetID"; observed_var = "Observed"; adjp_var = "adj.P.Val";  
 # title = ""; title_size = 10; axis_text_y_size = 10; axis_text_y_width = 70; color_point = 'darkslateblue'; size_range = c(2, 10)
 
 
@@ -11,7 +11,7 @@
 #' 
 #' @param x TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant'.
 #' @export
-wrapper_ora_dotplot_single <- function(x, geneset_var = "Geneset", observed_var = "Observed", adjp_var = "adj.P.Val",  genes_prefix = NA, color_point_var = NULL,
+wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_var = "Observed", adjp_var = "adj.P.Val",  genes_prefix = NA, color_point_var = NULL,
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   size_range = c(2, 10),
@@ -143,7 +143,7 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "Geneset", observed_var 
 
 # x <- topTable_significant_ora
 # 
-# geneset_var = "Geneset"
+# geneset_var = "GenesetID"
 # 
 # observed_prefix = "Observed"; adjp_prefix = "adj.P.Val";  sep = "_";
 # title = ""; title_size = 10; title_width = 70; axis_text_y_size = 10; axis_text_y_width = 70; colors_point = NULL; size_range = c(2, 10)
@@ -157,7 +157,7 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "Geneset", observed_var 
 #' 
 #' @param x TopTable with ORA results.
 #' @export
-wrapper_ora_dotplot_multiple <- function(x, geneset_var = "Geneset", observed_prefix = "Observed", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
+wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_prefix = "Observed", adjp_prefix = "adj.P.Val", sep = "_", directions = c("both", "up", "down"),
   title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70, 
   colors_point = NULL, size_range = c(2, 10), point_alpha = 0.8){
   

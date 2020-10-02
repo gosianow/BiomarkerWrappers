@@ -18,7 +18,7 @@
 #' @param x TopTable with DGE results, for example, from limma.
 #' @export
 wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
-  gsea_results = NULL, geneset_var = "Geneset", adjp_var = "adj.P.Val", color_point_var = "NES",
+  gsea_results = NULL, geneset_var = "GenesetID", adjp_var = "adj.P.Val", color_point_var = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
   title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70){
@@ -104,7 +104,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
     
     ggdata <- data[mm, , drop = FALSE]
     
-    ggdata$Geneset <- names(genesets[i])
+    ggdata$GenesetID <- names(genesets[i])
     
     return(ggdata)
     
@@ -115,13 +115,13 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   
   ## Wrap the gene set names so they can be nicely displayed in the plots
-  ggdata$Geneset <- factor(ggdata$Geneset, levels = rev(names(genesets)), labels = stringr::str_wrap(rev(names(genesets)), width = axis_text_y_width))
+  ggdata$GenesetID <- factor(ggdata$GenesetID, levels = rev(names(genesets)), labels = stringr::str_wrap(rev(names(genesets)), width = axis_text_y_width))
   
-  ggdata$Geneset_num <- as.numeric(ggdata$Geneset)
+  ggdata$GenesetID_num <- as.numeric(ggdata$GenesetID)
   
-  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.1, -0.1)
+  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$GenesetID_num + ifelse(ggdata$direction == "up", 0.1, -0.1)
   
-  ggdata$statistic_fixed <- ggdata$Geneset_num + ifelse(ggdata$direction == "up", 0.5, -0.5)
+  ggdata$statistic_fixed <- ggdata$GenesetID_num + ifelse(ggdata$direction == "up", 0.5, -0.5)
   
   
   # -------------------------------------------------------------------------
@@ -133,11 +133,11 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   xlab <- "Rank"
   
   
-  # ggp <-  ggplot(ggdata, aes(x = .data$rank, xend = .data$rank, y = .data$Geneset, yend = .data$statistic_fixed, color = .data$direction))
+  # ggp <-  ggplot(ggdata, aes(x = .data$rank, xend = .data$rank, y = .data$GenesetID, yend = .data$statistic_fixed, color = .data$direction))
   
-  ggp <-  ggplot(ggdata, aes(x = 0, y = .data$Geneset, group = .data$Geneset)) +
+  ggp <-  ggplot(ggdata, aes(x = 0, y = .data$GenesetID, group = .data$GenesetID)) +
     geom_line() +
-    geom_segment(aes(x = .data$rank, xend = .data$rank, y = .data$Geneset_num - 0.45, yend = .data$Geneset_num + 0.45, color = .data$statistic)) +
+    geom_segment(aes(x = .data$rank, xend = .data$rank, y = .data$GenesetID_num - 0.45, yend = .data$GenesetID_num + 0.45, color = .data$statistic)) +
     ggtitle(title) +
     xlab(xlab) +
     theme(axis.line = element_blank(), 
@@ -178,7 +178,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   # ggp2
   
-  out1 <- cowplot::plot_grid(ggp, ggp2, nrow = 2, ncol = 1, rel_heights = c(max(c(1, length(genesets) / 4)), 1), align = "v", axis = 'lr')
+  out1 <- cowplot::plot_grid(ggp, ggp2, nrow = 2, ncol = 1, rel_heights = c((length(genesets) + 4) / 5, 1), align = "v", axis = 'lr')
   
   
   
@@ -193,7 +193,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
           axis.ticks.y = element_blank())
       
       
-      out2 <- cowplot::plot_grid(ggp3, nrow = 2, ncol = 1, rel_heights = c(max(c(1, length(genesets) / 4)), 1))
+      out2 <- cowplot::plot_grid(ggp3, nrow = 2, ncol = 1, rel_heights = c((length(genesets) + 4) / 5, 1))
       
       
       out <- cowplot::plot_grid(out1, out2, nrow = 1, ncol = 2, rel_widths = c(4, 1), align = "h", axis = "tb")

@@ -92,7 +92,7 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
   covariate_vars <- covariate_var
   return_vars <- covariate_var
   
-  wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
   
   
   res <- bresults(wrapper_res)

@@ -103,13 +103,13 @@ wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NU
   # -------------------------------------------------------------------------
   
   
-  out <- data.frame(Geneset = names(genesets), stringsAsFactors = FALSE)
+  out <- data.frame(GenesetID = names(genesets), stringsAsFactors = FALSE)
   
   if(!is.null(genesets_extra_info)){
     
-    colnames(genesets_extra_info)[1] <- "Geneset"
+    colnames(genesets_extra_info)[1] <- "GenesetID"
     
-    out <- dplyr::left_join(out, genesets_extra_info, by = "Geneset")
+    out <- dplyr::left_join(out, genesets_extra_info, by = "GenesetID")
     
   }
   
@@ -200,10 +200,10 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
     universe <- unique(x[, gene_var])
   }
   
-  geneset_vars <- "Geneset"
+  geneset_vars <- "GenesetID"
   
   if(!is.null(genesets_extra_info)){
-    colnames(genesets_extra_info)[1] <- "Geneset"
+    colnames(genesets_extra_info)[1] <- "GenesetID"
     geneset_vars <- colnames(genesets_extra_info)
   }
   
@@ -295,7 +295,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
 #' @export
 wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both", 
   sort_by = "pval", topn = 20, pval = 0.05,
-  geneset_vars = "Geneset", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  geneset_vars = "GenesetID", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   genes_prefix = "Genes", stats_prefixes = c("GeneRatio", "BgRatio", "Observed", "Expected"), sep = "_", 
   caption = NULL){
   
