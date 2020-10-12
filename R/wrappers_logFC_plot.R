@@ -55,7 +55,7 @@
 #' @export
 wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", pval = 0.05, title = "", 
-  axis_text_x_angle = 30, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
+  axis_text_x_angle = 40, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
   axis_text_y_size = 10, title_size = 12,
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_limits = 2, radius_range = c(10, 3),

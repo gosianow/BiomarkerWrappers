@@ -150,18 +150,39 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     
     if(is.na(color_smooth_var)){
       
-      ggpl <- ggpl + 
-        geom_smooth(aes(group = 1),
-          method = smooth_method, formula = smooth_formula, se = smooth_se, 
-          linetype = smooth_type, size = smooth_size)
+      if(is.factor(data[, x_var])){
+        
+        ggpl <- ggpl + 
+          stat_summary(aes(group = 1), 
+            geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_type, size = smooth_size)
+        
+      }else{
+        
+        ggpl <- ggpl + 
+          geom_smooth(aes(group = 1),
+            method = smooth_method, formula = smooth_formula, se = smooth_se, 
+            linetype = smooth_type, size = smooth_size)
+        
+      }
+      
       
     }else{
       
-      ggpl <- ggpl + 
-        geom_smooth(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
-          method = smooth_method, formula = smooth_formula, se = smooth_se, 
-          linetype = smooth_type, size = smooth_size)
-      
+      if(is.factor(data[, x_var])){
+        
+        ggpl <- ggpl + 
+          stat_summary(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
+            geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_type, size = smooth_size)
+        
+      }else{
+        
+        ggpl <- ggpl + 
+          geom_smooth(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
+            method = smooth_method, formula = smooth_formula, se = smooth_se, 
+            linetype = smooth_type, size = smooth_size)
+        
+      }
+    
       
     }
     

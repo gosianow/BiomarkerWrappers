@@ -84,12 +84,13 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   stopifnot(length(keep_levels) > 0)
   
   stopifnot(length(method) == 1)
-  stopifnot(method %in% c("facet", "dodge"))
+  stopifnot(method %in% c("facet", "dodge_facet", "dodge"))
   
   ## Dodge method cannot be used when there are more than one levels 
-  if(length(keep_levels) > 1){
-    method <- "facet"
+  if(length(keep_levels) > 1 && method == "dodge"){
+    stop("Dodge method cannot be used when there are more than one levels")
   }
+  
   
   ### Keep only those variables that are used for the analysis
   data <- data[, c(x_var, y_var, facet_var), drop = FALSE]
@@ -101,7 +102,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   # Colors
   # -------------------------------------------------------------------------
   
-  if(method == "facet"){
+  if(method %in% c("facet", "dodge_facet")){
     colors_bar <- format_colors(levels = levels(data[, y_var]), colors = colors_bar)
   }
   
@@ -113,7 +114,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   # Axis and legend labels
   # -------------------------------------------------------------------------
   
-  if(method == "facet"){
+  if(method %in% c("facet", "dodge_facet")){
     
     ### By default we do not display legend title as the description of the variable is on the y-axis 
     legend_colors_title <- legend_colors_title
@@ -346,7 +347,51 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   
   
   
+  if(method == "dodge_facet"){
+    
+    
+    ggpl <- ggplot() +
+      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Observation), color = "black", position = position_dodge2(preserve = "single", width = 0.75)) +
+      scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
+    
+    
+    ### Facet
+    if(facet_var != "facet_dummy"){
+      
+      if(facet_label_both){
+        labeller <- function(labels, multi_line = FALSE, sep = ": "){
+          colnames(labels) <- variable_names[colnames(labels)]
+          out <- ggplot2::label_both(labels, multi_line = multi_line, sep = sep)
+          out
+        }
+      }else{
+        labeller <- "label_value"
+      }
+      
+      ggpl <- ggpl +
+        facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+        theme(strip.background = element_rect(colour = "white", fill = "white"),
+          strip.text = element_text(size = strip_text_size))
+      
+    }
+    
+    
+    ### Labels
+    if(show_proportions){
+      
+      ggpl <- ggpl +
+        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, group = .data$Observation, label = .data$Label), 
+          position = position_dodge(preserve = "total", width = 0.9), size = label_size, angle = label_angle, vjust = 0.5)
+      
+    }
+    
+    
+  }
+  
+  
+  
   if(method == "dodge"){
+    
     
     ## ggplot2 doesn't know you want to give the labels the same virtual width as the bars. So tell it. 
     ## You can't nudge and dodge text, so instead adjust the y position.
@@ -381,6 +426,8 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
           size = label_size, angle = label_angle, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
       
     }
+    
+    
     
   }
   

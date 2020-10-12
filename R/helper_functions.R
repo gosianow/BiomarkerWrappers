@@ -17,7 +17,7 @@ eSet2csv <- function(es, file, digits = 2){
   
   fdata <- Biobase::fData(es)
   pdata <- Biobase::pData(es)
-  expr <- round_signif(Biobase::exprs(es))
+  expr <- round_signif(Biobase::exprs(es), digits = digits)
   
   
   if(!all(colnames(expr) == pdata[, 1])){
