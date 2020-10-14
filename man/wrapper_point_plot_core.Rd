@@ -10,9 +10,13 @@ wrapper_point_plot_core(
   x_var,
   y_var,
   color_point_var = NULL,
-  color_smooth_var = NULL,
   facet_var = NULL,
   colors_point = NULL,
+  scale_gradient = "gradientn",
+  color_low_point = "#42399B",
+  color_mid_point = "white",
+  color_high_point = "#D70131",
+  midpoint = 0,
   variable_names = NULL,
   xlab = NULL,
   ylab = NULL,
@@ -25,11 +29,12 @@ wrapper_point_plot_core(
   point_shape = 20,
   point_alpha = 1,
   point_stroke = 0.8,
+  smooth = "none",
   smooth_method = "auto",
   smooth_formula = y ~ x,
   smooth_se = FALSE,
   smooth_size = 2,
-  smooth_type = 1,
+  smooth_linetype = 1,
   title_size = 12,
   strip_text_size = NULL,
   facet_scales = "fixed",
@@ -43,11 +48,15 @@ wrapper_point_plot_core_strat(
   x_var,
   y_var,
   color_point_var = NULL,
-  color_smooth_var = NULL,
   facet_var = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
   colors_point = NULL,
+  scale_gradient = "gradientn",
+  color_low_point = "#42399B",
+  color_mid_point = "white",
+  color_high_point = "#D70131",
+  midpoint = 0,
   variable_names = NULL,
   xlab = NULL,
   ylab = NULL,
@@ -61,11 +70,12 @@ wrapper_point_plot_core_strat(
   point_shape = 20,
   point_alpha = 1,
   point_stroke = 0.8,
+  smooth = "none",
   smooth_method = "auto",
   smooth_formula = y ~ x,
   smooth_se = FALSE,
   smooth_size = 2,
-  smooth_type = 1,
+  smooth_linetype = 1,
   title_size = 12,
   strip_text_size = NULL,
   facet_scales = "fixed",
@@ -100,5 +110,9 @@ y_var <- "GeneB"
 
 
 wrapper_point_plot_core(data = data, x_var = x_var, y_var = y_var)
+
+wrapper_point_plot_core(data = bdata, x_var = x_var, y_var = y_var, color_point_var = "Sex", smooth = "strat")
+
+wrapper_point_plot_core(data = bdata, x_var = x_var, y_var = y_var, color_point_var = "Age")
 
 }

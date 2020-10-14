@@ -7,7 +7,7 @@
 # legend_colors_line_title = NULL; legend_position = "right"; facet_label_both = TRUE; 
 # line_size = 1; line_type = 1; line_alpha = 1;
 # smooth_method = "lm"; smooth_formula = y ~ x; smooth_se = FALSE;
-# smooth_size = 2; smooth_type = 1; 
+# smooth_size = 2; smooth_linetype = 1; 
 # point_size = 1.5; point_shape = 16; point_alpha = 1; 
 # title_size = 12; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
 # background_grid_major = "none"
@@ -20,14 +20,14 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
+wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, facet_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
   xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
   legend_colors_line_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1, 
-  smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
-  smooth_size = 2, smooth_type = 1, 
+  smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
+  smooth_size = 2, smooth_linetype = 1, 
   point_size = 1.5, point_shape = 16, point_alpha = 1, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none"){
@@ -57,6 +57,8 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     stopifnot(is.factor(data[, facet_var]))
   }
   
+  stopifnot(length(smooth) == 1)
+  stopifnot(smooth %in% c("none", "pooled", "strat"))
   
   ### Keep non-missing data
   
@@ -146,48 +148,42 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     coord_cartesian(xlim = xlim, ylim = ylim)
   
   
-  if(!is.null(color_smooth_var)){
+  
+  if(smooth == "pooled"){
     
-    if(is.na(color_smooth_var)){
+    if(is.factor(data[, x_var])){
       
-      if(is.factor(data[, x_var])){
-        
-        ggpl <- ggpl + 
-          stat_summary(aes(group = 1), 
-            geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_type, size = smooth_size)
-        
-      }else{
-        
-        ggpl <- ggpl + 
-          geom_smooth(aes(group = 1),
-            method = smooth_method, formula = smooth_formula, se = smooth_se, 
-            linetype = smooth_type, size = smooth_size)
-        
-      }
-      
+      ggpl <- ggpl + 
+        stat_summary(aes(group = 1), 
+          geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_linetype, size = smooth_size)
       
     }else{
       
-      if(is.factor(data[, x_var])){
-        
-        ggpl <- ggpl + 
-          stat_summary(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
-            geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_type, size = smooth_size)
-        
-      }else{
-        
-        ggpl <- ggpl + 
-          geom_smooth(aes(group = .data[[color_smooth_var]], color = .data[[color_smooth_var]]), 
-            method = smooth_method, formula = smooth_formula, se = smooth_se, 
-            linetype = smooth_type, size = smooth_size)
-        
-      }
+      ggpl <- ggpl + 
+        geom_smooth(aes(group = 1),
+          method = smooth_method, formula = smooth_formula, se = smooth_se, 
+          linetype = smooth_linetype, size = smooth_size)
+      
+    }
     
+  }else if(smooth == "strat"){
+    
+    if(is.factor(data[, x_var])){
+      
+      ggpl <- ggpl + 
+        stat_summary(aes(group = .data[[color_line_var]], color = .data[[color_line_var]]), 
+          geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_linetype, size = smooth_size)
+      
+    }else{
+      
+      ggpl <- ggpl + 
+        geom_smooth(aes(group = .data[[color_line_var]], color = .data[[color_line_var]]), 
+          method = smooth_method, formula = smooth_formula, se = smooth_se, 
+          linetype = smooth_linetype, size = smooth_size)
       
     }
     
   }
-  
   
   
   if(!is.null(facet_var)){
@@ -228,7 +224,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_smooth_var = NULL, facet_var = NULL, 
+wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, smooth = "none", facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
@@ -236,7 +232,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   legend_colors_line_title = NULL, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1,
   smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
-  smooth_size = 2, smooth_type = 1, 
+  smooth_size = 2, smooth_linetype = 1, 
   point_size = 1.5, point_shape = 16, point_alpha = 1, 
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none", 
@@ -344,14 +340,14 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
       }
       
       
-      ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, color_smooth_var = color_smooth_var, facet_var = facet_var, 
+      ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, smooth = smooth, facet_var = facet_var, 
         colors_line = colors_line, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,
         legend_colors_line_title = legend_colors_line_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         line_size = line_size, line_type = line_type, line_alpha = line_alpha,
         smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
-        smooth_size = smooth_size, smooth_type = smooth_type, 
+        smooth_size = smooth_size, smooth_linetype = smooth_linetype, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, 
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim,
         background_grid_major = background_grid_major)

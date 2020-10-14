@@ -13,7 +13,7 @@ wrapper_logFC_dotplot(
   sep = "_",
   pval = 0.05,
   title = "",
-  axis_text_x_angle = 30,
+  axis_text_x_angle = 40,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 1,
   axis_text_y_size = 10,
