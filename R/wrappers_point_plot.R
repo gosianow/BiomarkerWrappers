@@ -66,15 +66,6 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   stopifnot(length(scale_gradient) == 1)
   stopifnot(scale_gradient %in% c("gradientn", "gradient2", "gradient"))
   
-  if(is.factor(data[, color_point_var])){
-    scale <- "manual"
-  }else{
-    scale <- scale_gradient
-    if(smooth == "strat"){
-      smooth <- "pooled"
-    }
-  }
-  
   
   ### Keep non-missing data
   
@@ -111,6 +102,14 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     
   }
   
+  if(is.factor(data[, color_point_var])){
+    scale <- "manual"
+  }else{
+    scale <- scale_gradient
+    if(smooth == "strat"){
+      smooth <- "pooled"
+    }
+  }
   
   # -------------------------------------------------------------------------
   # Labels
