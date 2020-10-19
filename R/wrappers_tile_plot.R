@@ -8,9 +8,16 @@
 #' Tile plot
 #' 
 #' @param data Data frame.
+#' @param x_var Name of a variable that defined objects unique IDs.
+#' @param y_vars Names of variables to be plotted as tiles. Those variables must be factors.
+#' @param colors Named list with colors for 'y_vars'.
+#' @param variable_names Named vector with nicer variable names.
+#' @param skip_NAs Logical. Whether to skip NAs.
 #' @export
 wrapper_tile_plot1_core <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
   
+  stopifnot(length(y_vars) >= 1)
+  stopifnot(all(sapply(data[, y_vars], class) == "factor"))
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -65,11 +72,13 @@ wrapper_tile_plot1_core <- function(data, x_var, y_vars, colors = NULL, variable
 
 
 
-#' Tile plot
-#' 
-#' @param data Data frame.
+#' @rdname wrapper_tile_plot1_core
 #' @export
 wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+  
+  
+  stopifnot(length(y_vars) >= 1)
+  stopifnot(all(sapply(data[, y_vars], class) == "factor"))
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -81,20 +90,17 @@ wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable
     
     ### To calculate proportions of interaction factors we have to add NA as a factor level
     
+    levels_original <- list()
+    
     for(i in seq_along(y_vars)){
       # i = 2
       
       y_var <- y_vars[i]
-      
+      levels_original[[y_var]] <- levels(data[, y_var])
+        
       if(any(is.na(data[, y_var]))){
         data[, y_var] <- factor(data[, y_var], exclude = NULL, levels = c(NA, levels(data[, y_var])), labels = c("NA", levels(data[, y_var])))
-      }else{
-        next  
       }
-      
-      ### Update colors 
-      
-      colors[[y_var]] <- c("NA" = "gray95", colors[[y_var]])
       
     }
     
@@ -114,7 +120,7 @@ wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable
     prop <- tbl / nrow(data) * 100
     
     
-    levels_y_var <- strsplit2(names(tbl), split = " /dummy-dummy/ ")[, i]
+    levels_y_var <- limma::strsplit2(names(tbl), split = " /dummy-dummy/ ")[, i]
     
     
     out <- data.frame(y_var = y_vars[i], 
@@ -138,7 +144,12 @@ wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable
     y_var <- data_tile_size$y_var[1]
     names_y_var <- data_tile_size$names_y_var[1]
     
-    colors_tmp <- format_colors(levels = levels(data[, y_var]), colors = colors[[y_var]])
+
+    ### Update colors 
+    
+    colors_tmp <- format_colors(levels = levels_original[[y_var]], colors = colors[[y_var]])
+    colors_tmp <- c(colors_tmp, "NA" = "gray95")
+
     
     
     ggplot(data_tile_size) +

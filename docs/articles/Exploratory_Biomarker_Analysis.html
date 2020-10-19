@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.17</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2020-09-29</h4>
+            <h4 class="date">2020-10-19</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -138,10 +138,27 @@
 <span class="kw">bdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">bdata</span>, <span class="kw">data_cat2</span>, <span class="kw">data_cat4</span>)
 </pre></div>
 </div>
+<div id="tile-plot" class="section level1">
+<h1 class="hasAnchor">
+<a href="#tile-plot" class="anchor"></a>Tile plot</h1>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co">### Plot generated using geom_tile</span>
+
+<span class="fu"><a href="../reference/wrapper_tile_plot1_core.html">wrapper_tile_plot1_core</a></span>(<span class="kw">bdata</span>, x_var = <span class="st">"Patient_ID"</span>, y_vars = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2_by_IHC"</span>, <span class="st">"BCL2_by_FISH"</span>))
+</pre></div>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-1-1.png" width="960" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="co">### Plot generated using geom_col. It has substantially smaller size when sample</span>
+<span class="co">### size is large.</span>
+
+<span class="fu"><a href="../reference/wrapper_tile_plot1_core.html">wrapper_tile_plot2_core</a></span>(<span class="kw">bdata</span>, x_var = <span class="st">"Patient_ID"</span>, y_vars = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2_by_IHC"</span>, <span class="st">"BCL2_by_FISH"</span>))
+</pre></div>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-1-2.png" width="960" style="display: block; margin: auto;"></p>
+</div>
 <div id="log-rank-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#log-rank-test" class="anchor"></a>Log-rank test</h1>
-<div class="sourceCode" id="cb4"><pre class="downlit">
+<div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="co">### Biomarker effect</span>
 
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
@@ -509,7 +526,7 @@ high
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb5"><pre class="downlit">
+<div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="co">### Treatment effect within biomarker subgroups</span>
 
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
@@ -879,7 +896,7 @@ TRT
 <div id="cox-regression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#cox-regression" class="anchor"></a>Cox regression</h1>
-<div class="sourceCode" id="cb6"><pre class="downlit">
+<div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="co">### Biomarker effect</span>
 
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
@@ -1167,7 +1184,7 @@ GeneA
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb7"><pre class="downlit">
+<div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="co">## To represent the results with a forest plot</span>
 
 <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
@@ -1177,7 +1194,7 @@ GeneA
 <span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span>(<span class="kw">x</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-1.png" width="1920" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
+<div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="co">### Treatment effect within biomarker subgroups</span>
 
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
@@ -1544,7 +1561,7 @@ TRT
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit">
+<div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="co">## To represent the results with a forest plot</span>
 
 <span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
@@ -1555,7 +1572,7 @@ TRT
 <span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span>(<span class="kw">x</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-2.png" width="1920" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
+<div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="co">### Treatment-biomarker interaction effect</span>
 
 
@@ -1660,7 +1677,7 @@ TRT vs CTRL
 <div id="km-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#km-plot" class="anchor"></a>KM plot</h1>
-<div class="sourceCode" id="cb11"><pre class="downlit">
+<div class="sourceCode" id="cb13"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
@@ -1671,7 +1688,7 @@ TRT vs CTRL
 <span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, covariate_var = <span class="kw">covariate_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
+<div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
 <span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
@@ -1685,7 +1702,7 @@ TRT vs CTRL
     covariate_var = <span class="kw">covariate_var</span>, strat1_var = <span class="kw">strat1_var</span>, strat2_var = <span class="kw">strat2_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
+<div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
 <span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
@@ -1699,7 +1716,7 @@ TRT vs CTRL
     treatment_var = <span class="kw">treatment_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_interaction-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
+<div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
 <span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
@@ -1712,7 +1729,7 @@ TRT vs CTRL
     treatment_var = <span class="kw">treatment_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_biomarker-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
+<div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
 <span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
@@ -1729,7 +1746,7 @@ TRT vs CTRL
 <div id="logistic-regression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#logistic-regression" class="anchor"></a>Logistic regression</h1>
-<div class="sourceCode" id="cb16"><pre class="downlit">
+<div class="sourceCode" id="cb18"><pre class="downlit">
 <span class="co">### Biomarker effect</span>
 
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
@@ -1995,7 +2012,7 @@ GeneA
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb17"><pre class="downlit">
+<div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="co">### Treatment effect within biomarker subgroups</span>
 
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
@@ -2334,7 +2351,7 @@ TRT
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb18"><pre class="downlit">
+<div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="co">### Treatment-biomarker interaction effect</span>
 
 
@@ -2438,7 +2455,7 @@ TRT vs CTRL
 <div id="pearsons-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#pearsons-test" class="anchor"></a>Pearson’s test</h1>
-<div class="sourceCode" id="cb19"><pre class="downlit">
+<div class="sourceCode" id="cb21"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
 <span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
@@ -2549,7 +2566,7 @@ TRT
 <div id="cochran-mantel-haenszel-chi-squared-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#cochran-mantel-haenszel-chi-squared-test" class="anchor"></a>Cochran-Mantel-Haenszel Chi-Squared Test</h1>
-<div class="sourceCode" id="cb20"><pre class="downlit">
+<div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
 <span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
@@ -2661,7 +2678,7 @@ TRT
 <div id="barplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#barplot" class="anchor"></a>Barplot</h1>
-<div class="sourceCode" id="cb21"><pre class="downlit">
+<div class="sourceCode" id="cb23"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
@@ -2671,7 +2688,7 @@ TRT
 <span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
+<div class="sourceCode" id="cb24"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
@@ -2682,7 +2699,7 @@ TRT
 <span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-2.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
+<div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
@@ -2694,7 +2711,7 @@ TRT
     skip_levels = <span class="kw">skip_levels</span>, ylim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">100</span>))
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-3.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
+<div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
@@ -2708,7 +2725,7 @@ TRT
     strat2_var = <span class="kw">strat2_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
+<div class="sourceCode" id="cb27"><pre class="downlit">
 <span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
     strat2_var = <span class="kw">strat2_var</span>, less_legends = <span class="fl">TRUE</span>)
 </pre></div>
@@ -2717,7 +2734,7 @@ TRT
 <div id="complex-barplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#complex-barplot" class="anchor"></a>Complex barplot</h1>
-<div class="sourceCode" id="cb26"><pre class="downlit">
+<div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
@@ -2727,7 +2744,7 @@ TRT
 <span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, values_to = <span class="st">"Gene expression"</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
+<div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
@@ -2745,7 +2762,7 @@ TRT
 <div id="box-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#box-plot" class="anchor"></a>Box plot</h1>
-<div class="sourceCode" id="cb28"><pre class="downlit">
+<div class="sourceCode" id="cb30"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
@@ -2755,7 +2772,7 @@ TRT
 <span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-1.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
+<div class="sourceCode" id="cb31"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
@@ -2768,7 +2785,7 @@ TRT
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb30"><pre class="downlit">
+<div class="sourceCode" id="cb32"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
@@ -2781,7 +2798,7 @@ TRT
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-2.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb31"><pre class="downlit">
+<div class="sourceCode" id="cb33"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
@@ -2798,7 +2815,7 @@ TRT
 <div id="complex-boxplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#complex-boxplot" class="anchor"></a>Complex boxplot</h1>
-<div class="sourceCode" id="cb32"><pre class="downlit">
+<div class="sourceCode" id="cb34"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
@@ -2806,7 +2823,7 @@ TRT
 <span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb33"><pre class="downlit">
+<div class="sourceCode" id="cb35"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
@@ -2819,7 +2836,7 @@ TRT
     dodge_var = <span class="kw">dodge_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-2.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb34"><pre class="downlit">
+<div class="sourceCode" id="cb36"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 <span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
 
@@ -2836,7 +2853,7 @@ TRT
 <div id="point-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#point-plot" class="anchor"></a>Point plot</h1>
-<div class="sourceCode" id="cb35"><pre class="downlit">
+<div class="sourceCode" id="cb37"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
@@ -2846,7 +2863,7 @@ TRT
 <span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb36"><pre class="downlit">
+<div class="sourceCode" id="cb38"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
@@ -2859,7 +2876,7 @@ TRT
     color_point_var = <span class="kw">color_point_var</span>)
 </pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot_strat-1.png" width="1152" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb37"><pre class="downlit">
+<div class="sourceCode" id="cb39"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneD"</span>
@@ -2876,7 +2893,7 @@ TRT
 <div id="kruskalwallis-h-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#kruskalwallis-h-test" class="anchor"></a>Kruskal–Wallis H test</h1>
-<div class="sourceCode" id="cb38"><pre class="downlit">
+<div class="sourceCode" id="cb40"><pre class="downlit">
 <span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span>()
 
 
@@ -3017,7 +3034,7 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb39"><pre class="downlit">
+<div class="sourceCode" id="cb41"><pre class="downlit">
 <span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="kw">data</span>, num_vars = <span class="kw">num_vars</span>, cat_vars = <span class="kw">cat_vars</span>, print_pvalues = <span class="fl">FALSE</span>)
 </pre></div>
 <table class="table table table-condensed table-bordered">
@@ -3121,7 +3138,7 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb40"><pre class="downlit">
+<div class="sourceCode" id="cb42"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">cat_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Cell_Of_Origin"</span>, <span class="st">"IPI"</span>, <span class="st">"Treatment_Arm"</span>)
@@ -3360,7 +3377,7 @@ TRT
 <div id="fishers-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#fishers-test" class="anchor"></a>Fisher’s test</h1>
-<div class="sourceCode" id="cb41"><pre class="downlit">
+<div class="sourceCode" id="cb43"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">col_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
@@ -3450,7 +3467,7 @@ TRT
 <div id="characteristics-of-itt-and-bep" class="section level1">
 <h1 class="hasAnchor">
 <a href="#characteristics-of-itt-and-bep" class="anchor"></a>Characteristics of ITT and BEP</h1>
-<div class="sourceCode" id="cb42"><pre class="downlit">
+<div class="sourceCode" id="cb44"><pre class="downlit">
 <span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
 
 <span class="kw">strat_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
@@ -3635,7 +3652,7 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb43"><pre class="downlit">
+<div class="sourceCode" id="cb45"><pre class="downlit">
 <span class="kw">bep_vars</span> <span class="op">&lt;-</span> <span class="st">"BEP_RNAseq"</span>
 <span class="kw">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Age"</span>, <span class="st">"IPI"</span>)
 
@@ -3983,12 +4000,12 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb44"><pre class="downlit">
+<div class="sourceCode" id="cb46"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
 </pre></div>
 <pre><code>## R version 4.0.2 (2020-06-22)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.6
+## Running under: macOS Catalina 10.15.7
 ## 
 ## Matrix products: default
 ## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
@@ -4001,7 +4018,7 @@ High
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] BiomarkerWrappers_0.0.0.16 testthat_2.3.2            
+## [1] BiomarkerWrappers_0.0.0.17 testthat_2.3.2            
 ## [3] kableExtra_1.2.1           rmarkdown_2.3             
 ## [5] knitr_1.29                
 ## 
@@ -4013,7 +4030,7 @@ High
 ##  [13] digest_0.6.25        htmltools_0.5.0      fansi_0.4.1         
 ##  [16] magrittr_1.5         checkmate_2.0.0      memoise_1.1.0       
 ##  [19] cluster_2.1.0        openxlsx_4.1.5       limma_3.44.3        
-##  [22] remotes_2.2.0        annotate_1.66.0      ComplexHeatmap_2.4.3
+##  [22] remotes_2.2.0        ComplexHeatmap_2.4.3 annotate_1.66.0     
 ##  [25] sandwich_2.5-1       pkgdown_1.6.1        prettyunits_1.1.1   
 ##  [28] colorspace_1.4-1     blob_1.2.1           rvest_0.3.6         
 ##  [31] haven_2.3.1          xfun_0.17            dplyr_1.0.2         

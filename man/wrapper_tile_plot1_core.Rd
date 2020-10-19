@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrappers_tile_plot.R
 \name{wrapper_tile_plot1_core}
 \alias{wrapper_tile_plot1_core}
+\alias{wrapper_tile_plot2_core}
 \title{Tile plot}
 \usage{
 wrapper_tile_plot1_core(
@@ -12,9 +13,28 @@ wrapper_tile_plot1_core(
   variable_names = NULL,
   skip_NAs = FALSE
 )
+
+wrapper_tile_plot2_core(
+  data,
+  x_var,
+  y_vars,
+  colors = NULL,
+  variable_names = NULL,
+  skip_NAs = FALSE
+)
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{x_var}{Name of a variable that defined objects unique IDs.}
+
+\item{y_vars}{Names of variables to be plotted as tiles. Those variables must be factors.}
+
+\item{colors}{Named list with colors for 'y_vars'.}
+
+\item{variable_names}{Named vector with nicer variable names.}
+
+\item{skip_NAs}{Logical. Whether to skip NAs.}
 }
 \description{
 Tile plot

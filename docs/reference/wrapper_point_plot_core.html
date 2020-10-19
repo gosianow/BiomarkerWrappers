@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.17</span>
       </span>
     </div>
 
@@ -129,9 +129,13 @@
   <span class='kw'>x_var</span>,
   <span class='kw'>y_var</span>,
   color_point_var = <span class='kw'>NULL</span>,
-  color_smooth_var = <span class='kw'>NULL</span>,
   facet_var = <span class='kw'>NULL</span>,
   colors_point = <span class='kw'>NULL</span>,
+  scale_gradient = <span class='st'>"gradientn"</span>,
+  color_low_point = <span class='st'>"#42399B"</span>,
+  color_mid_point = <span class='st'>"white"</span>,
+  color_high_point = <span class='st'>"#D70131"</span>,
+  midpoint = <span class='fl'>0</span>,
   variable_names = <span class='kw'>NULL</span>,
   xlab = <span class='kw'>NULL</span>,
   ylab = <span class='kw'>NULL</span>,
@@ -144,11 +148,12 @@
   point_shape = <span class='fl'>20</span>,
   point_alpha = <span class='fl'>1</span>,
   point_stroke = <span class='fl'>0.8</span>,
+  smooth = <span class='st'>"none"</span>,
   smooth_method = <span class='st'>"auto"</span>,
   smooth_formula = <span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x</span>,
   smooth_se = <span class='fl'>FALSE</span>,
   smooth_size = <span class='fl'>2</span>,
-  smooth_type = <span class='fl'>1</span>,
+  smooth_linetype = <span class='fl'>1</span>,
   title_size = <span class='fl'>12</span>,
   strip_text_size = <span class='kw'>NULL</span>,
   facet_scales = <span class='st'>"fixed"</span>,
@@ -162,11 +167,15 @@
   <span class='kw'>x_var</span>,
   <span class='kw'>y_var</span>,
   color_point_var = <span class='kw'>NULL</span>,
-  color_smooth_var = <span class='kw'>NULL</span>,
   facet_var = <span class='kw'>NULL</span>,
   strat1_var = <span class='kw'>NULL</span>,
   strat2_var = <span class='kw'>NULL</span>,
   colors_point = <span class='kw'>NULL</span>,
+  scale_gradient = <span class='st'>"gradientn"</span>,
+  color_low_point = <span class='st'>"#42399B"</span>,
+  color_mid_point = <span class='st'>"white"</span>,
+  color_high_point = <span class='st'>"#D70131"</span>,
+  midpoint = <span class='fl'>0</span>,
   variable_names = <span class='kw'>NULL</span>,
   xlab = <span class='kw'>NULL</span>,
   ylab = <span class='kw'>NULL</span>,
@@ -180,11 +189,12 @@
   point_shape = <span class='fl'>20</span>,
   point_alpha = <span class='fl'>1</span>,
   point_stroke = <span class='fl'>0.8</span>,
+  smooth = <span class='st'>"none"</span>,
   smooth_method = <span class='st'>"auto"</span>,
   smooth_formula = <span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x</span>,
   smooth_se = <span class='fl'>FALSE</span>,
   smooth_size = <span class='fl'>2</span>,
-  smooth_type = <span class='fl'>1</span>,
+  smooth_linetype = <span class='fl'>1</span>,
   title_size = <span class='fl'>12</span>,
   strip_text_size = <span class='kw'>NULL</span>,
   facet_scales = <span class='st'>"fixed"</span>,
@@ -228,6 +238,10 @@
 
 <span class='fu'>wrapper_point_plot_core</span>(data = <span class='kw'>data</span>, x_var = <span class='kw'>x_var</span>, y_var = <span class='kw'>y_var</span>)
 </div><div class='img'><img src='wrapper_point_plot_core-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>wrapper_point_plot_core</span>(data = <span class='kw'>bdata</span>, x_var = <span class='kw'>x_var</span>, y_var = <span class='kw'>y_var</span>, color_point_var = <span class='st'>"Sex"</span>, smooth = <span class='st'>"strat"</span>)
+</div><div class='output co'>#&gt; <span class='message'>`geom_smooth()` using method = 'loess'</span></div><div class='img'><img src='wrapper_point_plot_core-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>wrapper_point_plot_core</span>(data = <span class='kw'>bdata</span>, x_var = <span class='kw'>x_var</span>, y_var = <span class='kw'>y_var</span>, color_point_var = <span class='st'>"Age"</span>)
+</div><div class='img'><img src='wrapper_point_plot_core-3.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

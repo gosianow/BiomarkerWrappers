@@ -109,6 +109,37 @@ bdata <- cbind(bdata, data_cat2, data_cat4)
 ```
 
 
+
+
+# Tile plot
+
+
+
+
+
+```{r, fig.height=4, fig.width=10}
+
+
+### Plot generated using geom_tile
+
+wrapper_tile_plot1_core(bdata, x_var = "Patient_ID", y_vars = c("BCL2_by_IHC", "BCL2_by_FISH"))
+
+
+### Plot generated using geom_col. It has substantially smaller size when sample size is large.
+
+wrapper_tile_plot2_core(bdata, x_var = "Patient_ID", y_vars = c("BCL2_by_IHC", "BCL2_by_FISH"))
+
+
+
+
+```
+
+
+
+
+
+
+
 # Log-rank test
 
 

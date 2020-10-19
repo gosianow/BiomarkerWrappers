@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.16</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.17</span>
       </span>
     </div>
 
@@ -131,6 +131,15 @@
   colors = <span class='kw'>NULL</span>,
   variable_names = <span class='kw'>NULL</span>,
   skip_NAs = <span class='fl'>FALSE</span>
+)
+
+<span class='fu'>wrapper_tile_plot2_core</span>(
+  <span class='kw'>data</span>,
+  <span class='kw'>x_var</span>,
+  <span class='kw'>y_vars</span>,
+  colors = <span class='kw'>NULL</span>,
+  variable_names = <span class='kw'>NULL</span>,
+  skip_NAs = <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -139,6 +148,26 @@
     <tr>
       <th>data</th>
       <td><p>Data frame.</p></td>
+    </tr>
+    <tr>
+      <th>x_var</th>
+      <td><p>Name of a variable that defined objects unique IDs.</p></td>
+    </tr>
+    <tr>
+      <th>y_vars</th>
+      <td><p>Names of variables to be plotted as tiles. Those variables must be factors.</p></td>
+    </tr>
+    <tr>
+      <th>colors</th>
+      <td><p>Named list with colors for 'y_vars'.</p></td>
+    </tr>
+    <tr>
+      <th>variable_names</th>
+      <td><p>Named vector with nicer variable names.</p></td>
+    </tr>
+    <tr>
+      <th>skip_NAs</th>
+      <td><p>Logical. Whether to skip NAs.</p></td>
     </tr>
     </table>
 
