@@ -910,6 +910,20 @@ format_vs <- function(level, reference){
 
 
 
+#' Format proportions
+#' 
+#' @param props Vector with proportions.
+#' @param digits Number of decimal places when rounding proportions.
+#' @keywords internal
+format_props <- function(props, digits = 2){
+  
+  
+  out <- ifelse(is.na(props), "", paste0(" (", formatC(as.numeric(props), format = "f", digits = digits, drop0trailing = FALSE), "%)"))
+  
+  out
+  
+  
+}
 
 
 #' Paste counts and proportions corresponding to one subgroup
@@ -1145,7 +1159,29 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
       
       # d3 20 - light color first
       
-      palette <- c("#aec7e8", "#1f77b4",  "#ffbb78", "#ff7f0e", "#98df8a", "#2ca02c", "#ff9896", "#d62728", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      
+      # palette <- c("#aec7e8", "#1f77b4",  "#ffbb78", "#ff7f0e", "#98df8a", "#2ca02c", "#ff9896", "#d62728", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      
+      
+      # barplot(rep(1, length(palette)), col = palette)
+      
+      
+      # paired
+      # palette <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+      
+      
+      # barplot(rep(1, length(palette)), col = palette)
+      
+      
+      # Mix d3 20 - light color first with paired colors from brewer.pal
+      
+      palette <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      
+      
+      # barplot(rep(1, length(palette)), col = palette)
+      
+
+      
       
       stopifnot(length(levels) <= 20)
       
@@ -1204,6 +1240,8 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
 
 
 
+
+
 #' Calculate break time used in KM plots
 #' 
 #' @param x Vector with time-to-event data.
@@ -1227,6 +1265,44 @@ calculate_break_time <- function(x, n_breaks = 10){
 
 
 
+
+
+#' Density Values for Smooth Density Plots
+#' 
+#' It produces a vector containing density values which encode the local densities at each point in a scatterplot.
+#' 
+#' @details It is based on function densCols from grDevices.
+#' @return Vector with density level.
+#' @export
+densVals <- function(x, y = NULL, nbin = 128, bandwidth){
+  
+  xy <- grDevices::xy.coords(x, y, setLab = FALSE)
+  
+  select <- is.finite(xy$x) & is.finite(xy$y)
+  
+  x <- cbind(xy$x, xy$y)[select, ]
+  
+  map <- grDevices:::.smoothScatterCalcDensity(x, nbin, bandwidth)
+  
+  mkBreaks <- function(u) u - diff(range(u))/(length(u) - 1)/2
+  
+  xbin <- cut(x[, 1], mkBreaks(map$x1), labels = FALSE)
+  
+  ybin <- cut(x[, 2], mkBreaks(map$x2), labels = FALSE)
+  
+  dens <- map$fhat[cbind(xbin, ybin)]
+  
+  dens[is.na(dens)] <- 0
+  
+  colpal <- cut(dens, length(dens), labels = FALSE)
+  
+  vals <- rep(NA, length(select))
+  
+  vals[select] <- colpal
+  
+  vals
+  
+}
 
 
 

@@ -8,13 +8,12 @@
 #' Tile plot
 #' 
 #' @param data Data frame.
-#' @param x_var Name of a variable that defined objects unique IDs.
 #' @param y_vars Names of variables to be plotted as tiles. Those variables must be factors.
 #' @param colors Named list with colors for 'y_vars'.
 #' @param variable_names Named vector with nicer variable names.
 #' @param skip_NAs Logical. Whether to skip NAs.
 #' @export
-wrapper_tile_plot1_core <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
@@ -22,12 +21,14 @@ wrapper_tile_plot1_core <- function(data, x_var, y_vars, colors = NULL, variable
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   if(skip_NAs){
-    data <- data[complete.cases(data), , drop = FALSE]
+    data <- data[complete.cases(complete.cases(data[, y_vars, drop = FALSE])), , drop = FALSE]
   }
   
   data <- data[order2(data[, y_vars, drop = FALSE], decreasing = TRUE), , drop = FALSE]
   
-  data[, x_var] <- factor(data[, x_var], levels = data[, x_var])
+  x_var <- "dummy_x_var"
+  
+  data[, x_var] <- factor(paste0("Sample", seq_len(nrow(data))), levels = paste0("Sample", seq_len(nrow(data))))
   
   
   plotlist <- lapply(seq_along(y_vars), function(i){
@@ -72,9 +73,11 @@ wrapper_tile_plot1_core <- function(data, x_var, y_vars, colors = NULL, variable
 
 
 
+
+
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
   
   
   stopifnot(length(y_vars) >= 1)
@@ -83,30 +86,28 @@ wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
+  levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
+  names(levels_original) <- y_vars
+  
   
   if(skip_NAs){
-    data <- data[complete.cases(data), , drop = FALSE]
+    data <- data[complete.cases(data[, y_vars, drop = FALSE]), , drop = FALSE]
   }else{
     
     ### To calculate proportions of interaction factors we have to add NA as a factor level
-    
-    levels_original <- list()
     
     for(i in seq_along(y_vars)){
       # i = 2
       
       y_var <- y_vars[i]
-      levels_original[[y_var]] <- levels(data[, y_var])
-        
+      
       if(any(is.na(data[, y_var]))){
         data[, y_var] <- factor(data[, y_var], exclude = NULL, levels = c(NA, levels(data[, y_var])), labels = c("NA", levels(data[, y_var])))
       }
       
     }
     
-    
   }
-  
   
   
   ### Compute tile size 
@@ -122,18 +123,29 @@ wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable
     
     levels_y_var <- limma::strsplit2(names(tbl), split = " /dummy-dummy/ ")[, i]
     
+    ### Information about marginal proportions
+    
+    tbl_y_var <- table(data[, y_vars[i]])
+    prop_y_var <- tbl_y_var / nrow(data) * 100
+    
+    
     
     out <- data.frame(y_var = y_vars[i], 
       names_y_var = variable_names[y_vars[i]],
       value_interaction = factor(names(tbl), levels = levels(value_interaction)), 
       levels_y_var = factor(levels_y_var, levels = levels(data[, y_vars[i]])), 
+      levels_with_prop_y_var = factor(levels_y_var, levels = levels(data[, y_vars[i]]), 
+        labels = paste0(levels(data[, y_vars[i]]), " ", format_props(prop_y_var, digits = 0))), 
       prop = as.numeric(prop), 
       stringsAsFactors = FALSE, row.names = NULL)
+    
     
     
     return(out)
     
   })
+  
+  
   
   
   plotlist <- lapply(seq_along(data_tile_size_list), function(i){
@@ -144,16 +156,23 @@ wrapper_tile_plot2_core <- function(data, x_var, y_vars, colors = NULL, variable
     y_var <- data_tile_size$y_var[1]
     names_y_var <- data_tile_size$names_y_var[1]
     
-
+    
     ### Update colors 
     
     colors_tmp <- format_colors(levels = levels_original[[y_var]], colors = colors[[y_var]])
     colors_tmp <- c(colors_tmp, "NA" = "gray95")
-
+    
+    ### Use names with proportions
+    
+    prop_tbl <- unique(data_tile_size[, c("levels_y_var", "levels_with_prop_y_var")])
+    
+    mm <- match(names(colors_tmp), prop_tbl$levels_y_var)
+    names(colors_tmp) <- prop_tbl$levels_with_prop_y_var[mm]
+    
     
     
     ggplot(data_tile_size) +
-      geom_col(aes(x = names_y_var, y = prop, group = value_interaction, fill = levels_y_var)) +
+      geom_col(aes(x = names_y_var, y = prop, group = value_interaction, fill = levels_with_prop_y_var)) +
       coord_flip() +
       theme(axis.text.x = element_blank(), 
         axis.title = element_blank(),
