@@ -27,8 +27,8 @@
 wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var, 
   colors = NULL,
   variable_names = NULL, 
-  title = NULL, subtitle = NULL,
-  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = TRUE, subtitle = TRUE, xlab = TRUE,
+  legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none"){
@@ -84,12 +84,32 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   # Labels
   # -------------------------------------------------------------------------
   
+  if(is.logical(title)){
+    if(title){
+      title <- variable_names[covariate_var]
+    }else{
+      title <- NULL
+    }
+  }
   
-  xlab <- variable_names[tte_var]
+  if(is.logical(subtitle)){
+    subtitle <- NULL
+  }
   
+  if(is.logical(xlab)){
+    if(xlab){
+      xlab <- variable_names[tte_var]
+    }else{
+      xlab <- NULL
+    }
+  }
   
-  if(is.null(legend_colors_title)){
-    legend_colors_title <- variable_names[covariate_var]
+  if(is.logical(legend_colors_title)){
+    if(legend_colors_title){
+      legend_colors_title <- variable_names[covariate_var]
+    }else{
+      legend_colors_title <- NULL
+    }
   }
   
   
@@ -219,8 +239,8 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
@@ -334,7 +354,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
       ggpl <- wrapper_KM_plot_core(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
         colors = colors, 
         variable_names = variable_names, 
-        title = title, subtitle = subtitle,
+        title = title, subtitle = subtitle, xlab = xlab,
         legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
         break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
         title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
@@ -379,8 +399,8 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   strat1_var = NULL, strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(4, 1), 
   background_grid_major = "none",
@@ -396,8 +416,12 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  if(is.null(title)){
-    title <- variable_names[biomarker_var]
+  if(is.logical(title)){
+    if(title){
+      title <- variable_names[biomarker_var]
+    }else{
+      title <- NULL
+    }
   }
   
   
@@ -468,7 +492,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
-    title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
@@ -494,8 +518,8 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
@@ -514,8 +538,12 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  if(is.null(title)){
-    title <- variable_names[biomarker_var]
+  if(is.logical(title)){
+    if(title){
+      title <- variable_names[biomarker_var]
+    }else{
+      title <- NULL
+    }
   }
   
   
@@ -592,7 +620,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
-    title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
@@ -626,8 +654,8 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
   strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
-  title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_title = NULL, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
+  title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
@@ -646,11 +674,13 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-  if(is.null(title)){
-    title <- variable_names[biomarker_var]
+  if(is.logical(title)){
+    if(title){
+      title <- variable_names[biomarker_var]
+    }else{
+      title <- NULL
+    }
   }
-  
-  
   
   if(!is.null(biomarker_var)){
     
@@ -723,7 +753,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var =
     strat1_var = strat1_var, strat2_var = strat2_var, 
     colors = colors, 
     variable_names = variable_names, 
-    title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     title_size = title_size, label_size = label_size, rel_heights = rel_heights, 

@@ -23,8 +23,8 @@
 wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, facet_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
-  legend_colors_line_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
+  legend_colors_line_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1, 
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
@@ -90,20 +90,41 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   
   
   # -------------------------------------------------------------------------
-  # Labels
+  # Axis and legend labels
   # -------------------------------------------------------------------------
   
   
-  if(is.null(xlab)){
-    xlab <- variable_names[x_var]
-  }
-  if(is.null(ylab)){
-    ylab <- variable_names[y_var]
-  }
-  if(is.null(legend_colors_line_title)){
-    legend_colors_line_title <- variable_names[color_line_var]
+  if(is.logical(title)){
+    title <- NULL
   }
   
+  if(is.logical(subtitle)){
+    subtitle <- NULL
+  }
+  
+  if(is.logical(xlab)){
+    if(xlab){
+      xlab <- variable_names[x_var]
+    }else{
+      xlab <- NULL
+    }
+  }
+  
+  if(is.logical(ylab)){
+    if(ylab){
+      ylab <- variable_names[y_var]
+    }else{
+      ylab <- NULL
+    }
+  }
+  
+  if(is.logical(legend_colors_line_title)){
+    if(legend_colors_line_title){
+      legend_colors_line_title <- variable_names[color_line_var]
+    }else{
+      legend_colors_line_title <- NULL
+    }
+  }
   
   
   # -------------------------------------------------------------------------
@@ -228,8 +249,8 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_line_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_line_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1,
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 

@@ -20,8 +20,8 @@
 wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
-  legend_colors_box_title = NULL, legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
+  legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
@@ -110,18 +110,45 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   # Axis and legend labels
   # -------------------------------------------------------------------------
   
+
+  if(is.logical(title)){
+    title <- NULL
+  }
   
-  if(is.null(xlab)){
-    xlab <- variable_names[x_var]
+  if(is.logical(subtitle)){
+    subtitle <- NULL
   }
-  if(is.null(ylab)){
-    ylab <- variable_names[y_var]
+  
+  if(is.logical(xlab)){
+    if(xlab){
+      xlab <- variable_names[x_var]
+    }else{
+      xlab <- NULL
+    }
   }
-  if(is.null(legend_colors_point_title)){
-    legend_colors_point_title <- variable_names[color_point_var]
+  
+  if(is.logical(ylab)){
+    if(ylab){
+      ylab <- variable_names[y_var]
+    }else{
+      ylab <- NULL
+    }
   }
-  if(is.null(legend_colors_box_title)){
-    legend_colors_box_title <- variable_names[dodge_var]
+  
+  if(is.logical(legend_colors_point_title)){
+    if(legend_colors_point_title){
+      legend_colors_point_title <- variable_names[color_point_var]
+    }else{
+      legend_colors_point_title <- NULL
+    }
+  }
+  
+  if(is.logical(legend_colors_box_title)){
+    if(legend_colors_box_title){
+      legend_colors_box_title <- variable_names[dodge_var]
+    }else{
+      legend_colors_box_title <- NULL
+    }
   }
   
   
@@ -348,8 +375,8 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL,
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_box_title = NULL, legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5, label_nudge = 0.025,
@@ -520,8 +547,8 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_box_title = NULL, legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,

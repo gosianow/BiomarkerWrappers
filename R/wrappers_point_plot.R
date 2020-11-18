@@ -28,8 +28,8 @@
 wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL, 
-  legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
+  legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
@@ -112,20 +112,41 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   }
   
   # -------------------------------------------------------------------------
-  # Labels
+  # Axis and legend labels
   # -------------------------------------------------------------------------
   
   
-  if(is.null(xlab)){
-    xlab <- variable_names[x_var]
-  }
-  if(is.null(ylab)){
-    ylab <- variable_names[y_var]
-  }
-  if(is.null(legend_colors_point_title)){
-    legend_colors_point_title <- variable_names[color_point_var]
+  if(is.logical(title)){
+    title <- NULL
   }
   
+  if(is.logical(subtitle)){
+    subtitle <- NULL
+  }
+  
+  if(is.logical(xlab)){
+    if(xlab){
+      xlab <- variable_names[x_var]
+    }else{
+      xlab <- NULL
+    }
+  }
+  
+  if(is.logical(ylab)){
+    if(ylab){
+      ylab <- variable_names[y_var]
+    }else{
+      ylab <- NULL
+    }
+  }
+  
+  if(is.logical(legend_colors_point_title)){
+    if(legend_colors_point_title){
+      legend_colors_point_title <- variable_names[color_point_var]
+    }else{
+      legend_colors_point_title <- NULL
+    }
+  }
   
   
   # -------------------------------------------------------------------------
@@ -241,8 +262,8 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   strat1_var = NULL, strat2_var = NULL, 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_point_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 

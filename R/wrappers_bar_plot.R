@@ -40,8 +40,8 @@
 wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, 
   colors_bar = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, subtitle = NULL,
-  legend_colors_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
+  legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
@@ -114,32 +114,65 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   # Axis and legend labels
   # -------------------------------------------------------------------------
   
+  if(is.logical(title)){
+    title <- NULL
+  }
+  
+  if(is.logical(subtitle)){
+    subtitle <- NULL
+  }
+  
+  
   if(method %in% c("facet", "dodge_facet")){
     
     ### By default we do not display legend title as the description of the variable is on the y-axis 
     legend_colors_title <- legend_colors_title
     
-    if(is.null(xlab)){
-      xlab <- variable_names[x_var]
+    if(is.logical(xlab)){
+      if(xlab){
+        xlab <- variable_names[x_var]
+      }else{
+        xlab <- NULL
+      }
     }
-    if(is.null(ylab)){
-      ylab <- paste0(variable_names[y_var], "\nProportion (%)")
+    
+    if(is.logical(ylab)){
+      if(ylab){
+        ylab <- paste0(variable_names[y_var], "\nProportion (%)")
+      }else{
+        ylab <- NULL
+      }
     }
+    
   }
   
   
   if(method == "dodge"){
     
-    if(is.null(legend_colors_title)){
-      legend_colors_title <- variable_names[x_var]
+    if(is.logical(legend_colors_title)){
+      if(legend_colors_title){
+        legend_colors_title <- variable_names[x_var]
+      }else{
+        legend_colors_title <- NULL
+      }
     }
     
-    if(is.null(xlab)){
-      xlab <- variable_names[facet_var]
+    if(is.logical(xlab)){
+      if(xlab){
+        xlab <- variable_names[facet_var]
+      }else{
+        xlab <- NULL
+      }
     }
-    if(is.null(ylab)){
-      ylab <- paste0(variable_names[y_var], ": ", keep_levels, "\nProportion (%)")
+    
+    if(is.logical(ylab)){
+      if(ylab){
+        ylab <- paste0(variable_names[y_var], ": ", keep_levels, "\nProportion (%)")
+      }else{
+        ylab <- NULL
+      }
     }
+    
   }
   
   
@@ -483,8 +516,8 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL,
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
@@ -654,8 +687,8 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars,
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, 
   variable_names = NULL, 
-  xlab = NULL, ylab = NULL, title = NULL, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_title = NULL, legend_position = "right", facet_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,

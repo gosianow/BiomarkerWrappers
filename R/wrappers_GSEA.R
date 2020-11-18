@@ -105,8 +105,17 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   # Run fgseaMultilevel
   # -------------------------------------------------------------------------
   
+  scoreType <- "std"
+  
+  if(all(statistic > 0)){
+    scoreType <- "pos"
+  }else if(all(statistic < 0)){
+    scoreType <- "neg"
+  }
+  
+  
   ## fgsea sorts the statistic in the descending order
-  fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic, eps = 0)
+  fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic, eps = 0, scoreType = scoreType)
   
   
   ### Make the same order as in genesets
