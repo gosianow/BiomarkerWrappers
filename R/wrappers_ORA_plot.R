@@ -153,7 +153,7 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
 
 
 
-#' Dot plot with ORA results for a single contrast 
+#' Dot plot with ORA results for multiple contrasts 
 #' 
 #' @param x TopTable with ORA results.
 #' @export

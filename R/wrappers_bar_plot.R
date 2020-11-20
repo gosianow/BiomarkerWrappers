@@ -84,11 +84,12 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   stopifnot(length(keep_levels) > 0)
   
   stopifnot(length(method) == 1)
-  stopifnot(method %in% c("facet", "dodge_facet", "dodge"))
+  stopifnot(method %in% c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge"))
   
-  ## Dodge method cannot be used when there are more than one levels 
-  if(length(keep_levels) > 1 && method == "dodge"){
-    stop("Dodge method cannot be used when there are more than one levels")
+  
+  ## Dodge method cannot be used when there is more than one level kept
+  if(length(keep_levels) > 1 && method %in% c("dodge", "facet2")){
+    stop("Method 'dodge' or 'facet2' cannot be used when there is more than one level kept")
   }
   
   
@@ -106,7 +107,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     colors_bar <- format_colors(levels = levels(data[, y_var]), colors = colors_bar)
   }
   
-  if(method == "dodge"){
+  if(method %in% c("dodge", "facet2", "dodge_facet2")){
     colors_bar <- format_colors(levels = levels(data[, x_var]), colors = colors_bar)
   }
   
@@ -125,14 +126,11 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   
   if(method %in% c("facet", "dodge_facet")){
     
-    ### By default we do not display legend title as the description of the variable is on the y-axis 
-    legend_colors_title <- legend_colors_title
-    
-    if(is.logical(xlab)){
-      if(xlab){
-        xlab <- variable_names[x_var]
+    if(is.logical(legend_colors_title)){
+      if(legend_colors_title){
+        legend_colors_title <- variable_names[y_var]
       }else{
-        xlab <- NULL
+        legend_colors_title <- NULL
       }
     }
     
@@ -144,7 +142,74 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
       }
     }
     
+    if(is.logical(xlab)){
+      if(xlab){
+        xlab <- variable_names[x_var]
+      }else{
+        xlab <- NULL
+      }
+    }
+    
   }
+  
+  
+  if(method %in% c("dodge_facet2")){
+    
+    if(is.logical(legend_colors_title)){
+      if(legend_colors_title){
+        legend_colors_title <- variable_names[x_var]
+      }else{
+        legend_colors_title <- NULL
+      }
+    }
+    
+    if(is.logical(ylab)){
+      if(ylab){
+        ylab <- paste0(variable_names[y_var], "\nProportion (%)")
+      }else{
+        ylab <- NULL
+      }
+    }
+    
+    if(is.logical(xlab)){
+      if(xlab){
+        xlab <- variable_names[y_var]
+      }else{
+        xlab <- NULL
+      }
+    }
+    
+  }
+  
+  
+  if(method %in% c("facet2")){
+    
+    if(is.logical(legend_colors_title)){
+      if(legend_colors_title){
+        legend_colors_title <- variable_names[x_var]
+      }else{
+        legend_colors_title <- NULL
+      }
+    }
+    
+    if(is.logical(ylab)){
+      if(ylab){
+        ylab <- paste0(variable_names[y_var], ": ", keep_levels, "\nProportion (%)")
+      }else{
+        ylab <- NULL
+      }
+    }
+    
+    if(is.logical(xlab)){
+      if(xlab){
+        xlab <- variable_names[x_var]
+      }else{
+        xlab <- NULL
+      }
+    }
+    
+  }
+  
   
   
   if(method == "dodge"){
@@ -313,7 +378,11 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   if(!is.null(ylim)){
     ymax <- max(ylim)
   }else{
-    ymax <- max(ggdata_total$Proportion, na.rm = TRUE)  
+    if(method %in% c("dodge_facet", "dodge_facet2")){
+      ymax <- max(ggdata$Proportion, na.rm = TRUE)
+    }else{
+      ymax <- max(ggdata_total$Proportion, na.rm = TRUE)  
+    }
   }
   ynudge <- ymax * label_nudge
   
@@ -326,29 +395,6 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     ggpl <- ggplot() +
       geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Observation), color = "black") +
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
-    
-    
-    ### Facet
-    if(facet_var != "facet_dummy"){
-      
-      if(facet_label_both){
-        labeller <- function(labels, multi_line = FALSE, sep = ": "){
-          colnames(labels) <- variable_names[colnames(labels)]
-          out <- ggplot2::label_both(labels, multi_line = multi_line, sep = sep)
-          out
-        }
-      }else{
-        labeller <- "label_value"
-      }
-      
-      ggpl <- ggpl +
-        facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
-        theme(strip.background = element_rect(colour = "white", fill = "white"),
-          strip.text = element_text(size = strip_text_size))
-      
-    }
-    
-    
     
     ### Labels
     if(show_proportions){
@@ -388,6 +434,73 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
+    ### Labels
+    if(show_proportions){
+      
+      ggpl <- ggpl +
+        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, group = .data$Observation, label = .data$Label), 
+          position = position_dodge(preserve = "total", width = 0.9), size = label_size, angle = label_angle, vjust = 0.5)
+      
+    }
+    
+    
+  }
+  
+  
+  
+  if(method == "dodge_facet2"){
+    
+    
+    ggpl <- ggplot() +
+      geom_col(data = ggdata, aes(x = .data$Observation, y = .data$Proportion, fill = .data$Subgroup), color = "black", position = position_dodge2(preserve = "single", width = 0.75)) +
+      scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
+    
+    
+    ### Labels
+    if(show_proportions){
+      
+      ggpl <- ggpl +
+        geom_text(data = ggdata, aes(x = .data$Observation, y = .data$Proportion + ynudge, group = .data$Subgroup, label = .data$Label), 
+          position = position_dodge(preserve = "total", width = 0.9), size = label_size, angle = label_angle, vjust = 0.5)
+      
+    }
+    
+    
+  }
+  
+  
+  
+  if(method == "facet2"){
+    
+    
+    ggpl <- ggplot() +
+      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Subgroup), color = "black") +
+      scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
+    
+    
+    if(show_total_counts){
+      
+      ggpl <- ggpl +
+        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = 0 - ynudge)) + 
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = 0 - ynudge, label = .data$Label_Total), size = label_size, angle = label_angle, vjust = 0.5)
+      
+    }
+    
+    if(show_total_proportions){
+      
+      ggpl <- ggpl +
+        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
+      
+    }
+    
+  }
+  
+  
+  
+  
+  if(method %in% c("facet", "dodge_facet", "dodge_facet2", "facet2")){
+    
     ### Facet
     if(facet_var != "facet_dummy"){
       
@@ -402,24 +515,14 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
       }
       
       ggpl <- ggpl +
-        facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+        facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales, nrow = 1) +
         theme(strip.background = element_rect(colour = "white", fill = "white"),
           strip.text = element_text(size = strip_text_size))
       
     }
     
-    
-    ### Labels
-    if(show_proportions){
-      
-      ggpl <- ggpl +
-        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, group = .data$Observation, label = .data$Label), 
-          position = position_dodge(preserve = "total", width = 0.9), size = label_size, angle = label_angle, vjust = 0.5)
-      
-    }
-    
-    
   }
+  
   
   
   

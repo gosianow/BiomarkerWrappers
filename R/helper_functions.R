@@ -305,7 +305,11 @@ wrapper_write_gmt <- function(x, filename){
 #' Spit a list of plots into chunks and plot them in a grid layout
 #' 
 #' @export
-wrapper_print_plot_grid <- function(plotlist, nsplit = 2, ncol = 2, nrow = 1){
+wrapper_print_plot_grid <- function(plotlist, nsplit = NULL, ncol = 2, nrow = NULL){
+  
+  if(is.null(nsplit)){
+    nsplit <- length(plotlist)
+  }
   
   indx <- seq_along(plotlist)
   indx_split <- split(indx, ceiling(seq_along(indx) / nsplit))
@@ -1141,7 +1145,7 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 
 
 
-#' Check or create colors
+#' Format or create colors for a vector of levels
 #' 
 #' Make sure that unique named colors are created for each level.
 #' 
@@ -1237,6 +1241,43 @@ format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicate
   
   
 }
+
+
+
+
+
+
+
+
+#' Format or create colors for factor and numerical variables in a data frame
+#' 
+#' 
+#' @param data Data frame.
+#' @param color_list Optional color list with color definitions for some of the variables.
+#' @param colors Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.
+#' @param palette_cat Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges" for categorical variables.
+#' @param palette_num Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges" for numerical variables.
+#' @return Named list with colors for factor and numerical variables in a data frame.
+#' @export
+format_color_list <- function(data, color_list = NULL, colors = NULL, palette_cat = NULL, palette_num = NULL, allow_duplicated = TRUE){
+  
+  
+  
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
