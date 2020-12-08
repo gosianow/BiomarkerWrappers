@@ -104,11 +104,11 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   # -------------------------------------------------------------------------
   
   if(method %in% c("facet", "dodge_facet")){
-    colors_bar <- format_colors(levels = levels(data[, y_var]), colors = colors_bar)
+    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar)
   }
   
   if(method %in% c("dodge", "facet2", "dodge_facet2")){
-    colors_bar <- format_colors(levels = levels(data[, x_var]), colors = colors_bar)
+    colors_bar <- format_colors(levels(data[, x_var]), colors = colors_bar)
   }
   
   # -------------------------------------------------------------------------

@@ -87,7 +87,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
       colors_point <- colors_point[1]
     }
   }else{
-    colors_point <- format_colors(levels = levels(data[, color_point_var]), colors = colors_point)
+    colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point)
   }
   
   
@@ -97,10 +97,10 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
       colors_box <- rep(colors_box, nlevels(data[, x_var]))
       names(colors_box) <- levels(data[, x_var])
     }else{
-      colors_box <- format_colors(levels = levels(data[, x_var]), colors = colors_box)
+      colors_box <- format_colors(levels(data[, x_var]), colors = colors_box)
     }
   }else{
-    colors_box <- format_colors(levels = levels(data[, dodge_var]), colors = colors_box)
+    colors_box <- format_colors(levels(data[, dodge_var]), colors = colors_box)
   }
   
   

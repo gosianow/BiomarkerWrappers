@@ -40,7 +40,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
     
     y_var <- y_vars[i]
     
-    colors_tmp <- format_colors(levels = levels(data[, y_var]), colors = colors[[y_var]])
+    colors_tmp <- format_colors(levels(data[, y_var]), colors = colors[[y_var]])
     
     data$dummy <- variable_names[y_var]
     
@@ -169,7 +169,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
     ### Update colors 
     
-    colors_tmp <- format_colors(levels = levels_original[[y_var]], colors = colors[[y_var]])
+    colors_tmp <- format_colors(levels_original[[y_var]], colors = colors[[y_var]])
     colors_tmp <- c(colors_tmp, "NA" = "gray95")
     
     ### Use names with proportions

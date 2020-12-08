@@ -85,7 +85,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       colors_line <- colors_line[1]
     }
   }else{
-    colors_line <- format_colors(levels = levels(data[, color_line_var]), colors = colors_line)
+    colors_line <- format_colors(levels(data[, color_line_var]), colors = colors_line)
   }
   
   

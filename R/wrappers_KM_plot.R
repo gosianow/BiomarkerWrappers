@@ -65,7 +65,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   # Colors
   # -------------------------------------------------------------------------
   
-  colors <- format_colors(levels = levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
+  colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
   
   ### Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts. For the ggsurvplot function and in ggplot adjustment colors cannot have names. Otherwise, it does not work. 
   
@@ -464,7 +464,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
     
     colors <- unlist(lapply(seq_along(levels_treatment), function(i){
-      format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
+      format_colors(paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
     }))
     
     
@@ -476,7 +476,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     
     colors <- unlist(lapply(1:nlevels_treatment, function(i){
       # i = 1
-      out <- format_colors(levels = levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
+      out <- format_colors(levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
       names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
       return(out)
     }))
@@ -584,7 +584,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
       default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
       
       colors <- unlist(lapply(seq_along(levels_treatment), function(i){
-        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
+        format_colors(paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
       }))
       
       
@@ -592,7 +592,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
         # i = 1
-        out <- format_colors(levels = levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
+        out <- format_colors(levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
         names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
         return(out)
       }))
@@ -718,7 +718,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
       default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
       
       colors <- unlist(lapply(seq_along(levels_treatment), function(i){
-        format_colors(levels = paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
+        format_colors(paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
       }))
       
       
@@ -726,7 +726,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
       
       colors <- unlist(lapply(1:nlevels_treatment, function(i){
         # i = 1
-        out <- format_colors(levels = levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
+        out <- format_colors(levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
         names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
         return(out)
       }))

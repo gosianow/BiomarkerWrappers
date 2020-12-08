@@ -95,7 +95,7 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   }else{
     
     if(is.factor(data[, color_point_var])){
-      colors_point <- format_colors(levels = levels(data[, color_point_var]), colors = colors_point)
+      colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point)
     }else{
       colors_point <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
     }

@@ -260,7 +260,7 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
   # ggplot
   # ---------------------------------------------------------------------------
   
-  colors_point <- format_colors(levels = contrasts, colors = colors_point)
+  colors_point <- format_colors(contrasts, colors = colors_point)
   
   
   if(!is.null(observed_var)){

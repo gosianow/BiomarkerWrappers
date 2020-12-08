@@ -1145,102 +1145,431 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 
 
 
-#' Format or create colors for a vector of levels
+#' Format or create colors for a vector with categorical values
 #' 
-#' Make sure that unique named colors are created for each level.
+#' Make sure that unique named colors are created for each value.
 #' 
-#' @param levels Vector of factor levels for which we want to specify colors.
-#' @param colors Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.
-#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges".
-#' @return Named vector of unique colors for all levels.
+#' @param x Vector of categorical values for which we want to specify colors.
+#' @param colors Vector of colors longer or equal the number of unique levels of x. Can be named or non-named. If NULL, colors are generated.
+#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral".
+#' @return Named vector of unique colors for all unique values of x.
+#' 
+#' @examples 
+#' 
+#' x <- c("low", "high")
+#' 
+#' colors <- c("high" = "red", "low" = "grey")
+#' palette <- NULL
+#' allow_duplicated <- FALSE
+#' 
+#' 
+#' format_colors_cat(x, colors = colors, palette = palette, allow_duplicated = allow_duplicated)
+#' 
+#' 
+#' x <- c("<1", "<2", "<3", "<4")
+#'
+#' colors <- NULL
+#' palette <- "RdYlBu"
+#' allow_duplicated <- FALSE
+#' 
+#' 
+#' out <- format_colors_cat(x, colors = colors, palette = palette, allow_duplicated = allow_duplicated)
+#' 
+#' barplot(rep(1, length(out)), col = out)
+#' 
+#' 
 #' @export
-format_colors <- function(levels, colors = NULL, palette = NULL, allow_duplicated = TRUE){
+format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, allow_duplicated = TRUE){
+  
+  
+  x <- x[!is.na(x)]
+  
+  if(!is.factor(x)){
+    x <- factor(x, levels = unique(x))
+  }
+  
+  levels_x <- levels(x)
+  
   
   
   if(is.null(colors)){
     
     if(is.null(palette)){
       
-      # d3 20 - light color first
+      ### d3 20 - light color first
+      
+      # colors_default <- c("#aec7e8", "#1f77b4",  "#ffbb78", "#ff7f0e", "#98df8a", "#2ca02c", "#ff9896", "#d62728", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      
+      # barplot(rep(1, length(colors_default)), col = colors_default)
       
       
-      # palette <- c("#aec7e8", "#1f77b4",  "#ffbb78", "#ff7f0e", "#98df8a", "#2ca02c", "#ff9896", "#d62728", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      
+      ### paired
+      
+      # colors_default <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+      
+      # barplot(rep(1, length(colors_default)), col = colors_default)
       
       
-      # barplot(rep(1, length(palette)), col = palette)
+      
+      ### Mix d3 20 - light color first with paired colors from brewer.pal
+      
+      colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      
+      # barplot(rep(1, length(colors_default)), col = colors_default)
       
       
-      # paired
-      # palette <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+      stopifnot(length(levels_x) <= 20)
       
-      
-      # barplot(rep(1, length(palette)), col = palette)
-      
-      
-      # Mix d3 20 - light color first with paired colors from brewer.pal
-      
-      palette <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
-      
-      
-      # barplot(rep(1, length(palette)), col = palette)
-      
-
-      
-      
-      stopifnot(length(levels) <= 20)
-      
-      colors <- palette[1:length(levels)]
-      names(colors) <- levels
+      out <- colors_default[1:length(levels_x)]
+      names(out) <- levels_x
       
       
     }else{
       
       if(length(palette) == 1){
         
-        if(length(levels) <= 4){
-          palette <- rev(RColorBrewer::brewer.pal(9, palette))
-          colors <- rev(palette[2 * seq_along(levels)])
+        
+        if(palette %in% c("Blues", "BuGn", "BuPu", "GnBu", "Greens", "Greys", "Oranges", "OrRd", "PuBu", "PuBuGn", "PuRd", "Purples", "RdPu", "Reds", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd")){
+          
+          n <- 9
+          
+          out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(length(levels_x))
+          
         }else{
-          colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(9, palette)[-1])(length(levels))
+          
+          n <- 11  
+          
+          out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, 5, 6, 7, n)])(length(levels_x))
+          
         }
         
+        
+        
+        
+        if(rev){
+          out <- rev(out)
+        }
+        
+        names(out) <- levels_x
+        
+        
+        # barplot(rep(1, length(out)), col = out)
+        
+        
       }else{
-        colors <- grDevices::colorRampPalette(palette)(length(levels))
-        names(colors) <- levels
+        out <- grDevices::colorRampPalette(palette)(length(levels_x))
+        names(out) <- levels_x
       }
       
       
     }
     
     
-    # barplot(rep(1, length(colors)), col = colors)
+    # barplot(rep(1, length(out)), col = out)
     
     
   }else{
     
-    stopifnot(length(colors) >= length(levels))
+    stopifnot(length(colors) >= length(levels_x))
     
     if(is.null(names(colors))){
-      colors <- colors[1:length(levels)]
-      names(colors) <- levels
+      out <- colors[1:length(levels_x)]
+      names(out) <- levels_x
     }else{
-      stopifnot(all(levels %in% names(colors)))
-      colors <- colors[levels]
+      stopifnot(all(levels_x %in% names(colors)))
+      out <- colors[levels_x]
     }
     
     ### Colors have to be unique for ggsurvplot. Otherwise, it does not work.
     if(!allow_duplicated){
-      stopifnot(sum(duplicated(colors)) == 0)
+      stopifnot(sum(duplicated(out)) == 0)
     }
     
     
   }
   
   
-  return(colors)
+  return(out)
   
   
 }
+
+
+
+
+#' @rdname format_colors_cat
+#' @export
+format_colors <- function(x, colors = NULL, palette = NULL, rev = FALSE, allow_duplicated = TRUE){
+  
+  format_colors_cat(x, colors = colors, palette = palette, rev = rev, allow_duplicated = allow_duplicated)
+  
+}
+
+
+
+
+
+
+#' @rdname format_colors_cat
+#' @param strata Vector of categorical values of stratification groups.
+#' @param palette List with palettes for the different strata.
+#' @return Named vector of unique colors for all unique values of x.
+#' @export
+format_colors_cat_strata <- function(x, strata = NULL, palette = NULL, rev = FALSE){
+  
+  
+  x <- x[!is.na(x)]
+  
+  if(!is.factor(x)){
+    x <- factor(x, levels = unique(x))
+  }
+  
+  levels_x <- levels(x)
+  
+  
+  
+  if(is.null(strata)){
+    strata <- "strata_dummy"
+  }
+  
+  strata <- strata[!is.na(strata)]
+  
+  if(!is.factor(strata)){
+    strata <- factor(strata, levels = unique(strata))
+  }
+  
+  levels_strata <- levels(strata)
+  
+  
+  if(is.null(palette)){
+    
+    palette <- lapply(seq_along(levels_strata), function(i){
+      c("Oranges", "Blues", "Greens", "Purples", "Reds", "Greys")[i]
+    })
+    
+  }else{
+    
+    stopifnot(length(palette) == length(levels_strata))
+    
+  }
+  
+  
+  
+  out <- lapply(seq_along(levels_strata), function(i){
+    # i = 1 
+    
+    x <- paste0(levels_strata[i], ", ", levels_x)
+    
+    
+    out <- format_colors_cat(x, palette = palette[[i]], rev = rev, allow_duplicated = FALSE)
+    
+    
+  })
+  
+  
+  out <- unlist(out, use.names = TRUE)
+  
+  names(out) <- gsub("^strata_dummy, ", "", names(out))
+  
+  
+  out
+  
+  
+  
+}
+
+
+
+
+
+compute_upper_whisker <- function(x, range = 1.5){
+  
+  
+  first_quartile <- quantile(x, probs = 0.25, na.rm = TRUE)
+  third_quartile <- quantile(x, probs = 0.75, na.rm = TRUE)
+  
+  IQR <- third_quartile - first_quartile
+  
+  upper_whisker <- as.numeric(third_quartile + range * IQR)
+  
+  
+}
+
+
+
+compute_lower_whisker <- function(x, range = 1.5){
+  
+  
+  first_quartile <- quantile(x, probs = 0.25, na.rm = TRUE)
+  third_quartile <- quantile(x, probs = 0.75, na.rm = TRUE)
+  
+  IQR <- third_quartile - first_quartile
+  
+  lower_whisker <- as.numeric(first_quartile - range * IQR)
+  
+  
+}
+
+
+
+
+
+
+#' Generate colors for ComplexHeatmap for numerical variables 
+#' 
+#' @param x Vector of numerical values for which we want to specify colors.
+#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral".
+#' @return Vector of unique colors for all unique values of x.
+#' 
+#' @examples 
+#' 
+#' x <- rnorm(20)
+#' 
+#' palette <- "Spectral"
+#' 
+#' format_colors_num(x, trim_values = 2.5)
+#' 
+#' 
+#' @export
+format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, trim_values = NULL, trim_prop = NULL, trim_range = NULL){
+  
+  
+  x <- c(x)
+  x <- x[!is.na(x)]
+  
+  if(is.null(palette)){
+    if(centered){
+      palette <- c("dodgerblue1", "dodgerblue3", "dodgerblue4", "black", "firebrick4", "firebrick3", "firebrick1")
+      # barplot(rep(1, length(palette)), col = palette)
+    }else{
+      palette <- rev(grDevices::hcl.colors(10, palette = "viridis"))
+    }
+  }
+  
+  
+  if(length(palette) == 1){
+    
+    if(palette %in% c("Blues", "BuGn", "BuPu", "GnBu", "Greens", "Greys", "Oranges", "OrRd", "PuBu", "PuBuGn", "PuRd", "Purples", "RdPu", "Reds", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd")){
+      
+      n <- 9
+      
+      colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(n)
+      
+    }else{
+      
+      n <- 11  
+      
+      colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(n)
+      
+    }
+    
+    if(rev){
+      colors <- rev(colors)
+    }
+    
+    # barplot(rep(1, length(colors)), col = colors)
+    
+    
+  }else{
+    
+    colors <- palette
+    
+  }
+  
+  
+  if(centered){
+    
+    
+    if(is.null(trim_values) && is.null(trim_prop) && is.null(trim_range)){
+      max_abs_value <- max(abs(range(x, na.rm = TRUE)))
+    }
+    
+    
+    if(!is.null(trim_range)){
+      ### Use whiskers
+      
+      lower_whisker <- compute_lower_whisker(x, range = trim_range)
+      upper_whisker <- compute_upper_whisker(x, range = trim_range)
+      
+      max_abs_value <- max(abs(c(lower_whisker, upper_whisker)))
+    }
+    
+    
+    if(!is.null(trim_prop)){
+      ### Use quantiles 
+      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)))
+    }
+    
+    
+    if(!is.null(trim_values)){
+      max_abs_value <- max(trim_values)
+    }
+    
+    
+    breaks <- seq(-max_abs_value, max_abs_value, length.out = length(colors))
+    
+    out <- circlize::colorRamp2(breaks, colors)
+    
+    
+  }else{
+    
+    
+    
+    if(is.null(trim_values) && is.null(trim_prop) && is.null(trim_range)){
+      range_value <- range(x, na.rm = TRUE)
+    }
+    
+    
+    if(!is.null(trim_range)){
+      ### Use whiskers
+      
+      lower_whisker <- compute_lower_whisker(x, range = trim_range)
+      upper_whisker <- compute_upper_whisker(x, range = trim_range)
+      
+      range_value <- c(lower_whisker, upper_whisker)
+    }
+    
+    
+    if(!is.null(trim_prop)){
+      ### Use quantiles 
+      range_value <- quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)
+    }
+    
+    
+    if(!is.null(trim_values)){
+      range_value <- trim_values
+    }
+    
+    
+    breaks <- seq(range_value[1], range_value[2], length.out = length(colors))
+    
+    out <- circlize::colorRamp2(breaks, colors)
+    
+    
+    
+  }
+  
+  
+  return(out)
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
