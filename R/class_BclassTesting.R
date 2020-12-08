@@ -128,7 +128,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, lineheight = "auto"){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks_by = NULL, lineheight = "auto"){
   
   # lineheight = unit(1, "cm")
   
@@ -136,6 +136,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   out <- boutput(x)
   res <- bresults(x)
   caption <- bcaption(x)
+  
   
   ### ----------------------------------------------------------------------
   ### Some checks
@@ -165,9 +166,9 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   if(mean_var %in% c("HR", "OR") && is.null(clip)){
-    clip = c(0, 5)
+    clip = c(0, 7)
   }else if(is.null(clip)){
-    clip = c(-20, 20)
+    clip = c(-40, 40)
   }
   
   if(mean_var %in% c("HR", "OR")){
@@ -177,6 +178,25 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   }
 
   
+  if(mean_var %in% c("HR", "OR") && is.null(xticks_by)){
+    
+    xticks_by <- 0.2
+    xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
+    xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
+    xticks <- sort(unique(c(xticks_left, xticks_right)))
+    
+  }else if(is.null(xticks_by)){
+    
+    xticks_by <- 5
+    xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
+    xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
+    xticks <- sort(unique(c(xticks_left, xticks_right)))
+    
+  }
+  
+
+  
+
   
   ### ----------------------------------------------------------------------
   
@@ -223,16 +243,18 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     is.summary = c(TRUE, rep(FALSE, nrow(res))), xlog = FALSE, xlab = xlab, zero = zero,
     title = caption,
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
-    boxsize = 0.3,
+    boxsize = 0.5,
     hrzl_lines = hrzl_lines, 
     graphwidth = grid::unit(10, "cm"), colgap = grid::unit(6, "mm"),
     lineheight = lineheight,
-    lwd.ci = 2, lwd.xaxis = 2, lwd.zero = 2, 
+    lwd.ci = 2.5, lwd.xaxis = 2, lwd.zero = 2.5, 
     txt_gp = forestplot::fpTxtGp(xlab = grid::gpar(fontsize = 20), ticks = grid::gpar(fontsize = 18)), 
     mar = grid::unit(c(5, rep(5, times = 3)), "mm"), # grid::unit(rep(5, times = 4)
     clip = clip, 
     ci.vertices = TRUE,
-    align = "l")
+    align = "l",
+    xticks = xticks,
+    xticks.digits = 2)
   
   
 })

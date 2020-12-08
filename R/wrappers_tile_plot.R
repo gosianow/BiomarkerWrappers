@@ -13,7 +13,7 @@
 #' @param variable_names Named vector with nicer variable names.
 #' @param skip_NAs Logical. Whether to skip NAs.
 #' @export
-wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, order = TRUE, return_plotlist = FALSE){
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
@@ -24,7 +24,11 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
     data <- data[complete.cases(complete.cases(data[, y_vars, drop = FALSE])), , drop = FALSE]
   }
   
-  data <- data[order2(data[, y_vars, drop = FALSE], decreasing = TRUE), , drop = FALSE]
+  
+  if(order){
+    data <- data[order2(data[, y_vars, drop = FALSE], decreasing = TRUE), , drop = FALSE]
+  }
+  
   
   x_var <- "dummy_x_var"
   
@@ -63,7 +67,13 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
   })
   
   
-  plot_grid(plotlist = plotlist, ncol = 1, align = "v", axis = "lr") 
+  if(return_plotlist){
+    plotlist
+  }else{
+    plot_grid(plotlist = plotlist, ncol = 1, align = "v", axis = "lr")  
+  }
+  
+  
   
   
 }
@@ -77,7 +87,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
 
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, return_plotlist = FALSE){
   
   
   stopifnot(length(y_vars) >= 1)
@@ -192,9 +202,11 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
   })
   
-  
-  plot_grid(plotlist = plotlist, ncol = 1, align = "v", axis = "lr") 
-  
+  if(return_plotlist){
+    plotlist
+  }else{
+    plot_grid(plotlist = plotlist, ncol = 1, align = "v", axis = "lr") 
+  }
   
   
 }

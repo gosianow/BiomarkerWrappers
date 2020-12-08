@@ -362,7 +362,9 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   
   ggdata_total[, facet_var] <- factor(ggdata_total[, facet_var], levels = levels(ggdata[, facet_var]))
   
-  ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "%")
+  ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "% (", ggdata_total$Count, ")")
+  # ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "%")
+    
   
   ggdata_total$Label_Total <- paste0("(", ggdata_total$Count_Total, ")")
   

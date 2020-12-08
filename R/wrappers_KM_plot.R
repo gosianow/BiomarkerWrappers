@@ -512,7 +512,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 #' KM plots with biomarker effect per treatment arm
 #' 
 #' @inheritParams wrapper_KM_plot_interaction
-#' @param colors If treatment = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
+#' @param colors If treatment = NULL, then a vector. Otherwise, a list of length equal to treatment levels.
 #' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
   strat2_var = NULL,
@@ -648,9 +648,9 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 #' KM plot with treatment effect per biomarker subgroup
 #' 
 #' @inheritParams wrapper_KM_plot_interaction
-#' @param colors If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to tratment levels.
+#' @param colors If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to treatment levels.
 #' @export
-wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, biomarker_var = NULL, treatment_var, 
+wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_var = NULL,
   strat2_var = NULL,
   colors = NULL, 
   variable_names = NULL, 
