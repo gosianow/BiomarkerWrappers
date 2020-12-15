@@ -7,26 +7,25 @@
 \usage{
 wrapper_tile_plot1_core(
   data,
-  x_var,
   y_vars,
   colors = NULL,
   variable_names = NULL,
-  skip_NAs = FALSE
+  skip_NAs = FALSE,
+  order = TRUE,
+  return_plotlist = FALSE
 )
 
 wrapper_tile_plot2_core(
   data,
-  x_var,
   y_vars,
   colors = NULL,
   variable_names = NULL,
-  skip_NAs = FALSE
+  skip_NAs = FALSE,
+  return_plotlist = FALSE
 )
 }
 \arguments{
 \item{data}{Data frame.}
-
-\item{x_var}{Name of a variable that defined objects unique IDs.}
 
 \item{y_vars}{Names of variables to be plotted as tiles. Those variables must be factors.}
 

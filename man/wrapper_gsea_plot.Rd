@@ -27,7 +27,7 @@ wrapper_gsea_plot(
 )
 }
 \arguments{
-\item{x}{TopTable with DGE results, for example, from limma.}
+\item{x}{TopTable with statistic, for example, DGE results from limma.}
 }
 \description{
 Plot GSEA statistics ranks

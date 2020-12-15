@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_ORA_plot.R
 \name{wrapper_ora_dotplot_multiple}
 \alias{wrapper_ora_dotplot_multiple}
-\title{Dot plot with ORA results for a single contrast}
+\title{Dot plot with ORA results for multiple contrasts}
 \usage{
 wrapper_ora_dotplot_multiple(
   x,
@@ -25,5 +25,5 @@ wrapper_ora_dotplot_multiple(
 \item{x}{TopTable with ORA results.}
 }
 \description{
-Dot plot with ORA results for a single contrast
+Dot plot with ORA results for multiple contrasts
 }

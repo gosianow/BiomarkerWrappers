@@ -8,15 +8,16 @@ wrapper_KM_plot_treatment(
   data,
   tte_var,
   censor_var,
-  biomarker_var = NULL,
   treatment_var,
+  biomarker_var = NULL,
   strat2_var = NULL,
   colors = NULL,
   variable_names = NULL,
-  title = NULL,
+  title = TRUE,
+  xlab = TRUE,
   strat1_label_both = TRUE,
   strat2_label_both = TRUE,
-  legend_colors_title = NULL,
+  legend_colors_title = TRUE,
   legend_position = c(0.03, 0.03),
   legend_justification = c(0, 0),
   break_time_by = NULL,
@@ -44,7 +45,7 @@ wrapper_KM_plot_treatment(
 
 \item{strat2_var}{Name of the second stratification variable.}
 
-\item{colors}{If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to tratment levels.}
+\item{colors}{If biomarker_var = NULL, then a vector. Otherwise, a list of length equal to treatment levels.}
 }
 \description{
 KM plot with treatment effect per biomarker subgroup

@@ -4,7 +4,7 @@
 \alias{wrapper_print_plot_grid}
 \title{Spit a list of plots into chunks and plot them in a grid layout}
 \usage{
-wrapper_print_plot_grid(plotlist, nsplit = 2, ncol = 2, nrow = 1)
+wrapper_print_plot_grid(plotlist, nsplit = NULL, ncol = 2, nrow = NULL)
 }
 \description{
 Spit a list of plots into chunks and plot them in a grid layout
