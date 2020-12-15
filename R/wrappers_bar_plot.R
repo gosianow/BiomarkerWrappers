@@ -364,7 +364,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   
   ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "% (", ggdata_total$Count, ")")
   # ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "%")
-    
+  
   
   ggdata_total$Label_Total <- paste0("(", ggdata_total$Count_Total, ")")
   
@@ -863,6 +863,249 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars,
 
 
 
+
+
+
+#' Bar plot with biomarker effect on response per treatment arm
+#' 
+#' @inheritParams wrapper_bar_plot_core_strat
+#' @param colors_bar Vector with colors for treatment X response interaction.
+#' @export
+wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatment_var = NULL,
+  facet_var = NULL, strat2_var = NULL,
+  colors_bar = NULL, 
+  variable_names = NULL, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
+  skip_levels = NULL, method = "facet", 
+  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  label_size = 3.5, label_angle = 0, label_nudge = 0.025,
+  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
+  background_grid_major = "none",
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
+  
+  
+  ## biomarker_var and treatment_var must be factors for the color definition
+  stopifnot(length(biomarker_var) == 1)
+  stopifnot(is.factor(data[, biomarker_var]))
+  
+  
+  if(!is.null(treatment_var)){
+    stopifnot(length(treatment_var) == 1)
+    stopifnot(is.factor(data[, treatment_var]))
+  }
+  
+  
+  x_var <- biomarker_var
+  strat1_var <- treatment_var
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  if(is.logical(title)){
+    if(title){
+      title <- variable_names[biomarker_var]
+    }else{
+      title <- NULL
+    }
+  }
+  
+  
+  # -------------------------------------------------------------------------
+  # Generate the treatment-response interaction covariate
+  # -------------------------------------------------------------------------
+  
+  if(!is.null(treatment_var)){
+    
+    
+    stopifnot(!"treatment_response_interaction" %in% colnames(data))
+    
+    data$treatment_response_interaction <- interaction(data[, treatment_var], data[, response_var], lex.order = TRUE, sep = ", ")
+    
+    y_var <- "treatment_response_interaction"
+    
+    variable_names[[y_var]] <- structure(paste0(variable_names[treatment_var], ", ", variable_names[response_var]), names = y_var)
+    
+    
+    if(!is.null(skip_levels)){
+      
+      skip_levels <- paste0(rep(levels(data[, treatment_var]), each = length(skip_levels)), ", ", skip_levels)
+      
+    }
+    
+    
+    
+    # -------------------------------------------------------------------------
+    # Colors
+    # -------------------------------------------------------------------------
+    
+    if(is.null(colors_bar)){
+      
+      colors_bar <- format_colors_cat_strata(levels(data[, response_var]), strata = levels(data[, treatment_var]))
+      
+      # barplot(rep(1, length(colors_bar)), col = colors_bar)
+      
+    }else{
+      
+      colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE)
+      
+    }
+    
+    
+    
+  }else{
+    
+    y_var <- response_var
+    
+    # -------------------------------------------------------------------------
+    # Colors
+    # -------------------------------------------------------------------------
+    
+    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE)
+    
+  }
+  
+  
+  
+  # -------------------------------------------------------------------------
+  # Plot
+  # -------------------------------------------------------------------------
+  
+  
+  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var,
+    colors_bar = colors_bar, 
+    variable_names = variable_names, 
+    xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
+    skip_levels = skip_levels, method = method, 
+    show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
+    label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
+    title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
+    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+    background_grid_major = background_grid_major,
+    strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
+  
+  
+  
+  ggpl
+  
+  
+  
+}
+
+
+
+
+
+
+
+#' Bar plot with treatment effect on response per biomarker subgroup
+#' 
+#' @inheritParams wrapper_bar_plot_core_strat
+#' @param colors_bar Vector with colors for treatment X response interaction.
+#' @export
+wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomarker_var = NULL,
+  facet_var = NULL, strat2_var = NULL,
+  colors_bar = NULL, 
+  variable_names = NULL, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
+  skip_levels = NULL, method = "facet", 
+  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  label_size = 3.5, label_angle = 0, label_nudge = 0.025,
+  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
+  background_grid_major = "none",
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
+  
+  
+  ## biomarker_var and treatment_var must be factors for the color definition
+  if(!is.null(biomarker_var)){
+    stopifnot(length(biomarker_var) == 1)
+    stopifnot(is.factor(data[, biomarker_var]))
+  }
+  stopifnot(length(treatment_var) == 1)
+  stopifnot(is.factor(data[, treatment_var]))
+  
+  x_var <- treatment_var
+  strat1_var <- biomarker_var
+  
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  if(is.logical(title)){
+    if(title){
+      title <- variable_names[biomarker_var]
+    }else{
+      title <- NULL
+    }
+  }
+  
+  
+  # -------------------------------------------------------------------------
+  # Generate the treatment-response interaction covariate
+  # -------------------------------------------------------------------------
+  
+  stopifnot(!"treatment_response_interaction" %in% colnames(data))
+  
+  data$treatment_response_interaction <- interaction(data[, treatment_var], data[, response_var], lex.order = TRUE, sep = ", ")
+  
+  y_var <- "treatment_response_interaction"
+  
+  variable_names[[y_var]] <- structure(paste0(variable_names[treatment_var], ", ", variable_names[response_var]), names = y_var)
+  
+  
+  if(!is.null(skip_levels)){
+    
+    skip_levels <- paste0(rep(levels(data[, treatment_var]), each = length(skip_levels)), ", ", skip_levels)
+    
+  }
+  
+  # -------------------------------------------------------------------------
+  # Colors
+  # -------------------------------------------------------------------------
+  
+  if(is.null(colors_bar)){
+    
+    colors_bar <- format_colors_cat_strata(levels(data[, response_var]), strata = levels(data[, treatment_var]))
+    
+    # barplot(rep(1, length(colors_bar)), col = colors_bar)
+    
+  }else{
+    
+    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE)
+    
+  }
+  
+  
+  # -------------------------------------------------------------------------
+  # Plot
+  # -------------------------------------------------------------------------
+  
+  
+  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var,
+    colors_bar = colors_bar, 
+    variable_names = variable_names, 
+    xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
+    legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
+    skip_levels = skip_levels, method = method, 
+    show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
+    label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
+    title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
+    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+    background_grid_major = background_grid_major,
+    strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
+  
+  
+  
+  ggpl
+  
+  
+  
+}
 
 
 

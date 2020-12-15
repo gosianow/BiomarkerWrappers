@@ -1234,7 +1234,27 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
           
           n <- 9
           
-          out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(length(levels_x))
+          if(length(levels_x) == 2){
+            skip_colors <- c(2, 3, 4, n-1)
+          }else if(length(levels_x) <= 4){
+            skip_colors <- c(2, n-1)
+          }else{
+            skip_colors <- NULL
+          }
+          
+          
+          out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, skip_colors, n)])(length(levels_x))
+          
+        }else if(palette %in% c("Oranges2", "Blues2")){
+          
+          palette_colors <- list(
+            "Oranges2" = grDevices::colorRampPalette(c("white", "#F69C26"))(9)[-c(1:4)],
+            "Blues2" = grDevices::colorRampPalette(c("white", "#297cbe"))(9)[-c(1:4)]
+          )
+          
+          out <- grDevices::colorRampPalette(palette_colors[[palette]])(length(levels_x))
+          
+          # barplot(rep(1, length(out)), col = out)
           
         }else{
           
@@ -1274,7 +1294,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
     stopifnot(length(colors) >= length(levels_x))
     
     if(is.null(names(colors))){
-      out <- colors[1:length(levels_x)]
+      out <- colors[seq_along(levels_x)]
       names(out) <- levels_x
     }else{
       stopifnot(all(levels_x %in% names(colors)))
@@ -1345,7 +1365,7 @@ format_colors_cat_strata <- function(x, strata = NULL, palette = NULL, rev = FAL
   if(is.null(palette)){
     
     palette <- lapply(seq_along(levels_strata), function(i){
-      c("Oranges", "Blues", "Greens", "Purples", "Reds", "Greys")[i]
+      c("Blues", "Oranges", "Greens", "Purples", "Reds", "Greys")[i]
     })
     
   }else{
@@ -1555,49 +1575,6 @@ format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, t
   
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#' Format or create colors for factor and numerical variables in a data frame
-#' 
-#' 
-#' @param data Data frame.
-#' @param color_list Optional color list with color definitions for some of the variables.
-#' @param colors Vector of colors longer or equal the number of levels. Can be named or non-named. If NULL, colors are created.
-#' @param palette_cat Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges" for categorical variables.
-#' @param palette_num Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette with 9 colors e.g. "Oranges" for numerical variables.
-#' @return Named list with colors for factor and numerical variables in a data frame.
-#' @export
-format_color_list <- function(data, color_list = NULL, colors = NULL, palette_cat = NULL, palette_num = NULL, allow_duplicated = TRUE){
-  
-  
-  
-  
-  
-  
-  
-}
-
 
 
 

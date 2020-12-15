@@ -264,115 +264,16 @@ wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up",
   stats_prefixes = c("NGenes", "Genes", "Median.t"), sep = "_", 
   caption = NULL){
   
-  # -------------------------------------------------------------------------
-  # Checks
-  # -------------------------------------------------------------------------
   
-  stopifnot(length(geneset_vars) >= 1)
-  stopifnot(all(geneset_vars %in% colnames(x)))
-  
-  stopifnot(topn > 1)
-  
-  stopifnot(sort_by %in% c("none", "pval"))
-
-  stopifnot(length(direction) == 1)
-  stopifnot(direction %in% c("up", "down", "both"))
-  
-  if(direction == "both"){
-    direction_print <- "up-, down-"
-  }else{
-    direction_print <- paste0(direction, "-")  
-  }
-  
-  # -------------------------------------------------------------------------
-  # Preprocessing
-  # -------------------------------------------------------------------------
+  out <- wrapper_dispaly_significant_gsea(x, contrast = contrast, direction = direction, 
+    sort_by = sort_by, topn = topn, pval = pval, 
+    geneset_vars = geneset_vars, direction_prefix = direction_prefix, 
+    pval_prefix = pval_prefix, adjp_prefix = adjp_prefix, 
+    stats_prefixes = stats_prefixes, sep = sep, 
+    caption = caption)
   
   
-  ## We add '^' because we want to match expression at the beginning of the string
-  contrasts <- gsub(paste0("^", direction_prefix, sep), "", grep(paste0("^", direction_prefix, sep), colnames(x), value = TRUE))
-  
-  stopifnot(contrast %in% contrasts)
-  
-  
-  ## Find columns corresponding to the contrast and subset the data
-  ## We add '$' because we want to match expression at the end of the string
-  
-  contrast_vars_display <- paste0(c(direction_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast)
-  
-  x <- x[ , c(geneset_vars, contrast_vars_display), drop = FALSE]
-  
-  colnames(x) <- gsub(paste0(sep, contrast, "$"), "", colnames(x))
-  
-  
-  ## Sort
-  if(sort_by == "pval"){
-    x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
-  }else{
-    x_sort <- x
-  }
-
-  ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval, , drop = FALSE]
-  
-  
-  ## Subset by direction
-  if(direction == "up"){
-    x_sort <- x_sort[x_sort[, direction_prefix] == "Up", , drop = FALSE]
-  }else if(direction == "down"){
-    x_sort <- x_sort[x_sort[, direction_prefix] == "Down", , drop = FALSE]
-  }
-  
-  
-  if(nrow(x_sort) == 0){
-    
-    caption <- paste0("There are no enriched gene sets (", adjp_prefix, " <= ", pval, ") by ", direction_print, "regulated genes when comparing ", contrast, ".")
-    
-    ## Remove all undescores from the caption because they are problematic when rendering to PDF
-    caption <- gsub("_", " ", caption)
-    
-    return(BclassDE(caption = caption))
-    
-  }
-  
-  
-  res <- x_sort[1:(min(nrow(x_sort), topn)), , drop = FALSE]
-  rownames(res) <- NULL
-  
-  out <- res %>% 
-    mutate_at(pval_prefix, format_pvalues2) %>% 
-    mutate_at(adjp_prefix, format_pvalues2)
-  
-  
-  
-  # --------------------------------------------------------------------------
-  # Generate caption
-  # --------------------------------------------------------------------------
-  
-  
-  if(is.null(caption)){
-
-    caption <- paste0("List of gene sets enriched (", adjp_prefix, " <= ", pval, ") by ", direction_print, "regulated genes when comparing ", contrast, ".")
-
-    
-    if(nrow(x_sort) >  topn){
-      
-      caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " gene sets.")
-      
-    }
-    
-  }
-  
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
-  caption <- gsub("_", " ", caption)
-  
-  rownames(res) <- NULL
-  rownames(out) <- NULL
-  
-  bout <- BclassDE(results = res, output = out, caption = caption)
-  
-  
-  return(bout)
+  return(out)
   
   
 }

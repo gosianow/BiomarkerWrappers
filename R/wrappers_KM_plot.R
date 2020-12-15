@@ -442,46 +442,18 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   # Colors
   # -------------------------------------------------------------------------
   
-  
-  nlevels_biomarker <- nlevels(data[, biomarker_var])
-  levels_biomarker <- levels(data[, biomarker_var])
-  nlevels_treatment <- nlevels(data[, treatment_var])
-  levels_treatment <- levels(data[, treatment_var])
-  
-  
   if(is.null(colors)){
-    ## Some default colors that work for max 4 treatment levels
     
-    if(nlevels_treatment > 4){
-      stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
-    }
-    
-    
-    # levels_treatment <- 1:4
-    # levels_biomarker <- 1:4
-    
-    
-    default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
-    
-    colors <- unlist(lapply(seq_along(levels_treatment), function(i){
-      format_colors(paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
-    }))
-    
+    colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
     
     # barplot(rep(1, length(colors)), col = colors)
-
-    
     
   }else{
     
-    colors <- unlist(lapply(1:nlevels_treatment, function(i){
-      # i = 1
-      out <- format_colors(levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
-      names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
-      return(out)
-    }))
+    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
     
   }
+  
   
   # -------------------------------------------------------------------------
   # Plot
@@ -532,8 +504,12 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   ## biomarker_var and treatment_var must be factors for the color definition
   stopifnot(length(biomarker_var) == 1)
   stopifnot(is.factor(data[, biomarker_var]))
-  stopifnot(length(treatment_var) == 1)
-  stopifnot(is.factor(data[, treatment_var]))
+  
+  if(!is.null(treatment_var)){
+    stopifnot(length(treatment_var) == 1)
+    stopifnot(is.factor(data[, treatment_var]))
+  }
+  
   
 
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -568,43 +544,27 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     # -------------------------------------------------------------------------
     
     
-    nlevels_biomarker <- nlevels(data[, biomarker_var])
-    levels_biomarker <- levels(data[, biomarker_var])
-    nlevels_treatment <- nlevels(data[, treatment_var])
-    levels_treatment <- levels(data[, treatment_var])
-    
-    
     if(is.null(colors)){
-      ## Some default colors that work for max 4 treatment levels
       
-      if(nlevels_treatment > 4){
-        stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
-      }
+      colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
       
-      default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
-      
-      colors <- unlist(lapply(seq_along(levels_treatment), function(i){
-        format_colors(paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
-      }))
-      
+      # barplot(rep(1, length(colors)), col = colors)
       
     }else{
       
-      colors <- unlist(lapply(1:nlevels_treatment, function(i){
-        # i = 1
-        out <- format_colors(levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
-        names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
-        return(out)
-      }))
+      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
       
     }
     
-    
     strat1_var <- treatment_var
+    
     
   }else{
     
     covariate_var <- biomarker_var
+    
+    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
+    
     strat1_var <- NULL
     
     
@@ -666,8 +626,11 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   
   
   ## biomarker_var and treatment_var must be factors for the color definition
-  stopifnot(length(biomarker_var) == 1)
-  stopifnot(is.factor(data[, biomarker_var]))
+  if(!is.null(biomarker_var)){
+    stopifnot(length(biomarker_var) == 1)
+    stopifnot(is.factor(data[, biomarker_var]))
+  }
+  
   stopifnot(length(treatment_var) == 1)
   stopifnot(is.factor(data[, treatment_var]))
   
@@ -702,34 +665,15 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     # -------------------------------------------------------------------------
     
     
-    nlevels_biomarker <- nlevels(data[, biomarker_var])
-    levels_biomarker <- levels(data[, biomarker_var])
-    nlevels_treatment <- nlevels(data[, treatment_var])
-    levels_treatment <- levels(data[, treatment_var])
-    
-    
     if(is.null(colors)){
-      ## Some default colors that work for max 4 treatment levels
       
-      if(nlevels_treatment > 4){
-        stop("There are no default colors available when number of treatment levels is higher than 4. Please, provide the colors.")
-      }
+      colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
       
-      default_pals_per_treatment <- c("Oranges", "Blues", "Greens", "Purples")
-      
-      colors <- unlist(lapply(seq_along(levels_treatment), function(i){
-        format_colors(paste0(levels_treatment[i], ", ", levels_biomarker), palette = default_pals_per_treatment[[i]], allow_duplicated = FALSE)
-      }))
-      
+      # barplot(rep(1, length(colors)), col = colors)
       
     }else{
       
-      colors <- unlist(lapply(1:nlevels_treatment, function(i){
-        # i = 1
-        out <- format_colors(levels_biomarker, colors = colors[[i]], allow_duplicated = FALSE)
-        names(out) <- paste0(levels_treatment[i], ", ", levels_biomarker)
-        return(out)
-      }))
+      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
       
     }
     
@@ -739,6 +683,9 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   }else{
     
     covariate_var <- treatment_var
+    
+    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = FALSE)
+    
     strat1_var <- NULL
     
   }

@@ -15,13 +15,18 @@
 
 #' Plot GSEA statistics ranks
 #' 
-#' @param x TopTable with DGE results, for example, from limma.
+#' @param x TopTable with statistic, for example, DGE results from limma.
 #' @export
 wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
   gsea_results = NULL, geneset_var = "GenesetID", adjp_var = "adj.P.Val", color_point_var = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
   title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70){
+  
+  
+  if(contrast == ""){
+    sep <- ""
+  }
   
   
   ## Wrap the title so it can be nicely displayed in the plots
