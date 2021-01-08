@@ -14,7 +14,7 @@ wrapper_cameraPR(
   gene_var = "EntrezIDs",
   statistic_prefix = "t",
   sep = "_",
-  display_topn = 10
+  topn_genes = 20
 )
 }
 \arguments{

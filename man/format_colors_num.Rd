@@ -17,6 +17,8 @@ format_colors_num(
 \arguments{
 \item{x}{Vector of numerical values for which we want to specify colors.}
 
+\item{centered}{Logical. Default value TRUE.}
+
 \item{palette}{Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral".}
 }
 \value{

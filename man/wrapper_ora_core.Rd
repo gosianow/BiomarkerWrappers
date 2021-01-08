@@ -15,7 +15,7 @@ wrapper_ora_core(
   method = "hypergeometric",
   min_GS_size = 10,
   max_GS_size = 500,
-  display_topn = 20
+  topn_genes = 20
 )
 }
 \arguments{

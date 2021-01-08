@@ -45,7 +45,7 @@ wrapper_KM_plot_biomarker(
 
 \item{strat2_var}{Name of the second stratification variable.}
 
-\item{colors}{If treatment = NULL, then a vector. Otherwise, a list of length equal to treatment levels.}
+\item{colors}{Vector with colors for treatment X biomarker levels.}
 }
 \description{
 KM plots with biomarker effect per treatment arm

@@ -9,6 +9,7 @@
 # cluster_rows <- hclust(d, method = "ward.D2")
 
 
+### Method from Crowell et al. 2020 https://www.nature.com/articles/s41467-020-19894-4
 
 # cols_lfc <- grep(paste0("^", lfc_prefix, sep), colnames(x), value = TRUE)
 # 
@@ -55,10 +56,10 @@
 #' @export
 wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", pval = 0.05, title = "", 
-  axis_text_x_angle = 40, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
-  axis_text_y_size = 10, title_size = 12,
+  axis_text_x_angle = 60, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
+  axis_text_y_size = 10, axis_text_y_width = 80, title_size = 12,
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
-  trim_limits = 2, radius_range = c(10, 3),
+  trim_limits = 3, radius_range = c(10, 3),
   legend_position = "right"){
   
   
@@ -106,7 +107,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "log
   data$contrast <- factor(data$contrast, levels = contrasts)
   
   ## Shorten the gene set names so they can be nicely displayed in the plots
-  data[, gene_var] <- factor(stringr::str_wrap(data[, gene_var], width = 70), levels = stringr::str_wrap(rev(x[, gene_var]), width = 70))
+  data[, gene_var] <- factor(stringr::str_wrap(data[, gene_var], width = axis_text_y_width), levels = stringr::str_wrap(rev(x[, gene_var]), width = axis_text_y_width))
   
   
   pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.1, 0.2, 1)
@@ -189,19 +190,20 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", lfc_prefix = "log
 wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", draw = TRUE, title = "",
-  color_low = '#42399B', color_mid = "white", color_high = '#D70131', trim_limits = NULL,
+  color_low = '#42399B', color_mid = "white", color_high = '#D70131', trim_limits = 3,
   rect_gp = grid::gpar(col = "grey"), point_size = 3,
   cluster_rows = FALSE, 
   row_split = NULL, column_split = NULL,
   show_row_names = TRUE, show_column_names = TRUE, 
-  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), ...){
+  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), 
+  row_names_width = 80, ...){
   
   
   stopifnot(length(gene_var) == 1)
   
   
   ## Shorten the gene set names so they can be nicely displayed in the plots
-  rownames(x) <- stringr::str_wrap(x[, gene_var], width = 70)
+  rownames(x) <- stringr::str_wrap(x[, gene_var], width = row_names_width)
   
   
   data_lfc <- wrapper_extract_from_topTable(x, extract_prefix = lfc_prefix, sep = sep)
@@ -326,19 +328,21 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' @param x Matrix with expression to plot
 #' @export
 wrapper_gene_expression_heatmap <- function(x,  
-  name = "sample\nlogFC", draw = TRUE, title = "", 
-  color_low = 'cornflowerblue', color_mid = "royalblue4", color_high = '#ff717e', trim_limits = NULL,
+  name = "z-score", title = "", draw = TRUE,
+  colors = NULL, trim_limits = 2.5,
   cluster_rows = FALSE, cluster_columns = FALSE,
   left_annotation = NULL, top_annotation = NULL, 
   row_split = NULL, column_split = NULL,
   row_title = NULL, column_title = NULL, 
   show_row_names = TRUE, show_column_names = FALSE, 
-  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), ...){
+  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), 
+  row_names_width = 80, ...){
   
-  ### Colors for z-score
-  # color_low = 'cornflowerblue', color_mid = "black", color_high = 'orangered'
   
   matrix <- as.matrix(x)
+  
+  ## Shorten the row names so they can be nicely displayed in the plots
+  rownames(matrix) <- stringr::str_wrap(rownames(matrix), width = row_names_width)
   
   
   # ---------------------------------------------------------------------------
@@ -356,7 +360,11 @@ wrapper_gene_expression_heatmap <- function(x,
   }
   
   
-  colors_matrix <- circlize::colorRamp2(c(-max_abs_value, 0, max_abs_value), c(color_low, color_mid, color_high))
+  if(!is.null(colors)){
+    colors_matrix <- colors
+  }else{
+    colors_matrix <- format_colors_num(matrix, trim_values = max_abs_value)
+  }
   
   breaks <- seq(-max_abs_value, max_abs_value, 1)
   

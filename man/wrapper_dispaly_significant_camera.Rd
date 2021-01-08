@@ -15,7 +15,7 @@ wrapper_dispaly_significant_camera(
   direction_prefix = "Direction",
   pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",
-  stats_prefixes = c("NGenes", "Genes", "Median.t"),
+  stats_prefixes = c("Size", "Leading.Genes", "Median.t"),
   sep = "_",
   caption = NULL
 )

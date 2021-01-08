@@ -16,7 +16,7 @@
 #' @export
 wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
-  method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, display_topn = 20){
+  method = "hypergeometric", min_GS_size = 10, max_GS_size = 500, topn_genes = 20){
   
   # -------------------------------------------------------------------------
   # Checks
@@ -118,8 +118,8 @@ wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NU
     
     suffix <- ""
     
-    if(length(x) > display_topn){
-      x <- x[seq_len(display_topn)]
+    if(length(x) > topn_genes){
+      x <- x[seq_len(topn_genes)]
       suffix <- ", ..."
     }
     
@@ -170,7 +170,7 @@ wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NU
 # method = "hypergeometric"; min_GS_size = 10; max_GS_size = 500;
 # min_DE_size = 5; topn = Inf; pval = 0.05; lfc = 0;
 # gene_var = "GeneID"; lfc_prefix = "logFC"; pval_prefix = "P.Value"; adjp_prefix = "adj.P.Val"; sep = "_";
-# display_topn = 10
+# topn_genes = 10
 
 
 
@@ -185,7 +185,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500,
   directions = c("up", "down", "both"), min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
   gene_var = "EntrezIDs", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", sep = "_", 
-  display_topn = 20){
+  topn_genes = 20){
   
   
   stopifnot(all(directions %in% c("up", "down", "both")))
@@ -248,7 +248,7 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
       
       res_ora <- wrapper_ora_core(genes, genesets = genesets, universe = universe, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
         name = name, sep = sep,
-        method = method, min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn)
+        method = method, min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes)
       
       
       return(res_ora)

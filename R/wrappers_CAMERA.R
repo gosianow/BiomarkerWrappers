@@ -18,7 +18,7 @@
 # gene_mapping <- entrez2hgnc
 # 
 # 
-# min_GS_size = 10; max_GS_size = 500; display_topn = 20; statistic_name = "t"
+# min_GS_size = 10; max_GS_size = 500; topn_genes = 20; statistic_name = "t"
 
 
 
@@ -29,7 +29,7 @@
 #' @export
 wrapper_cameraPR_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
-  min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
+  min_GS_size = 10, max_GS_size = 500, topn_genes = 20, statistic_name = "t"){
   
   
   # -------------------------------------------------------------------------
@@ -116,10 +116,10 @@ wrapper_cameraPR_core <- function(statistic, genesets, genesets_extra_info = NUL
     
   }
   
-  out[, paste0("NGenes", sep, name)] <- camera_out$NGenes
+  out[, paste0("Size", sep, name)] <- camera_out$NGenes
   
   ### Names of leading genes
-  out[, paste0("Genes", sep, name)] <- sapply(seq_along(camera_index), function(i){
+  out[, paste0("Leading.Genes", sep, name)] <- sapply(seq_along(camera_index), function(i){
     # i = 1
     
     x <- camera_index[[i]]
@@ -132,8 +132,8 @@ wrapper_cameraPR_core <- function(statistic, genesets, genesets_extra_info = NUL
     
     suffix <- ""
     
-    if(length(x) > display_topn){
-      x <- x[seq_len(display_topn)]
+    if(length(x) > topn_genes){
+      x <- x[seq_len(topn_genes)]
       suffix <- ", ..."
     }
     
@@ -180,7 +180,7 @@ wrapper_cameraPR_core <- function(statistic, genesets, genesets_extra_info = NUL
 # 
 # min_GS_size = 10; max_GS_size = 500;
 # gene_var = "GeneID"; statistic_prefix = "t"; sep = "_"; 
-# display_topn = 10
+# topn_genes = 10
 
 
 
@@ -191,7 +191,7 @@ wrapper_cameraPR_core <- function(statistic, genesets, genesets_extra_info = NUL
 wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   min_GS_size = 10, max_GS_size = 500,
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
-  display_topn = 10){
+  topn_genes = 20){
   
   
   # -------------------------------------------------------------------------
@@ -226,7 +226,7 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 
     res_camera <- wrapper_cameraPR_core(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
       name = name, sep = sep,
-      min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn, statistic_name = statistic_prefix)
+      min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes, statistic_name = statistic_prefix)
     
 
     return(res_camera)
@@ -249,7 +249,7 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 # direction = "up"
 # topn = 20; pval = 0.05; 
 # geneset_vars = "GenesetID"; direction_prefix = "Direction"; pval_prefix = "P.Value"; adjp_prefix = "adj.P.Val"; 
-# stats_prefixes = c("NGenes", "Genes", "Mean.t"); sep = "_"; 
+# stats_prefixes = c("Size", "Leading.Genes", "Mean.t"); sep = "_"; 
 # caption = NULL
 
 
@@ -261,7 +261,7 @@ wrapper_cameraPR <- function(x, genesets, genesets_extra_info = NULL, gene_mappi
 wrapper_dispaly_significant_camera <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "GenesetID", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("NGenes", "Genes", "Median.t"), sep = "_", 
+  stats_prefixes = c("Size", "Leading.Genes", "Median.t"), sep = "_", 
   caption = NULL){
   
   

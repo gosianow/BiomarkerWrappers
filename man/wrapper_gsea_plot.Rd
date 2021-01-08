@@ -23,7 +23,7 @@ wrapper_gsea_plot(
   title_size = 10,
   title_width = 100,
   axis_text_y_size = 8,
-  axis_text_y_width = 70
+  axis_text_y_width = 80
 )
 }
 \arguments{

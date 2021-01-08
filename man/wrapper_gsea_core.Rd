@@ -13,7 +13,7 @@ wrapper_gsea_core(
   sep = "_",
   min_GS_size = 10,
   max_GS_size = 500,
-  display_topn = 10,
+  topn_genes = 20,
   statistic_name = "t"
 )
 }

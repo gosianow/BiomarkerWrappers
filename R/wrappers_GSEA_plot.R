@@ -8,7 +8,7 @@
 # statistic_prefix = "t"; sep = "_";
 # trim_limits = 0.01;
 # color_low = '#42399B'; color_mid = "darkgrey"; color_high = '#D70131';
-# title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 70
+# title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 80
 
 
 
@@ -21,7 +21,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   gsea_results = NULL, geneset_var = "GenesetID", adjp_var = "adj.P.Val", color_point_var = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
-  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 70){
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 80){
   
   
   if(contrast == ""){

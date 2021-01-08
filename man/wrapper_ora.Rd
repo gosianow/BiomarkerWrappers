@@ -23,7 +23,7 @@ wrapper_ora(
   pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",
   sep = "_",
-  display_topn = 20
+  topn_genes = 20
 )
 }
 \arguments{

@@ -241,10 +241,10 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   forestplot::forestplot(labeltext, mean = c(NA, res[, mean_var]), lower = c(NA, res[, lower_var]), upper = c(NA, res[, upper_var]), 
-    is.summary = c(TRUE, rep(FALSE, nrow(res))), xlog = FALSE, xlab = xlab, zero = zero,
+    is.summary = c(TRUE, rep(FALSE, nrow(res))), xlab = xlab, zero = zero,
     title = caption,
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
-    boxsize = 0.5,
+    boxsize = 0.35,
     hrzl_lines = hrzl_lines, 
     graphwidth = grid::unit(10, "cm"), colgap = grid::unit(6, "mm"),
     lineheight = lineheight,
@@ -255,7 +255,8 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     ci.vertices = TRUE,
     align = "l",
     xticks = xticks,
-    xticks.digits = 2)
+    xticks.digits = 2,
+    xlog = FALSE)
   
   
 })

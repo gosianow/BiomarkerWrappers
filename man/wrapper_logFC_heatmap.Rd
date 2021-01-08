@@ -16,7 +16,7 @@ wrapper_logFC_heatmap(
   color_low = "#42399B",
   color_mid = "white",
   color_high = "#D70131",
-  trim_limits = NULL,
+  trim_limits = 3,
   rect_gp = grid::gpar(col = "grey"),
   point_size = 3,
   cluster_rows = FALSE,
@@ -26,6 +26,7 @@ wrapper_logFC_heatmap(
   show_column_names = TRUE,
   row_names_gp = grid::gpar(fontsize = 9),
   column_names_gp = grid::gpar(fontsize = 9),
+  row_names_width = 80,
   ...
 )
 }

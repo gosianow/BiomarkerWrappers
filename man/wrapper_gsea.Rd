@@ -9,12 +9,12 @@ wrapper_gsea(
   genesets,
   genesets_extra_info = NULL,
   gene_mapping = NULL,
-  min_GS_size = 10,
-  max_GS_size = 500,
   gene_var = "EntrezIDs",
   statistic_prefix = "t",
   sep = "_",
-  display_topn = 10
+  min_GS_size = 10,
+  max_GS_size = 500,
+  topn_genes = 20
 )
 }
 \arguments{

@@ -6,13 +6,11 @@
 \usage{
 wrapper_gene_expression_heatmap(
   x,
-  name = "sample\\nlogFC",
-  draw = TRUE,
+  name = "z-score",
   title = "",
-  color_low = "cornflowerblue",
-  color_mid = "royalblue4",
-  color_high = "#ff717e",
-  trim_limits = NULL,
+  draw = TRUE,
+  colors = NULL,
+  trim_limits = 2.5,
   cluster_rows = FALSE,
   cluster_columns = FALSE,
   left_annotation = NULL,
@@ -25,6 +23,7 @@ wrapper_gene_expression_heatmap(
   show_column_names = FALSE,
   row_names_gp = grid::gpar(fontsize = 9),
   column_names_gp = grid::gpar(fontsize = 9),
+  row_names_width = 80,
   ...
 )
 }

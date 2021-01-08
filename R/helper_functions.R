@@ -1214,12 +1214,15 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
       
       ### Mix d3 20 - light color first with paired colors from brewer.pal
       
-      colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
+      colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf",
+        "#FF7256", "#CD5B45", "#FFB90F", "#CD950C", "#7FFFD4", "#66CDAA", "#1E90FF", "#3A5FCD", "#FF00FF", "#CD00CD", "#C0FF3E", "#698B22", "#B9D3EE", "#6C7B8B", "#FFFF00", "#CDCD00", "#00FF7F", "#008B45", "#FFE1FF", "#CDB5CD")
+      
       
       # barplot(rep(1, length(colors_default)), col = colors_default)
       
       
-      stopifnot(length(levels_x) <= 20)
+      
+      stopifnot(length(levels_x) <= 40)
       
       out <- colors_default[1:length(levels_x)]
       names(out) <- levels_x
@@ -1439,7 +1442,9 @@ compute_lower_whisker <- function(x, range = 1.5){
 #' Generate colors for ComplexHeatmap for numerical variables 
 #' 
 #' @param x Vector of numerical values for which we want to specify colors.
+#' @param centered Logical. Default value TRUE.
 #' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral".
+#' 
 #' @return Vector of unique colors for all unique values of x.
 #' 
 #' @examples 

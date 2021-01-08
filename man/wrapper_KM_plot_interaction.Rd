@@ -48,7 +48,7 @@ wrapper_KM_plot_interaction(
 
 \item{strat2_var}{Name of the second stratification variable.}
 
-\item{colors}{A list of length equal to the number of treatment levels.}
+\item{colors}{Vector with colors for treatment X biomarker levels.}
 }
 \description{
 KM plot with curves per biomarker and treatment in a single panel

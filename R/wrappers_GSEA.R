@@ -19,7 +19,7 @@ NULL
 # gene_mapping <- entrez2hgnc
 # 
 # 
-# min_GS_size = 10; max_GS_size = 500; display_topn = 20; statistic_name = "t"
+# min_GS_size = 10; max_GS_size = 500; topn_genes = 20; statistic_name = "t"
 
 
 
@@ -30,7 +30,7 @@ NULL
 #' @export
 wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
-  min_GS_size = 10, max_GS_size = 500, display_topn = 10, statistic_name = "t"){
+  min_GS_size = 10, max_GS_size = 500, topn_genes = 20, statistic_name = "t"){
   
   
   # -------------------------------------------------------------------------
@@ -67,7 +67,7 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   
   ### Keep genes in the gene sets that are in the universe
   
-  ## We want to keep the order that is in the univarse so it has to be the first argument in intersect
+  ## We want to keep the order that is in the universe so it has to be the first argument in intersect
   genesets <- lapply(genesets, function(x){intersect(universe, x)})
   
   # genesets[[1]]
@@ -118,6 +118,12 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic, eps = 0, scoreType = scoreType)
   
   
+  # out <- fgsea_out[order(fgsea_out$pval, decreasing = FALSE), ]
+  # plotEnrichment(pathway = genesets[[out$pathway[4]]], stats = statistic)
+  
+  # table(unlist(lapply(out$leadingEdge, length)))
+  
+  
   ### Make the same order as in genesets
   fgsea_out <- fgsea_out[match(names(genesets), fgsea_out$pathway), , drop = FALSE]
   
@@ -140,10 +146,10 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
     
   }
   
-  out[, paste0("size", sep, name)] <- fgsea_out$size
+  out[, paste0("Size", sep, name)] <- fgsea_out$size
   
   ### Names of leading genes
-  out[, paste0("Genes", sep, name)] <- sapply(seq_along(camera_index), function(i){
+  out[, paste0("Leading.Genes", sep, name)] <- sapply(seq_along(camera_index), function(i){
     # i = 1
     
     x <- camera_index[[i]]
@@ -154,10 +160,16 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
       x <- rev(x)
     }
     
+    
+    ### Keep the leading genes
+    
+    x <- x[seq_along(fgsea_out$leadingEdge[[i]])]
+    
+    
     suffix <- ""
     
-    if(length(x) > display_topn){
-      x <- x[seq_len(display_topn)]
+    if(length(x) > topn_genes){
+      x <- x[seq_len(topn_genes)]
       suffix <- ", ..."
     }
     
@@ -198,15 +210,9 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
 
 
 # x <- topTable
-# 
-# genesets <- geneset_list_reactome
-# genesets_extra_info <- geneset_extra_reactome 
-# gene_mapping <- entrez2hgnc
-# 
-# 
+# statistic_prefix = "t"; sep = "_";
 # min_GS_size = 10; max_GS_size = 500;
-# gene_var = "GeneID"; statistic_prefix = "t"; sep = "_"; 
-# display_topn = 10
+# topn_genes = 10
 
 
 
@@ -215,9 +221,9 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
 #' @param x TopTable
 #' @export
 wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
-  min_GS_size = 10, max_GS_size = 500,
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
-  display_topn = 10){
+  min_GS_size = 10, max_GS_size = 500,
+  topn_genes = 20){
   
   
   # -------------------------------------------------------------------------
@@ -233,7 +239,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
   
   
   # -------------------------------------------------------------------------
-  # Run GSEA for each contrast
+  # Extract contrasts
   # -------------------------------------------------------------------------
   
   ## We add '^' because we want to match expression at the beginning of the string
@@ -244,6 +250,11 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
     contrasts <- ""
     sep <- ""
   }
+  
+  
+  # -------------------------------------------------------------------------
+  # Run GSEA for each contrast
+  # -------------------------------------------------------------------------
   
   
   res_gsea <- lapply(1:length(contrasts), function(i){
@@ -258,7 +269,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
     
     res_gsea <- wrapper_gsea_core(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
       name = name, sep = sep,
-      min_GS_size = min_GS_size, max_GS_size = max_GS_size, display_topn = display_topn, statistic_name = statistic_prefix)
+      min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes, statistic_name = statistic_prefix)
     
     
     return(res_gsea)
@@ -283,7 +294,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
 wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "GenesetID", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("size", "Genes", "Median.t", "NES"), sep = "_", 
+  stats_prefixes = c("Size", "Leading.Genes", "Median.t", "NES"), sep = "_", 
   caption = NULL){
   
   
