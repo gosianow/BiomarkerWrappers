@@ -328,9 +328,12 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' @param x Matrix with expression to plot
 #' @export
 wrapper_gene_expression_heatmap <- function(x,  
+  method = "z-score", scale = TRUE,
   name = "z-score", title = "", draw = TRUE,
   colors = NULL, trim_limits = 2.5,
+  rect_gp = grid::gpar(col = "black"), 
   cluster_rows = FALSE, cluster_columns = FALSE,
+  row_dend_reorder = FALSE, column_dend_reorder = FALSE, 
   left_annotation = NULL, top_annotation = NULL, 
   row_split = NULL, column_split = NULL,
   row_title = NULL, column_title = NULL, 
@@ -340,6 +343,16 @@ wrapper_gene_expression_heatmap <- function(x,
   
   
   matrix <- as.matrix(x)
+  
+  if(method == "z-score"){
+    
+    zscore <- t(apply(matrix, 1, scale, center = TRUE, scale = scale))
+    colnames(zscore) <- colnames(matrix)
+    
+    matrix <- zscore
+    
+  }
+  
   
   ## Shorten the row names so they can be nicely displayed in the plots
   rownames(matrix) <- stringr::str_wrap(rownames(matrix), width = row_names_width)
@@ -360,11 +373,21 @@ wrapper_gene_expression_heatmap <- function(x,
   }
   
   
-  if(!is.null(colors)){
-    colors_matrix <- colors
-  }else{
+  
+  if(is.null(colors)){
+    
     colors_matrix <- format_colors_num(matrix, trim_values = max_abs_value)
+    
+  }else if(is.function(colors)){
+    
+    colors_matrix <- colors
+    
+  }else{
+    
+    colors_matrix <- format_colors_num(matrix, trim_values = max_abs_value, palette = colors)
+    
   }
+  
   
   breaks <- seq(-max_abs_value, max_abs_value, 1)
   
@@ -378,13 +401,14 @@ wrapper_gene_expression_heatmap <- function(x,
     name = name,
     col = colors_matrix, 
     na_col = "grey90",
+    rect_gp = rect_gp, 
     heatmap_legend_param = list(color_bar = "continuous", at = breaks), 
     
     cluster_columns = cluster_columns, 
     cluster_rows = cluster_rows, 
     
-    row_dend_reorder = FALSE, 
-    column_dend_reorder = FALSE,
+    row_dend_reorder = row_dend_reorder, 
+    column_dend_reorder = column_dend_reorder,
     
     left_annotation = left_annotation,
     top_annotation = top_annotation,

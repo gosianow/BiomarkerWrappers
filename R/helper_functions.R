@@ -185,6 +185,45 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
 }
 
 
+
+
+#' My version of cut
+#' 
+#' @export
+cut2 <- function(x, breaks, labels = NULL, right = TRUE, dig.lab = 6, digits = 2){
+  
+  
+  breaks <- round(breaks, digits = digits)
+  
+  breaks_orig <- breaks
+  
+  breaks <- c(min(x, na.rm = TRUE) - 1, breaks_orig, max(x, na.rm = TRUE) + 1)
+  
+  
+  if(is.null(labels)){
+    
+    labels <- levels(cut(1, breaks = breaks, labels = NULL, right = right, dig.lab = dig.lab))
+    
+    lower_number <- gsub("\\)|\\]", "", strsplit(labels[1], split = ",")[[1]][2])
+    upper_number <- gsub("\\(|\\[", "", strsplit(labels[length(labels)], split = ",")[[1]][1])
+    
+    lower_label <- paste0(ifelse(right, "<=", "<"), lower_number)
+    upper_label <- paste0(ifelse(right, ">", ">="), upper_number)
+    
+    
+    labels[1] <- lower_label
+    labels[length(labels)] <- upper_label
+    
+  }
+  
+  out <- cut(x, breaks = breaks, labels = labels, right = right, dig.lab = dig.lab)
+  
+  
+}
+
+
+
+
 #' My version of duplicated
 #' 
 #' @export
@@ -745,6 +784,8 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
 #' @keywords internal 
 format_or <- function(x, digits = 2, non_empty = NULL){
   
+  max_val <- 100
+  
   if(!is.null(non_empty)){
     if(is.logical(non_empty)){
       stopifnot(length(non_empty) == length(x))
@@ -769,6 +810,7 @@ format_or <- function(x, digits = 2, non_empty = NULL){
   
   output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[x < min_val] <- paste0("<", formatC(min_val, format = "f", digits = digits))
+  output[x > max_val] <- paste0(">", formatC(max_val, format = "f", digits = digits))
   output[x %in% 0] <- "0"
   output[is.na(x)] <- "NA"
   
@@ -999,8 +1041,8 @@ format_counts_and_props_df <- function(counts, props, digits = 2, prefix_counts 
 #' @examples 
 #' 
 #' \dontrun{
-#' summ <- c(10, 23.6442)
-#' digits <- c(0, 2)
+#' summ <- c(10, 1000000, 1e6, 23.6442)
+#' digits <- c(0, 0, 0, 2)
 #' 
 #' format_summ(summ, digits)
 #' }
@@ -1203,7 +1245,6 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
       # barplot(rep(1, length(colors_default)), col = colors_default)
       
       
-      
       ### paired
       
       # colors_default <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
@@ -1211,8 +1252,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
       # barplot(rep(1, length(colors_default)), col = colors_default)
       
       
-      
-      ### Mix d3 20 - light color first with paired colors from brewer.pal
+      ### Mix d3 20 - light color first with paired colors from brewer.pal + Add another 20 colors
       
       colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf",
         "#FF7256", "#CD5B45", "#FFB90F", "#CD950C", "#7FFFD4", "#66CDAA", "#1E90FF", "#3A5FCD", "#FF00FF", "#CD00CD", "#C0FF3E", "#698B22", "#B9D3EE", "#6C7B8B", "#FFFF00", "#CDCD00", "#00FF7F", "#008B45", "#FFE1FF", "#CDB5CD")
@@ -1455,7 +1495,6 @@ compute_lower_whisker <- function(x, range = 1.5){
 #' 
 #' format_colors_num(x, trim_values = 2.5)
 #' 
-#' 
 #' @export
 format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, trim_values = NULL, trim_prop = NULL, trim_range = NULL){
   
@@ -1465,10 +1504,13 @@ format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, t
   
   if(is.null(palette)){
     if(centered){
-      palette <- c("dodgerblue1", "dodgerblue3", "dodgerblue4", "black", "firebrick4", "firebrick3", "firebrick1")
+      # palette <- c("dodgerblue1", "dodgerblue3", "dodgerblue4", "black", "firebrick4", "firebrick3", "firebrick1")
       # barplot(rep(1, length(palette)), col = palette)
+      
+      palette <- c(rev(RColorBrewer::brewer.pal(9, "Blues")), RColorBrewer::brewer.pal(9, "Oranges"))
+      
     }else{
-      palette <- rev(grDevices::hcl.colors(10, palette = "viridis"))
+      palette <- grDevices::hcl.colors(10, palette = "viridis")
     }
   }
   
@@ -1479,18 +1521,16 @@ format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, t
       
       n <- 9
       
-      colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(n)
+      # colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(n)
+      colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette))(n)
       
     }else{
       
       n <- 11  
       
-      colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(n)
+      # colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, n)])(n)
+      colors <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette))(n)
       
-    }
-    
-    if(rev){
-      colors <- rev(colors)
     }
     
     # barplot(rep(1, length(colors)), col = colors)
@@ -1501,6 +1541,12 @@ format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, t
     colors <- palette
     
   }
+  
+  
+  if(rev){
+    colors <- rev(colors)
+  }
+  
   
   
   if(centered){
