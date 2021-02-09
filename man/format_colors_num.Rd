@@ -11,7 +11,8 @@ format_colors_num(
   rev = FALSE,
   trim_values = NULL,
   trim_prop = NULL,
-  trim_range = NULL
+  trim_range = NULL,
+  ceiling = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,5 @@ x <- rnorm(20)
 palette <- "Spectral"
 
 format_colors_num(x, trim_values = 2.5)
-
 
 }

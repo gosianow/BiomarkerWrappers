@@ -65,11 +65,11 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   limits <- c(-max_abs_value, max_abs_value)
   
   
+  ### Normalize the hight of lines to 1 (-0.5;0.5)
+
   # data$statistic[data$statistic > max_abs_value] <- max_abs_value
   # data$statistic[data$statistic < -max_abs_value] <- -max_abs_value
-  
-  ### Normalize the hight of lines to 1
-  data$statistic_adj <- data$statistic / (2 * max_abs_value)
+  # data$statistic_adj <- data$statistic / (2 * max_abs_value)
   
   
   # -------------------------------------------------------------------------
@@ -124,7 +124,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   ggdata$GenesetID_num <- as.numeric(ggdata$GenesetID)
   
-  ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$GenesetID_num + ifelse(ggdata$direction == "up", 0.1, -0.1)
+  # ggdata$statistic_adj2 <- ggdata$statistic_adj + ggdata$GenesetID_num + ifelse(ggdata$direction == "up", 0.1, -0.1)
   
   ggdata$statistic_fixed <- ggdata$GenesetID_num + ifelse(ggdata$direction == "up", 0.5, -0.5)
   

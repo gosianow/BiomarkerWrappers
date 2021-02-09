@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrappers_logFC_plot.R
 \name{wrapper_logFC_dotplot}
 \alias{wrapper_logFC_dotplot}
-\title{Dot plot with logFC and p-values for mutiple contrasts}
+\title{Dot plot with logFC and p-values for multiple contrasts}
 \usage{
 wrapper_logFC_dotplot(
   x,
@@ -13,23 +13,26 @@ wrapper_logFC_dotplot(
   sep = "_",
   pval = 0.05,
   title = "",
+  color_low = "#42399B",
+  color_mid = "white",
+  color_high = "#D70131",
+  trim_values = 3,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE,
+  radius_range = c(10, 3),
+  legend_position = "right",
   axis_text_x_angle = 60,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 1,
   axis_text_y_size = 10,
   axis_text_y_width = 80,
-  title_size = 12,
-  color_low = "#42399B",
-  color_mid = "white",
-  color_high = "#D70131",
-  trim_limits = 3,
-  radius_range = c(10, 3),
-  legend_position = "right"
+  title_size = 12
 )
 }
 \arguments{
 \item{x}{TopTable}
 }
 \description{
-Dot plot with logFC and p-values for mutiple contrasts
+Dot plot with logFC and p-values for multiple contrasts
 }

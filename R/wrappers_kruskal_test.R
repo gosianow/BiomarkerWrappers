@@ -3,7 +3,7 @@
 
 
 
-#' Kruskal-Wallis H test or Wilcoxon Rank-Sum test
+#' Kruskal-Wallis H test or Wilcoxon Rank-Sum test or Wilcoxon-Mann-Whitney test
 #' 
 #' Returns a table where stratification subgroups are in columns and distribution summary statistics for the numerical variable are in rows. 
 #' 

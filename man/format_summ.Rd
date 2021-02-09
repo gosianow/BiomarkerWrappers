@@ -17,8 +17,8 @@ Format summary statistics such as N, mean, median, min, max
 \examples{
 
 \dontrun{
-summ <- c(10, 23.6442)
-digits <- c(0, 2)
+summ <- c(10, 1000000, 1e6, 23.6442)
+digits <- c(0, 0, 0, 2)
 
 format_summ(summ, digits)
 }

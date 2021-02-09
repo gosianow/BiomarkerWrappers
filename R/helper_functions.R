@@ -1476,6 +1476,86 @@ compute_lower_whisker <- function(x, range = 1.5){
 
 
 
+#' Compute trimming values 
+#' 
+#' @param x Vector with data
+#' 
+#' @return Vector of length two with data range that should be used for trimming.
+#' 
+#' @export
+compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
+  
+  
+  if(centered){
+    
+    
+    if(is.null(trim_prop) && is.null(trim_range)){
+      max_abs_value <- max(abs(range(x, na.rm = TRUE)))
+    }
+    
+    
+    if(!is.null(trim_range)){
+      ### Use whiskers
+      
+      lower_whisker <- compute_lower_whisker(x, range = trim_range)
+      upper_whisker <- compute_upper_whisker(x, range = trim_range)
+      
+      max_abs_value <- max(abs(c(lower_whisker, upper_whisker)))
+    }
+    
+    
+    if(!is.null(trim_prop)){
+      ### Use quantiles 
+      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)))
+    }
+    
+    
+    if(ceiling){
+      max_abs_value <- ceiling(max_abs_value)
+    }
+    
+    
+    trim_values <- c(-max_abs_value, max_abs_value)
+    
+    
+  }else{
+    
+    
+    
+    if(is.null(trim_prop) && is.null(trim_range)){
+      range_value <- range(x, na.rm = TRUE)
+    }
+    
+    
+    if(!is.null(trim_range)){
+      ### Use whiskers
+      
+      lower_whisker <- compute_lower_whisker(x, range = trim_range)
+      upper_whisker <- compute_upper_whisker(x, range = trim_range)
+      
+      range_value <- c(lower_whisker, upper_whisker)
+    }
+    
+    
+    if(!is.null(trim_prop)){
+      ### Use quantiles 
+      range_value <- quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)
+    }
+    
+    if(ceiling){
+      range_value <- c(floor(range_value[1]), ceiling(range_value[2]))
+    }
+    
+    trim_values <- c(range_value[1], range_value[2])
+    
+  }
+  
+  trim_values
+  
+}
+
+
+
 
 
 
@@ -1496,11 +1576,18 @@ compute_lower_whisker <- function(x, range = 1.5){
 #' format_colors_num(x, trim_values = 2.5)
 #' 
 #' @export
-format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, trim_values = NULL, trim_prop = NULL, trim_range = NULL){
+format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
   
   
   x <- c(x)
   x <- x[!is.na(x)]
+  
+  
+  # ---------------------------------------------------------------------
+  # Define colors
+  # ---------------------------------------------------------------------
+  
+  
   
   if(is.null(palette)){
     if(centered){
@@ -1548,78 +1635,36 @@ format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, t
   }
   
   
+  # ---------------------------------------------------------------------
+  # Define trim values and color breaks 
+  # ---------------------------------------------------------------------
+  
   
   if(centered){
     
     
-    if(is.null(trim_values) && is.null(trim_prop) && is.null(trim_range)){
-      max_abs_value <- max(abs(range(x, na.rm = TRUE)))
+    if(is.null(trim_values)){
+      trim_values <- compute_trim_values(x, centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+    }else{
+      max_abs_value <- max(abs(trim_values))
+      trim_values <- c(-max_abs_value, max_abs_value)
     }
-    
-    
-    if(!is.null(trim_range)){
-      ### Use whiskers
-      
-      lower_whisker <- compute_lower_whisker(x, range = trim_range)
-      upper_whisker <- compute_upper_whisker(x, range = trim_range)
-      
-      max_abs_value <- max(abs(c(lower_whisker, upper_whisker)))
-    }
-    
-    
-    if(!is.null(trim_prop)){
-      ### Use quantiles 
-      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)))
-    }
-    
-    
-    if(!is.null(trim_values)){
-      max_abs_value <- max(trim_values)
-    }
-    
-    
-    breaks <- seq(-max_abs_value, max_abs_value, length.out = length(colors))
-    
-    out <- circlize::colorRamp2(breaks, colors)
     
     
   }else{
     
     
-    
-    if(is.null(trim_values) && is.null(trim_prop) && is.null(trim_range)){
-      range_value <- range(x, na.rm = TRUE)
+    if(is.null(trim_values)){
+      trim_values <- compute_trim_values(x, centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
     }
-    
-    
-    if(!is.null(trim_range)){
-      ### Use whiskers
-      
-      lower_whisker <- compute_lower_whisker(x, range = trim_range)
-      upper_whisker <- compute_upper_whisker(x, range = trim_range)
-      
-      range_value <- c(lower_whisker, upper_whisker)
-    }
-    
-    
-    if(!is.null(trim_prop)){
-      ### Use quantiles 
-      range_value <- quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)
-    }
-    
-    
-    if(!is.null(trim_values)){
-      range_value <- trim_values
-    }
-    
-    
-    breaks <- seq(range_value[1], range_value[2], length.out = length(colors))
-    
-    out <- circlize::colorRamp2(breaks, colors)
-    
     
     
   }
+  
+  
+  breaks <- seq(trim_values[1], trim_values[2], length.out = length(colors))
+  
+  out <- circlize::colorRamp2(breaks, colors)
   
   
   return(out)
@@ -1701,6 +1746,210 @@ densVals <- function(x, y = NULL, nbin = 128, bandwidth){
   vals
   
 }
+
+
+
+##############################################################################
+# Renumber clusters 
+##############################################################################
+
+
+
+
+
+setClusterColors <- function(past_ct, ct, colorList, colorU, method = "original", threshold = 70){
+  
+  
+  stopifnot(method %in% c("original", "new"))
+  
+  
+  if(length(colorList)==0){
+    
+    #k==2
+    newColors = colorU[ct]
+    colori = 2
+    
+  }else if(method == "original"){ # Here we look where the majority of old cluster goes 
+    
+    newColors <- NULL
+    colori <- colorList[["colori"]]
+    
+    m <- proportions(table(past_ct = past_ct, ct = ct), margin = 1) * 100
+    m
+    
+    for(tci in 1:ncol(m)){ # for each new cluster
+      # tci = 1
+      
+      maxC <- max(m[, tci])
+      
+      pci <- which(m[, tci] == maxC) 
+      
+      
+      if(length(pci) == 1 & max(m[pci, ]) == maxC & sum(m[pci, ] == maxC) == 1){
+        
+        #if new column maximum is unique, same cell is row maximum and is also unique
+        ##Note: the greatest of the prior clusters' members are the greatest in a current cluster's members.
+        newColors[which(ct == tci)] <- unique(colorList[["newColors"]][which(past_ct == pci)]) # one value
+        
+      }else{ # Add new color
+        
+        colori <- colori + 1
+        newColors[which(ct == tci)] <- colorU[colori]
+        
+      }
+      
+    }
+    
+  }else{ # Here we look at the main composition of the new cluster 
+    
+    newColors <- NULL
+    colori <- colorList[["colori"]]
+    
+    m <- proportions(table(past_ct = past_ct, ct = ct), margin = 2) * 100
+    m
+    
+    
+    for(tci in 1:ncol(m)){ # for each new cluster
+      # tci = 1
+      
+      maxC <- max(m[, tci])
+      
+      pci <- which(m[, tci] == maxC) 
+      
+      
+      if(maxC > threshold & length(pci) == 1 & max(m[pci, ]) == maxC & sum(m[pci, ] == maxC) == 1){
+        
+        # if new column maximum is unique, same cell is row maximum and is also unique
+        ##Note: the greatest of the prior clusters' members are the greatest in a current cluster's members.
+        newColors[which(ct == tci)] <- unique(colorList[["newColors"]][which(past_ct == pci)]) # one value
+        
+      }else{ # Add new color
+        
+        colori <- colori + 1
+        newColors[which(ct == tci)] <- colorU[colori]
+        
+      }
+      
+    }
+    
+    
+    
+  }
+  
+  
+  unique_newColors <- unique(newColors)
+  names(unique_newColors) <- unique(ct)
+  
+  unique_newColors <- unique_newColors[order(unique(ct))]
+  
+  
+  return(list(newColors = newColors, colori = colori, unique_newColors = unique_newColors))
+  
+  
+}
+
+
+
+
+
+
+#' Renumber clusters based on their splitting so they can be traced 
+#' 
+#' @param x Data frame with clustering, where columns are ordered by non-decreasing rank of clustering.
+#' @export
+wrapper_renumber_clusters <- function(x, method = "new", threshold = 70){
+  
+  
+  x <- mutate_all(x, factor)
+  x <- mutate_all(x, as.numeric)
+  
+  
+  ranks <- unlist(lapply(x, function(xx){
+    length(unique(xx))
+  }))
+  
+  original_col_order <- colnames(x)
+  
+  x <- x[, order(ranks)]
+  
+  
+  max_rank <- max(ranks)
+  
+  colorU <- 1:(max_rank * max_rank)
+  
+  
+  colorList <- list(list())
+  
+  
+  for(i in 1:ncol(x)){
+    # i = 1
+    
+    # print(i)
+    
+    if(i == 1){
+      past_ct <- NULL
+    }else{
+      past_ct <- x[, i - 1]  
+    }
+    
+    ct <- x[, i]
+    
+    
+    colorList[[i + 1]] <- setClusterColors(past_ct = past_ct, ct = ct, colorList = colorList[[i]], colorU = colorU, method = method, threshold = threshold)
+    
+    # print(colorList[[i + 1]])
+    
+    
+  }
+  
+  
+  
+  out <- lapply(colorList[-1], function(x){
+    x[[1]]
+  })
+  
+  out <- data.frame(out)
+  colnames(out) <- colnames(x)
+  
+  
+  out <- out[, original_col_order]
+  
+  return(out)
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
