@@ -385,7 +385,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
   }
   
   ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval, , drop = FALSE]
+  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval & !is.na(x_sort[, adjp_prefix]), , drop = FALSE]
   
   
   if(nrow(x_sort) == 0){

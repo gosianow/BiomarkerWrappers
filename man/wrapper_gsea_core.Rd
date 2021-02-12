@@ -18,7 +18,7 @@ wrapper_gsea_core(
 )
 }
 \arguments{
-\item{statistic}{Named vector of t statistics from limma or logFC.}
+\item{statistic}{Named vector of t statistics or logFC from limma.}
 }
 \description{
 Run GSEA

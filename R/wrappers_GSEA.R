@@ -26,7 +26,7 @@ NULL
 
 #' Run GSEA
 #' 
-#' @param statistic Named vector of t statistics from limma or logFC.
+#' @param statistic Named vector of t statistics or logFC from limma.
 #' @export
 wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
@@ -39,6 +39,8 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   
   stopifnot(min_GS_size >= 1)
   stopifnot(max_GS_size > min_GS_size)
+  
+  statistic <- statistic[!is.na(statistic)]
   
   ## fgsea sorts the statistic in the descending order
   statistic <- sort(statistic, decreasing = TRUE)
@@ -354,7 +356,7 @@ wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up",
   }
   
   ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval, , drop = FALSE]
+  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval & !is.na(x_sort[, adjp_prefix]), , drop = FALSE]
   
   
   ## Subset by direction

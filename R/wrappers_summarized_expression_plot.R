@@ -70,7 +70,7 @@ wrapper_summarized_expression_dotplot <- function(x, group){
 #' 
 #' @param x Matrix with gene expression.
 #' @param group Vector of factors with grouping.
-#' @param adjp Matrix with adjusted p-values for the groups. Column names must correspond to all the groups.
+#' @param adjp Matrix with adjusted p-values for selected groups. Column names must correspond to the groups.
 #' @param method Summarize and plot data 'asis' or transform it with 'z-score'.
 #' @export
 wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
@@ -100,11 +100,26 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   if(!is.null(adjp)){
     
-    stopifnot(all(levels(group) %in% colnames(adjp)))
+    levels_group <- levels(group)
+    
+    stopifnot(length(intersect(levels_group, colnames(adjp))) > 0)
+    
     stopifnot(all(rownames(adjp) == rownames(x)))
     
-    adjp <- adjp[, levels(group), drop = FALSE]
-    
+    adjp <- lapply(seq_along(levels_group), function(i){
+      # i = 1
+      
+      if(levels_group[i] %in% colnames(adjp)){
+        out <- adjp[, levels_group[i]]
+      }else{
+        out <- rep(NA, nrow(x))  
+      }
+      return(out)
+      
+    })
+    adjp <- as.matrix(data.frame(adjp))
+    rownames(adjp) <- rownames(x)
+    colnames(adjp) <- levels_group
     
     ## Shorten the row names so they can be nicely displayed in the plots
     rownames(adjp) <- stringr::str_wrap(rownames(adjp), width = row_names_width)

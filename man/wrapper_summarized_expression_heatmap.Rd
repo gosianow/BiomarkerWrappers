@@ -43,7 +43,7 @@ wrapper_summarized_expression_heatmap(
 
 \item{group}{Vector of factors with grouping.}
 
-\item{adjp}{Matrix with adjusted p-values for the groups. Column names must correspond to all the groups.}
+\item{adjp}{Matrix with adjusted p-values for selected groups. Column names must correspond to the groups.}
 
 \item{method}{Summarize and plot data 'asis' or transform it with 'z-score'.}
 }

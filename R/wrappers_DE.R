@@ -104,7 +104,8 @@ wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"
 #' @export
 wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, lfc = 0, 
-  gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), 
+  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   stats_prefixes = NULL, sep = "_", 
   caption = NULL){
   
@@ -159,7 +160,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   
   ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval, , drop = FALSE]
+  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval & !is.na(x_sort[, adjp_prefix]), , drop = FALSE]
   
   
   ## Subset by direction
@@ -258,7 +259,10 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
   out <- lapply(seq_along(biomarker_vars), function(i){
     # i = 1
     
-    formula_tmp <- stats::as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
+    data$dummy_biomarker_var <- data[, biomarker_vars[i]]
+    
+    
+    formula_tmp <- stats::as.formula(paste0("dummy_biomarker_var", paste0(as.character(formula), collapse = "")))
     
     fit <- stats::lm(formula_tmp, data)
     
@@ -342,7 +346,9 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
   out <- lapply(seq_along(biomarker_vars), function(i){
     # i = 1
     
-    formula_tmp <- stats::as.formula(paste0(biomarker_vars[i], paste0(as.character(formula), collapse = "")))
+    data$dummy_biomarker_var <- data[, biomarker_vars[i]]
+    
+    formula_tmp <- stats::as.formula(paste0("dummy_biomarker_var", paste0(as.character(formula), collapse = "")))
     
     fit <- lme4::lmer(formula_tmp, data)
     
