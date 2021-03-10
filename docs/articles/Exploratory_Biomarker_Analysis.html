@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2021-01-08</h4>
+            <h4 class="date">2021-03-11</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -84,96 +84,90 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="co">### Packages to compile rmarkdown</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://yihui.org/knitr">knitr</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/rstudio/rmarkdown">rmarkdown</a></span>)
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Packages to compile rmarkdown</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/rmarkdown">rmarkdown</a></span><span class="op">)</span>
 <span class="co">### Packages for nice tables</span>
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://haozhu233.github.io/kableExtra">kableExtra</a></span>)
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/">kableExtra</a></span><span class="op">)</span>
 
 
-<span class="kw">font_size</span> <span class="op">&lt;-</span> <span class="fl">9</span>
-<span class="kw">cache</span> <span class="op">&lt;-</span> <span class="fl">0</span>
+<span class="va">font_size</span> <span class="op">&lt;-</span> <span class="fl">9</span>
+<span class="va">cache</span> <span class="op">&lt;-</span> <span class="fl">0</span>
 
 
 <span class="co">### Set global option for font_size for bkable in this document </span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(bkable_font_size = <span class="kw">font_size</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span>(bkable_full_width = <span class="fl">TRUE</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>bkable_font_size <span class="op">=</span> <span class="va">font_size</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>bkable_full_width <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
 
-<span class="kw">knitr</span>::<span class="kw"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span>(cache = <span class="kw">cache</span>, cache.comments = <span class="fl">FALSE</span>, echo = <span class="fl">TRUE</span>, warning = <span class="fl">FALSE</span>, message = <span class="fl">FALSE</span>, error = <span class="fl">FALSE</span>, fig.width = <span class="fl">6</span>, fig.height = <span class="fl">5</span>, fig.align = <span class="st">"center"</span>, tidy=<span class="fl">TRUE</span>, tidy.opts = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(width.cutoff = <span class="fl">80</span>))
-</pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">ggplot2</span>::<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html">theme_set</a></span>(<span class="kw">cowplot</span>::<span class="fu"><a href="https://rdrr.io/pkg/cowplot/man/theme_cowplot.html">theme_cowplot</a></span>())
+<span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>cache <span class="op">=</span> <span class="va">cache</span>, cache.comments <span class="op">=</span> <span class="cn">FALSE</span>, echo <span class="op">=</span> <span class="cn">TRUE</span>, warning <span class="op">=</span> <span class="cn">FALSE</span>, message <span class="op">=</span> <span class="cn">FALSE</span>, error <span class="op">=</span> <span class="cn">FALSE</span>, fig.width <span class="op">=</span> <span class="fl">6</span>, fig.height <span class="op">=</span> <span class="fl">5</span>, fig.align <span class="op">=</span> <span class="st">"center"</span>, tidy<span class="op">=</span><span class="cn">TRUE</span>, tidy.opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>width.cutoff <span class="op">=</span> <span class="fl">80</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html">theme_set</a></span><span class="op">(</span><span class="fu">cowplot</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/cowplot/reference/theme_cowplot.html">theme_cowplot</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 
 
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">BiomarkerWrappers</span>)
-</pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">BiomarkerWrappers</span><span class="op">)</span></code></pre></div>
 <div id="load-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#load-data" class="anchor"></a>Load data</h1>
 <p><code>bdata</code> object contains random survival and biomarker data. It is not expected to observe any biologically meaningful associations. The goal for this data sets is to solely demonstrate the functionality of this package.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="kw">bdata</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">bdata</span><span class="op">)</span>
 
 
 
 <span class="co">### Dichotomize gene expression into low and high</span>
 
-<span class="kw">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2"</span>, <span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>, <span class="st">"GeneD"</span>)
+<span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BCL2"</span>, <span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>, <span class="st">"GeneD"</span><span class="op">)</span>
 
-<span class="kw">data_cat2</span> <span class="op">&lt;-</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="kw">bdata</span>[, <span class="kw">genes</span>], <span class="kw">wrapper_cut_2groups</span>)
+<span class="va">data_cat2</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span><span class="op">(</span><span class="va">bdata</span><span class="op">[</span>, <span class="va">genes</span><span class="op">]</span>, <span class="va">wrapper_cut_2groups</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">data_cat2</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">genes</span>, <span class="st">"_cat2"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">data_cat2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">genes</span>, <span class="st">"_cat2"</span><span class="op">)</span>
 
 
 <span class="co">### Stratify gene expression into quartiles</span>
 
-<span class="kw">data_cat4</span> <span class="op">&lt;-</span> <span class="kw">dplyr</span>::<span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span>(<span class="kw">bdata</span>[, <span class="kw">genes</span>], <span class="kw">wrapper_cut_quartiles</span>)
+<span class="va">data_cat4</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_all</a></span><span class="op">(</span><span class="va">bdata</span><span class="op">[</span>, <span class="va">genes</span><span class="op">]</span>, <span class="va">wrapper_cut_quartiles</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">data_cat4</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="kw">genes</span>, <span class="st">"_cat4"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">data_cat4</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="va">genes</span>, <span class="st">"_cat4"</span><span class="op">)</span>
 
 
-<span class="kw">bdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="kw">bdata</span>, <span class="kw">data_cat2</span>, <span class="kw">data_cat4</span>)
-</pre></div>
+<span class="va">bdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">bdata</span>, <span class="va">data_cat2</span>, <span class="va">data_cat4</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="tile-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#tile-plot" class="anchor"></a>Tile plot</h1>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="co">### Plot generated using geom_tile</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Plot generated using geom_tile</span>
 
-<span class="fu"><a href="../reference/wrapper_tile_plot1_core.html">wrapper_tile_plot1_core</a></span>(<span class="kw">bdata</span>, y_vars = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2_by_IHC"</span>, <span class="st">"BCL2_by_FISH"</span>))
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_tile_plot1_core.html">wrapper_tile_plot1_core</a></span><span class="op">(</span><span class="va">bdata</span>, y_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BCL2_by_IHC"</span>, <span class="st">"BCL2_by_FISH"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-1-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="co">### Plot generated using geom_col. It has substantially smaller size when sample</span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Plot generated using geom_col. It has substantially smaller size when sample</span>
 <span class="co">### size is large.</span>
 
-<span class="fu"><a href="../reference/wrapper_tile_plot1_core.html">wrapper_tile_plot2_core</a></span>(<span class="kw">bdata</span>, y_vars = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"BCL2_by_IHC"</span>, <span class="st">"BCL2_by_FISH"</span>))
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_tile_plot1_core.html">wrapper_tile_plot2_core</a></span><span class="op">(</span><span class="va">bdata</span>, y_vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BCL2_by_IHC"</span>, <span class="st">"BCL2_by_FISH"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-1-2.png" width="960" style="display: block; margin: auto;"></p>
 </div>
 <div id="log-rank-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#log-rank-test" class="anchor"></a>Log-rank test</h1>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="co">### Biomarker effect</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Biomarker effect</span>
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>)
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span><span class="op">)</span>
 
-<span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_log_rank_test_biomarker.html">wrapper_log_rank_test_biomarker</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    biomarker_vars = <span class="kw">biomarker_vars</span>, strat1_var = <span class="kw">strat1_var</span>, print_nevent = <span class="fl">TRUE</span>, 
-    print_mst = <span class="fl">TRUE</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_log_rank_test_biomarker.html">wrapper_log_rank_test_biomarker</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>, print_nevent <span class="op">=</span> <span class="cn">TRUE</span>, 
+    print_mst <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Biomarker effect on PFS. Unstratified log-rank test.
@@ -356,7 +350,7 @@ high
 43 (43.0%)
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100.3
+&gt;100.0
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 (81.6 - NA)
@@ -526,20 +520,19 @@ high
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="co">### Treatment effect within biomarker subgroups</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Treatment effect within biomarker subgroups</span>
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>)
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span><span class="op">)</span>
 
 
-<span class="fu"><a href="../reference/wrapper_log_rank_test_treatment.html">wrapper_log_rank_test_treatment</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    treatment_var = <span class="kw">treatment_var</span>, biomarker_vars = <span class="kw">biomarker_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_log_rank_test_treatment.html">wrapper_log_rank_test_treatment</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Treatment effect on PFS. Unstratified log-rank test.
@@ -722,7 +715,7 @@ TRT
 43 (43.0%)
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100.3
+&gt;100.0
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 (81.6 - NA)
@@ -896,22 +889,21 @@ TRT
 <div id="cox-regression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#cox-regression" class="anchor"></a>Cox regression</h1>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="co">### Biomarker effect</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Biomarker effect</span>
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span>)
-<span class="kw">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span><span class="op">)</span>
+<span class="va">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
-<span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>, strat1_var = <span class="kw">strat1_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Biomarker effect on PFS. Adjusted, unstratified analysis. Cox regression model includes the biomarker and IPI.
@@ -1092,7 +1084,7 @@ high
 43 (43.0%)
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100.3
+&gt;100.0
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 (81.6 - NA)
@@ -1184,31 +1176,29 @@ GeneA
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co">## To represent the results with a forest plot</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## To represent the results with a forest plot</span>
 
-<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>, strat1_var = <span class="kw">strat1_var</span>, 
-    print_total = <span class="fl">FALSE</span>, print_adjpvalues = <span class="fl">FALSE</span>)
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapper_cox_regression_biomarker.html">wrapper_cox_regression_biomarker</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>, 
+    print_total <span class="op">=</span> <span class="cn">FALSE</span>, print_adjpvalues <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span>(<span class="kw">x</span>)
-</pre></div>
+<span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-1.png" width="1920" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="co">### Treatment effect within biomarker subgroups</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Treatment effect within biomarker subgroups</span>
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>)
-<span class="kw">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span><span class="op">)</span>
+<span class="va">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    treatment_var = <span class="kw">treatment_var</span>, biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Treatment effect on PFS. Adjusted, unstratified analysis. Cox regression model includes the treatment and IPI.
@@ -1389,7 +1379,7 @@ TRT
 43 (43.0%)
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
-100.3
+&gt;100.0
 </td>
 <td style="text-align:left;background-color: #F2F4F4 !important;">
 (81.6 - NA)
@@ -1561,34 +1551,32 @@ TRT
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="co">## To represent the results with a forest plot</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">## To represent the results with a forest plot</span>
 
-<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    treatment_var = <span class="kw">treatment_var</span>, biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>, 
-    print_total = <span class="fl">FALSE</span>, print_adjpvalues = <span class="fl">FALSE</span>)
+<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/wrapper_cox_regression_treatment.html">wrapper_cox_regression_treatment</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span>, 
+    print_total <span class="op">=</span> <span class="cn">FALSE</span>, print_adjpvalues <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 
-<span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span>(<span class="kw">x</span>)
-</pre></div>
+<span class="fu"><a href="../reference/Bclass-class.html">bforest</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/cox_regression-2.png" width="1920" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="co">### Treatment-biomarker interaction effect</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Treatment-biomarker interaction effect</span>
 
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span>)
-<span class="kw">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span><span class="op">)</span>
+<span class="va">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
 
 
-<span class="fu"><a href="../reference/wrapper_cox_regression_interaction.html">wrapper_cox_regression_interaction</a></span>(<span class="kw">data</span>, <span class="kw">tte_var</span>, <span class="kw">censor_var</span>, treatment_var = <span class="kw">treatment_var</span>, 
-    biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_cox_regression_interaction.html">wrapper_cox_regression_interaction</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">tte_var</span>, <span class="va">censor_var</span>, treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, 
+    biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Effect of interaction between biomarker and treatment on PFS. Adjusted, unstratified analysis. Cox regression model includes: biomarker, treatment and IPI.
@@ -1677,90 +1665,89 @@ TRT vs CTRL
 <div id="km-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#km-plot" class="anchor"></a>KM plot</h1>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
-<span class="kw">covariate_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">covariate_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, covariate_var = <span class="kw">covariate_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, covariate_var <span class="op">=</span> <span class="va">covariate_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
-<span class="kw">covariate_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<span class="va">covariate_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
 
-<span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">strat2_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strat2_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core_strat</a></span>(data = <span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, 
-    covariate_var = <span class="kw">covariate_var</span>, strat1_var = <span class="kw">strat1_var</span>, strat2_var = <span class="kw">strat2_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_KM_plot_core.html">wrapper_KM_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, 
+    covariate_var <span class="op">=</span> <span class="va">covariate_var</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>, strat2_var <span class="op">=</span> <span class="va">strat2_var</span>, 
+    linetypes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">biomarker_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-
-<span class="fu"><a href="../reference/wrapper_KM_plot_interaction.html">wrapper_KM_plot_interaction</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, biomarker_var = <span class="kw">biomarker_var</span>, 
-    treatment_var = <span class="kw">treatment_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_KM_plot_interaction.html">wrapper_KM_plot_interaction</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, biomarker_var <span class="op">=</span> <span class="va">biomarker_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_interaction-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/wrapper_KM_plot_interaction.html">wrapper_KM_plot_interaction</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, biomarker_var <span class="op">=</span> <span class="va">biomarker_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"blue2"</span>, <span class="st">"red"</span>, <span class="st">"red2"</span><span class="op">)</span>, linetypes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, 
+        <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_interaction-2.png" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">biomarker_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_KM_plot_biomarker.html">wrapper_KM_plot_biomarker</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, biomarker_var = <span class="kw">biomarker_var</span>, 
-    treatment_var = <span class="kw">treatment_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_KM_plot_biomarker.html">wrapper_KM_plot_biomarker</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, biomarker_var <span class="op">=</span> <span class="va">biomarker_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_biomarker-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
-<span class="kw">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">tte_var</span> <span class="op">&lt;-</span> <span class="st">"PFS"</span>
+<span class="va">censor_var</span> <span class="op">&lt;-</span> <span class="st">"PFS_Event"</span>
 
-<span class="kw">biomarker_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_KM_plot_treatment.html">wrapper_KM_plot_treatment</a></span>(<span class="kw">data</span>, tte_var = <span class="kw">tte_var</span>, censor_var = <span class="kw">censor_var</span>, biomarker_var = <span class="kw">biomarker_var</span>, 
-    treatment_var = <span class="kw">treatment_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_KM_plot_treatment.html">wrapper_KM_plot_treatment</a></span><span class="op">(</span><span class="va">data</span>, tte_var <span class="op">=</span> <span class="va">tte_var</span>, censor_var <span class="op">=</span> <span class="va">censor_var</span>, biomarker_var <span class="op">=</span> <span class="va">biomarker_var</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/KM_plot_treatment-1.png" width="960" style="display: block; margin: auto;"></p>
 </div>
 <div id="logistic-regression" class="section level1">
 <h1 class="hasAnchor">
 <a href="#logistic-regression" class="anchor"></a>Logistic regression</h1>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="co">### Biomarker effect</span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Biomarker effect</span>
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
 
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span>)
-<span class="kw">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span><span class="op">)</span>
+<span class="va">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
-<span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_logistic_regression_biomarker.html">wrapper_logistic_regression_biomarker</a></span>(<span class="kw">data</span>, response_var = <span class="kw">response_var</span>, biomarker_vars = <span class="kw">biomarker_vars</span>, 
-    adjustment_vars = <span class="kw">adjustment_vars</span>, strat1_var = <span class="kw">strat1_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_logistic_regression_biomarker.html">wrapper_logistic_regression_biomarker</a></span><span class="op">(</span><span class="va">data</span>, response_var <span class="op">=</span> <span class="va">response_var</span>, biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, 
+    adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Biomarker effect on ORR. Adjusted analysis. Logistic regression model includes the biomarker and IPI.
@@ -2012,20 +1999,19 @@ GeneA
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb19"><pre class="downlit">
-<span class="co">### Treatment effect within biomarker subgroups</span>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Treatment effect within biomarker subgroups</span>
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
 
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>)
-<span class="kw">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span><span class="op">)</span>
+<span class="va">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_logistic_regression_treatment.html">wrapper_logistic_regression_treatment</a></span>(<span class="kw">data</span>, response_var = <span class="kw">response_var</span>, treatment_var = <span class="kw">treatment_var</span>, 
-    biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_logistic_regression_treatment.html">wrapper_logistic_regression_treatment</a></span><span class="op">(</span><span class="va">data</span>, response_var <span class="op">=</span> <span class="va">response_var</span>, treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, 
+    biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Treatment effect on ORR. Adjusted analysis. Logistic regression model includes the treatment and IPI.
@@ -2351,22 +2337,21 @@ TRT
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="co">### Treatment-biomarker interaction effect</span>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">### Treatment-biomarker interaction effect</span>
 
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
 
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span>)
-<span class="kw">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">biomarker_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneA"</span><span class="op">)</span>
+<span class="va">adjustment_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
 
 
-<span class="fu"><a href="../reference/wrapper_logistic_regression_interaction.html">wrapper_logistic_regression_interaction</a></span>(<span class="kw">data</span>, response_var = <span class="kw">response_var</span>, treatment_var = <span class="kw">treatment_var</span>, 
-    biomarker_vars = <span class="kw">biomarker_vars</span>, adjustment_vars = <span class="kw">adjustment_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_logistic_regression_interaction.html">wrapper_logistic_regression_interaction</a></span><span class="op">(</span><span class="va">data</span>, response_var <span class="op">=</span> <span class="va">response_var</span>, treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, 
+    biomarker_vars <span class="op">=</span> <span class="va">biomarker_vars</span>, adjustment_vars <span class="op">=</span> <span class="va">adjustment_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Effect of interaction between biomarker and treatment on ORR.Adjusted analysis. Logistic regression model includes the biomarker, treatment and IPI.
@@ -2455,14 +2440,13 @@ TRT vs CTRL
 <div id="pearsons-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#pearsons-test" class="anchor"></a>Pearson’s test</h1>
-<div class="sourceCode" id="cb21"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_pearsons_test_treatment.html">wrapper_pearsons_test_treatment</a></span>(<span class="kw">data</span>, response_var = <span class="kw">response_var</span>, treatment_var = <span class="kw">treatment_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_pearsons_test_treatment.html">wrapper_pearsons_test_treatment</a></span><span class="op">(</span><span class="va">data</span>, response_var <span class="op">=</span> <span class="va">response_var</span>, treatment_var <span class="op">=</span> <span class="va">treatment_var</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Treatment effect on ORR. Unstratified Pearson’s Chi-squared test.
@@ -2566,15 +2550,14 @@ TRT
 <div id="cochran-mantel-haenszel-chi-squared-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#cochran-mantel-haenszel-chi-squared-test" class="anchor"></a>Cochran-Mantel-Haenszel Chi-Squared Test</h1>
-<div class="sourceCode" id="cb22"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
-<span class="kw">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">strata_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">response_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
+<span class="va">treatment_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strata_vars</span> <span class="op">&lt;-</span> <span class="st">"IPI"</span>
 
-<span class="fu"><a href="../reference/wrapper_pearsons_test_treatment.html">wrapper_pearsons_test_treatment</a></span>(<span class="kw">data</span>, response_var = <span class="kw">response_var</span>, treatment_var = <span class="kw">treatment_var</span>, 
-    strata_vars = <span class="kw">strata_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_pearsons_test_treatment.html">wrapper_pearsons_test_treatment</a></span><span class="op">(</span><span class="va">data</span>, response_var <span class="op">=</span> <span class="va">response_var</span>, treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, 
+    strata_vars <span class="op">=</span> <span class="va">strata_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Treatment effect on ORR. Stratified Cochran-Mantel-Haenszel Chi-squared test. Stratification factors: IPI.
@@ -2678,233 +2661,215 @@ TRT
 <div id="barplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#barplot" class="anchor"></a>Barplot</h1>
-<div class="sourceCode" id="cb23"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
+<span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
-<span class="kw">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
+<span class="va">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-2.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
-<span class="kw">skip_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"NE"</span>, <span class="st">"PD"</span>, <span class="st">"SD"</span>)
-<span class="kw">show_total_proportions</span> <span class="op">&lt;-</span> <span class="fl">TRUE</span>
+<span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
+<span class="va">skip_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NE"</span>, <span class="st">"PD"</span>, <span class="st">"SD"</span><span class="op">)</span>
+<span class="va">show_total_proportions</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span>
 
-<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, show_total_proportions = <span class="kw">show_total_proportions</span>, 
-    skip_levels = <span class="kw">skip_levels</span>, ylim = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">100</span>))
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, show_total_proportions <span class="op">=</span> <span class="va">show_total_proportions</span>, 
+    skip_levels <span class="op">=</span> <span class="va">skip_levels</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-3.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
-<span class="kw">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
+<span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span>
+<span class="va">y_var</span> <span class="op">=</span> <span class="st">"Response"</span>
 
-<span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">strat2_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strat2_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
-    strat2_var = <span class="kw">strat2_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>, 
+    strat2_var <span class="op">=</span> <span class="va">strat2_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
-<span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>, 
-    strat2_var = <span class="kw">strat2_var</span>, less_legends = <span class="fl">TRUE</span>)
-</pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>, 
+    strat2_var <span class="op">=</span> <span class="va">strat2_var</span>, less_legends <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot_strat-2.png" width="960" style="display: block; margin: auto;"></p>
 </div>
 <div id="complex-barplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#complex-barplot" class="anchor"></a>Complex barplot</h1>
-<div class="sourceCode" id="cb28"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span>)
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span><span class="op">)</span>
 
 
-<span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, values_to = <span class="st">"Gene expression"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span>, values_to <span class="op">=</span> <span class="st">"Gene expression"</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span>)
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA_cat2"</span>, <span class="st">"GeneB_cat2"</span>, <span class="st">"GeneC_cat2"</span><span class="op">)</span>
 
-<span class="kw">skip_levels</span> <span class="op">&lt;-</span> <span class="st">"low"</span>
-<span class="kw">method</span> <span class="op">&lt;-</span> <span class="st">"dodge"</span>
+<span class="va">skip_levels</span> <span class="op">&lt;-</span> <span class="st">"low"</span>
+<span class="va">method</span> <span class="op">&lt;-</span> <span class="st">"dodge"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_vars = <span class="kw">y_vars</span>, skip_levels = <span class="kw">skip_levels</span>, 
-    method = <span class="kw">method</span>, values_to = <span class="st">"Gene expression"</span>, names_to = <span class="st">"Gene"</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span>, skip_levels <span class="op">=</span> <span class="va">skip_levels</span>, 
+    method <span class="op">=</span> <span class="va">method</span>, values_to <span class="op">=</span> <span class="st">"Gene expression"</span>, names_to <span class="op">=</span> <span class="st">"Gene"</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-2.png" width="960" style="display: block; margin: auto;"></p>
 </div>
 <div id="box-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#box-plot" class="anchor"></a>Box plot</h1>
-<div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot-1.png" width="672" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
-<span class="kw">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">dodge_var</span> <span class="op">=</span> <span class="kw">NULL</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
+<span class="va">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">dodge_var</span> <span class="op">=</span> <span class="cn">NULL</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
-    dodge_var = <span class="kw">dodge_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>, 
+    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb32"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
-<span class="kw">facet_var</span> <span class="op">&lt;-</span> <span class="kw">NULL</span>
-<span class="kw">dodge_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
+<span class="va">facet_var</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>
+<span class="va">dodge_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
-    dodge_var = <span class="kw">dodge_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>, 
+    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-2.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb33"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
-
-
-<span class="kw">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, strat1_var = <span class="kw">strat1_var</span>)
-</pre></div>
+<span class="va">strat1_var</span> <span class="op">=</span> <span class="st">"Treatment_Arm"</span>
+
+
+<span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-3.png" width="768" style="display: block; margin: auto;"></p>
 </div>
 <div id="complex-boxplot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#complex-boxplot" class="anchor"></a>Complex boxplot</h1>
-<div class="sourceCode" id="cb34"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span><span class="op">)</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span><span class="op">)</span>
 
-<span class="kw">x_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">facet_var</span> <span class="op">=</span> <span class="kw">NULL</span>
-<span class="kw">dodge_var</span> <span class="op">=</span> <span class="kw">NULL</span>
+<span class="va">x_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">facet_var</span> <span class="op">=</span> <span class="cn">NULL</span>
+<span class="va">dodge_var</span> <span class="op">=</span> <span class="cn">NULL</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>, x_var = <span class="kw">x_var</span>, facet_var = <span class="kw">facet_var</span>, 
-    dodge_var = <span class="kw">dodge_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>, 
+    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-2.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb36"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
-<span class="kw">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span>)
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
+<span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span><span class="op">)</span>
 
-<span class="kw">x_var</span> <span class="op">=</span> <span class="kw">NULL</span>
-<span class="kw">facet_var</span> <span class="op">=</span> <span class="kw">NULL</span>
-<span class="kw">dodge_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">x_var</span> <span class="op">=</span> <span class="cn">NULL</span>
+<span class="va">facet_var</span> <span class="op">=</span> <span class="cn">NULL</span>
+<span class="va">dodge_var</span> <span class="op">=</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span>(<span class="kw">data</span>, y_vars = <span class="kw">y_vars</span>, x_var = <span class="kw">x_var</span>, facet_var = <span class="kw">facet_var</span>, 
-    dodge_var = <span class="kw">dodge_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>, 
+    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-3.png" width="960" style="display: block; margin: auto;"></p>
 </div>
 <div id="point-plot" class="section level1">
 <h1 class="hasAnchor">
 <a href="#point-plot" class="anchor"></a>Point plot</h1>
-<div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb38"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
-<span class="kw">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">color_point_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
+<span class="va">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">color_point_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
-    color_point_var = <span class="kw">color_point_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>, 
+    color_point_var <span class="op">=</span> <span class="va">color_point_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot_strat-1.png" width="1152" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneD"</span>
-<span class="kw">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
-<span class="kw">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">strat1_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneD"</span>
+<span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneB"</span>
+<span class="va">facet_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">strat1_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core_strat</a></span>(data = <span class="kw">data</span>, x_var = <span class="kw">x_var</span>, y_var = <span class="kw">y_var</span>, facet_var = <span class="kw">facet_var</span>, 
-    strat1_var = <span class="kw">strat1_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>, 
+    strat1_var <span class="op">=</span> <span class="va">strat1_var</span><span class="op">)</span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot_strat-2.png" width="1152" style="display: block; margin: auto;"></p>
 </div>
 <div id="kruskalwallis-h-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#kruskalwallis-h-test" class="anchor"></a>Kruskal–Wallis H test</h1>
-<div class="sourceCode" id="cb40"><pre class="downlit">
-<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span>()
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/load_all.html">load_all</a></span><span class="op">(</span><span class="op">)</span>
 
 
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">cat_vars</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
-<span class="kw">num_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>)
+<span class="va">cat_vars</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span>
+<span class="va">num_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span><span class="op">)</span>
 
 
-<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="kw">data</span>, num_vars = <span class="kw">num_vars</span>, cat_vars = <span class="kw">cat_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span><span class="op">(</span><span class="va">data</span>, num_vars <span class="op">=</span> <span class="va">num_vars</span>, cat_vars <span class="op">=</span> <span class="va">cat_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal-Wallis H test.
@@ -3034,9 +2999,8 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb41"><pre class="downlit">
-<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="kw">data</span>, num_vars = <span class="kw">num_vars</span>, cat_vars = <span class="kw">cat_vars</span>, print_pvalues = <span class="fl">FALSE</span>)
-</pre></div>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span><span class="op">(</span><span class="va">data</span>, num_vars <span class="op">=</span> <span class="va">num_vars</span>, cat_vars <span class="op">=</span> <span class="va">cat_vars</span>, print_pvalues <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal-Wallis H test.
@@ -3138,15 +3102,14 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb42"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">cat_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Cell_Of_Origin"</span>, <span class="st">"IPI"</span>, <span class="st">"Treatment_Arm"</span>)
-<span class="kw">num_vars</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
+<span class="va">cat_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Cell_Of_Origin"</span>, <span class="st">"IPI"</span>, <span class="st">"Treatment_Arm"</span><span class="op">)</span>
+<span class="va">num_vars</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span>(<span class="kw">data</span>, num_vars = <span class="kw">num_vars</span>, cat_vars = <span class="kw">cat_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span><span class="op">(</span><span class="va">data</span>, num_vars <span class="op">=</span> <span class="va">num_vars</span>, cat_vars <span class="op">=</span> <span class="va">cat_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Kruskal-Wallis H test.
@@ -3377,15 +3340,14 @@ TRT
 <div id="fishers-test" class="section level1">
 <h1 class="hasAnchor">
 <a href="#fishers-test" class="anchor"></a>Fisher’s test</h1>
-<div class="sourceCode" id="cb43"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">col_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
-<span class="kw">row_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">col_var</span> <span class="op">&lt;-</span> <span class="st">"ORR"</span>
+<span class="va">row_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_fishers_test_core.html">wrapper_fishers_test_core</a></span>(<span class="kw">data</span>, col_var = <span class="kw">col_var</span>, row_var = <span class="kw">row_var</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_fishers_test_core.html">wrapper_fishers_test_core</a></span><span class="op">(</span><span class="va">data</span>, col_var <span class="op">=</span> <span class="va">col_var</span>, row_var <span class="op">=</span> <span class="va">row_var</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <caption style="font-size: initial !important;">
 Fisher’s exact test.
@@ -3467,15 +3429,14 @@ TRT
 <div id="characteristics-of-itt-and-bep" class="section level1">
 <h1 class="hasAnchor">
 <a href="#characteristics-of-itt-and-bep" class="anchor"></a>Characteristics of ITT and BEP</h1>
-<div class="sourceCode" id="cb44"><pre class="downlit">
-<span class="kw">data</span> <span class="op">&lt;-</span> <span class="kw">bdata</span>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span>
 
-<span class="kw">strat_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Age"</span>, <span class="st">"IPI"</span>)
+<span class="va">strat_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Age"</span>, <span class="st">"IPI"</span><span class="op">)</span>
 
 
-<span class="fu"><a href="../reference/wrapper_characteristics_core.html">wrapper_characteristics_core</a></span>(<span class="kw">data</span>, strat_var = <span class="kw">strat_var</span>, covariate_vars = <span class="kw">covariate_vars</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_characteristics_core.html">wrapper_characteristics_core</a></span><span class="op">(</span><span class="va">data</span>, strat_var <span class="op">=</span> <span class="va">strat_var</span>, covariate_vars <span class="op">=</span> <span class="va">covariate_vars</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <thead>
 <tr>
@@ -3652,17 +3613,16 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb45"><pre class="downlit">
-<span class="kw">bep_vars</span> <span class="op">&lt;-</span> <span class="st">"BEP_RNAseq"</span>
-<span class="kw">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Age"</span>, <span class="st">"IPI"</span>)
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">bep_vars</span> <span class="op">&lt;-</span> <span class="st">"BEP_RNAseq"</span>
+<span class="va">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Age"</span>, <span class="st">"IPI"</span><span class="op">)</span>
 
-<span class="kw">treatment_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
-<span class="kw">itt_name</span> <span class="op">=</span> <span class="st">"ITT"</span>
+<span class="va">treatment_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span>
+<span class="va">itt_name</span> <span class="op">=</span> <span class="st">"ITT"</span>
 
 
-<span class="fu"><a href="../reference/wrapper_characteristics_bep.html">wrapper_characteristics_bep</a></span>(<span class="kw">data</span>, covariate_vars = <span class="kw">covariate_vars</span>, bep_vars = <span class="kw">bep_vars</span>, 
-    treatment_var = <span class="kw">treatment_var</span>, itt_name = <span class="kw">itt_name</span>)
-</pre></div>
+<span class="fu"><a href="../reference/wrapper_characteristics_bep.html">wrapper_characteristics_bep</a></span><span class="op">(</span><span class="va">data</span>, covariate_vars <span class="op">=</span> <span class="va">covariate_vars</span>, bep_vars <span class="op">=</span> <span class="va">bep_vars</span>, 
+    treatment_var <span class="op">=</span> <span class="va">treatment_var</span>, itt_name <span class="op">=</span> <span class="va">itt_name</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered">
 <thead><tr>
 <th style="text-align:left;">
@@ -4000,10 +3960,9 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb46"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
-</pre></div>
-<pre><code>## R version 4.0.2 (2020-06-22)
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<pre><code>## R version 4.0.3 (2020-10-10)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Catalina 10.15.7
 ## 
@@ -4018,60 +3977,60 @@ High
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] BiomarkerWrappers_0.0.0.19 testthat_2.3.2            
-## [3] kableExtra_1.2.1           rmarkdown_2.3             
-## [5] knitr_1.29                
+## [1] BiomarkerWrappers_0.0.0.21 testthat_3.0.1            
+## [3] kableExtra_1.3.1           rmarkdown_2.6             
+## [5] knitr_1.30                
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] readxl_1.3.1         backports_1.1.10     circlize_0.4.10     
-##   [4] fastmatch_1.1-0      systemfonts_0.3.1    plyr_1.8.6          
-##   [7] GSEABase_1.50.1      splines_4.0.2        BiocParallel_1.22.0 
-##  [10] usethis_1.6.1        ggplot2_3.3.2        TH.data_1.0-10      
-##  [13] digest_0.6.25        htmltools_0.5.0      fansi_0.4.1         
-##  [16] magrittr_1.5         checkmate_2.0.0      memoise_1.1.0       
-##  [19] cluster_2.1.0        openxlsx_4.1.5       limma_3.44.3        
-##  [22] remotes_2.2.0        ComplexHeatmap_2.4.3 annotate_1.66.0     
-##  [25] sandwich_2.5-1       pkgdown_1.6.1        prettyunits_1.1.1   
-##  [28] colorspace_1.4-1     blob_1.2.1           rvest_0.3.6         
-##  [31] haven_2.3.1          xfun_0.17            dplyr_1.0.2         
-##  [34] RCurl_1.98-1.2       callr_3.4.4          crayon_1.3.4        
-##  [37] graph_1.66.0         lme4_1.1-23          survival_3.2-3      
-##  [40] zoo_1.8-8            glue_1.4.2           survminer_0.4.8     
-##  [43] gtable_0.3.0         webshot_0.5.2        GetoptLong_1.0.2    
-##  [46] car_3.0-9            pkgbuild_1.1.0       shape_1.4.5         
-##  [49] BiocGenerics_0.34.0  abind_1.4-5          scales_1.1.1        
-##  [52] mvtnorm_1.1-1        DBI_1.1.0            cpp11_0.2.1         
-##  [55] rstatix_0.6.0        Rcpp_1.0.5           viridisLite_0.3.0   
-##  [58] xtable_1.8-4         clue_0.3-57          bit_4.0.4           
-##  [61] foreign_0.8-80       km.ci_0.5-2          stats4_4.0.2        
-##  [64] httr_1.4.2           fgsea_1.14.0         RColorBrewer_1.1-2  
+##   [1] readxl_1.3.1         backports_1.2.1      circlize_0.4.12     
+##   [4] fastmatch_1.1-0      systemfonts_1.0.1    plyr_1.8.6          
+##   [7] GSEABase_1.52.1      splines_4.0.3        BiocParallel_1.24.1 
+##  [10] TH.data_1.0-10       usethis_2.0.0        ggplot2_3.3.3       
+##  [13] digest_0.6.27        htmltools_0.5.1      fansi_0.4.2         
+##  [16] magrittr_2.0.1       checkmate_2.0.0      memoise_1.1.0       
+##  [19] cluster_2.1.0        openxlsx_4.2.3       limma_3.46.0        
+##  [22] remotes_2.2.0        annotate_1.68.0      ComplexHeatmap_2.6.2
+##  [25] matrixStats_0.57.0   sandwich_3.0-0       pkgdown_1.6.1       
+##  [28] prettyunits_1.1.1    colorspace_2.0-0     blob_1.2.1          
+##  [31] rvest_0.3.6          textshaping_0.2.1    haven_2.3.1         
+##  [34] xfun_0.20            dplyr_1.0.3          callr_3.5.1         
+##  [37] crayon_1.3.4         graph_1.68.0         lme4_1.1-26         
+##  [40] survival_3.2-7       zoo_1.8-8            glue_1.4.2          
+##  [43] survminer_0.4.8      gtable_0.3.0         webshot_0.5.2       
+##  [46] GetoptLong_1.0.5     car_3.0-10           pkgbuild_1.2.0      
+##  [49] shape_1.4.5          BiocGenerics_0.36.0  abind_1.4-5         
+##  [52] scales_1.1.1         mvtnorm_1.1-1        DBI_1.1.1           
+##  [55] rstatix_0.6.0        Rcpp_1.0.6           viridisLite_0.3.0   
+##  [58] xtable_1.8-4         clue_0.3-58          bit_4.0.4           
+##  [61] foreign_0.8-81       km.ci_0.5-2          stats4_4.0.3        
+##  [64] httr_1.4.2           fgsea_1.16.0         RColorBrewer_1.1-2  
 ##  [67] ellipsis_0.3.1       XML_3.99-0.5         pkgconfig_2.0.3     
-##  [70] farver_2.0.3         AnnotationDbi_1.50.3 tidyselect_1.1.0    
-##  [73] labeling_0.3         rlang_0.4.7          munsell_0.5.0       
-##  [76] cellranger_1.1.0     tools_4.0.2          cli_2.0.2           
-##  [79] RSQLite_2.2.0        generics_0.0.2       devtools_2.3.1      
-##  [82] broom_0.7.0          evaluate_0.14        stringr_1.4.0       
-##  [85] yaml_2.2.1           ragg_0.3.1           bit64_4.0.5         
-##  [88] processx_3.4.4       fs_1.5.0             zip_2.1.1           
-##  [91] survMisc_0.5.5       forestplot_1.10      purrr_0.3.4         
-##  [94] nlme_3.1-149         formatR_1.7          xml2_1.3.2          
-##  [97] compiler_4.0.2       rstudioapi_0.11      beeswarm_0.2.3      
+##  [70] farver_2.0.3         AnnotationDbi_1.52.0 tidyselect_1.1.0    
+##  [73] labeling_0.4.2       rlang_0.4.10         munsell_0.5.0       
+##  [76] cellranger_1.1.0     tools_4.0.3          cli_2.2.0           
+##  [79] RSQLite_2.2.2        generics_0.1.0       devtools_2.3.2      
+##  [82] broom_0.7.3          evaluate_0.14        stringr_1.4.0       
+##  [85] yaml_2.2.1           ragg_0.4.1           bit64_4.0.5         
+##  [88] processx_3.4.5       fs_1.5.0             zip_2.1.1           
+##  [91] survMisc_0.5.5       forestplot_1.10.1    purrr_0.3.4         
+##  [94] nlme_3.1-151         formatR_1.7          xml2_1.3.2          
+##  [97] compiler_4.0.3       rstudioapi_0.13      beeswarm_0.2.3      
 ## [100] curl_4.3             png_0.1-7            ggsignif_0.6.0      
-## [103] tibble_3.0.3         statmod_1.4.34       stringi_1.5.3       
-## [106] highr_0.8            ps_1.3.4             desc_1.2.0          
-## [109] forcats_0.5.0        lattice_0.20-41      Matrix_1.2-18       
-## [112] nloptr_1.2.2.2       KMsurv_0.1-5         vctrs_0.3.4         
-## [115] pillar_1.4.6         lifecycle_0.2.0      GlobalOptions_0.1.2 
-## [118] bitops_1.0-6         data.table_1.13.0    cowplot_1.1.0       
-## [121] R6_2.4.1             gridExtra_2.3        rio_0.5.16          
-## [124] IRanges_2.22.2       vipor_0.4.5          sessioninfo_1.1.1   
-## [127] codetools_0.2-16     boot_1.3-25          MASS_7.3-53         
-## [130] assertthat_0.2.1     pkgload_1.1.0        rprojroot_1.3-2     
-## [133] rjson_0.2.20         withr_2.2.0          S4Vectors_0.26.1    
-## [136] multcomp_1.4-13      parallel_4.0.2       hms_0.5.3           
-## [139] grid_4.0.2           tidyr_1.1.2          minqa_1.2.4         
-## [142] carData_3.0-4        ggpubr_0.4.0         ggnewscale_0.4.3    
-## [145] Biobase_2.48.0       ggbeeswarm_0.6.0</code></pre>
+## [103] tibble_3.0.5         statmod_1.4.35       stringi_1.5.3       
+## [106] highr_0.8            ps_1.5.0             desc_1.2.0          
+## [109] forcats_0.5.0        lattice_0.20-41      Matrix_1.3-2        
+## [112] nloptr_1.2.2.2       KMsurv_0.1-5         vctrs_0.3.6         
+## [115] pillar_1.4.7         lifecycle_0.2.0      GlobalOptions_0.1.2 
+## [118] data.table_1.13.6    cowplot_1.1.1        R6_2.5.0            
+## [121] gridExtra_2.3        rio_0.5.16           vipor_0.4.5         
+## [124] IRanges_2.24.1       codetools_0.2-18     sessioninfo_1.1.1   
+## [127] boot_1.3-25          MASS_7.3-53          assertthat_0.2.1    
+## [130] pkgload_1.1.0        rprojroot_2.0.2      rjson_0.2.20        
+## [133] withr_2.4.0          multcomp_1.4-15      S4Vectors_0.28.1    
+## [136] parallel_4.0.3       hms_1.0.0            grid_4.0.3          
+## [139] tidyr_1.1.2          minqa_1.2.4          carData_3.0-4       
+## [142] Cairo_1.5-12.2       ggpubr_0.4.0         ggnewscale_0.4.5    
+## [145] Biobase_2.50.0       ggbeeswarm_0.6.0</code></pre>
 </div>
   </div>
 

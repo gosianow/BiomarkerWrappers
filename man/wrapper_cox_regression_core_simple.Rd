@@ -12,6 +12,7 @@ wrapper_cox_regression_core_simple(
   covariate_vars,
   strata_vars = NULL,
   return_vars = NULL,
+  keep_obs = TRUE,
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,

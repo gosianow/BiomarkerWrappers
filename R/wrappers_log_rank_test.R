@@ -42,7 +42,7 @@ NULL
 #' 
 #' 
 #' @export
-wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = FALSE, print_pvalues = TRUE){
+wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = FALSE, print_pvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -50,6 +50,11 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
   # --------------------------------------------------------------------------
   
   stopifnot(is.data.frame(data))
+  
+  if(length(keep_obs) == 1){
+    keep_obs <- rep(keep_obs, nrow(data))
+  }
+  stopifnot(length(keep_obs) == nrow(data))
   
   ## Time to event variable must be numeric
   stopifnot(length(tte_var) == 1)
@@ -70,21 +75,6 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
   }
   
   
-  ### Keep non-missing data
-  
-  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var, strata_vars)]), ]
-  
-  stopifnot(nrow(data) > 0)
-  
-  variable_names <- format_variable_names(data = data, variable_names = variable_names)
-  
-  
-  # --------------------------------------------------------------------------
-  # Prepare data frame with results
-  # --------------------------------------------------------------------------
-  
-  
-  
   # -----------------------------------
   # Fit Cox regression to obtain Number of Events, MST and HR
   # -----------------------------------
@@ -92,11 +82,24 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
   covariate_vars <- covariate_var
   return_vars <- covariate_var
   
-  wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  
+  wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
   
   
   res <- bresults(wrapper_res)
   out <- boutput(wrapper_res)
+  
+  
+  
+  ### Keep non-missing data
+  
+  data <- data[keep_obs, , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var, strata_vars)]), , drop = FALSE]
+  
+  # stopifnot(nrow(data) > 0)
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
   
   
   
@@ -283,10 +286,6 @@ wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, c
     print_adjpvalues <- FALSE
   }
   
-  ### Keep non-missing data
-  
-  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var, strat1_var, strat2_var, strata_vars)]), ]
-  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
@@ -297,25 +296,15 @@ wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, c
   
   wrapper_res <- lapply(1:length(strata2_levels), function(j){
     # j = 1
-    
-    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
-    
-    if(nrow(data_strata2) == 0){
-      return(NULL)
-    }
-    
+
     
     wrapper_res <- lapply(1:length(strata1_levels), function(i){
       # i = 1
       
-      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
-      
-      if(nrow(data_strata1) == 0){
-        return(NULL)
-      }
+      keep_obs <- data[, strat2_var] %in% strata2_levels[j] & data[, strat1_var] %in% strata1_levels[i]
       
       
-      wrapper_res <- wrapper_log_rank_test_core_simple(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_log_rank_test_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -370,7 +359,7 @@ wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, c
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if(print_adjpvalues){
-    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue)
+    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue, non_empty = out$`P-value` != "")
   }
   
   ### Set repeating Strata names to empty
@@ -456,7 +445,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue)
+    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue, non_empty = out$`P-value` != "")
   }
   
   
@@ -591,7 +580,7 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
   if("Adj. P-value" %in% colnames(out)){
-    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue)
+    out$`Adj. P-value` <- format_pvalues(res$adj_pvalue, non_empty = out$`P-value` != "")
   }
   
   if(length(biomarker_vars) == 1){

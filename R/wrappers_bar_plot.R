@@ -23,6 +23,7 @@
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
+#' @param method One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")
 #' 
 #' @examples 
 #'  

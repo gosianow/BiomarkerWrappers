@@ -53,6 +53,8 @@ wrapper_bar_plot_yvars_core_strat(
 \item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{method}{One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")}
 }
 \description{
 Generate barplots for multiple variables in one faceted or dodged panel.

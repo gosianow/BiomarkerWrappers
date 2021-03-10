@@ -13,6 +13,7 @@ wrapper_cox_regression_core_interaction(
   interaction2_var,
   covariate_vars = NULL,
   strata_vars = NULL,
+  keep_obs = TRUE,
   variable_names = NULL,
   caption = NULL,
   print_pvalues = TRUE,

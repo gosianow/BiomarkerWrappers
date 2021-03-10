@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,21 +124,21 @@
     <p>Display significant pathways for a given contrast and direction</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_dispaly_significant_ora</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>contrast</span>,
-  direction = <span class='st'>"both"</span>,
-  sort_by = <span class='st'>"pval"</span>,
-  topn = <span class='fl'>20</span>,
-  pval = <span class='fl'>0.05</span>,
-  geneset_vars = <span class='st'>"GenesetID"</span>,
-  pval_prefix = <span class='st'>"P.Value"</span>,
-  adjp_prefix = <span class='st'>"adj.P.Val"</span>,
-  genes_prefix = <span class='st'>"Genes"</span>,
-  stats_prefixes = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"GeneRatio"</span>, <span class='st'>"BgRatio"</span>, <span class='st'>"Observed"</span>, <span class='st'>"Expected"</span>),
-  sep = <span class='st'>"_"</span>,
-  caption = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>wrapper_dispaly_significant_ora</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>contrast</span>,
+  direction <span class='op'>=</span> <span class='st'>"both"</span>,
+  sort_by <span class='op'>=</span> <span class='st'>"pval"</span>,
+  topn <span class='op'>=</span> <span class='fl'>20</span>,
+  pval <span class='op'>=</span> <span class='fl'>0.05</span>,
+  geneset_vars <span class='op'>=</span> <span class='st'>"GenesetID"</span>,
+  pval_prefix <span class='op'>=</span> <span class='st'>"P.Value"</span>,
+  adjp_prefix <span class='op'>=</span> <span class='st'>"adj.P.Val"</span>,
+  genes_prefix <span class='op'>=</span> <span class='st'>"Genes"</span>,
+  stats_prefixes <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"GeneRatio"</span>, <span class='st'>"BgRatio"</span>, <span class='st'>"Observed"</span>, <span class='st'>"Expected"</span><span class='op'>)</span>,
+  sep <span class='op'>=</span> <span class='st'>"_"</span>,
+  caption <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

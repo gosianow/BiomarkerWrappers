@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dot plot with logFC and p-values for mutiple contrasts — wrapper_logFC_dotplot • BiomarkerWrappers</title>
+<title>Dot plot with logFC and p-values for multiple contrasts — wrapper_logFC_dotplot • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Dot plot with logFC and p-values for mutiple contrasts — wrapper_logFC_dotplot" />
-<meta property="og:description" content="Dot plot with logFC and p-values for mutiple contrasts" />
+<meta property="og:title" content="Dot plot with logFC and p-values for multiple contrasts — wrapper_logFC_dotplot" />
+<meta property="og:description" content="Dot plot with logFC and p-values for multiple contrasts" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -115,37 +115,40 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Dot plot with logFC and p-values for mutiple contrasts</h1>
+    <h1>Dot plot with logFC and p-values for multiple contrasts</h1>
     
     <div class="hidden name"><code>wrapper_logFC_dotplot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Dot plot with logFC and p-values for mutiple contrasts</p>
+    <p>Dot plot with logFC and p-values for multiple contrasts</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_logFC_dotplot</span>(
-  <span class='kw'>x</span>,
-  gene_var = <span class='st'>"Hgnc_Symbol"</span>,
-  lfc_prefix = <span class='st'>"logFC"</span>,
-  pval_prefix = <span class='st'>"P.Value"</span>,
-  adjp_prefix = <span class='st'>"adj.P.Val"</span>,
-  sep = <span class='st'>"_"</span>,
-  pval = <span class='fl'>0.05</span>,
-  title = <span class='st'>""</span>,
-  axis_text_x_angle = <span class='fl'>60</span>,
-  axis_text_x_vjust = <span class='fl'>1</span>,
-  axis_text_x_hjust = <span class='fl'>1</span>,
-  axis_text_y_size = <span class='fl'>10</span>,
-  axis_text_y_width = <span class='fl'>80</span>,
-  title_size = <span class='fl'>12</span>,
-  color_low = <span class='st'>"#42399B"</span>,
-  color_mid = <span class='st'>"white"</span>,
-  color_high = <span class='st'>"#D70131"</span>,
-  trim_limits = <span class='fl'>3</span>,
-  radius_range = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>10</span>, <span class='fl'>3</span>),
-  legend_position = <span class='st'>"right"</span>
-)</pre>
+    <pre class="usage"><span class='fu'>wrapper_logFC_dotplot</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  gene_var <span class='op'>=</span> <span class='st'>"Hgnc_Symbol"</span>,
+  lfc_prefix <span class='op'>=</span> <span class='st'>"logFC"</span>,
+  pval_prefix <span class='op'>=</span> <span class='st'>"P.Value"</span>,
+  adjp_prefix <span class='op'>=</span> <span class='st'>"adj.P.Val"</span>,
+  sep <span class='op'>=</span> <span class='st'>"_"</span>,
+  pval <span class='op'>=</span> <span class='fl'>0.05</span>,
+  title <span class='op'>=</span> <span class='st'>""</span>,
+  color_low <span class='op'>=</span> <span class='st'>"#42399B"</span>,
+  color_mid <span class='op'>=</span> <span class='st'>"white"</span>,
+  color_high <span class='op'>=</span> <span class='st'>"#D70131"</span>,
+  trim_values <span class='op'>=</span> <span class='fl'>3</span>,
+  trim_prop <span class='op'>=</span> <span class='cn'>NULL</span>,
+  trim_range <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ceiling <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  radius_range <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>3</span><span class='op'>)</span>,
+  legend_position <span class='op'>=</span> <span class='st'>"right"</span>,
+  axis_text_x_angle <span class='op'>=</span> <span class='fl'>60</span>,
+  axis_text_x_vjust <span class='op'>=</span> <span class='fl'>1</span>,
+  axis_text_x_hjust <span class='op'>=</span> <span class='fl'>1</span>,
+  axis_text_y_size <span class='op'>=</span> <span class='fl'>10</span>,
+  axis_text_y_width <span class='op'>=</span> <span class='fl'>80</span>,
+  title_size <span class='op'>=</span> <span class='fl'>12</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

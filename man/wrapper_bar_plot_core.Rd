@@ -83,6 +83,8 @@ wrapper_bar_plot_core_strat(
 \arguments{
 \item{data}{Data frame.}
 
+\item{method}{One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")}
+
 \item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}

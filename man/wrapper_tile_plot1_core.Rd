@@ -11,6 +11,7 @@ wrapper_tile_plot1_core(
   colors = NULL,
   variable_names = NULL,
   skip_NAs = FALSE,
+  rev = FALSE,
   order = TRUE,
   return_plotlist = FALSE
 )
@@ -21,6 +22,7 @@ wrapper_tile_plot2_core(
   colors = NULL,
   variable_names = NULL,
   skip_NAs = FALSE,
+  rev = FALSE,
   return_plotlist = FALSE
 )
 }

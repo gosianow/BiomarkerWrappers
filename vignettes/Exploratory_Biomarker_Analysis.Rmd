@@ -279,8 +279,6 @@ covariate_var <- "Treatment_Arm"
 wrapper_KM_plot_core(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var)
 
 
-
-
 ```
 
 
@@ -298,7 +296,7 @@ strat1_var = "Treatment_Arm"
 strat2_var = "Cell_Of_Origin"
   
 
-wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var)
+wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var, linetypes = c(2, 1))
 
 
 
@@ -317,8 +315,10 @@ biomarker_var <- "GeneA_cat2"
 treatment_var = "Treatment_Arm"
 
 
-
 wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
+
+
+wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var, colors = c("blue", "blue2", "red", "red2"), linetypes = c(2, 1, 2, 1))
 
 
 
@@ -338,7 +338,6 @@ treatment_var = "Treatment_Arm"
 
 
 wrapper_KM_plot_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
-
 
 
 ```

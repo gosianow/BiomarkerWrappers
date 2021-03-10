@@ -13,12 +13,35 @@
 #' @param variable_names Named vector with nicer variable names.
 #' @param skip_NAs Logical. Whether to skip NAs.
 #' @export
-wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, order = TRUE, return_plotlist = FALSE){
+wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, order = TRUE, return_plotlist = FALSE){
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  if(any(rev == TRUE)){
+    
+    if(length(rev) == 1){
+      rev <- rep(rev, length(y_vars))
+    }
+    
+    stopifnot(length(rev) == length(y_vars))
+    
+    for(i in seq_along(rev)){
+      # i = 1
+      
+      if(rev[i]){
+        
+        data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
+        
+      }
+      
+    }
+    
+  }
+  
   
   if(skip_NAs){
     data <- data[complete.cases(complete.cases(data[, y_vars, drop = FALSE])), , drop = FALSE]
@@ -87,7 +110,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
 
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, return_plotlist = FALSE){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, return_plotlist = FALSE){
   
   
   stopifnot(length(y_vars) >= 1)
@@ -95,6 +118,31 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  
+  if(any(rev == TRUE)){
+    
+    if(length(rev) == 1){
+      rev <- rep(rev, length(y_vars))
+    }
+    
+    stopifnot(length(rev) == length(y_vars))
+    
+    for(i in seq_along(rev)){
+      # i = 1
+      
+      if(rev[i]){
+        
+        data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
+        
+        }
+
+    }
+    
+  }
+  
+
   
   levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
   names(levels_original) <- y_vars

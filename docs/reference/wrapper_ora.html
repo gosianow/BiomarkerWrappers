@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,27 +124,27 @@
     <p>Over-representation analysis (ORA)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_ora</span>(
-  <span class='kw'>x</span>,
-  <span class='kw'>genesets</span>,
-  universe = <span class='kw'>NULL</span>,
-  genesets_extra_info = <span class='kw'>NULL</span>,
-  gene_mapping = <span class='kw'>NULL</span>,
-  method = <span class='st'>"hypergeometric"</span>,
-  min_GS_size = <span class='fl'>10</span>,
-  max_GS_size = <span class='fl'>500</span>,
-  directions = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"up"</span>, <span class='st'>"down"</span>, <span class='st'>"both"</span>),
-  min_DE_size = <span class='fl'>5</span>,
-  topn = <span class='fl'>Inf</span>,
-  pval = <span class='fl'>0.05</span>,
-  lfc = <span class='fl'>0</span>,
-  gene_var = <span class='st'>"EntrezIDs"</span>,
-  lfc_prefix = <span class='st'>"logFC"</span>,
-  pval_prefix = <span class='st'>"P.Value"</span>,
-  adjp_prefix = <span class='st'>"adj.P.Val"</span>,
-  sep = <span class='st'>"_"</span>,
-  topn_genes = <span class='fl'>20</span>
-)</pre>
+    <pre class="usage"><span class='fu'>wrapper_ora</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>genesets</span>,
+  universe <span class='op'>=</span> <span class='cn'>NULL</span>,
+  genesets_extra_info <span class='op'>=</span> <span class='cn'>NULL</span>,
+  gene_mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
+  method <span class='op'>=</span> <span class='st'>"hypergeometric"</span>,
+  min_GS_size <span class='op'>=</span> <span class='fl'>10</span>,
+  max_GS_size <span class='op'>=</span> <span class='fl'>500</span>,
+  directions <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"up"</span>, <span class='st'>"down"</span>, <span class='st'>"both"</span><span class='op'>)</span>,
+  min_DE_size <span class='op'>=</span> <span class='fl'>5</span>,
+  topn <span class='op'>=</span> <span class='cn'>Inf</span>,
+  pval <span class='op'>=</span> <span class='fl'>0.05</span>,
+  lfc <span class='op'>=</span> <span class='fl'>0</span>,
+  gene_var <span class='op'>=</span> <span class='st'>"EntrezIDs"</span>,
+  lfc_prefix <span class='op'>=</span> <span class='st'>"logFC"</span>,
+  pval_prefix <span class='op'>=</span> <span class='st'>"P.Value"</span>,
+  adjp_prefix <span class='op'>=</span> <span class='st'>"adj.P.Val"</span>,
+  sep <span class='op'>=</span> <span class='st'>"_"</span>,
+  topn_genes <span class='op'>=</span> <span class='fl'>20</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

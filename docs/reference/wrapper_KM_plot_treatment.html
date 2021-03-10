@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,37 +124,38 @@
     <p>KM plot with treatment effect per biomarker subgroup</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_KM_plot_treatment</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>tte_var</span>,
-  <span class='kw'>censor_var</span>,
-  <span class='kw'>treatment_var</span>,
-  biomarker_var = <span class='kw'>NULL</span>,
-  strat2_var = <span class='kw'>NULL</span>,
-  colors = <span class='kw'>NULL</span>,
-  variable_names = <span class='kw'>NULL</span>,
-  title = <span class='fl'>TRUE</span>,
-  xlab = <span class='fl'>TRUE</span>,
-  strat1_label_both = <span class='fl'>TRUE</span>,
-  strat2_label_both = <span class='fl'>TRUE</span>,
-  legend_colors_title = <span class='fl'>TRUE</span>,
-  legend_position = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.03</span>, <span class='fl'>0.03</span>),
-  legend_justification = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>0</span>),
-  break_time_by = <span class='kw'>NULL</span>,
-  max_tte = <span class='kw'>NULL</span>,
-  risk_table = <span class='fl'>TRUE</span>,
-  conf_int = <span class='fl'>FALSE</span>,
-  surv_median_line = <span class='st'>"none"</span>,
-  title_size = <span class='fl'>12</span>,
-  label_size = <span class='fl'>3</span>,
-  rel_heights = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>5</span>, <span class='fl'>1</span>),
-  background_grid_major = <span class='st'>"none"</span>,
-  strat_scales = <span class='st'>"fixed"</span>,
-  strat1_nrow = <span class='fl'>1</span>,
-  strat1_ncol = <span class='kw'>NULL</span>,
-  strat2_nrow = <span class='kw'>NULL</span>,
-  strat2_ncol = <span class='fl'>1</span>
-)</pre>
+    <pre class="usage"><span class='fu'>wrapper_KM_plot_treatment</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>tte_var</span>,
+  <span class='va'>censor_var</span>,
+  <span class='va'>treatment_var</span>,
+  biomarker_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colors <span class='op'>=</span> <span class='cn'>NULL</span>,
+  linetypes <span class='op'>=</span> <span class='fl'>1</span>,
+  variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  xlab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strat1_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strat2_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_colors_title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_position <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.03</span>, <span class='fl'>0.03</span><span class='op'>)</span>,
+  legend_justification <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0</span><span class='op'>)</span>,
+  break_time_by <span class='op'>=</span> <span class='cn'>NULL</span>,
+  max_tte <span class='op'>=</span> <span class='cn'>NULL</span>,
+  risk_table <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  conf_int <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  surv_median_line <span class='op'>=</span> <span class='st'>"none"</span>,
+  title_size <span class='op'>=</span> <span class='fl'>12</span>,
+  label_size <span class='op'>=</span> <span class='fl'>3</span>,
+  rel_heights <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>)</span>,
+  background_grid_major <span class='op'>=</span> <span class='st'>"none"</span>,
+  strat_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  strat1_nrow <span class='op'>=</span> <span class='fl'>1</span>,
+  strat1_ncol <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_nrow <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_ncol <span class='op'>=</span> <span class='fl'>1</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

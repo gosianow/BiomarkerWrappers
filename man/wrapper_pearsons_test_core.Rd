@@ -15,6 +15,7 @@ wrapper_pearsons_test_core(
   caption = NULL,
   force_empty_cols = FALSE,
   print_total = TRUE,
+  print_non_response = TRUE,
   print_pvalues = TRUE
 )
 
@@ -30,6 +31,7 @@ wrapper_pearsons_test_core_strat(
   caption = NULL,
   force_empty_cols = FALSE,
   print_total = TRUE,
+  print_non_response = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )

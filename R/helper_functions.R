@@ -389,6 +389,31 @@ wrapper_cut_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%
 }
 
 
+#' Stratify data into tertiles
+#' 
+#' @param x Vector of continuous values to cut.
+#' 
+#' @export
+wrapper_cut_tertiles <- function(x, labels = c("low", "mid", "high")){
+  
+  stopifnot(length(labels) == 3)
+  
+  out <- NULL
+  
+  try(out <- ggplot2::cut_number(x, n = 3), silent = TRUE)
+  
+  if(!is.null(out)){
+    out <- factor(out, labels = labels)
+  }else{
+    out <- rep(NA, length(x))
+  }
+  
+  return(out)
+  
+}
+
+
+
 #' Dichotomize data by median 
 #' 
 #' @param x Vector of continuous values to cut.
@@ -398,13 +423,23 @@ wrapper_cut_median <- function(x, labels = c("<=MED", ">MED")){
   
   stopifnot(length(labels) == 2)
   
-  out <- ggplot2::cut_number(x, n = 2)
+  out <- NULL
   
-  out <- factor(out, labels = labels)
+  try(out <- ggplot2::cut_number(x, n = 2), silent = TRUE)
+  
+  if(!is.null(out)){
+    out <- factor(out, labels = labels)
+  }else{
+    out <- rep(NA, length(x))
+  }
   
   return(out)
   
 }
+
+
+
+
 
 #' Stratify data into two groups
 #' 
@@ -445,6 +480,31 @@ wrapper_cut_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%
     indx_sub <- which(strata %in% strata_levels[i])
     
     out[indx_sub] <- wrapper_cut_quartiles(x[indx_sub], labels = labels)
+    
+  }
+  
+  return(out)
+  
+}
+
+
+
+#' @rdname wrapper_cut_tertiles
+#' @export
+wrapper_cut_tertiles_strat <- function(x, strata, labels = c("low", "mid", "high")){
+  
+  stopifnot(is.factor(strata))
+  
+  strata_levels <- levels(strata)
+  
+  out <- factor(rep(NA, length(x)), levels = labels)
+  
+  for(i in 1:length(strata_levels)){
+    # i = 1
+    
+    indx_sub <- which(strata %in% strata_levels[i])
+    
+    out[indx_sub] <- wrapper_cut_tertiles(x[indx_sub], labels = labels)
     
   }
   

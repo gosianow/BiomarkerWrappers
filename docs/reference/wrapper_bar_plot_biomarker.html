@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,47 +124,47 @@
     <p>Bar plot with biomarker effect on response per treatment arm</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_bar_plot_biomarker</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>response_var</span>,
-  <span class='kw'>biomarker_var</span>,
-  treatment_var = <span class='kw'>NULL</span>,
-  facet_var = <span class='kw'>NULL</span>,
-  strat2_var = <span class='kw'>NULL</span>,
-  colors_bar = <span class='kw'>NULL</span>,
-  variable_names = <span class='kw'>NULL</span>,
-  title = <span class='fl'>TRUE</span>,
-  xlab = <span class='fl'>TRUE</span>,
-  ylab = <span class='fl'>TRUE</span>,
-  strat1_label_both = <span class='fl'>TRUE</span>,
-  strat2_label_both = <span class='fl'>TRUE</span>,
-  legend_colors_title = <span class='fl'>TRUE</span>,
-  legend_position = <span class='st'>"right"</span>,
-  facet_label_both = <span class='fl'>TRUE</span>,
-  skip_levels = <span class='kw'>NULL</span>,
-  method = <span class='st'>"facet"</span>,
-  show_proportions = <span class='fl'>TRUE</span>,
-  show_counts = <span class='fl'>TRUE</span>,
-  show_total_proportions = <span class='fl'>FALSE</span>,
-  show_total_counts = <span class='fl'>FALSE</span>,
-  label_size = <span class='fl'>3.5</span>,
-  label_angle = <span class='fl'>0</span>,
-  label_nudge = <span class='fl'>0.025</span>,
-  title_size = <span class='fl'>12</span>,
-  strip_text_size = <span class='kw'>NULL</span>,
-  facet_scales = <span class='st'>"fixed"</span>,
-  ylim = <span class='kw'>NULL</span>,
-  axis_text_x_angle = <span class='fl'>0</span>,
-  axis_text_x_vjust = <span class='fl'>0</span>,
-  axis_text_x_hjust = <span class='fl'>0.5</span>,
-  background_grid_major = <span class='st'>"none"</span>,
-  strat_scales = <span class='st'>"fixed"</span>,
-  strat1_nrow = <span class='fl'>1</span>,
-  strat1_ncol = <span class='kw'>NULL</span>,
-  strat2_nrow = <span class='kw'>NULL</span>,
-  strat2_ncol = <span class='fl'>1</span>,
-  less_legends = <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>wrapper_bar_plot_biomarker</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>response_var</span>,
+  <span class='va'>biomarker_var</span>,
+  treatment_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colors_bar <span class='op'>=</span> <span class='cn'>NULL</span>,
+  variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  xlab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  ylab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strat1_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strat2_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_colors_title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_position <span class='op'>=</span> <span class='st'>"right"</span>,
+  facet_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  skip_levels <span class='op'>=</span> <span class='cn'>NULL</span>,
+  method <span class='op'>=</span> <span class='st'>"facet"</span>,
+  show_proportions <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  show_counts <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  show_total_proportions <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show_total_counts <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  label_size <span class='op'>=</span> <span class='fl'>3.5</span>,
+  label_angle <span class='op'>=</span> <span class='fl'>0</span>,
+  label_nudge <span class='op'>=</span> <span class='fl'>0.025</span>,
+  title_size <span class='op'>=</span> <span class='fl'>12</span>,
+  strip_text_size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  ylim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  axis_text_x_angle <span class='op'>=</span> <span class='fl'>0</span>,
+  axis_text_x_vjust <span class='op'>=</span> <span class='fl'>0</span>,
+  axis_text_x_hjust <span class='op'>=</span> <span class='fl'>0.5</span>,
+  background_grid_major <span class='op'>=</span> <span class='st'>"none"</span>,
+  strat_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  strat1_nrow <span class='op'>=</span> <span class='fl'>1</span>,
+  strat1_ncol <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_nrow <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_ncol <span class='op'>=</span> <span class='fl'>1</span>,
+  less_legends <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,6 +180,10 @@
     <tr>
       <th>colors_bar</th>
       <td><p>Vector with colors for treatment X response interaction.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")</p></td>
     </tr>
     </table>
 

@@ -21,7 +21,7 @@
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 #' @export
-wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -65,14 +65,14 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       colnames(out_dummy) <- c(paste0("n_", response_levels), paste0("prop_", response_levels), paste0(response_levels[2], c("_CI95_lower", "_CI95_upper")))
       
       
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
+      res <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
         subgroup = "", reference = "", reference_indx = 0, n = NA, 
         out_dummy,
         OR_non_empty = TRUE,
         stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
       
       
-      return(out)
+      return(res)
       
       
     }else{
@@ -98,12 +98,12 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       
       
       
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
+      res <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
         subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), 
         ndf, propdf,
         stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
       
-      out$OR_non_empty <- c(FALSE, rep(TRUE, nrow(out) - 1))
+      res$OR_non_empty <- c(FALSE, rep(TRUE, nrow(res) - 1))
       
       
       # --------------------------------------------------------------------------
@@ -119,7 +119,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
         
         binom_test_res <- binom.test(as.numeric(tbl_test[k, ]))
         
-        out <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
+        res <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
         
       })
       
@@ -127,9 +127,9 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
       
       
-      out <- cbind(out, response_CI)
+      res <- cbind(res, response_CI)
       
-      return(out) 
+      return(res) 
       
     }
     
@@ -298,6 +298,10 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     }
   }
   
+  if(!print_non_response){
+    out[, response_levels[1]] <- NULL
+  }
+  
   if(!print_pvalues){
     out$`P-value` <- NULL
     out$`Adj. P-value` <- NULL
@@ -349,7 +353,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -409,7 +413,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
       }
       
       
-      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       
@@ -508,7 +512,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -536,7 +540,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -618,7 +622,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, adjustment_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, adjustment_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Checks
@@ -653,7 +657,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)

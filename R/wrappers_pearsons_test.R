@@ -18,7 +18,7 @@ NULL
 #' @param print_pvalues Logical. Whether to print p-values.
 #'  
 #' @export
-wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata_vars = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE){
+wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata_vars = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -50,7 +50,9 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-
+  response_levels <- levels(data[, response_var])
+  
+  
   # --------------------------------------------------------------------------
   # Prepare data frame with results
   # --------------------------------------------------------------------------
@@ -59,20 +61,73 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   # Fit logistic regression to obtain Response rates
   # -----------------------------------
   
-  covariate_vars <- covariate_var
-  return_vars <- covariate_var
+  # covariate_vars <- covariate_var
+  # return_vars <- covariate_var
+  # 
+  # wrapper_res <- wrapper_logistic_regression_core_simple(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  # 
+  # 
+  # res <- bresults(wrapper_res)
+  # out <- boutput(wrapper_res)
+  # 
+  # ### Remove OR
+  # 
+  # res <- res[, -grep("^OR", colnames(res))]
+  # out <- out[, -grep("^OR", colnames(out))]
   
-  wrapper_res <- wrapper_logistic_regression_core_simple(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = TRUE, print_pvalues = FALSE, print_adjpvalues = FALSE)
+  
+  # ----------------------------------------------------------------------
+  # Calculate response rates
+  # ----------------------------------------------------------------------
+  
+  tbl <- table(data[, covariate_var])
+  
+  ## Calculate nresponse and propresponse
+  tbl_response <- table(data[, covariate_var], data[, response_var])
+  prop_response <- prop.table(tbl_response, margin = 1) * 100
+  ## Replace NaN with NA
+  prop_response[is.na(prop_response)] <- NA
   
   
-  res <- bresults(wrapper_res)
-  out <- boutput(wrapper_res)
+  ndf <- as.data.frame.matrix(tbl_response)
+  colnames(ndf) <- paste0("n_", colnames(tbl_response))
   
-  ### Remove OR
+  propdf <- as.data.frame.matrix(prop_response)
+  colnames(propdf) <- paste0("prop_", colnames(prop_response))
   
-  res <- res[, -grep("^OR", colnames(res))]
-  out <- out[, -grep("^OR", colnames(out))]
   
+  res <- data.frame(covariate = covariate_var, subgroup = levels(data[, covariate_var]), 
+    n = as.numeric(tbl), 
+    ndf, propdf,
+    stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+  
+
+  
+  # --------------------------------------------
+  # Calculate CIs for proportions of response/success 
+  # --------------------------------------------
+  
+  
+  tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response)))]
+  
+  
+  response_CI <- lapply(1:nrow(tbl_test), function(k){
+    # k = 1
+    
+    binom_test_res <- binom.test(as.numeric(tbl_test[k, ]))
+    
+    out <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
+    
+  })
+  
+  response_CI <- rbind.fill(response_CI)
+  colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
+  
+  
+  res <- cbind(res, response_CI)
+  
+  
+  res$n_total <- nrow(data)
   
   
   # --------------------------------------------------------------------------
@@ -229,6 +284,18 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
+  
+  out <- data.frame(Covariate = variable_names[res$covariate], 
+    Subgroup = as.character(res$subgroup),
+    `Total N` = as.character(res$n_total),
+    `N` = format_difference(res$n, digits = 0),
+    format_counts_and_props_df(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
+    
+    as.data.frame(matrix(format_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")]), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
+    check.names = FALSE, stringsAsFactors = FALSE)
+  
+  
+  
   if(method == "pearson"){
     out$Difference = format_difference(res$difference, digits = 2, non_empty = 1)
     out$`Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2, non_empty = 1)
@@ -262,6 +329,10 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
     for(i in seq_along(col_total)){
       out[, col_total[i]] <- NULL
     }
+  }
+  
+  if(!print_non_response){
+    out[, response_levels[1]] <- NULL
   }
   
   if(!print_pvalues){
@@ -312,7 +383,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
 #' @param strat1_var Name of the second stratification variable.
 #' @param print_adjpvalues Logical. Whether to print adjusted p-values.
 #' @export
-wrapper_pearsons_test_core_strat <- function(data, response_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_core_strat <- function(data, response_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -380,7 +451,7 @@ wrapper_pearsons_test_core_strat <- function(data, response_var, covariate_var, 
       }
       
       
-      wrapper_res <- wrapper_pearsons_test_core(data = data_strata1, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, method = method, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_pearsons_test_core(data = data_strata1, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, method = method, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -473,7 +544,7 @@ wrapper_pearsons_test_core_strat <- function(data, response_var, covariate_var, 
 #' @inheritParams wrapper_pearsons_test_core_strat
 #' @param biomarker_vars Vector of biomarker names.
 #' @export
-wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -495,7 +566,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_pearsons_test_core_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_pearsons_test_core_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -578,7 +649,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -611,7 +682,7 @@ wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, s
     covariate_var <- treatment_var
     strat1_var <- biomarker_vars[i]
     
-    wrapper_res <- wrapper_pearsons_test_core_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_pearsons_test_core_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     res <- bresults(wrapper_res)

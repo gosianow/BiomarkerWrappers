@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,15 +124,16 @@
     <p>Generate colors for ComplexHeatmap for numerical variables</p>
     </div>
 
-    <pre class="usage"><span class='fu'>format_colors_num</span>(
-  <span class='kw'>x</span>,
-  centered = <span class='fl'>TRUE</span>,
-  palette = <span class='kw'>NULL</span>,
-  rev = <span class='fl'>FALSE</span>,
-  trim_values = <span class='kw'>NULL</span>,
-  trim_prop = <span class='kw'>NULL</span>,
-  trim_range = <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>format_colors_num</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  centered <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  palette <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rev <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  trim_values <span class='op'>=</span> <span class='cn'>NULL</span>,
+  trim_prop <span class='op'>=</span> <span class='cn'>NULL</span>,
+  trim_range <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ceiling <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,11 +158,11 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>20</span>)
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>20</span><span class='op'>)</span>
 
-<span class='kw'>palette</span> <span class='op'>&lt;-</span> <span class='st'>"Spectral"</span>
+<span class='va'>palette</span> <span class='op'>&lt;-</span> <span class='st'>"Spectral"</span>
 
-<span class='fu'>format_colors_num</span>(<span class='kw'>x</span>, trim_values = <span class='fl'>2.5</span>)
+<span class='fu'>format_colors_num</span><span class='op'>(</span><span class='va'>x</span>, trim_values <span class='op'>=</span> <span class='fl'>2.5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; function (x = NULL, return_rgb = FALSE, max_value = 1) 
 #&gt; {
 #&gt;     if (is.null(x)) {
@@ -197,24 +198,36 @@
 #&gt;         return(res_col2)
 #&gt;     }
 #&gt; }
-#&gt; &lt;bytecode: 0x7f96ec1f8a60&gt;
-#&gt; &lt;environment: 0x7f96ebb546b0&gt;
+#&gt; &lt;bytecode: 0x7fcfaf4c5bc8&gt;
+#&gt; &lt;environment: 0x7fcfaf4cd218&gt;
 #&gt; attr(,"breaks")
-#&gt; [1] -2.5000000 -1.6666667 -0.8333333  0.0000000  0.8333333  1.6666667  2.5000000
+#&gt;  [1] -2.5000000 -2.2058824 -1.9117647 -1.6176471 -1.3235294 -1.0294118
+#&gt;  [7] -0.7352941 -0.4411765 -0.1470588  0.1470588  0.4411765  0.7352941
+#&gt; [13]  1.0294118  1.3235294  1.6176471  1.9117647  2.2058824  2.5000000
 #&gt; attr(,"colors")
-#&gt;             red     green      blue
-#&gt; [1,] 0.11764706 0.5647059 1.0000000
-#&gt; [2,] 0.09411765 0.4549020 0.8039216
-#&gt; [3,] 0.06274510 0.3058824 0.5450980
-#&gt; [4,] 0.00000000 0.0000000 0.0000000
-#&gt; [5,] 0.54509804 0.1019608 0.1019608
-#&gt; [6,] 0.80392157 0.1490196 0.1490196
-#&gt; [7,] 1.00000000 0.1882353 0.1882353
+#&gt;              red     green        blue
+#&gt;  [1,] 0.03137255 0.1882353 0.419607843
+#&gt;  [2,] 0.03137255 0.3176471 0.611764706
+#&gt;  [3,] 0.12941176 0.4431373 0.709803922
+#&gt;  [4,] 0.25882353 0.5725490 0.776470588
+#&gt;  [5,] 0.41960784 0.6823529 0.839215686
+#&gt;  [6,] 0.61960784 0.7921569 0.882352941
+#&gt;  [7,] 0.77647059 0.8588235 0.937254902
+#&gt;  [8,] 0.87058824 0.9215686 0.968627451
+#&gt;  [9,] 0.96862745 0.9843137 1.000000000
+#&gt; [10,] 1.00000000 0.9607843 0.921568627
+#&gt; [11,] 0.99607843 0.9019608 0.807843137
+#&gt; [12,] 0.99215686 0.8156863 0.635294118
+#&gt; [13,] 0.99215686 0.6823529 0.419607843
+#&gt; [14,] 0.99215686 0.5529412 0.235294118
+#&gt; [15,] 0.94509804 0.4117647 0.074509804
+#&gt; [16,] 0.85098039 0.2823529 0.003921569
+#&gt; [17,] 0.65098039 0.2117647 0.011764706
+#&gt; [18,] 0.49803922 0.1529412 0.015686275
 #&gt; attr(,"transparency")
 #&gt; [1] 0
 #&gt; attr(,"space")
 #&gt; [1] "LAB"</div><div class='input'>
-
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

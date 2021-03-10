@@ -52,6 +52,8 @@ wrapper_bar_plot_biomarker(
 \item{strat2_var}{Name of the second stratification variable.}
 
 \item{colors_bar}{Vector with colors for treatment X response interaction.}
+
+\item{method}{One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")}
 }
 \description{
 Bar plot with biomarker effect on response per treatment arm

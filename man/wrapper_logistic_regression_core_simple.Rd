@@ -14,6 +14,7 @@ wrapper_logistic_regression_core_simple(
   caption = NULL,
   force_empty_cols = FALSE,
   print_total = TRUE,
+  print_non_response = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -29,6 +30,7 @@ wrapper_logistic_regression_core_simple_strat(
   caption = NULL,
   force_empty_cols = FALSE,
   print_total = TRUE,
+  print_non_response = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )

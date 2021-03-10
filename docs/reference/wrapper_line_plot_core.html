@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.19</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,86 +124,86 @@
     <p>Line plot</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wrapper_line_plot_core</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>x_var</span>,
-  <span class='kw'>y_var</span>,
-  <span class='kw'>group_var</span>,
-  color_line_var = <span class='kw'>NULL</span>,
-  facet_var = <span class='kw'>NULL</span>,
-  colors_line = <span class='kw'>NULL</span>,
-  variable_names = <span class='kw'>NULL</span>,
-  title = <span class='fl'>TRUE</span>,
-  subtitle = <span class='fl'>TRUE</span>,
-  xlab = <span class='fl'>TRUE</span>,
-  ylab = <span class='fl'>TRUE</span>,
-  legend_colors_line_title = <span class='fl'>TRUE</span>,
-  legend_position = <span class='st'>"right"</span>,
-  facet_label_both = <span class='fl'>TRUE</span>,
-  line_size = <span class='fl'>1</span>,
-  line_type = <span class='fl'>1</span>,
-  line_alpha = <span class='fl'>1</span>,
-  smooth = <span class='st'>"none"</span>,
-  smooth_method = <span class='st'>"lm"</span>,
-  smooth_formula = <span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x</span>,
-  smooth_se = <span class='fl'>FALSE</span>,
-  smooth_size = <span class='fl'>2</span>,
-  smooth_linetype = <span class='fl'>1</span>,
-  point_size = <span class='fl'>1.5</span>,
-  point_shape = <span class='fl'>16</span>,
-  point_alpha = <span class='fl'>1</span>,
-  title_size = <span class='fl'>12</span>,
-  strip_text_size = <span class='kw'>NULL</span>,
-  facet_scales = <span class='st'>"fixed"</span>,
-  xlim = <span class='kw'>NULL</span>,
-  ylim = <span class='kw'>NULL</span>,
-  background_grid_major = <span class='st'>"none"</span>
-)
+    <pre class="usage"><span class='fu'>wrapper_line_plot_core</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>x_var</span>,
+  <span class='va'>y_var</span>,
+  <span class='va'>group_var</span>,
+  color_line_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colors_line <span class='op'>=</span> <span class='cn'>NULL</span>,
+  variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  subtitle <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  xlab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  ylab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_colors_line_title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_position <span class='op'>=</span> <span class='st'>"right"</span>,
+  facet_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  line_size <span class='op'>=</span> <span class='fl'>1</span>,
+  line_type <span class='op'>=</span> <span class='fl'>1</span>,
+  line_alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  smooth <span class='op'>=</span> <span class='st'>"none"</span>,
+  smooth_method <span class='op'>=</span> <span class='st'>"lm"</span>,
+  smooth_formula <span class='op'>=</span> <span class='va'>y</span> <span class='op'>~</span> <span class='va'>x</span>,
+  smooth_se <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth_size <span class='op'>=</span> <span class='fl'>2</span>,
+  smooth_linetype <span class='op'>=</span> <span class='fl'>1</span>,
+  point_size <span class='op'>=</span> <span class='fl'>1.5</span>,
+  point_shape <span class='op'>=</span> <span class='fl'>16</span>,
+  point_alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  title_size <span class='op'>=</span> <span class='fl'>12</span>,
+  strip_text_size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  xlim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ylim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  background_grid_major <span class='op'>=</span> <span class='st'>"none"</span>
+<span class='op'>)</span>
 
-<span class='fu'>wrapper_line_plot_core_strat</span>(
-  <span class='kw'>data</span>,
-  <span class='kw'>x_var</span>,
-  <span class='kw'>y_var</span>,
-  <span class='kw'>group_var</span>,
-  color_line_var = <span class='kw'>NULL</span>,
-  facet_var = <span class='kw'>NULL</span>,
-  strat1_var = <span class='kw'>NULL</span>,
-  strat2_var = <span class='kw'>NULL</span>,
-  colors_line = <span class='kw'>NULL</span>,
-  variable_names = <span class='kw'>NULL</span>,
-  title = <span class='fl'>TRUE</span>,
-  xlab = <span class='fl'>TRUE</span>,
-  ylab = <span class='fl'>TRUE</span>,
-  strat1_label_both = <span class='fl'>TRUE</span>,
-  strat2_label_both = <span class='fl'>TRUE</span>,
-  legend_colors_line_title = <span class='fl'>TRUE</span>,
-  legend_position = <span class='st'>"right"</span>,
-  facet_label_both = <span class='fl'>TRUE</span>,
-  line_size = <span class='fl'>1</span>,
-  line_type = <span class='fl'>1</span>,
-  line_alpha = <span class='fl'>1</span>,
-  smooth = <span class='st'>"none"</span>,
-  smooth_method = <span class='st'>"lm"</span>,
-  smooth_formula = <span class='kw'>y</span> <span class='op'>~</span> <span class='kw'>x</span>,
-  smooth_se = <span class='fl'>FALSE</span>,
-  smooth_size = <span class='fl'>2</span>,
-  smooth_linetype = <span class='fl'>1</span>,
-  point_size = <span class='fl'>1.5</span>,
-  point_shape = <span class='fl'>16</span>,
-  point_alpha = <span class='fl'>1</span>,
-  title_size = <span class='fl'>12</span>,
-  strip_text_size = <span class='kw'>NULL</span>,
-  facet_scales = <span class='st'>"fixed"</span>,
-  xlim = <span class='kw'>NULL</span>,
-  ylim = <span class='kw'>NULL</span>,
-  background_grid_major = <span class='st'>"none"</span>,
-  strat_scales = <span class='st'>"fixed"</span>,
-  strat1_nrow = <span class='fl'>1</span>,
-  strat1_ncol = <span class='kw'>NULL</span>,
-  strat2_nrow = <span class='kw'>NULL</span>,
-  strat2_ncol = <span class='fl'>1</span>,
-  less_legends = <span class='fl'>FALSE</span>
-)</pre>
+<span class='fu'>wrapper_line_plot_core_strat</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  <span class='va'>x_var</span>,
+  <span class='va'>y_var</span>,
+  <span class='va'>group_var</span>,
+  color_line_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat1_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_var <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colors_line <span class='op'>=</span> <span class='cn'>NULL</span>,
+  variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  xlab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  ylab <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strat1_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  strat2_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_colors_line_title <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  legend_position <span class='op'>=</span> <span class='st'>"right"</span>,
+  facet_label_both <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  line_size <span class='op'>=</span> <span class='fl'>1</span>,
+  line_type <span class='op'>=</span> <span class='fl'>1</span>,
+  line_alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  smooth <span class='op'>=</span> <span class='st'>"none"</span>,
+  smooth_method <span class='op'>=</span> <span class='st'>"lm"</span>,
+  smooth_formula <span class='op'>=</span> <span class='va'>y</span> <span class='op'>~</span> <span class='va'>x</span>,
+  smooth_se <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  smooth_size <span class='op'>=</span> <span class='fl'>2</span>,
+  smooth_linetype <span class='op'>=</span> <span class='fl'>1</span>,
+  point_size <span class='op'>=</span> <span class='fl'>1.5</span>,
+  point_shape <span class='op'>=</span> <span class='fl'>16</span>,
+  point_alpha <span class='op'>=</span> <span class='fl'>1</span>,
+  title_size <span class='op'>=</span> <span class='fl'>12</span>,
+  strip_text_size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  xlim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ylim <span class='op'>=</span> <span class='cn'>NULL</span>,
+  background_grid_major <span class='op'>=</span> <span class='st'>"none"</span>,
+  strat_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  strat1_nrow <span class='op'>=</span> <span class='fl'>1</span>,
+  strat1_ncol <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_nrow <span class='op'>=</span> <span class='cn'>NULL</span>,
+  strat2_ncol <span class='op'>=</span> <span class='fl'>1</span>,
+  less_legends <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">

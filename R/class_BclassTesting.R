@@ -177,23 +177,43 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   }else{
     zero = 0
   }
-
   
-  if(mean_var %in% c("HR", "OR") && is.null(xticks_by)){
+  
+  
+  
+  if(is.null(xticks_by)){
     
-    xticks_by <- 0.2
+    res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
+    res_width <- min(c(res_range[2], clip[2])) - max(c(res_range[1], clip[1]))
+    
+    tick_width_original <- res_width / 7
+    
+    tick_width_rounded <- cut(tick_width_original, breaks = c(0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500), labels = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500))
+    tick_width_rounded <- as.numeric(as.character(tick_width_rounded))
+    
+    xticks_by <- tick_width_rounded
+    
+  }
+  
+  
+  if(mean_var %in% c("HR", "OR")){
+    
+    xticks_by <- min(xticks_by, 1)
+    
     xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
     xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
     xticks <- sort(unique(c(xticks_left, xticks_right)))
     
-  }else if(is.null(xticks_by)){
+  }else{
     
-    xticks_by <- 5
     xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
     xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
     xticks <- sort(unique(c(xticks_left, xticks_right)))
     
   }
+  
+  
+  
   
 
   
@@ -244,11 +264,11 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     is.summary = c(TRUE, rep(FALSE, nrow(res))), xlab = xlab, zero = zero,
     title = caption,
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
-    boxsize = 0.35,
+    boxsize = 0.4,
     hrzl_lines = hrzl_lines, 
     graphwidth = grid::unit(10, "cm"), colgap = grid::unit(6, "mm"),
     lineheight = lineheight,
-    lwd.ci = 2.5, lwd.xaxis = 2, lwd.zero = 2.5, 
+    lwd.ci = 2, lwd.xaxis = 2, lwd.zero = 2.5, 
     txt_gp = forestplot::fpTxtGp(xlab = grid::gpar(fontsize = 20), ticks = grid::gpar(fontsize = 18)), 
     mar = grid::unit(c(5, rep(5, times = 3)), "mm"), # grid::unit(rep(5, times = 4)
     clip = clip, 

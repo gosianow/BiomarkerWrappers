@@ -11,6 +11,7 @@ wrapper_log_rank_test_core_simple(
   censor_var,
   covariate_var,
   strata_vars = NULL,
+  keep_obs = TRUE,
   variable_names = NULL,
   caption = NULL,
   print_nevent = TRUE,
