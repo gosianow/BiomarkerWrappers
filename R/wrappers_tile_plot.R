@@ -21,6 +21,13 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
+  colors <- lapply(seq_along(y_vars), function(i){
+    # i = 1
+    format_colors(levels(data[, y_var]), colors = colors[[y_var]])
+  })
+  names(colors) <- y_var
+  
+
   if(any(rev == TRUE)){
     
     if(length(rev) == 1){
@@ -63,8 +70,6 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
     
     y_var <- y_vars[i]
     
-    colors_tmp <- format_colors(levels(data[, y_var]), colors = colors[[y_var]])
-    
     data$dummy <- variable_names[y_var]
     
     
@@ -82,7 +87,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
         legend.text = element_text(size = 8),
         legend.key.size = unit(0.5, "line"),
         plot.margin = margin(t = 1, r = 7, b = 1, l = 7, unit = "pt")) +
-      scale_fill_manual(values = colors_tmp, na.value = "gray95") +
+      scale_fill_manual(values = colors[[i]], na.value = "gray95") +
       scale_y_discrete(expand = c(0,0)) +
       guides(fill = guide_legend(nrow = 4, reverse = TRUE))
     

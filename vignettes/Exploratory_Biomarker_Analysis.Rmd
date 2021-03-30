@@ -261,8 +261,6 @@ wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = tr
 
 
 
-
-
 # KM plot
 
 

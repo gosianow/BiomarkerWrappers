@@ -1823,11 +1823,10 @@ setClusterColors <- function(past_ct, ct, colorList, colorU, method = "original"
   stopifnot(method %in% c("original", "new"))
   
   
-  if(length(colorList)==0){
+  if(length(colorList) == 0){
     
-    #k==2
     newColors = colorU[ct]
-    colori = 2
+    colori = max(ct)
     
   }else if(method == "original"){ # Here we look where the majority of old cluster goes 
     

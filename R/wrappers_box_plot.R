@@ -25,7 +25,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
+  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none"){
   
@@ -304,7 +304,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
     }
     
     ggpl <- ggpl +
-      facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales) +
+      facet_wrap(stats::as.formula(paste("~", facet_var)), labeller = labeller, scales = facet_scales, nrow = facet_nrow, ncol = facet_ncol) +
       theme(strip.background = element_rect(colour = "white", fill = "white"),
         strip.text = element_text(size = strip_text_size))
     
@@ -380,7 +380,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5, label_nudge = 0.025,
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
+  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
@@ -488,7 +488,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
         legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         show_total_counts = show_total_counts, show_median = show_median, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
-        title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
+        title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
         label_size = label_size, label_nudge = label_nudge, 
         background_grid_major = background_grid_major)
@@ -552,7 +552,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
+  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE,
@@ -600,7 +600,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
     legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
     show_total_counts = show_total_counts, show_median = show_median, 
     point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
-    title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
+    title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
     label_size = label_size, label_nudge = label_nudge, 
     background_grid_major = background_grid_major, 
