@@ -27,6 +27,7 @@ wrapper_KM_plot_interaction(
   risk_table = TRUE,
   conf_int = FALSE,
   surv_median_line = "none",
+  line_size = 1,
   title_size = 12,
   label_size = 3,
   rel_heights = c(4, 1),

@@ -8,8 +8,8 @@ wrapper_logistic_regression_biomarker(
   data,
   response_var,
   biomarker_vars,
+  treatment_var = NULL,
   adjustment_vars = NULL,
-  strat1_var = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -27,8 +27,6 @@ wrapper_logistic_regression_biomarker(
 \item{biomarker_vars}{Vector of biomarker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
-
-\item{strat1_var}{Name of the second stratification variable.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 

@@ -8,8 +8,8 @@ wrapper_pearsons_test_biomarker(
   data,
   response_var,
   biomarker_vars,
+  treatment_var = NULL,
   strata_vars = NULL,
-  strat1_var = NULL,
   strat2_var = NULL,
   method = "pearson",
   variable_names = NULL,
@@ -28,8 +28,6 @@ wrapper_pearsons_test_biomarker(
 \item{biomarker_vars}{Vector of biomarker names.}
 
 \item{strata_vars}{Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.}
-
-\item{strat1_var}{Name of the second stratification variable.}
 
 \item{method}{Method 'pearson' or 'fisher' test.}
 

@@ -129,7 +129,7 @@ variable_names
 
 ### Adjust variable names
 
-variable_names[["GeneA_cat2"]] <- "Gene A stratified by median " 
+variable_names[["GeneA_cat2"]] <- "Gene A stratified by median" 
 
 
 
@@ -167,56 +167,6 @@ wrapper_tile_plot2_core(bdata, y_vars = c("BCL2_by_IHC", "BCL2_by_FISH"))
 ```
 
 
-
-
-
-
-
-# Log-rank test
-
-
-```{r log_rank_test, results='asis', fig.width=20, fig.height=5}
-
-
-### Biomarker effect 
-
-data <- bdata
-tte_var <- "PFS"
-censor_var <- "PFS_Event"
-
-biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
-treatment_var = "Treatment_Arm"
-
-
-wrapper_log_rank_test_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var)
-
-
-### Treatment effect within biomarker subgroups
-
-
-data <- bdata
-tte_var <- "PFS"
-censor_var <- "PFS_Event"
-
-treatment_var = "Treatment_Arm"
-biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
-
-
-wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars)
-  
-
-
-x <- wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, print_nevent = FALSE, print_mst = FALSE, print_total = FALSE)
-
-
-bkable(x)
-
-bforest(x)
-
-
-
-
-```
 
 
 
@@ -296,6 +246,56 @@ wrapper_cox_regression_interaction(data, tte_var, censor_var, treatment_var = tr
 
 ```
 
+
+
+
+
+
+# Log-rank test
+
+
+```{r log_rank_test, results='asis', fig.width=20, fig.height=5}
+
+
+### Biomarker effect 
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
+treatment_var = "Treatment_Arm"
+
+
+wrapper_log_rank_test_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var)
+
+
+### Treatment effect within biomarker subgroups
+
+
+data <- bdata
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+
+treatment_var = "Treatment_Arm"
+biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
+
+
+wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars)
+  
+
+
+x <- wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, print_nevent = FALSE, print_mst = FALSE, print_total = FALSE)
+
+
+bkable(x)
+
+bforest(x)
+
+
+
+
+```
 
 
 
@@ -626,7 +626,7 @@ wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, show_subtotal_p
 
 
 
-```{r barplot_strat, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10}
 
 
 data <- bdata
@@ -644,7 +644,7 @@ wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, facet_var = fac
 
 
 
-```{r barplot_strat, fig.height=15, fig.width=10}
+```{r, fig.height=15, fig.width=10}
 
 
 data <- bdata
@@ -758,7 +758,7 @@ wrapper_box_plot_core(data = data, x_var = x_var, y_var = y_var)
 ```
 
 
-
+## Stratified 
 
 ```{r Box_plot_strat, fig.height=5, fig.width=8}
 
@@ -912,6 +912,8 @@ wrapper_point_plot_core(data = data, x_var = x_var, y_var = y_var)
 
 ```
 
+
+## Stratified
 
 
 ```{r Point_plot_strat, fig.width = 12}

@@ -9,8 +9,8 @@ wrapper_log_rank_test_biomarker(
   tte_var,
   censor_var,
   biomarker_vars,
+  treatment_var = NULL,
   strata_vars = NULL,
-  strat1_var = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -32,8 +32,6 @@ wrapper_log_rank_test_biomarker(
 \item{biomarker_vars}{Vector of biomarker names.}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
-
-\item{strat1_var}{Name of the firts stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 

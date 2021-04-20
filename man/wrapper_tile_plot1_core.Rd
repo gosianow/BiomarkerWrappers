@@ -13,7 +13,8 @@ wrapper_tile_plot1_core(
   skip_NAs = FALSE,
   rev = FALSE,
   order = TRUE,
-  return_plotlist = FALSE
+  return_plotlist = FALSE,
+  nrow_legend = 4
 )
 
 wrapper_tile_plot2_core(
@@ -23,7 +24,8 @@ wrapper_tile_plot2_core(
   variable_names = NULL,
   skip_NAs = FALSE,
   rev = FALSE,
-  return_plotlist = FALSE
+  return_plotlist = FALSE,
+  nrow_legend = 4
 )
 }
 \arguments{
@@ -35,7 +37,7 @@ wrapper_tile_plot2_core(
 
 \item{variable_names}{Named vector with nicer variable names.}
 
-\item{skip_NAs}{Logical. Whether to skip NAs.}
+\item{skip_NAs}{Logical vector. Whether to skip NAs.}
 }
 \description{
 Tile plot

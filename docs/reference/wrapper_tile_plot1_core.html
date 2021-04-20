@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.23</span>
       </span>
     </div>
 
@@ -132,7 +132,8 @@
   skip_NAs <span class='op'>=</span> <span class='cn'>FALSE</span>,
   rev <span class='op'>=</span> <span class='cn'>FALSE</span>,
   order <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  return_plotlist <span class='op'>=</span> <span class='cn'>FALSE</span>
+  return_plotlist <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nrow_legend <span class='op'>=</span> <span class='fl'>4</span>
 <span class='op'>)</span>
 
 <span class='fu'>wrapper_tile_plot2_core</span><span class='op'>(</span>
@@ -142,7 +143,8 @@
   variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
   skip_NAs <span class='op'>=</span> <span class='cn'>FALSE</span>,
   rev <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  return_plotlist <span class='op'>=</span> <span class='cn'>FALSE</span>
+  return_plotlist <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  nrow_legend <span class='op'>=</span> <span class='fl'>4</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -166,7 +168,7 @@
     </tr>
     <tr>
       <th>skip_NAs</th>
-      <td><p>Logical. Whether to skip NAs.</p></td>
+      <td><p>Logical vector. Whether to skip NAs.</p></td>
     </tr>
     </table>
 

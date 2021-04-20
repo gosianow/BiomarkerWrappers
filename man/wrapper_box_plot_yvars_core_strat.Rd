@@ -36,6 +36,8 @@ wrapper_box_plot_yvars_core_strat(
   title_size = 12,
   strip_text_size = NULL,
   facet_scales = "fixed",
+  facet_nrow = NULL,
+  facet_ncol = NULL,
   ylim = NULL,
   axis_text_x_angle = 0,
   axis_text_x_vjust = 0,

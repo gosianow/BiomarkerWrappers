@@ -9,8 +9,8 @@ wrapper_log_rank_test_treatment(
   tte_var,
   censor_var,
   treatment_var,
-  strata_vars = NULL,
   biomarker_vars = NULL,
+  strata_vars = NULL,
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -31,9 +31,9 @@ wrapper_log_rank_test_treatment(
 
 \item{treatment_var}{Name of column with treatment information.}
 
-\item{strata_vars}{Vector with names of covariates that are used as strata.}
-
 \item{biomarker_vars}{Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.}
+
+\item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{strat2_var}{Name of the second stratification variable.}
 
