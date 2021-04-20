@@ -544,7 +544,7 @@ wrapper_pearsons_test_core_strat <- function(data, response_var, covariate_var, 
 #' @inheritParams wrapper_pearsons_test_core_strat
 #' @param biomarker_vars Vector of biomarker names.
 #' @export
-wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, strata_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -552,7 +552,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
   # --------------------------------------------------------------------------
   
   ### Model variables cannot include strata variables
-  stopifnot(length(intersect(c(biomarker_vars), c(strata_vars, strat1_var, strat2_var))) == 0)
+  stopifnot(length(intersect(c(biomarker_vars), c(strata_vars, treatment_var, strat2_var))) == 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -566,7 +566,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_pearsons_test_core_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_pearsons_test_core_strat(data = data, response_var = response_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = treatment_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -649,7 +649,7 @@ wrapper_pearsons_test_biomarker <- function(data, response_var, biomarker_vars, 
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_pearsons_test_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, strata_vars = NULL, strat2_var = NULL, method = "pearson", variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 # xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL;
 # legend_colors_title = NULL; facet_label_both = TRUE;
 # skip_levels = NULL; method = "facet";
-# show_proportions = TRUE; show_counts = TRUE; show_total_proportions = FALSE; show_total_counts = TRUE;
+# show_proportions = TRUE; show_counts = TRUE; show_subtotal_proportions = FALSE; show_total_counts = TRUE;
 # label_size = 3.5; label_angle = 0;
 # title_size = 12; strip_text_size = NULL; facet_scales = "fixed"; ylim = NULL;
 # axis_text_x_angle = 0; axis_text_x_vjust = 0; axis_text_x_hjust = 0.5;
@@ -44,7 +44,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
-  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -281,16 +281,16 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     ### Prepare labels
     if(show_proportions){
       if(show_counts){
-        ggdata$Label <- paste0(round(ggdata$Proportion, 1), "% (", ggdata$Count, ")")
+        ggdata$Label <- paste0(formatC(ggdata$Proportion, format = "f", digits = 1, drop0trailing = FALSE), "% (", ggdata$Count, ")")
       }else{
-        ggdata$Label <- paste0(round(ggdata$Proportion, 1), "%")
+        ggdata$Label <- paste0(formatC(ggdata$Proportion, format = "f", digits = 1, drop0trailing = FALSE), "%")
       }
       
     }else{
       if(show_counts){
         ggdata$Label <- paste0("(", ggdata$Count, ")")
       }else{
-        ggdata$Label <- NULL
+        ggdata$Label <- "" 
       }
     }
     
@@ -299,7 +299,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     # ggdata <- ggdata[ggdata$Count > 0, ]
     
     ### Set label to NA for zero counts so it is not displayed
-    ggdata$Label[ggdata$Count == 0] <- NA
+    ggdata$Label[ggdata$Count == 0] <- ""
     
     
     ggdata$Subgroup <- factor(ggdata$Subgroup, levels = levels(data_sub[, x_var]))
@@ -363,8 +363,27 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   
   ggdata_total[, facet_var] <- factor(ggdata_total[, facet_var], levels = levels(ggdata[, facet_var]))
   
-  ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "% (", ggdata_total$Count, ")")
-  # ggdata_total$Label <- paste0(round(ggdata_total$Proportion, 1), "%")
+  
+  
+  
+  ### Prepare labels
+  if(show_subtotal_proportions){
+    if(show_subtotal_counts){
+      ggdata_total$Label <- paste0(formatC(ggdata_total$Proportion, format = "f", digits = 1, drop0trailing = FALSE), "% (", ggdata_total$Count, ")")
+    }else{
+      ggdata_total$Label <- paste0(formatC(ggdata_total$Proportion, format = "f", digits = 1, drop0trailing = FALSE), "%")
+    }
+    
+  }else{
+    if(show_subtotal_counts){
+      ggdata_total$Label <- paste0("(", ggdata_total$Count, ")")
+    }else{
+      ggdata_total$Label <- ""
+    }
+  }
+  
+  ### Set label to NA for zero counts so it is not displayed
+  ggdata_total$Label[ggdata_total$Count == 0] <- ""
   
   
   ggdata_total$Label_Total <- paste0("(", ggdata_total$Count_Total, ")")
@@ -400,11 +419,19 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     ### Labels
-    if(show_proportions){
+    if(show_proportions || show_counts){
       
       ggpl <- ggpl +
         geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, group = .data$Observation, label = .data$Label), 
           position = position_stack(vjust = 0.5), size = label_size, angle = label_angle)
+      
+    }
+    
+    if(show_subtotal_proportions || show_subtotal_counts){
+      
+      ggpl <- ggpl +
+        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
       
     }
     
@@ -416,13 +443,6 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
       
     }
     
-    if(show_total_proportions){
-      
-      ggpl <- ggpl +
-        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
-        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
-      
-    }
     
   }
   
@@ -438,7 +458,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     
     
     ### Labels
-    if(show_proportions){
+    if(show_proportions || show_counts){
       
       ggpl <- ggpl +
         geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, group = .data$Observation, label = .data$Label), 
@@ -460,7 +480,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     
     
     ### Labels
-    if(show_proportions){
+    if(show_proportions || show_counts){
       
       ggpl <- ggpl +
         geom_text(data = ggdata, aes(x = .data$Observation, y = .data$Proportion + ynudge, group = .data$Subgroup, label = .data$Label), 
@@ -481,19 +501,19 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
+    if(show_subtotal_proportions || show_subtotal_counts){
+      
+      ggpl <- ggpl +
+        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
+      
+    }
+    
     if(show_total_counts){
       
       ggpl <- ggpl +
         # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = 0 - ynudge)) + 
         geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = 0 - ynudge, label = .data$Label_Total), size = label_size, angle = label_angle, vjust = 0.5)
-      
-    }
-    
-    if(show_total_proportions){
-      
-      ggpl <- ggpl +
-        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
-        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
       
     }
     
@@ -550,19 +570,19 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     ggdata_total$top_position <- ggdata_total$Proportion + ynudge
     
     
-    if(show_total_counts){
-      
-      ggpl <- ggpl +
-        geom_text(data = ggdata_total, aes(x = .data[[facet_var]], y = .data$bottom_position, group = .data$Subgroup, label = .data$Label_Total), size = label_size, angle = label_angle, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
-      
-    }
-    
-    ### For one level left in the dodge setup show_proportions is equivalent to show_total_proportions
-    if(show_proportions || show_total_proportions){
+    ### For one level left in the dodge setup show_proportions is equivalent to show_subtotal_proportions
+    if(show_proportions || show_subtotal_proportions || show_counts || show_subtotal_counts){
       
       ggpl <- ggpl +
         geom_text(data = ggdata_total, aes(x = .data[[facet_var]], y = .data$top_position, group = .data$Subgroup, label = .data$Label), 
           size = label_size, angle = label_angle, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
+      
+    }
+    
+    if(show_total_counts){
+      
+      ggpl <- ggpl +
+        geom_text(data = ggdata_total, aes(x = .data[[facet_var]], y = .data$bottom_position, group = .data$Subgroup, label = .data$Label_Total), size = label_size, angle = label_angle, vjust = 0.5, position = position_dodge(preserve = "total", width = 0.9))
       
     }
     
@@ -603,7 +623,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
 # xlab = NULL; ylab = NULL; title = NULL; strat1_label_both = TRUE; strat2_label_both = TRUE;
 # legend_colors_title = NULL; facet_label_both = TRUE;
 # skip_levels = NULL; method = "facet";
-# show_proportions = TRUE; show_counts = TRUE; show_total_proportions = FALSE; show_total_counts = TRUE;
+# show_proportions = TRUE; show_counts = TRUE; show_subtotal_proportions = FALSE; show_total_counts = TRUE;
 # label_size = 3.5; label_angle = 0;
 # title_size = 12; strip_text_size = NULL; facet_scales = "fixed"; ylim = NULL;
 # axis_text_x_angle = 0; axis_text_x_vjust = 0; axis_text_x_hjust = 0.5;
@@ -625,7 +645,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL,
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
-  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -732,7 +752,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL,
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
         legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         skip_levels = skip_levels, method = method, 
-        show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
+        show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
         label_size = label_size, label_angle = label_angle, label_nudge = label_nudge,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
@@ -796,7 +816,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars,
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
-  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -849,7 +869,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars,
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
     skip_levels = skip_levels, method = method, 
-    show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
+    show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
     label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
@@ -879,7 +899,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
-  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -981,7 +1001,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
     skip_levels = skip_levels, method = method, 
-    show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
+    show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
     label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
@@ -1014,7 +1034,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
-  show_proportions = TRUE, show_counts = TRUE, show_total_proportions = FALSE, show_total_counts = FALSE, 
+  show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 3.5, label_angle = 0, label_nudge = 0.025,
   title_size = 12, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
@@ -1093,7 +1113,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
     skip_levels = skip_levels, method = method, 
-    show_proportions = show_proportions, show_counts = show_counts, show_total_proportions = show_total_proportions, show_total_counts = show_total_counts, 
+    show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
     label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 

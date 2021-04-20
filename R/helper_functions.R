@@ -1758,9 +1758,18 @@ format_colors_num <- function(x, centered = TRUE, palette = NULL, rev = FALSE, t
 #' @keywords internal
 calculate_break_time <- function(x, n_breaks = 10){
   
-  break_time_by <- max(x, na.rm = TRUE) %/% n_breaks
+  # break_time_by <- max(x, na.rm = TRUE) %/% n_breaks
   
-  break_time_by
+  time_max <- max(x, na.rm = TRUE)
+  
+  time_by_original <- time_max / n_breaks
+  
+  breaks <- c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000)
+  
+  time_by_rounded <- cut(time_by_original, breaks = c(0, breaks), labels = breaks)
+  time_by_rounded <- as.numeric(as.character(time_by_rounded))
+  
+  time_by_rounded
   
 }
 

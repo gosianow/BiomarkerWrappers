@@ -11,9 +11,9 @@
 #' @param y_vars Names of variables to be plotted as tiles. Those variables must be factors.
 #' @param colors Named list with colors for 'y_vars'.
 #' @param variable_names Named vector with nicer variable names.
-#' @param skip_NAs Logical. Whether to skip NAs.
+#' @param skip_NAs Logical vector. Whether to skip NAs.
 #' @export
-wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, order = TRUE, return_plotlist = FALSE){
+wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, order = TRUE, return_plotlist = FALSE, nrow_legend = 4){
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
@@ -23,40 +23,45 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
   
   colors <- lapply(seq_along(y_vars), function(i){
     # i = 1
+    y_var <- y_vars[i]
     format_colors(levels(data[, y_var]), colors = colors[[y_var]])
   })
-  names(colors) <- y_var
+  names(colors) <- y_vars
   
-
-  if(any(rev == TRUE)){
+  
+  
+  
+  if(length(rev) == 1){
+    rev <- rep(rev, length(y_vars))
+  }
+  
+  stopifnot(length(rev) == length(y_vars))
+  
+  for(i in seq_along(rev)){
+    # i = 1
     
-    if(length(rev) == 1){
-      rev <- rep(rev, length(y_vars))
-    }
-    
-    stopifnot(length(rev) == length(y_vars))
-    
-    for(i in seq_along(rev)){
-      # i = 1
+    if(!rev[i]){
       
-      if(rev[i]){
-        
-        data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
-        
-      }
+      data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
       
     }
     
   }
   
   
-  if(skip_NAs){
-    data <- data[complete.cases(complete.cases(data[, y_vars, drop = FALSE])), , drop = FALSE]
+  
+  if(any(skip_NAs)){
+    
+    if(length(skip_NAs) == 1){
+      skip_NAs <- rep(skip_NAs, length(y_vars))
+    }
+    
+    data <- data[complete.cases(data[, y_vars[skip_NAs], drop = FALSE]), , drop = FALSE]
   }
   
   
   if(order){
-    data <- data[order2(data[, y_vars, drop = FALSE], decreasing = TRUE), , drop = FALSE]
+    data <- data[order2(data[, y_vars, drop = FALSE], decreasing = FALSE), , drop = FALSE]
   }
   
   
@@ -87,9 +92,9 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
         legend.text = element_text(size = 8),
         legend.key.size = unit(0.5, "line"),
         plot.margin = margin(t = 1, r = 7, b = 1, l = 7, unit = "pt")) +
-      scale_fill_manual(values = colors[[i]], na.value = "gray95") +
+      scale_fill_manual(values = colors[[y_var]], na.value = "gray95") +
       scale_y_discrete(expand = c(0,0)) +
-      guides(fill = guide_legend(nrow = 4, reverse = TRUE))
+      guides(fill = guide_legend(nrow = nrow_legend, reverse = FALSE))
     
     
   })
@@ -115,7 +120,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
 
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, return_plotlist = FALSE){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, return_plotlist = FALSE, nrow_legend = 4){
   
   
   stopifnot(length(y_vars) >= 1)
@@ -141,21 +146,29 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
         
         data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
         
-        }
-
+      }
+      
     }
     
   }
   
-
+  
   
   levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
   names(levels_original) <- y_vars
   
   
-  if(skip_NAs){
-    data <- data[complete.cases(data[, y_vars, drop = FALSE]), , drop = FALSE]
-  }else{
+  if(any(skip_NAs)){
+    
+    if(length(skip_NAs) == 1){
+      skip_NAs <- rep(skip_NAs, length(y_vars))
+    }
+    
+    data <- data[complete.cases(data[, y_vars[skip_NAs], drop = FALSE]), , drop = FALSE]
+    
+  }
+  
+  if(any(skip_NAs == FALSE)){
     
     ### To calculate proportions of interaction factors we have to add NA as a factor level
     
@@ -171,6 +184,8 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     }
     
   }
+  
+  
   
   
   ### Compute tile size 
@@ -250,7 +265,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
       scale_fill_manual(values = colors_tmp) +
       scale_y_discrete(expand = c(0,0)) +
       scale_x_discrete(expand = c(0,0)) +
-      guides(fill = guide_legend(nrow = 4, reverse = TRUE))
+      guides(fill = guide_legend(nrow = nrow_legend, reverse = TRUE))
     
     
   })

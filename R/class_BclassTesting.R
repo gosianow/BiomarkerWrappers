@@ -129,7 +129,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks_by = NULL, lineheight = "auto"){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto"){
   
   # lineheight = unit(1, "cm")
   
@@ -167,7 +167,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   if(mean_var %in% c("HR", "OR") && is.null(clip)){
-    clip = c(0, 7)
+    clip = c(0, 4)
   }else if(is.null(clip)){
     clip = c(-40, 40)
   }
@@ -179,44 +179,44 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   }
   
   
-  
-  
-  if(is.null(xticks_by)){
+  if(is.null(xticks)){
     
-    res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
-    res_width <- min(c(res_range[2], clip[2])) - max(c(res_range[1], clip[1]))
     
-    tick_width_original <- res_width / 7
+    if(is.null(xticks_by)){
+      
+      res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
+      res_width <- min(c(res_range[2], clip[2])) - max(c(res_range[1], clip[1]))
+      
+      tick_width_original <- res_width / 7
+      
+      tick_width_rounded <- cut(tick_width_original, breaks = c(0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500), labels = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500))
+      tick_width_rounded <- as.numeric(as.character(tick_width_rounded))
+      
+      xticks_by <- tick_width_rounded
+      
+    }
     
-    tick_width_rounded <- cut(tick_width_original, breaks = c(0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500), labels = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500))
-    tick_width_rounded <- as.numeric(as.character(tick_width_rounded))
     
-    xticks_by <- tick_width_rounded
+    if(mean_var %in% c("HR", "OR")){
+      
+      xticks_by <- min(xticks_by, 1)
+      
+      xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
+      xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
+      xticks <- sort(unique(c(xticks_left, xticks_right)))
+      
+    }else{
+      
+      xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
+      xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
+      xticks <- sort(unique(c(xticks_left, xticks_right)))
+      
+    }
+    
     
   }
-  
-  
-  if(mean_var %in% c("HR", "OR")){
-    
-    xticks_by <- min(xticks_by, 1)
-    
-    xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
-    xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
-    xticks <- sort(unique(c(xticks_left, xticks_right)))
-    
-  }else{
-    
-    xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
-    xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
-    xticks <- sort(unique(c(xticks_left, xticks_right)))
-    
-  }
-  
-  
-  
   
 
-  
 
   
   ### ----------------------------------------------------------------------

@@ -64,6 +64,7 @@ library(BiomarkerWrappers)
 
 ```{r library2, echo = FALSE}
 
+
 # devtools::load_all()
 
 
@@ -106,7 +107,36 @@ bdata <- cbind(bdata, data_cat2, data_cat4)
 
 
 
+
+
+
+
+
 ```
+
+
+## Define variable names
+
+
+
+```{r}
+
+
+variable_names <- format_variable_names(bdata)
+
+variable_names
+
+
+### Adjust variable names
+
+variable_names[["GeneA_cat2"]] <- "Gene A stratified by median " 
+
+
+
+```
+
+
+
 
 
 
@@ -117,13 +147,15 @@ bdata <- cbind(bdata, data_cat2, data_cat4)
 
 
 
-```{r, fig.height=4, fig.width=10}
+```{r, fig.height=4, fig.width=10, results='asis'}
 
 
 ### Plot generated using geom_tile
 
 wrapper_tile_plot1_core(bdata, y_vars = c("BCL2_by_IHC", "BCL2_by_FISH"))
 
+
+cat("\n\n ------ \n\n")
 
 ### Plot generated using geom_col. It has substantially smaller size when sample size is large.
 
@@ -143,7 +175,7 @@ wrapper_tile_plot2_core(bdata, y_vars = c("BCL2_by_IHC", "BCL2_by_FISH"))
 # Log-rank test
 
 
-```{r log_rank_test, results='asis'}
+```{r log_rank_test, results='asis', fig.width=20, fig.height=5}
 
 
 ### Biomarker effect 
@@ -153,16 +185,14 @@ tte_var <- "PFS"
 censor_var <- "PFS_Event"
 
 biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
-
-strat1_var = "Treatment_Arm"
-
-
-wrapper_log_rank_test_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, strat1_var = strat1_var, print_nevent = TRUE, print_mst = TRUE)
+treatment_var = "Treatment_Arm"
 
 
+wrapper_log_rank_test_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var)
 
 
 ### Treatment effect within biomarker subgroups
+
 
 data <- bdata
 tte_var <- "PFS"
@@ -174,6 +204,15 @@ biomarker_vars <- c("GeneA_cat2", "GeneB_cat2")
 
 wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars)
   
+
+
+x <- wrapper_log_rank_test_treatment(data, tte_var = tte_var, censor_var = censor_var, treatment_var = treatment_var, biomarker_vars = biomarker_vars, print_nevent = FALSE, print_mst = FALSE, print_total = FALSE)
+
+
+bkable(x)
+
+bforest(x)
+
 
 
 
@@ -198,15 +237,15 @@ censor_var <- "PFS_Event"
 biomarker_vars <- c("GeneA_cat2", "GeneA")
 adjustment_vars <- "IPI"
 
-strat1_var = "Treatment_Arm"
+treatment_var = "Treatment_Arm"
 
 
-wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
+wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, treatment_var = treatment_var)
 
 
 ## To represent the results with a forest plot
 
-x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var, print_total = FALSE, print_adjpvalues = FALSE)
+x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, treatment_var = treatment_var, print_total = FALSE, print_adjpvalues = FALSE)
 
 bforest(x)
 
@@ -316,7 +355,7 @@ treatment_var = "Treatment_Arm"
 wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var)
 
 
-wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var, colors = c("blue", "blue2", "red", "red2"), linetypes = c(2, 1, 2, 1))
+wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, biomarker_var = biomarker_var, treatment_var = treatment_var, colors = c("blue", "blue2", "red", "red2"), linetypes = c(2, 1, 2, 1), line_size = 0.5)
 
 
 
@@ -376,12 +415,11 @@ data <- bdata
 response_var <- "ORR"
 
 biomarker_vars <- c("GeneA_cat2", "GeneA")
+treatment_var = "Treatment_Arm"
 adjustment_vars <- "IPI"
 
-strat1_var = "Treatment_Arm"
 
-
-wrapper_logistic_regression_biomarker(data, response_var =  response_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, strat1_var = strat1_var)
+wrapper_logistic_regression_biomarker(data, response_var =  response_var, biomarker_vars = biomarker_vars, adjustment_vars = adjustment_vars, treatment_var = treatment_var)
 
 
 
@@ -427,17 +465,39 @@ wrapper_logistic_regression_interaction(data, response_var =  response_var, trea
 ```{r pearsons_test, results='asis'}
 
 
+### Biomarker effect 
+
 data <- bdata
 response_var <- "ORR"
+
+biomarker_vars <- c("GeneA_cat2")
 treatment_var = "Treatment_Arm"
 
+wrapper_pearsons_test_biomarker(data, response_var =  response_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var)
 
-wrapper_pearsons_test_treatment(data, response_var = response_var, treatment_var = treatment_var)
+
+
+### Treatment effect within biomarker subgroups
+
+
+data <- bdata
+response_var <- "ORR"
+
+biomarker_vars <- c("GeneA_cat2")
+treatment_var = "Treatment_Arm"
+
+wrapper_pearsons_test_treatment(data, response_var =  response_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var)
+
 
 
 
 
 ```
+
+
+
+
+
 
 
 
@@ -447,17 +507,86 @@ wrapper_pearsons_test_treatment(data, response_var = response_var, treatment_var
 ```{r mantel_test, results='asis'}
 
 
+### Biomarker effect 
+
 data <- bdata
 response_var <- "ORR"
+
+biomarker_vars <- c("GeneA_cat2")
 treatment_var = "Treatment_Arm"
 strata_vars <- "IPI"
 
-wrapper_pearsons_test_treatment(data, response_var = response_var, treatment_var = treatment_var, strata_vars = strata_vars)
+
+wrapper_pearsons_test_biomarker(data, response_var =  response_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var, strata_vars = strata_vars)
+
+
+
+### Treatment effect within biomarker subgroups
+
+
+data <- bdata
+response_var <- "ORR"
+
+biomarker_vars <- c("GeneA_cat2")
+treatment_var = "Treatment_Arm"
+strata_vars <- "IPI"
+
+
+wrapper_pearsons_test_treatment(data, response_var =  response_var, biomarker_vars = biomarker_vars, treatment_var = treatment_var, strata_vars = strata_vars)
+
+
+
+```
+
+
+
+
+# Barplot response 
+
+
+
+
+```{r, fig.height=5, fig.width=12}
+
+
+### Biomarker effect 
+
+data <- bdata
+response_var <- "ORR"
+
+biomarker_var <- "GeneA_cat2"
+treatment_var = "Treatment_Arm"
+
+
+wrapper_bar_plot_biomarker(data, response_var =  response_var, biomarker_var = biomarker_var, treatment_var = treatment_var, variable_names = variable_names, less_legends = TRUE, ylab = "ORR Proportion (%)", strat1_label_both = FALSE, legend_colors_title = FALSE)
+
+
+
+```
+
+
+
+
+```{r, fig.height=5, fig.width=8}
+
+
+### Treatment effect 
+
+data <- bdata
+response_var <- "ORR"
+
+biomarker_var <- "GeneA_cat2"
+treatment_var = "Treatment_Arm"
+
+
+wrapper_bar_plot_treatment(data, response_var =  response_var, biomarker_var = biomarker_var, treatment_var = treatment_var, variable_names = variable_names, less_legends = TRUE, ylab = "R Proportion (%)", strat1_label_both = FALSE, legend_colors_title = FALSE, skip_levels = c("NR"), legend_position = "none")
 
 
 
 
 ```
+
+
 
 
 
@@ -478,6 +607,27 @@ wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var)
 
 
 
+data <- bdata
+
+x_var = "GeneA_cat2"
+y_var = "Response"
+skip_levels <- c("NE", "PD", "SD")
+show_subtotal_proportions <- TRUE
+
+wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, show_subtotal_proportions = show_subtotal_proportions, skip_levels = skip_levels, ylim = c(0, 100))
+
+
+
+```
+
+
+
+## Stratified 
+
+
+
+```{r barplot_strat, fig.height=5, fig.width=10}
+
 
 data <- bdata
 
@@ -489,19 +639,9 @@ facet_var <- "Treatment_Arm"
 wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var)
 
 
-
-data <- bdata
-
-x_var = "GeneA_cat2"
-y_var = "Response"
-skip_levels <- c("NE", "PD", "SD")
-show_total_proportions <- TRUE
-
-wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, show_total_proportions = show_total_proportions, skip_levels = skip_levels, ylim = c(0, 100))
-
-
-
 ```
+
+
 
 
 ```{r barplot_strat, fig.height=15, fig.width=10}
@@ -561,6 +701,40 @@ wrapper_bar_plot_yvars_core_strat(data, x_var = x_var, y_vars = y_vars, skip_lev
 
 
 ```
+
+
+
+
+
+
+
+# Fisher's test
+
+
+```{r fishers_test, results='asis'}
+
+
+data <- bdata
+
+col_var <- "Cell_Of_Origin"
+row_vars <- c("GeneA_cat2", "GeneB_cat2", "GeneC_cat2")
+
+
+wrapper_fishers_test(data, col_var = col_var, row_vars = row_vars)
+
+
+wrapper_fishers_test(data, col_var = col_var, row_vars = row_vars, margin = 2)
+
+
+
+
+```
+
+
+
+
+
+
 
 
 
@@ -682,6 +856,41 @@ wrapper_box_plot_yvars_core_strat(data, y_vars = y_vars, x_var = x_var, facet_va
 
 
 
+# Kruskal–Wallis H test
+
+
+```{r kruskal_test, results='asis'}
+
+
+
+data <- bdata
+
+cat_vars <- "Cell_Of_Origin"
+num_vars <- c("GeneA", "GeneB")
+
+
+wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
+  
+wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars, print_pvalues = FALSE)
+  
+
+
+data <- bdata
+
+cat_vars <- c("Cell_Of_Origin", "IPI", "Treatment_Arm")
+num_vars <- "GeneA"
+
+
+wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
+ 
+ 
+  
+  
+
+```
+
+
+
 
 
 # Point plot
@@ -739,73 +948,6 @@ wrapper_point_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_v
 
 
 
-
-
-# Kruskal–Wallis H test
-
-
-```{r kruskal_test, results='asis'}
-
-devtools::load_all()
-
-
-data <- bdata
-
-cat_vars <- "Cell_Of_Origin"
-num_vars <- c("GeneA", "GeneB")
-
-
-wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
-  
-wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars, print_pvalues = FALSE)
-  
-
-
-data <- bdata
-
-cat_vars <- c("Cell_Of_Origin", "IPI", "Treatment_Arm")
-num_vars <- "GeneA"
-
-
-wrapper_kruskal_test(data, num_vars = num_vars, cat_vars = cat_vars)
- 
- 
-  
-  
-
-```
-
-
-
-
-
-
-# Fisher's test
-
-
-```{r fishers_test, results='asis'}
-
-
-data <- bdata
-
-col_var <- "ORR"
-row_var <- "Treatment_Arm"
-
-
-wrapper_fishers_test_core(data, col_var = col_var, row_var = row_var)
-
-
-
-
-```
-
-
-
-
-
-
-
-
 # Characteristics of ITT and BEP
 
 
@@ -836,6 +978,8 @@ wrapper_characteristics_bep(data, covariate_vars = covariate_vars, bep_vars = be
 
   
 ```
+
+
 
 
 

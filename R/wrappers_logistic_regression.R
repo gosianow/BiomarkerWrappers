@@ -512,7 +512,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -524,7 +524,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   stopifnot(length(intersect(biomarker_vars, adjustment_vars)) == 0)
   
   ### Model variables cannot include strata variables
-  stopifnot(length(intersect(c(biomarker_vars, adjustment_vars), c(strat1_var, strat2_var))) == 0)
+  stopifnot(length(intersect(c(biomarker_vars, adjustment_vars), c(treatment_var, strat2_var))) == 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -540,7 +540,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -622,7 +622,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, adjustment_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Checks

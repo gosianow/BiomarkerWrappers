@@ -62,7 +62,7 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
   
   ## Censor variable must be numeric and encode 1 for event and 0 for censor
   stopifnot(length(censor_var) == 1)
-  stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1)))
+  stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1, NA)))
   
   
   covariate_class <- sapply(data[, covariate_var], class)
@@ -403,7 +403,7 @@ wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, c
 #' @inheritParams wrapper_log_rank_test_core_simple_strat
 #' @param biomarker_vars Vector of biomarker names.
 #' @export
-wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, treatment_var = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -411,7 +411,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
   # --------------------------------------------------------------------------
   
   ### Model variables cannot include strata variables
-  stopifnot(length(intersect(c(biomarker_vars), c(strata_vars, strat1_var, strat2_var))) == 0)
+  stopifnot(length(intersect(c(biomarker_vars), c(strata_vars, treatment_var, strat2_var))) == 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -426,7 +426,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -475,7 +475,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -499,7 +499,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment_var, strata_vars = NULL, biomarker_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
