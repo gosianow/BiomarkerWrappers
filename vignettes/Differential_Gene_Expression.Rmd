@@ -1,0 +1,974 @@
+---
+title: "Differential gene expression"
+author: "Malgorzata Nowicka"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 3
+    toc_float: 
+      collapsed: false
+      smooth_scroll: false
+vignette: >
+  %\VignetteIndexEntry{Differential gene expression}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+
+```{r setup_knitr, include = TRUE, cache = FALSE}
+
+### Packages to compile rmarkdown
+library(knitr)
+library(rmarkdown)
+### Packages for nice tables
+library(kableExtra)
+
+
+font_size <- 9
+cache <- 0
+
+
+### Set global option for font_size for bkable in this document 
+
+options(bkable_font_size = font_size)
+options(bkable_full_width = TRUE)
+
+
+knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center", tidy=TRUE, tidy.opts = list(width.cutoff = 80))
+
+
+
+
+```
+
+
+
+
+```{r library, results="hide", cache = FALSE}
+
+library(ggplot2)
+library(SummarizedExperiment)
+library(limma)
+library(edgeR)
+library(msigdbr)
+
+library(BiomarkerWrappers)
+
+ggplot2::theme_set(cowplot::theme_cowplot(12))
+
+
+```
+
+
+
+
+```{r library2, echo = FALSE}
+
+
+# devtools::load_all()
+
+
+```
+
+
+
+
+# Load RNA-seq data
+
+
+`gse` SummarisedExperiment object contains RNA-seq data of 553 samples from the GOYA clinical trial.
+
+The GOYA trial tested the efficacy of Gazyva (GA101) compared with Rituxan (Rituximab) in first line, untreated DLBCL patients. Patients were randomized 1:1 to either G or R combined with a CHOP chemotherapy backbone. Tumor samples were collected at baseline, RNA was isolated using RNA-Access, and RNASeq was run with TruSeq (Illumina) RNASeq.
+
+
+https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE125966
+
+
+
+
+```{r load_data}
+
+
+data(gse)
+
+gse
+
+colData(gse)
+
+rowData(gse)
+
+
+
+## There are some duplicated Hgnc_Symbol. Replace them with EntrezIDs
+table(duplicated2(rowData(gse)$Hgnc_Symbol, value = TRUE))
+
+
+rowData(gse)$HGNC_Symbol <- rowData(gse)$Hgnc_Symbol
+
+
+rowData(gse)$HGNC_Symbol[duplicated2(rowData(gse)$HGNC_Symbol)] <- rowData(gse)$EntrezIDs[duplicated2(rowData(gse)$HGNC_Symbol)]
+
+# Use HGNC_Symbol as row names. They are needed for the gene set enrichment analysis. 
+
+rownames(gse) <- rowData(gse)$HGNC_Symbol
+
+
+
+
+```
+
+
+
+
+# Load gene sets from MSigDB
+
+
+For the description of the gene sets see https://www.gsea-msigdb.org/gsea/msigdb/genesets.jsp?collection=H
+
+
+
+
+```{r}
+
+
+
+### -------------------------------------------------------------------------
+### Hallmark from MSigDB
+### -------------------------------------------------------------------------
+
+
+geneset_df_hallmark <- msigdbr::msigdbr(species = "Homo sapiens", category = "H")
+
+
+### Skip genes that are missing
+table(geneset_df_hallmark$human_gene_symbol %in% rowData(gse)$HGNC_Symbol)
+
+geneset_df_hallmark <- geneset_df_hallmark[geneset_df_hallmark$human_gene_symbol %in% rowData(gse)$HGNC_Symbol, ]
+
+
+### Format the gene set names
+geneset_df_hallmark$gs_name2 <- gsub("_", " ", geneset_df_hallmark$gs_name)
+geneset_df_hallmark$gs_name2 <- gsub("^HALLMARK ", "", geneset_df_hallmark$gs_name2)
+
+
+geneset_list_hallmark <- split(geneset_df_hallmark$human_gene_symbol, geneset_df_hallmark$gs_name2)
+
+
+geneset_extra_hallmark <- data.frame(GenesetID = names(geneset_list_hallmark), Category = "HALLMARK", stringsAsFactors = FALSE)
+
+
+
+
+
+```
+
+
+
+
+
+
+
+
+# Differential gene expression between cell of origin
+
+
+
+```{r}
+
+
+
+table(gse$cell_of_origin)
+
+
+gse$DE_var <- factor(gse$cell_of_origin, levels = c("GCB", "UNCLASSIFIED", "ABC"))
+
+
+### Remove samples with NAs
+
+gse_dge <- gse[, !is.na(gse$DE_var)]
+
+
+
+
+expr <- assay(gse_dge)
+
+pdata <- data.frame(colData(gse_dge))
+
+fdata <- data.frame(rowData(gse_dge))
+
+
+
+
+
+```
+
+
+
+
+```{r}
+
+
+### Number of samples
+x <- table(pdata$DE_var)
+rownames(x) <- gsub("_", " ", rownames(x))
+
+
+kable(x, caption = "Number of samples used for the analysis.", booktabs = TRUE, linesep = "") %>%
+  kable_styling(bootstrap_options = c("condensed", "bordered", "striped"), latex_options = c("HOLD_position", "striped"), full_width = FALSE, font_size = font_size)
+
+
+
+```
+
+
+
+## Define the comparisons of interest
+
+
+```{r, results="hide"}
+
+
+# Design matrix. We include in the model information about treatment arm and time point
+design <- model.matrix(~ 0 + DE_var, data = pdata)
+
+colnames(design)
+
+
+# Generate contrast of interest - comparisons that we want to test
+# Group names must exactly match the column names of the design matrix.
+
+
+contrast_matrix <- makeContrasts(
+  UNCLASSIFIED_vs_GCB = DE_varUNCLASSIFIED - DE_varGCB,
+  ABC_vs_GCB = DE_varABC - DE_varGCB,
+  levels = design)
+
+
+contrasts <- colnames(contrast_matrix)
+
+group_var = "DE_var"
+
+contrast_mapping = c("UNCLASSIFIED_vs_GCB" = "UNCLASSIFIED", "ABC_vs_GCB" = "ABC")
+
+pval <- 0.05
+
+
+
+```
+
+
+
+
+## Run limma voom 
+
+
+```{r}
+
+
+### ----------------------------------------------------------------------
+### DE analysis using voom and limma model approach 
+### ----------------------------------------------------------------------
+
+# Obtain CPMs
+myCPM <- edgeR::cpm(expr)
+
+# We would like to skip genes that have very low expression.
+# We keep genes that have expression higher than 0.5 CPM in at least X samples, which is the size of the smallest subgroup that we want to compare
+genes2keep <- rowSums(myCPM > 0.5) >= min(table(pdata[, group_var]))
+table(genes2keep)
+
+
+# Subset the rows of expr to keep the more highly expressed genes
+
+y <- DGEList(expr[genes2keep, ], genes = fdata[genes2keep, ])
+
+
+# Apply normalization to DGEList object
+y <- calcNormFactors(y)
+
+
+# Estimate voom mean-variance trend and precision weights
+v <- voom(y, design = design, plot = TRUE)
+
+# Estimate linear model 
+fit <- lmFit(v, design = design)
+
+# We apply the contrasts matrix to the fit object to get the statistics and estimated parameters of our comparison that we are interested in
+
+fit <- contrasts.fit(fit, contrasts = contrast_matrix)
+
+# The final step is to call the eBayes function, which performs empirical Bayes shrinkage on the variances, and estimates moderated t-statistics and the associated p-values
+
+fit <- eBayes(fit)
+
+
+```
+
+
+
+```{r, results="asis"}
+
+
+# -------------------------------------------------------------------------
+# Tables with number of DE genes
+# -------------------------------------------------------------------------
+
+
+summa_fit_lfc0 <- decideTests(fit, p.value = pval, lfc = 0)
+
+x <- t(as.data.frame.matrix(summary(summa_fit_lfc0)))
+
+kable(x, caption = paste0("Number of DE genes (adj. p-value < ", pval, ", |LogFC| > 0)."), booktabs = TRUE, linesep = "") %>%
+  kable_styling(bootstrap_options = c("condensed", "bordered", "striped"), latex_options = c("HOLD_position", "striped"), full_width = FALSE, font_size = font_size) %>% 
+  print()
+
+
+
+
+summa_fit_lfc1 <- decideTests(fit, p.value = pval, lfc = 1)
+
+x <- t(as.data.frame.matrix(summary(summa_fit_lfc1)))
+
+
+kable(x, caption = paste0("Number of DE genes (adj. p-value < ", pval, ", |LogFC| > 1)."), booktabs = TRUE, linesep = "") %>%
+  kable_styling(bootstrap_options = c("condensed", "bordered", "striped"), latex_options = c("HOLD_position", "striped"), full_width = FALSE, font_size = font_size) %>% 
+  print()
+
+
+
+```
+
+
+
+
+
+```{r, results="asis", fig.width = 12, fig.height = 4}
+
+
+# -------------------------------------------------------------------------
+# plotMD
+# -------------------------------------------------------------------------
+
+
+
+par(mfrow = c(1, 3))
+
+
+for(k in 1:length(colnames(contrast_matrix))){
+  # k = 1
+  
+  contrast <- colnames(contrast_matrix)[k]
+  
+  
+  plotMD(fit, coef = contrast, status = summa_fit_lfc0[, contrast], values = c(-1, 1), hl.col = c("blue", "red"), main = paste0(gsub("_", " ", contrast), "\nDE genes (adj. p-value < ", pval, ", |LogFC| > 0)"), cex.main = 1.2)
+  abline(h = 0)
+  
+  plotMD(fit, coef = contrast, status = summa_fit_lfc1[, contrast], values = c(-1, 1), hl.col = c("blue", "red"), main = paste0(gsub("_", " ", contrast), "\nDE genes (adj. p-value < ", pval, ", |LogFC| > 1)"), cex.main = 1.2)
+  abline(h = 0)
+  
+  volcanoplot(fit, coef = contrast, highlight = 10, names = fit$genes$HGNC_Symbol, main = paste0(gsub("_", " ", contrast), "\nHighlighted top 10 genes"))
+  abline(v = c(-1, 1), col = "grey")
+  
+}
+
+
+par(mfrow = c(1, 1))
+
+
+
+
+
+  
+```
+
+
+
+
+
+```{r}
+
+
+# -------------------------------------------------------------------------
+# topTable
+# -------------------------------------------------------------------------
+
+
+topTable <- wrapper_merge_topTables(fit = fit, contrasts = colnames(contrast_matrix), gene_vars = c("EntrezIDs", "HGNC_Symbol"), pval = pval)
+
+rownames(topTable) <- topTable$HGNC_Symbol
+
+head(topTable)
+
+
+```
+
+
+
+
+
+
+
+## Volcano plots
+
+
+We highlight top 20 genes in the volcano plot. 
+
+
+```{r, fig.height = 5, fig.width = 6}
+
+
+
+for(i in 1:length(contrasts)){
+  # i = 1
+  
+  contrast <- contrasts[i]
+  
+  direction <- "both"
+  
+  topTable_both <- wrapper_dispaly_significant_genes(topTable, contrast = contrast, direction = direction, topn = 20, pval = 1, lfc = 0, gene_vars = c("EntrezIDs", "HGNC_Symbol"), lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val")
+  
+  
+  ggdata <- topTable[, c("HGNC_Symbol", paste0(c("logFC_", "P.Value_"), contrast))]
+  
+  colnames(ggdata) <- c("HGNC_Symbol", "logFC", "P.Value")
+  
+  ggdata$P.Value <- -log10(ggdata$P.Value)
+  
+  ggdata$Label <- ggdata$HGNC_Symbol
+  ggdata$Label[!ggdata$Label %in% bresults(topTable_both)$HGNC_Symbol] <- NA
+  
+  ggdata$Highlight <- is.na(ggdata$Label)
+  
+  
+  ggp <- ggplot(ggdata, aes(x = logFC, y = P.Value, color = Highlight, label = Label)) +
+    geom_point() +
+    geom_vline(xintercept = 0, linetype = 2, color = "lightgrey") +
+    geom_vline(xintercept = c(-1, 1), linetype = 2, color = "lightgrey") +
+    ggrepel::geom_text_repel(size = 2.5) +
+    labs(title = contrast) +
+    ylab("-log10(P-Value)") +
+    theme(legend.position = "none") +
+    scale_color_manual(values = c("darkslateblue", "grey"))
+  
+  print(ggp)
+  
+  
+}
+
+
+
+
+```
+
+
+
+
+
+## Correlation between LogFC
+
+
+
+
+```{r, results="asis", fig.height = 5, fig.width = 5}
+
+
+
+
+x <- topTable[, paste0("logFC_", contrasts), drop = FALSE]
+
+colnames(x) <- gsub("_", " ", colnames(x))
+
+correlation <- cor(x, method = "spearman", use = "pairwise.complete.obs")
+
+### Corrplot
+
+
+corrplot::corrplot(correlation, method = "color", addCoef.col = "black", number.digits = 1, number.cex = 0.75, order = "hclust", hclust.method = "complete", type = "full", tl.col = "black", tl.cex = 1, cl.pos = "n")
+
+
+
+
+
+```
+
+
+
+
+
+
+
+```{r, fig.height = 7, fig.width = 7}
+
+
+
+### Scatter plot with LogFC
+
+ggdf <- topTable
+
+logFC1 <- paste0("logFC_", contrasts[1])
+logFC2 <- paste0("logFC_", contrasts[2])
+
+
+logFC_cor <- round(cor(ggdf[, logFC1], ggdf[, logFC2], method = "spearman", use = "pairwise.complete.obs"), 2)
+
+logfc_range <- range(c(ggdf[, logFC1], ggdf[, logFC2]))
+
+wrapper_point_plot_core(ggdf, x_var = logFC1, y_var = logFC2, title = paste0("Spearman's R = ", logFC_cor), point_shape = 20, background_grid_major = "xy", xlim = logfc_range, ylim = logfc_range) +
+  geom_abline(slope = 1, intercept = 0, color = "grey") 
+
+
+
+
+
+
+### Venn diagram
+
+set1 <- contrasts[1]
+set2 <- contrasts[2]
+
+
+venn_data <- topTable[, paste0("summary_pval5_lfc0_", c(set1, set2))]
+colnames(venn_data) <- c(set1, set2)
+
+vennDiagram(venn_data, include = c("up", "down"), counts.col = c("red", "blue"), circle.col = c("blue", "orange", "grey"), main = "|LogFC| > 0, adj. p-val < 0.05", cex = c(0.8, 0.6, 0.6))
+
+
+
+venn_data <- topTable[, paste0("summary_pval5_lfc1_", c(set1, set2))]
+colnames(venn_data) <- c(set1, set2)
+
+vennDiagram(venn_data, include = c("up", "down"), counts.col = c("red", "blue"), circle.col = c("blue", "orange", "grey"), main = "|LogFC| > 1, adj. p-val < 0.05", cex = c(0.8, 0.6, 0.6))
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+## Significant results
+
+
+```{r, results="asis"}
+
+
+
+# ------------------------------
+# Generate tables with significant results
+# ------------------------------
+
+
+significant_genes_list <- lapply(1:length(contrasts), function(i){
+  # i = 5
+  
+  contrast <- contrasts[i]
+  
+  cat(paste0("\n\n### Testing for ", gsub("_", " ", contrast) , "\n\n"))
+  
+  
+  direction <- "up"
+  
+  topTable_up <- wrapper_dispaly_significant_genes(topTable, contrast = contrast, direction = direction, topn = 30, pval = pval, lfc = 0, gene_vars = c("EntrezIDs", "HGNC_Symbol"), lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val")
+  
+  print(topTable_up)
+  
+  
+  direction <- "down"
+  
+  topTable_down <- wrapper_dispaly_significant_genes(topTable, contrast = contrast, direction = direction, topn = 30, pval = pval, lfc = 0, gene_vars = c("EntrezIDs", "HGNC_Symbol"), lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val")
+  
+  print(topTable_down)
+  
+  
+  significant_genes <- c(bresults(topTable_up)$HGNC_Symbol, bresults(topTable_down)$HGNC_Symbol)
+  
+  
+})
+
+
+names(significant_genes_list) <- contrasts
+
+
+
+
+```
+
+
+
+
+
+## Summary
+
+
+
+```{r, results="asis", fig.height = 14, fig.width = 5}
+
+
+significant_genes <- unique(unlist(significant_genes_list))
+
+topTable_significant_genes <- topTable[significant_genes, , drop = FALSE]
+
+
+# -----------------------------------------------------------------------
+# Clustering by LogFC
+# -----------------------------------------------------------------------
+
+
+data_lfc <- wrapper_extract_from_topTable(topTable_significant_genes, extract_prefix = "logFC")
+
+
+if(ncol(data_lfc) > 1){
+  # Cluster rows using hierarchical clustering
+  d <- dist(data_lfc, method = "euclidean")
+  cluster_rows <- hclust(d, method = "complete")
+  clustering_order <- cluster_rows$order
+}else{
+  cluster_rows <- FALSE
+  clustering_order <- 1:nrow(data_lfc)
+}
+
+
+
+### logFC_dotplot
+
+
+wrapper_logFC_dotplot(topTable_significant_genes[clustering_order, ], 
+  gene_var = "HGNC_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  pval = pval)
+
+
+```
+
+
+
+
+```{r, fig.height = 14, fig.width = 5}
+
+### logFC_heatmap
+
+wrapper_logFC_heatmap(topTable_significant_genes, 
+  gene_var = "HGNC_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  cluster_rows = cluster_rows, 
+  row_names_gp = grid::gpar(fontsize = 7))
+
+
+
+```
+
+
+
+
+```{r, fig.height = 14, fig.width = 10}
+
+
+### z-score heatmap
+
+expr_de <- v$E[significant_genes, , drop = FALSE]
+
+
+wrapper_gene_expression_heatmap(expr_de,
+  cluster_rows = cluster_rows, column_split = pdata[, group_var],
+  row_names_gp = grid::gpar(fontsize = 7))
+
+
+
+```
+
+
+
+```{r, fig.height = 14, fig.width = 5}
+
+
+### Mean z-score heatmap
+
+data_adjp <- wrapper_extract_from_topTable(topTable_significant_genes, extract_prefix = "adj.P.Val")
+data_adjp <- data_adjp[, names(contrast_mapping), drop = FALSE]
+colnames(data_adjp) <- contrast_mapping
+
+
+wrapper_summarized_expression_heatmap(expr_de, group = pdata[, group_var], adjp = data_adjp,
+  cluster_rows = cluster_rows,
+  row_names_gp = grid::gpar(fontsize = 7),
+  trim_values = 1)
+
+
+
+```
+
+
+
+## Gene set enrichment analysis (GSEA)
+
+
+
+```{r}
+
+
+
+gene_mapping <- NULL
+gene_var <- "HGNC_Symbol"
+
+genesets <- geneset_list_hallmark
+genesets_extra_info <- geneset_extra_hallmark
+geneset_vars <- "GenesetID"
+
+
+#############################################################################
+# Run GSEA 
+#############################################################################
+
+
+set.seed(1234)
+
+topTable_gsea <- wrapper_gsea(topTable, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, gene_var = gene_var, topn_genes = Inf)
+
+
+rownames(topTable_gsea) <- topTable_gsea$GenesetID
+
+
+head(topTable_gsea)
+
+
+
+
+
+```
+
+
+
+
+```{r, results="asis", fig.height = 6, fig.width = 10}
+
+
+
+
+# ------------------------------------------------------------
+# Generate tables with significant results
+# ------------------------------------------------------------
+
+
+significant_gsea_list <- lapply(1:length(contrasts), function(i){
+  # i = 1
+  
+  contrast <- contrasts[i]
+  
+  cat(paste0("\n\n### GSEA results for ", gsub("_", " ", contrast), "\n\n"))
+  
+  
+  # -------------------------------------------
+  # up
+  # -------------------------------------------
+  
+  direction <- "up"
+  
+  
+  topTable_up <- wrapper_dispaly_significant_gsea(topTable_gsea, contrast = contrast, direction = direction, topn = 20, pval = pval, geneset_vars = geneset_vars, direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val")
+  
+  
+  print(topTable_up)
+  
+  
+  ### Plot
+  if(nrow(topTable_up) > 0){
+    
+    
+    genesets2plot <- genesets[bresults(topTable_up)$GenesetID]
+    names(genesets2plot) <- bresults(topTable_up)$GenesetID
+    title <- bcaption(topTable_up)
+    
+    gsea_results <- bresults(topTable_up)
+    
+    
+    ggp <- wrapper_gsea_plot(topTable, genesets = genesets2plot, contrast = contrast, title = title, gene_var = gene_var, gsea_results = gsea_results, geneset_var = "GenesetID")
+    
+    print(ggp)
+    
+    
+  }
+  
+  
+  # -------------------------------------------
+  # down
+  # -------------------------------------------
+  
+  direction <- "down"
+  
+  
+  topTable_down <- wrapper_dispaly_significant_gsea(topTable_gsea, contrast = contrast, direction = direction, topn = 20, pval = pval, geneset_vars = geneset_vars, direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val")
+  
+  
+  print(topTable_down)
+  
+  
+  ### Plot
+  if(nrow(topTable_down) > 0){
+    
+    
+    genesets2plot <- genesets[bresults(topTable_down)$GenesetID]
+    names(genesets2plot) <- bresults(topTable_down)$GenesetID
+    title <- bcaption(topTable_down)
+    
+    gsea_results <- bresults(topTable_down)
+    
+    
+    ggp <- wrapper_gsea_plot(topTable, genesets = genesets2plot, contrast = contrast, title = title, gene_var = gene_var, gsea_results = gsea_results, geneset_var = "GenesetID")
+    
+    print(ggp)
+    
+    
+  }
+  
+  
+  significant_gsea <- c(bresults(topTable_up)$GenesetID, bresults(topTable_down)$GenesetID)
+  
+  
+})
+
+
+
+names(significant_gsea_list) <- contrasts
+
+
+
+
+
+```
+
+
+
+### GSEA summary
+
+
+
+```{r, fig.height = 7, fig.width = 7}
+
+
+#############################################################################
+# GSEA summary
+#############################################################################
+
+
+
+significant_gsea <- unique(unlist(significant_gsea_list))
+
+topTable_significant_gsea <- topTable_gsea[significant_gsea, , drop = FALSE]
+
+
+
+data_lfc <- wrapper_extract_from_topTable(topTable_significant_gsea, extract_prefix = "NES")
+
+
+if(ncol(data_lfc) > 1){
+  # Cluster rows using hierarchical clustering
+  d <- dist(data_lfc, method = "euclidean")
+  cluster_rows <- hclust(d, method = "complete")
+  clustering_order <- cluster_rows$order
+}else{
+  cluster_rows <- FALSE
+  clustering_order <- 1:nrow(data_lfc)
+}
+
+
+### logFC_dotplot
+
+wrapper_logFC_dotplot(topTable_significant_gsea[clustering_order, ], 
+  gene_var = "GenesetID", lfc_prefix = "NES", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",
+  axis_text_y_size = 10, trim_values = 4, pval = pval, title = "Gene Set Enrichment Analysis") 
+
+
+### logFC_heatmap
+
+wrapper_logFC_heatmap(topTable_significant_gsea, 
+  gene_var = "GenesetID", lfc_prefix = "NES", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  cluster_rows = cluster_rows, 
+  row_names_gp = grid::gpar(fontsize = 8, lineheight = 0.8), 
+  trim_values = 4)
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+sessionInfo()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

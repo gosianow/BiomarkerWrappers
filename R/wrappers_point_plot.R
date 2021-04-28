@@ -33,7 +33,7 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none"){
   
   
@@ -267,7 +267,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   

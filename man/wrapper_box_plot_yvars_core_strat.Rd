@@ -33,7 +33,7 @@ wrapper_box_plot_yvars_core_strat(
   point_stroke = 0.8,
   label_size = 3.5,
   label_nudge = 0.025,
-  title_size = 12,
+  title_size = NULL,
   strip_text_size = NULL,
   facet_scales = "fixed",
   facet_nrow = NULL,

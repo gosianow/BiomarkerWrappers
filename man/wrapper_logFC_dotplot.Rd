@@ -25,9 +25,9 @@ wrapper_logFC_dotplot(
   axis_text_x_angle = 60,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 1,
-  axis_text_y_size = 10,
+  axis_text_y_size = NULL,
   axis_text_y_width = 80,
-  title_size = 12
+  title_size = NULL
 )
 }
 \arguments{

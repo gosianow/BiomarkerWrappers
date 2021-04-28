@@ -9,7 +9,7 @@
 # smooth_method = "lm"; smooth_formula = y ~ x; smooth_se = FALSE;
 # smooth_size = 2; smooth_linetype = 1; 
 # point_size = 1.5; point_shape = 16; point_alpha = 1; 
-# title_size = 12; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
+# title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
 # background_grid_major = "none"
 
 
@@ -29,7 +29,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
   point_size = 1.5, point_shape = 16, point_alpha = 1, 
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none"){
   
   
@@ -255,7 +255,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
   point_size = 1.5, point_shape = 16, point_alpha = 1, 
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   

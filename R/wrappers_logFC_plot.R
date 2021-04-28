@@ -48,7 +48,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
   radius_range = c(10, 3), legend_position = "right", 
   axis_text_x_angle = 60, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
-  axis_text_y_size = 10, axis_text_y_width = 80, title_size = 12){
+  axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
   
   
   
@@ -123,7 +123,6 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
     geom_point() +
     geom_point(aes(size = .data[["pval_cut"]] + 1, shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
     ggtitle(title) +
-    theme_cowplot(12) +
     theme(plot.title = element_text(size = title_size),
       axis.line = element_blank(), 
       axis.title = element_blank(), 

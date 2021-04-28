@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.23</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.24</span>
       </span>
     </div>
 
@@ -94,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/Differential_Gene_Expression.html">Differential gene expression</a>
+    </li>
     <li>
       <a href="../articles/Exploratory_Biomarker_Analysis.html">Exploratory biomarker analysis</a>
     </li>
@@ -134,7 +137,7 @@
   gsea_results <span class='op'>=</span> <span class='cn'>NULL</span>,
   geneset_var <span class='op'>=</span> <span class='st'>"GenesetID"</span>,
   adjp_var <span class='op'>=</span> <span class='st'>"adj.P.Val"</span>,
-  color_point_var <span class='op'>=</span> <span class='st'>"NES"</span>,
+  enrichment_score_var <span class='op'>=</span> <span class='st'>"NES"</span>,
   trim_limits <span class='op'>=</span> <span class='fl'>0.01</span>,
   color_low <span class='op'>=</span> <span class='st'>"#42399B"</span>,
   color_mid <span class='op'>=</span> <span class='st'>"darkgrey"</span>,
@@ -152,6 +155,10 @@
     <tr>
       <th>x</th>
       <td><p>TopTable with statistic, for example, DGE results from limma.</p></td>
+    </tr>
+    <tr>
+      <th>gsea_results</th>
+      <td><p>TopTable with selected GSEA results obtained by running 'wrapper_dispaly_significant_gsea'.</p></td>
     </tr>
     </table>
 

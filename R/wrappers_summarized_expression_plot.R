@@ -15,23 +15,23 @@ wrapper_summarized_expression_dotplot <- function(x, group){
   
   
   ggdata_expr <- x %>% 
-    group_by_at(group_var) %>% 
-    summarize_all(list(~ mean(.))) %>% 
-    pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr") %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(.))) %>% 
+    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr") %>% 
     data.frame
   
   
   ggdata_expr_no_zeros <- x %>% 
-    group_by_at(group_var) %>% 
-    summarize_all(list(~ mean(.[. != 0]))) %>% 
-    pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr_no_zeros") %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(.[. != 0]))) %>% 
+    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr_no_zeros") %>% 
     data.frame
   
   
   ggdata_zeros <- x %>% 
-    group_by_at(group_var) %>% 
-    summarize_all(list(~ mean(. != 0))) %>% 
-    pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Detected") %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(. != 0))) %>% 
+    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Detected") %>% 
     data.frame
   
   
@@ -152,8 +152,8 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   
   ggdata <- x %>% 
-    group_by_at(group_var) %>% 
-    summarize_all(list(~ mean(.))) %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(.))) %>% 
     data.frame(check.names = FALSE)
   
   
@@ -174,8 +174,8 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   if(cell_fun_method %in% c("circle", "rect")){
     
     ggdata <- x %>% 
-      group_by_at(group_var) %>% 
-      summarize_all(list(~ mean(. != 0))) %>% 
+      dplyr::group_by_at(group_var) %>% 
+      dplyr::summarize_all(list(~ mean(. != 0))) %>% 
       data.frame(check.names = FALSE)
     
     rownames(ggdata) <- ggdata[, group_var]

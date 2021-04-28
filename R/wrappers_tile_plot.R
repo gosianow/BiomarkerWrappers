@@ -13,7 +13,7 @@
 #' @param variable_names Named vector with nicer variable names.
 #' @param skip_NAs Logical vector. Whether to skip NAs.
 #' @export
-wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, order = TRUE, return_plotlist = FALSE, nrow_legend = 4){
+wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, order = TRUE, return_plotlist = FALSE, nrow_legend = 3){
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
@@ -89,7 +89,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
         panel.border = element_rect(colour = "black", fill = NA),
         legend.position = "right",
         legend.title = element_blank(), 
-        legend.text = element_text(size = 8),
+        # legend.text = element_text(size = 10),
         legend.key.size = unit(0.5, "line"),
         plot.margin = margin(t = 1, r = 7, b = 1, l = 7, unit = "pt")) +
       scale_fill_manual(values = colors[[y_var]], na.value = "gray95") +
@@ -120,7 +120,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
 
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, return_plotlist = FALSE, nrow_legend = 4){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, return_plotlist = FALSE, nrow_legend = 3){
   
   
   stopifnot(length(y_vars) >= 1)
@@ -259,7 +259,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
         panel.border = element_rect(colour = "black", fill = NA),
         legend.position = "right",
         legend.title = element_blank(), 
-        legend.text = element_text(size = 8),
+        # legend.text = element_text(size = 10),
         legend.key.size = unit(0.5, "line"),
         plot.margin = margin(t = 2, r = 7, b = 2, l = 7, unit = "pt")) +
       scale_fill_manual(values = colors_tmp) +

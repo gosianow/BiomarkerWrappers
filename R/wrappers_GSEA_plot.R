@@ -3,31 +3,21 @@
 
 
 
-# x <- topTable
-# genesets; contrast; gene_var = "EntrezIDs"; 
-# statistic_prefix = "t"; sep = "_";
-# trim_limits = 0.01;
-# color_low = '#42399B'; color_mid = "darkgrey"; color_high = '#D70131';
-# title = ""; title_size = 10; title_width = 100; axis_text_y_size = 8; axis_text_y_width = 80
-
-
-
-
 #' Plot GSEA statistics ranks
 #' 
-#' @param x TopTable with statistic, for example, DGE results from limma.
+#' @param statistic Named vector with statistic. Names correspond to genes.
+#' @param genesets Named list with gene sets to plot. Names correspond to gene sets.
+#' @param adjp Vector with adjusted p-values for the gene sets.
+#' @param enrichment_score Vector with enrichment scores for the gene sets.
 #' @export
-wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
-  gsea_results = NULL, geneset_var = "GenesetID", adjp_var = "adj.P.Val", color_point_var = "NES",
+wrapper_gsea_plot_core <- function(statistic, genesets, adjp = NULL, enrichment_score = NULL,
+  statistic_name = "t", geneset_name = "GenesetID", adjp_name = "adj.P.Val", enrichment_score_name = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
   title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 80){
   
   
-  if(contrast == ""){
-    sep <- ""
-  }
-  
+  stopifnot(!is.null(names(statistic)))
   
   ## Wrap the title so it can be nicely displayed in the plots
   title <- stringr::str_wrap(title, width = title_width)
@@ -36,9 +26,6 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   # -------------------------------------------------------------------------
   # Prepare data
   # -------------------------------------------------------------------------
-  
-  statistic <- x[, paste0(statistic_prefix, sep, contrast)]
-  names(statistic) <- x[, gene_var]
   
   statistic <- sort(statistic, decreasing = TRUE)
   
@@ -66,7 +53,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   
   ### Normalize the hight of lines to 1 (-0.5;0.5)
-
+  
   # data$statistic[data$statistic > max_abs_value] <- max_abs_value
   # data$statistic[data$statistic < -max_abs_value] <- -max_abs_value
   # data$statistic_adj <- data$statistic / (2 * max_abs_value)
@@ -92,8 +79,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   
   if(length(genesets) == 0){
-    message("There are no common genes between the universe and the genesets.")
-    return(NULL)
+    stop("There are no common genes between the universe and the genesets.")
   }
   
   
@@ -168,7 +154,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   ggp2 <- ggplot(data, aes(x = .data$rank, xend = .data$rank, y = 0, yend = .data$statistic, color = .data$statistic)) +
     geom_segment() +
     xlab(xlab) +
-    ylab(statistic_prefix) +
+    ylab(statistic_name) +
     theme(axis.line = element_blank(), 
       # axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),
@@ -187,13 +173,25 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   
   
   
-  if(!is.null(gsea_results)){
+  if(!is.null(adjp) && !is.null(enrichment_score)){
+    
+    stopifnot(length(adjp) == length(genesets))
+    stopifnot(length(enrichment_score) == length(genesets))
+    
+    
+    gsea_results <- data.frame(geneset = names(genesets), adjp = adjp, enrichment_score = enrichment_score, stringsAsFactors = FALSE)
+    
+    colnames(gsea_results) <- c(geneset_name, adjp_name, enrichment_score_name)
+    geneset_var <- geneset_name
+    adjp_var <- adjp_name
+    enrichment_score_var <- enrichment_score_name
+    
     
     if(all(names(genesets) == gsea_results[, geneset_var])){
       
       ### Use a trick with the title. Otherwise, the plots are not aligned :/
       
-      ggp3 <- wrapper_ora_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = color_point_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5)) +
+      ggp3 <- wrapper_ora_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = enrichment_score_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5)) +
         theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank())
       
@@ -218,6 +216,71 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
     out1
     
   }
+  
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' Plot GSEA statistics ranks
+#' 
+#' @param x TopTable with statistic, for example, DGE results from limma.
+#' @param gsea_results TopTable with selected GSEA results obtained by running 'wrapper_dispaly_significant_gsea'.
+#' @export
+wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
+  gsea_results = NULL, geneset_var = "GenesetID", adjp_var = "adj.P.Val", enrichment_score_var = "NES",
+  trim_limits = 0.01,
+  color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 80){
+  
+  
+  if(contrast == ""){
+    sep <- ""
+  }
+  
+  
+  # -------------------------------------------------------------------------
+  # Prepare data
+  # -------------------------------------------------------------------------
+  
+  statistic <- x[, paste0(statistic_prefix, sep, contrast)]
+  names(statistic) <- x[, gene_var]
+  
+  
+  if(!is.null(gsea_results)){
+    stopifnot(all(names(genesets) == gsea_results[, geneset_var]))
+    adjp <- gsea_results[, adjp_var]
+    enrichment_score <- gsea_results[, enrichment_score_var]
+  }else{
+    adjp <- NULL  
+    enrichment_score <- NULL
+  }
+  
+  
+  
+  wrapper_gsea_plot_core(statistic = statistic, genesets = genesets, adjp = adjp, enrichment_score = enrichment_score,
+    statistic_name = statistic_prefix, geneset_name = geneset_var, adjp_name = adjp_var, enrichment_score_name = enrichment_score_var,
+    trim_limits = trim_limits,
+    color_low = color_low, color_mid = color_mid, color_high = color_high,
+    title = title, title_size = title_size, title_width = title_width, axis_text_y_size = axis_text_y_size, axis_text_y_width = axis_text_y_width)
   
   
   

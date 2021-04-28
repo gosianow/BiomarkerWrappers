@@ -129,7 +129,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto"){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14){
   
   # lineheight = unit(1, "cm")
   
@@ -260,7 +260,10 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   
-  forestplot::forestplot(labeltext, mean = c(NA, res[, mean_var]), lower = c(NA, res[, lower_var]), upper = c(NA, res[, upper_var]), 
+  forestplot::forestplot(labeltext, 
+    mean = c(NA, res[, mean_var]), 
+    lower = c(NA, res[, lower_var]), 
+    upper = c(NA, res[, upper_var]), 
     is.summary = c(TRUE, rep(FALSE, nrow(res))), xlab = xlab, zero = zero,
     title = caption,
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
@@ -269,7 +272,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     graphwidth = grid::unit(10, "cm"), colgap = grid::unit(6, "mm"),
     lineheight = lineheight,
     lwd.ci = 2, lwd.xaxis = 2, lwd.zero = 2.5, 
-    txt_gp = forestplot::fpTxtGp(xlab = grid::gpar(fontsize = 20), ticks = grid::gpar(fontsize = 18)), 
+    txt_gp = forestplot::fpTxtGp(label = grid::gpar(fontsize = label_fontsize), xlab = grid::gpar(fontsize = 24), ticks = grid::gpar(fontsize = 22)), 
     mar = grid::unit(c(5, rep(5, times = 3)), "mm"), # grid::unit(rep(5, times = 4)
     clip = clip, 
     ci.vertices = TRUE,

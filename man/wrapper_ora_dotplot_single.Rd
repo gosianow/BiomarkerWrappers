@@ -9,7 +9,6 @@ wrapper_ora_dotplot_single(
   geneset_var = "GenesetID",
   observed_var = "Observed",
   adjp_var = "adj.P.Val",
-  genes_prefix = NA,
   color_point_var = NULL,
   trim_limits = 0.01,
   color_point = "darkslateblue",

@@ -14,7 +14,7 @@ wrapper_tile_plot1_core(
   rev = FALSE,
   order = TRUE,
   return_plotlist = FALSE,
-  nrow_legend = 4
+  nrow_legend = 3
 )
 
 wrapper_tile_plot2_core(
@@ -25,7 +25,7 @@ wrapper_tile_plot2_core(
   skip_NAs = FALSE,
   rev = FALSE,
   return_plotlist = FALSE,
-  nrow_legend = 4
+  nrow_legend = 3
 )
 }
 \arguments{

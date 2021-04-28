@@ -11,7 +11,8 @@
 #' 
 #' @param x TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant'.
 #' @export
-wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_var = "Observed", adjp_var = "adj.P.Val",  genes_prefix = NA, color_point_var = NULL,
+wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_var = "Observed", 
+  adjp_var = "adj.P.Val", color_point_var = NULL,
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   size_range = c(2, 10),
@@ -286,7 +287,6 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
     geom_vline(xintercept = xintercept, linetype = 2, color = "lightgrey") +
     ggtitle(title) +
     xlab(xlab) +
-    theme_cowplot(12) +
     theme(axis.line = element_blank(), 
       axis.title.y = element_blank(), 
       axis.text.y = element_text(size = axis_text_y_size),

@@ -25,7 +25,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none"){
   
@@ -380,7 +380,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5, label_nudge = 0.025,
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
@@ -552,7 +552,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
-  title_size = 12, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 0, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE,

@@ -14,7 +14,7 @@ wrapper_gsea_plot(
   gsea_results = NULL,
   geneset_var = "GenesetID",
   adjp_var = "adj.P.Val",
-  color_point_var = "NES",
+  enrichment_score_var = "NES",
   trim_limits = 0.01,
   color_low = "#42399B",
   color_mid = "darkgrey",
@@ -28,6 +28,8 @@ wrapper_gsea_plot(
 }
 \arguments{
 \item{x}{TopTable with statistic, for example, DGE results from limma.}
+
+\item{gsea_results}{TopTable with selected GSEA results obtained by running 'wrapper_dispaly_significant_gsea'.}
 }
 \description{
 Plot GSEA statistics ranks
