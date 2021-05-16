@@ -38,7 +38,7 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
   stopifnot(is.numeric(data[, num_var]) || is.integer(data[, num_var]))
   
   ### Keep non-missing data
-  data <- data[stats::complete.cases(data[, c(cat_var, num_var)]), c(cat_var, num_var), ]
+  data <- data[stats::complete.cases(data[, c(cat_var, num_var)]), , drop = FALSE]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -199,7 +199,7 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
 #' 
 #' @inheritParams wrapper_kruskal_test_core_col_cat
 #' @export
-wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "kruskal", pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -222,7 +222,7 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   stopifnot(is.factor(data[, cat_var]))
   stopifnot(nlevels(data[, cat_var]) >= 2)
   
-  if(method == "wilcox"){
+  if(method == "wilcox" && !pairwise){
     stopifnot(nlevels(data[, cat_var]) == 2)
   }
   
@@ -258,59 +258,142 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   rownames(summdf) <- levels(data[, cat_var])
   
   
-  
-  tbl <- table(data[, cat_var])
-  
-  if(sum(tbl > 1) >= 2){
+  if(pairwise){
     
-    test_res <- NULL
+    levels_cat <- levels(data[, cat_var])
     
-    if(method == "wilcox"){
-      ## Wilcoxon Rank-Sum test
-      levels_num_var <- levels(data[, cat_var])
+    test_stats <- lapply(seq_along(levels_cat)[-1], function(i){
+      # i = 2
       
-      try(test_res <- stats::wilcox.test(x = data[data[, cat_var] == levels_num_var[1], num_var], 
-        y = data[data[, cat_var] == levels_num_var[2], num_var]), silent = TRUE)
+      data_sub <- data[data[, cat_var] %in% c(levels_cat[1], levels_cat[i]), , drop = FALSE]
       
-    }else if(method == "kruskal"){
-      ## Kruskal-Wallis H test
+      data_sub[, cat_var] <- factor(data_sub[, cat_var], levels = c(levels_cat[1], levels_cat[i]))
       
-      try(test_res <- stats::kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
+      tbl <- table(data_sub[, cat_var])
       
-    }
-    
-    
-    if(is.null(test_res)){
-      pvalue <- NA
-      difference <- NA
-    }else{
-      pvalue <- test_res$p.value
-      if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-        difference <- Median[2] - Median[1]
+      if(sum(tbl > 1) >= 2){
+        
+        test_res <- NULL
+        levels_cat_var <- levels(data_sub[, cat_var])
+        
+        
+        if(method == "wilcox"){
+          ## Wilcoxon Rank-Sum test
+          
+          try(test_res <- stats::wilcox.test(x = data_sub[data_sub[, cat_var] == levels_cat_var[1], num_var], 
+            y = data_sub[data_sub[, cat_var] == levels_cat_var[2], num_var]), silent = TRUE)
+          
+        }else if(method == "kruskal"){
+          ## Kruskal-Wallis H test
+          
+          try(test_res <- stats::kruskal.test(x = data_sub[, num_var], g = data_sub[, cat_var]), silent = TRUE)
+          
+        }
+        
+        
+        if(is.null(test_res)){
+          pvalue <- NA
+          difference <- NA
+        }else{
+          pvalue <- test_res$p.value
+          if(length(tbl) == 2 && sum(tbl > 1) >= 2){
+            difference <- median(data_sub[data_sub[, cat_var] == levels_cat_var[2], num_var]) - median(data_sub[data_sub[, cat_var] == levels_cat_var[1], num_var])
+          }else{
+            difference <- NA
+          }
+        }
+        
+        
       }else{
+        pvalue <- NA
         difference <- NA
       }
-    }
+      
+      
+      return(data.frame(pvalue = pvalue, difference = difference))
+      
+    })
+    
+    test_stats <- rbind.fill(test_stats)
+    
+    pvalue <- test_stats$pvalue
+    difference <- test_stats$difference
     
     
   }else{
-    pvalue <- NA
-    difference <- NA
+      
+    
+    tbl <- table(data[, cat_var])
+    
+    if(sum(tbl > 1) >= 2){
+      
+      test_res <- NULL
+      
+      if(method == "wilcox"){
+        ## Wilcoxon Rank-Sum test
+        levels_cat_var <- levels(data[, cat_var])
+        
+        try(test_res <- stats::wilcox.test(x = data[data[, cat_var] == levels_cat_var[1], num_var], 
+          y = data[data[, cat_var] == levels_cat_var[2], num_var]), silent = TRUE)
+        
+      }else if(method == "kruskal"){
+        ## Kruskal-Wallis H test
+        
+        try(test_res <- stats::kruskal.test(x = data[, num_var], g = data[, cat_var]), silent = TRUE)
+        
+      }
+      
+      
+      if(is.null(test_res)){
+        pvalue <- NA
+        difference <- NA
+      }else{
+        pvalue <- test_res$p.value
+        if(length(tbl) == 2 && sum(tbl > 1) >= 2){
+          difference <- Median[2] - Median[1]
+        }else{
+          difference <- NA
+        }
+      }
+      
+      
+    }else{
+      pvalue <- NA
+      difference <- NA
+    }
+    
+    
+    
   }
   
   
+  
+ 
   
   # --------------------------------------------------------------------------
   # Prepare 'res' data frame
   # --------------------------------------------------------------------------
   
-  
-  res <- data.frame(covariate = cat_var,
-    subgroup = rownames(summdf),
-    summdf,
-    difference = c(difference, rep(NA, nrow(summdf) - 1)),
-    pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
-    stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+  if(pairwise){
+    
+    res <- data.frame(covariate = cat_var,
+      subgroup = rownames(summdf),
+      summdf,
+      difference = c(NA, difference),
+      pvalue = c(NA, pvalue), 
+      stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+    
+  }else{
+    
+    res <- data.frame(covariate = cat_var,
+      subgroup = rownames(summdf),
+      summdf,
+      difference = c(difference, rep(NA, nrow(summdf) - 1)),
+      pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
+      stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
+    
+    
+  }
   
   
   
@@ -322,13 +405,27 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   digits <- rep(2, length(display_statistics))
   digits[display_statistics == "N"] <- 0
   
+  if(pairwise){
+    
+    out <- data.frame(Covariate = variable_names[res$covariate], 
+      Subgroup = res$subgroup, 
+      format_summ_df(summ = summdf, per = "row", digits = digits),
+      Difference = format_difference(res$difference, digits = 2, non_empty = 2:nrow(res)),
+      `P-value` = format_pvalues(res$pvalue, non_empty = 2:nrow(res)), 
+      check.names = FALSE, stringsAsFactors = FALSE)
+    
+    
+  }else{
+    
+    out <- data.frame(Covariate = variable_names[res$covariate], 
+      Subgroup = res$subgroup, 
+      format_summ_df(summ = summdf, per = "row", digits = digits),
+      Difference = format_difference(res$difference, digits = 2, non_empty = 1),
+      `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
+      check.names = FALSE, stringsAsFactors = FALSE)
+    
+  }
   
-  out <- data.frame(Covariate = variable_names[res$covariate], 
-    Subgroup = res$subgroup, 
-    format_summ_df(summ = summdf, per = "row", digits = digits),
-    Difference = format_difference(res$difference, digits = 2, non_empty = 1),
-    `P-value` = format_pvalues(res$pvalue, non_empty = 1), 
-    check.names = FALSE, stringsAsFactors = FALSE)
   
   
   stopifnot(all(sapply(out, class) == "character"))
@@ -372,7 +469,7 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -552,7 +649,7 @@ wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, stra
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -619,7 +716,7 @@ wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, stra
       }
       
       
-      wrapper_res <- wrapper_kruskal_test_core_col_num(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_kruskal_test_core_col_num(data = data_strata1, num_var = num_var, cat_var = cat_var, method = method, pairwise = pairwise, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
       
       
       res <- bresults(wrapper_res)
@@ -717,7 +814,7 @@ wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, stra
 #' @param num_vars Vector with names of numerical variables. If it has length >= 1, then 'cat_var' must be of length 1, and stratification subgroups are displayed in columns and statistics in rows.
 #' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
 #' @export
-wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -764,7 +861,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
       num_var <- num_vars
       cat_var <- cat_vars[i]
       
-      wrapper_res <- wrapper_kruskal_test_core_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_kruskal_test_core_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, pairwise = pairwise, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       return(wrapper_res)
       

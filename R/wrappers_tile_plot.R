@@ -13,10 +13,14 @@
 #' @param variable_names Named vector with nicer variable names.
 #' @param skip_NAs Logical vector. Whether to skip NAs.
 #' @export
-wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, order = TRUE, return_plotlist = FALSE, nrow_legend = 3){
+wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = TRUE, rev_levels_skip = NULL, order = TRUE, return_plotlist = FALSE, nrow_legend = 3){
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
+  
+  if(is.null(rev_levels_skip)){
+    rev_levels_skip <- c("Unknown", "unknown", "Missing", "missing")
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -40,9 +44,14 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
   for(i in seq_along(rev)){
     # i = 1
     
-    if(!rev[i]){
+    if(rev[i]){
       
-      data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
+      levels_original <- levels(data[, y_vars[i]])
+      levels_skip <- levels_original[levels_original %in% rev_levels_skip]
+      levels_rev <- levels_original[!levels_original %in% rev_levels_skip]
+      levels_new <- c(rev(levels_rev), levels_skip)
+       
+      data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = levels_new)
       
     }
     
@@ -120,44 +129,51 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
 
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = FALSE, return_plotlist = FALSE, nrow_legend = 3){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = TRUE, rev_levels_skip = NULL, return_plotlist = FALSE, nrow_legend = 3){
   
   
   stopifnot(length(y_vars) >= 1)
   stopifnot(all(sapply(data[, y_vars], class) == "factor"))
   
+  if(is.null(rev_levels_skip)){
+    rev_levels_skip <- c("Unknown", "unknown", "Missing", "missing")
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
   
-  if(any(rev == TRUE)){
+  if(length(rev) == 1){
+    rev <- rep(rev, length(y_vars))
+  }
+  
+  stopifnot(length(rev) == length(y_vars))
+  
+  for(i in seq_along(rev)){
+    # i = 1
     
-    if(length(rev) == 1){
-      rev <- rep(rev, length(y_vars))
-    }
-    
-    stopifnot(length(rev) == length(y_vars))
-    
-    for(i in seq_along(rev)){
-      # i = 1
+    if(rev[i]){
       
-      if(rev[i]){
-        
-        data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
-        
-      }
+      levels_original <- levels(data[, y_vars[i]])
+      levels_skip <- levels_original[levels_original %in% rev_levels_skip]
+      levels_rev <- levels_original[!levels_original %in% rev_levels_skip]
+      levels_new <- c(rev(levels_rev), levels_skip)
+      
+      data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = levels_new)
       
     }
     
   }
   
+  ### In barplots the order is reversed 
+  for(i in seq_along(y_vars)){
+    # i = 1
+    
+    data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = rev(levels(data[, y_vars[i]])))
+    
+  }
   
-  
-  levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
-  names(levels_original) <- y_vars
-  
-  
+
   if(any(skip_NAs)){
     
     if(length(skip_NAs) == 1){
@@ -167,6 +183,15 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     data <- data[complete.cases(data[, y_vars[skip_NAs], drop = FALSE]), , drop = FALSE]
     
   }
+  
+  
+  ### Skip unused levels 
+  
+  data <- mutate_at(data, y_vars, factor)
+  
+  levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
+  names(levels_original) <- y_vars
+  
   
   if(any(skip_NAs == FALSE)){
     
@@ -278,11 +303,6 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   
   
 }
-
-
-
-
-
 
 
 
