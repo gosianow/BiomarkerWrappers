@@ -1,5 +1,58 @@
 
 
+
+
+
+
+#' Load content from a CSV file into an eSet 
+#' 
+#' @export
+csv2eSet <- function(file, skip_ncol, skip_nrow, sep = "\t"){
+  
+  
+  x <- read.table(file, header = FALSE, sep = sep, as.is = TRUE)
+  
+  
+  pdata_matrix <- x[1:(skip_nrow), -(1:skip_ncol)]
+  
+  
+  pdata <- data.frame(t(pdata_matrix[, -1]), stringsAsFactors = FALSE)
+  colnames(pdata) <- gsub(":$", "", pdata_matrix[, 1])
+  
+  
+  
+  expr <- as.matrix.data.frame(mutate_all(x[-(1:(skip_nrow + 1)), -(1:(skip_ncol + 1))], as.numeric))
+  
+  colnames(expr) <- x[skip_nrow + 1, -(1:(skip_ncol + 1))]
+  rownames(expr) <- x[-(1:(skip_nrow + 1)), skip_ncol + 1]
+  
+  
+  fdata <- x[-(1:(skip_nrow + 1)), 1:(skip_ncol + 1)]
+  
+  colnames(fdata) <- x[skip_nrow + 1, 1:(skip_ncol + 1)]
+  
+  
+  es <- ExpressionSet(assayData = expr)
+  
+  pData(es) <- pdata
+  
+  fData(es) <- fdata
+  
+  colnames(es) <- colnames(expr)
+  
+  es
+  
+  
+}
+
+
+
+
+
+
+
+
+
 #' Use round or signif
 #' 
 #' @keywords internal
