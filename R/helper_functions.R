@@ -1390,7 +1390,10 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
           
           n <- 9
           
-          if(length(levels_x) == 2){
+          ### Skip colors at the extremes 
+          if(length(levels_x) == 1){
+            skip_colors <- c(2:5, n-2, n-1)
+          }else if(length(levels_x) == 2){
             skip_colors <- c(2, 3, 4, n-1)
           }else if(length(levels_x) <= 4){
             skip_colors <- c(2, n-1)
@@ -1415,6 +1418,8 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
         }else{
           
           n <- 11  
+          
+          ### Skip the center light colors
           
           out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, 5, 6, 7, n)])(length(levels_x))
           

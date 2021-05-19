@@ -9,6 +9,7 @@
 #' @param tte_var Name of the variable containing time-to-event data.
 #' @param censor_var Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.
 #' @param covariate_var Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.
+#' @param level_mapping Named vector with level mapping. The names correspond to the original levels of covariate_var. 
 #' 
 #' @examples 
 #' 
@@ -32,7 +33,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = ggplot2::theme_classic(12), 
   line_size = 1, title_size = 12, label_size = 3, rel_heights = c(5, 1), 
-  background_grid_major = "none"){
+  background_grid_major = "none", level_mapping = NULL){
   
   
   # -------------------------------------------------------------------------
@@ -90,9 +91,19 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   linetypes <- linetypes[tbl != 0]
   
   
-  ## Removed unused levels from the data too
+  ## Remove unused levels from the data too
   
   data[, covariate_var] <- factor(data[, covariate_var])
+  
+  
+  ## Map levels 
+  
+  if(!is.null(level_mapping)){
+    
+    data[, covariate_var] <- factor(data[, covariate_var], labels = level_mapping[levels(data[, covariate_var])])
+    
+  }
+  
   
   # -------------------------------------------------------------------------
   # Labels
@@ -270,7 +281,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = ggplot2::theme_classic(12),
   line_size = 1, title_size = 12, label_size = 3, rel_heights = c(5, 1), 
-  background_grid_major = "none",
+  background_grid_major = "none", level_mapping = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -378,6 +389,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
         subtitle <- NULL
       }
       
+      
       ggpl <- wrapper_KM_plot_core(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
         colors = colors, linetypes = linetypes, 
         variable_names = variable_names, 
@@ -386,7 +398,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
         break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
         ggtheme = ggtheme,
         line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-        background_grid_major = background_grid_major)
+        background_grid_major = background_grid_major, level_mapping = level_mapping)
       
       
       return(ggpl)
@@ -527,10 +539,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   line_size = 1, title_size = 12, label_size = 3, rel_heights = c(5, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
-  
-  
-  ### TODO Do not display treatment in the legend
-  
+
 
   ## biomarker_var and treatment_var must be factors for the color definition
   stopifnot(length(biomarker_var) == 1)
@@ -567,7 +576,11 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     
     covariate_var <- "treatment_biomarker_interaction"
     
-    variable_names[[covariate_var]] <- structure(paste0(variable_names[treatment_var], ", ", variable_names[biomarker_var]), names = covariate_var)
+    variable_names[[covariate_var]] <- structure(variable_names[biomarker_var], names = covariate_var)
+    
+    
+    level_mapping <- rep(levels(data[, biomarker_var]), times = nlevels(data[, treatment_var]))
+    names(level_mapping) <- levels(data$treatment_biomarker_interaction)
     
     
     # -------------------------------------------------------------------------
@@ -616,7 +629,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-    background_grid_major = background_grid_major,
+    background_grid_major = background_grid_major, level_mapping = level_mapping,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -655,9 +668,6 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
-  ### TODO Do not display biomarker in the legend
-  
-  
   ## biomarker_var and treatment_var must be factors for the color definition
   if(!is.null(biomarker_var)){
     stopifnot(length(biomarker_var) == 1)
@@ -690,7 +700,11 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     
     covariate_var <- "treatment_biomarker_interaction"
     
-    variable_names[[covariate_var]] <- structure(paste0(variable_names[treatment_var], ", ", variable_names[biomarker_var]), names = covariate_var)
+    variable_names[[covariate_var]] <- structure(variable_names[treatment_var], names = covariate_var)
+    
+    
+    level_mapping <- rep(levels(data[, treatment_var]), each = nlevels(data[, biomarker_var]))
+    names(level_mapping) <- levels(data$treatment_biomarker_interaction)
     
     
     # -------------------------------------------------------------------------
@@ -700,7 +714,13 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     
     if(is.null(colors)){
       
-      colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
+      # colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
+      
+      colors <- format_colors_cat_strata("one_level", strata = levels(data[, treatment_var]))
+      
+      colors <- rep(colors, each = nlevels(data[, biomarker_var]))
+      
+      names(colors) <- levels(data$treatment_biomarker_interaction)
       
       # barplot(rep(1, length(colors)), col = colors)
       
@@ -738,7 +758,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-    background_grid_major = background_grid_major,
+    background_grid_major = background_grid_major, level_mapping = level_mapping, 
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
