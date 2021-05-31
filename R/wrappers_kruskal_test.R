@@ -20,7 +20,7 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
   stopifnot(method %in% c("kruskal", "wilcox"))
   
   stopifnot(length(display_statistics) >= 1)
-  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max"))
+  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
   
   stopifnot(is.data.frame(data))
   stopifnot(nrow(data) > 0)
@@ -56,8 +56,11 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
   Min = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
   Max = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
+  First.Quartile = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = quantile, probs = 0.25, na.rm = TRUE, drop = FALSE)[, 2]
+  Third.Quartile = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = quantile, probs = 0.75, na.rm = TRUE, drop = FALSE)[, 2]
   
-  summdf <- data.frame(N, Median, Mean, Min, Max)
+  
+  summdf <- data.frame(N, Median, Mean, Min, Max, First.Quartile, Third.Quartile)
   summdf <- summdf[, display_statistics, drop = FALSE]
   summdf <- t(summdf)
   colnames(summdf) <- levels(data[, cat_var])
@@ -208,7 +211,7 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   stopifnot(method %in% c("kruskal", "wilcox"))
   
   stopifnot(length(display_statistics) >= 1)
-  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max"))
+  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
   
   
   stopifnot(is.data.frame(data))
@@ -252,8 +255,11 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   Min = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
   Max = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
+  First.Quartile = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = quantile, probs = 0.25, na.rm = TRUE, drop = FALSE)[, 2]
+  Third.Quartile = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = quantile, probs = 0.75, na.rm = TRUE, drop = FALSE)[, 2]
   
-  summdf <- data.frame(N, Median, Mean, Min, Max)
+  
+  summdf <- data.frame(N, Median, Mean, Min, Max, First.Quartile, Third.Quartile)
   summdf <- summdf[, display_statistics, drop = FALSE]
   rownames(summdf) <- levels(data[, cat_var])
   

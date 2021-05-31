@@ -32,7 +32,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14), 
-  line_size = 1, title_size = 14, label_size = 3.5, rel_heights = c(5, 1), 
+  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL){
   
   
@@ -282,7 +282,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 3.5, rel_heights = c(5, 1), 
+  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
@@ -445,7 +445,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 3.5, rel_heights = c(4, 1), 
+  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1.5), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
@@ -538,7 +538,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 3.5, rel_heights = c(5, 1), 
+  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
 
@@ -665,7 +665,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 3.5, rel_heights = c(5, 1), 
+  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   

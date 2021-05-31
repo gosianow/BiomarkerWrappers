@@ -71,7 +71,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
   stopifnot(ncol(propm) == ncol(tbl_isna))
   
   
-  res <- data.frame(covariate = c(covariate_var, "Total (non-NA)", "NAs", rownames(tbl)),
+  res <- data.frame(covariate = c(covariate_var, "N", "NAs", rownames(tbl)),
     countm,
     propm,
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
@@ -81,7 +81,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Covariate = c(variable_names[covariate_var], "Total (non-NA)", "NAs", rownames(tbl)), 
+  out <- data.frame(Covariate = c(variable_names[covariate_var], "N", "NAs", rownames(tbl)), 
     
     format_counts_and_props_df(counts = countm, props = propm),
     
@@ -141,7 +141,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
+wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -149,6 +149,10 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   
   stopifnot(is.data.frame(data))
   stopifnot(nrow(data) > 0)
+  
+  stopifnot(length(display_statistics) >= 1)
+  stopifnot(display_statistics %in% c("Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
+  
   
   ### Keep only those variables that are used for the analysis
   data <- data[, c(covariate_var, strat_var), drop = FALSE]
@@ -187,8 +191,13 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   Min = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
   Max = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
   
+  First.Quartile = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = quantile, probs = 0.25, na.rm = TRUE, drop = FALSE)[, 2]
+  Third.Quartile = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = quantile, probs = 0.75, na.rm = TRUE, drop = FALSE)[, 2]
   
-  summdf <- t(data.frame(Median, Mean, Min, Max))
+  
+  summdf <- data.frame(Median, Mean, Min, Max, First.Quartile, Third.Quartile)
+  summdf <- summdf[, display_statistics, drop = FALSE]
+  summdf <- t(summdf)
   colnames(summdf) <- levels(data[, strat_var])
   
   
@@ -202,7 +211,7 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   stopifnot(ncol(summm) == ncol(tbl_isna))
   
   
-  res <- data.frame(covariate = c(covariate_var, "Total (non-NA)", "NAs", rownames(summdf)),
+  res <- data.frame(covariate = c(covariate_var, "N", "NAs", rownames(summdf)),
     summm,
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -213,7 +222,7 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   # Prepare 'out' data frame
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Covariate = c(variable_names[covariate_var], "Total (non-NA)", "NAs", rownames(summdf)), 
+  out <- data.frame(Covariate = c(variable_names[covariate_var], "N", "NAs", rownames(summdf)), 
     
     format_summ_df(summ = summm, digits = c(rep(0, 3), rep(2, nrow(summdf))), per = "col"),
     
@@ -270,7 +279,7 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
+wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -322,7 +331,7 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
       
     }else{
       
-      wrapper_res <- wrapper_characteristics_core_num(data = data, covariate_var = covariate_var, strat_var = strat_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
+      wrapper_res <- wrapper_characteristics_core_num(data = data, covariate_var = covariate_var, strat_var = strat_var, variable_names = variable_names, caption = caption, out_colname = out_colname, display_statistics = display_statistics)
       
     }
     
@@ -373,7 +382,7 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
 #' @param data Data frame.
 #' @param bep_vars Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).
 #' @export
-wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT"){
+wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean")){
   
   
   # --------------------------------------------------------------------------
@@ -393,7 +402,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
   # --------------------------------------------------------------------------
   
   
-  characteristics_itt <- wrapper_characteristics_core(data = data, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = itt_name)
+  characteristics_itt <- wrapper_characteristics_core(data = data, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = itt_name, display_statistics = display_statistics)
   
   
   if(!is.null(treatment_var)){
@@ -404,7 +413,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
     data$population_treatment_interaction <- interaction(data$population_dummy, data[, treatment_var], drop = FALSE, lex.order = TRUE, sep = " : ")
     
     
-    characteristics_itt_treatment <- wrapper_characteristics_core(data = data, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL)
+    characteristics_itt_treatment <- wrapper_characteristics_core(data = data, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL, display_statistics = display_statistics)
     
     
     res <- cbind(bresults(characteristics_itt), bresults(characteristics_itt_treatment)[, -1, drop = FALSE])
@@ -435,7 +444,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
       }
       
       
-      characteristics_bep <- wrapper_characteristics_core(data = data_bep, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = variable_names[bep_vars[i]])
+      characteristics_bep <- wrapper_characteristics_core(data = data_bep, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = variable_names[bep_vars[i]], display_statistics = display_statistics)
       
       
       if(!is.null(treatment_var)){
@@ -446,7 +455,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
         data_bep$population_treatment_interaction <- interaction(data_bep$population_dummy, data_bep[, treatment_var], drop = FALSE, lex.order = TRUE, sep = " : ")
         
         
-        characteristics_bep_treatment <- wrapper_characteristics_core(data = data_bep, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL)
+        characteristics_bep_treatment <- wrapper_characteristics_core(data = data_bep, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL, display_statistics = display_statistics)
         
         
         res <- cbind(bresults(characteristics_bep), bresults(characteristics_bep_treatment)[, -1, drop = FALSE])
