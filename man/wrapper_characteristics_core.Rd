@@ -10,7 +10,8 @@ wrapper_characteristics_core(
   strat_var = NULL,
   variable_names = NULL,
   caption = NULL,
-  out_colname = "Value"
+  out_colname = "Value",
+  display_statistics = c("Median", "Mean")
 )
 }
 \arguments{

@@ -220,7 +220,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
       background_grid(major = background_grid_major, minor = "none", size.major = 0.15))
   
   
-  if(risk_table){
+  if(risk_table %in% c(TRUE, "nrisk_cumcensor")){
     
     suppressMessages(ggpl_table <- ggpl$table +
         theme(plot.title = element_text(size = title_size, face = "plain"),
@@ -613,6 +613,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     
     strat1_var <- NULL
     
+    level_mapping <- NULL
     
   }
   
@@ -742,6 +743,8 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
     
     strat1_var <- NULL
+    
+    level_mapping <- NULL
     
   }
   

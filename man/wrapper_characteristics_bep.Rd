@@ -11,7 +11,8 @@ wrapper_characteristics_bep(
   treatment_var = NULL,
   variable_names = NULL,
   caption = NULL,
-  itt_name = "ITT"
+  itt_name = "ITT",
+  display_statistics = c("Median", "Mean")
 )
 }
 \arguments{

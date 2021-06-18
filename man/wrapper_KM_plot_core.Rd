@@ -24,11 +24,13 @@ wrapper_KM_plot_core(
   risk_table = TRUE,
   conf_int = FALSE,
   surv_median_line = "none",
+  ggtheme = cowplot::theme_cowplot(14),
   line_size = 1,
-  title_size = 12,
-  label_size = 3,
+  title_size = 14,
+  label_size = 4.5,
   rel_heights = c(5, 1),
-  background_grid_major = "none"
+  background_grid_major = "none",
+  level_mapping = NULL
 )
 
 wrapper_KM_plot_core_strat(
@@ -53,11 +55,13 @@ wrapper_KM_plot_core_strat(
   risk_table = TRUE,
   conf_int = FALSE,
   surv_median_line = "none",
+  ggtheme = cowplot::theme_cowplot(14),
   line_size = 1,
-  title_size = 12,
-  label_size = 3,
+  title_size = 14,
+  label_size = 4.5,
   rel_heights = c(5, 1),
   background_grid_major = "none",
+  level_mapping = NULL,
   strat_scales = "fixed",
   strat1_nrow = 1,
   strat1_ncol = NULL,
@@ -73,6 +77,8 @@ wrapper_KM_plot_core_strat(
 \item{censor_var}{Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.}
 
 \item{covariate_var}{Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.}
+
+\item{level_mapping}{Named vector with level mapping. The names correspond to the original levels of covariate_var.}
 
 \item{strat1_var}{Name of the firts stratification variable.}
 

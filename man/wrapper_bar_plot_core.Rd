@@ -34,7 +34,7 @@ wrapper_bar_plot_core(
   facet_scales = "fixed",
   ylim = NULL,
   axis_text_x_angle = 0,
-  axis_text_x_vjust = 0,
+  axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,
   background_grid_major = "none"
 )
@@ -71,7 +71,7 @@ wrapper_bar_plot_core_strat(
   facet_scales = "fixed",
   ylim = NULL,
   axis_text_x_angle = 0,
-  axis_text_x_vjust = 0,
+  axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,
   background_grid_major = "none",
   strat_scales = "fixed",

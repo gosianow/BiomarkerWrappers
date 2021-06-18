@@ -75,14 +75,15 @@ wrapper_summarized_expression_dotplot <- function(x, group){
 #' @export
 wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   method = "z-score", scale = TRUE,
-  title = "", name = "Mean\nz-score",
+  title = "", name = NULL,
   centered = TRUE, palette = NULL, rev = FALSE,
-  trim_values = 1.5, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
   cell_fun_method = "none", font_size = 10,
   rect_gp = grid::gpar(col = "white"), 
   cluster_rows = FALSE, cluster_columns = FALSE, 
   row_dend_reorder = FALSE, column_dend_reorder = FALSE,
   show_row_names = TRUE, show_column_names = TRUE, 
+  top_annotation = NULL,
   row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), 
   row_names_max_width = unit(20, "cm"), column_names_max_height = unit(20, "cm"),
   row_names_width = 80, draw = TRUE, return = "ht", ...){
@@ -96,6 +97,19 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   stopifnot(method %in% c("asis", "z-score"))
   stopifnot(cell_fun_method %in% c("none", "circle", "rect"))
+  
+  
+  if(is.null(name)){
+    name <- ifelse(method == "z-score" || centered, "Mean\nz-score", "Mean\nexpr.")
+  }
+  
+  if(is.null(trim_values)){
+    if(method == "z-score" || centered){
+      trim_values <- 1.5
+    }else{
+      trim_values <- NULL
+    }
+  }
   
   
   if(!is.null(adjp)){
@@ -144,6 +158,8 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     
     x <- zscore
     
+    centered <- TRUE
+    
   }
   
   
@@ -163,6 +179,29 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   matrix <- as.matrix(t(ggdata))
   
+  
+  # ---------------------------------------------------------------------------
+  # Prepare top annotation that shows number of samples in groups
+  # ---------------------------------------------------------------------------
+  
+  
+  if(is.logical(top_annotation)){
+    
+    if(top_annotation){
+      
+      tbl <- as.numeric(table(group))
+      
+      top_annotation <- HeatmapAnnotation(
+        "Sample number" = row_anno_barplot(x = tbl, border = TRUE, axis = TRUE, axis_param = list(gp = gpar(fontsize = 5)), gp = gpar(fill = "#696969", col = "#696969")), 
+        which = "column",
+        show_annotation_name = FALSE)
+      
+      
+    }else{
+      top_annotation <- NULL
+    }
+    
+  }
   
   
   
@@ -267,12 +306,12 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
       ### Scale the radius
       
       # grid.circle(x = x, y = y, r = min(unit.c(width, height))/2 * (data_zeros[i, j] + 0.01), 
-      #   gp = gpar(fill = col_fun(matrix[i, j]), col = NA))
+      #   gp = gpar(fill = colors_matrix(matrix[i, j]), col = NA))
       
       ### Scale the area
       
       grid.circle(x = x, y = y, r = min(unit.c(width, height))/2 * sqrt(data_zeros[i, j]), 
-        gp = gpar(fill = col_fun(matrix[i, j]), col = NA))
+        gp = gpar(fill = colors_matrix(matrix[i, j]), col = NA))
       
     }
     
@@ -285,7 +324,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
       grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "grey", fill = NA))
       
       grid.rect(x = x - (width * (1 - data_zeros[i, j]) / 2), y = y, width = width * data_zeros[i, j], height = height, 
-        gp = gpar(col = NA, fill = col_fun(matrix[i, j])))
+        gp = gpar(col = NA, fill = colors_matrix(matrix[i, j])))
       
     }
     
@@ -323,6 +362,8 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     
     row_names_max_width = row_names_max_width,
     column_names_max_height = column_names_max_height,
+    
+    top_annotation = top_annotation,
     
     ...)
   

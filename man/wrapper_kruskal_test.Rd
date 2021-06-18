@@ -11,6 +11,7 @@ wrapper_kruskal_test(
   strat1_var = NULL,
   strat2_var = NULL,
   method = "kruskal",
+  pairwise = FALSE,
   variable_names = NULL,
   caption = NULL,
   display_statistics = c("N", "Median"),

@@ -154,12 +154,12 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
 
 
 
-#' Heatmap with logFC for mutiple contrasts
+#' Heatmap with logFC for multiple contrasts
 #' 
 #' @param x TopTable
 #' @export
 wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
-  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", sep = "_", 
+  lfc_prefix = "logFC", adjp_prefix = "adj.P.Val", sep = "_", 
   title = "",
   palette = c('#42399B', "white", '#D70131'), rev = FALSE,
   trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,

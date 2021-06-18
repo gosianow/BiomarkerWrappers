@@ -1334,7 +1334,7 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 #' 
 #' 
 #' @export
-format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, allow_duplicated = TRUE){
+format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", rev = FALSE, allow_duplicated = TRUE){
   
   
   x <- x[!is.na(x)]
@@ -1349,102 +1349,138 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
   
   if(is.null(colors)){
     
-    if(is.null(palette)){
-      
-      ### d3 20 - light color first
-      
-      # colors_default <- c("#aec7e8", "#1f77b4",  "#ffbb78", "#ff7f0e", "#98df8a", "#2ca02c", "#ff9896", "#d62728", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf")
-      
-      # barplot(rep(1, length(colors_default)), col = colors_default)
+    
+    if(length(palette) == 1){
       
       
-      ### paired
-      
-      # colors_default <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
-      
-      # barplot(rep(1, length(colors_default)), col = colors_default)
-      
-      
-      ### Mix d3 20 - light color first with paired colors from brewer.pal + Add another 20 colors
-      
-      colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf",
-        "#FF7256", "#CD5B45", "#FFB90F", "#CD950C", "#7FFFD4", "#66CDAA", "#1E90FF", "#3A5FCD", "#FF00FF", "#CD00CD", "#C0FF3E", "#698B22", "#B9D3EE", "#6C7B8B", "#FFFF00", "#CDCD00", "#00FF7F", "#008B45", "#FFE1FF", "#CDB5CD")
-      
-      
-      # barplot(rep(1, length(colors_default)), col = colors_default)
-      
-      
-      
-      stopifnot(length(levels_x) <= 40)
-      
-      out <- colors_default[1:length(levels_x)]
-      names(out) <- levels_x
-      
-      
-    }else{
-      
-      if(length(palette) == 1){
+      if(palette == "d3_40_light_first"){
+        
+        ### Mix d3 20 - light color first with paired colors from brewer.pal + Add another 20 colors
+        
+        colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf",
+          "#FF7256", "#CD5B45", "#FFB90F", "#CD950C", "#7FFFD4", "#66CDAA", "#1E90FF", "#3A5FCD", "#FF00FF", "#CD00CD", "#C0FF3E", "#698B22", "#B9D3EE", "#6C7B8B", "#FFFF00", "#CDCD00", "#00FF7F", "#008B45", "#FFE1FF", "#CDB5CD")
         
         
-        if(palette %in% c("Blues", "BuGn", "BuPu", "GnBu", "Greens", "Greys", "Oranges", "OrRd", "PuBu", "PuBuGn", "PuRd", "Purples", "RdPu", "Reds", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd")){
-          
-          n <- 9
-          
-          ### Skip colors at the extremes 
-          if(length(levels_x) == 1){
-            skip_colors <- c(2:5, n-2, n-1)
-          }else if(length(levels_x) == 2){
-            skip_colors <- c(2, 3, 4, n-1)
-          }else if(length(levels_x) <= 4){
-            skip_colors <- c(2, n-1)
-          }else{
-            skip_colors <- NULL
-          }
-          
-          
-          out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, skip_colors, n)])(length(levels_x))
-          
-        }else if(palette %in% c("Oranges2", "Blues2")){
-          
-          palette_colors <- list(
-            "Oranges2" = grDevices::colorRampPalette(c("white", "#F69C26"))(9)[-c(1:4)],
-            "Blues2" = grDevices::colorRampPalette(c("white", "#297cbe"))(9)[-c(1:4)]
-          )
-          
-          out <- grDevices::colorRampPalette(palette_colors[[palette]])(length(levels_x))
-          
-          # barplot(rep(1, length(out)), col = out)
-          
-        }else{
-          
-          n <- 11  
-          
-          ### Skip the center light colors
-          
-          out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, 5, 6, 7, n)])(length(levels_x))
-          
-        }
+        # barplot(rep(1, length(colors_default)), col = colors_default)
         
+        stopifnot(length(levels_x) <= 40)
         
-        
-        
-        if(rev){
-          out <- rev(out)
-        }
-        
+        out <- colors_default[1:length(levels_x)]
         names(out) <- levels_x
         
+        
+      }else if(palette == "d3_20"){
+        
+        colors_default <- c("#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5")
+        
+        
+        # barplot(rep(1, length(colors_default)), col = colors_default)
+        
+        stopifnot(length(levels_x) <= 20)
+        
+        out <- colors_default[1:length(levels_x)]
+        names(out) <- levels_x
+        
+        
+      }else if(palette == "d3_10"){
+        
+        
+        colors_default <-c('#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf')
+        
+        
+        # barplot(rep(1, length(colors_default)), col = colors_default)
+        
+        stopifnot(length(levels_x) <= 10)
+        
+        out <- colors_default[1:length(levels_x)]
+        names(out) <- levels_x
+        
+        
+      }else if(palette == "paired"){
+        
+        ### paired
+        
+        colors_default <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+        
+        # barplot(rep(1, length(colors_default)), col = colors_default)
+        
+        
+        stopifnot(length(levels_x) <= 12)
+        
+        out <- colors_default[1:length(levels_x)]
+        names(out) <- levels_x
+        
+        
+      }else if(palette %in% "ggplot"){
+        
+        gg_color_hue <- function(n) {
+          hues = seq(15, 375, length = n+1)
+          hcl(h = hues, l = 65, c = 100)[1:n]
+        }
+        
+        out <- gg_color_hue(length(levels_x))
+        
+        
+      }else if(palette %in% c("Blues", "BuGn", "BuPu", "GnBu", "Greens", "Greys", "Oranges", "OrRd", "PuBu", "PuBuGn", "PuRd", "Purples", "RdPu", "Reds", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd")){
+        
+        n <- 9
+        
+        ### Skip colors at the extremes 
+        if(length(levels_x) == 1){
+          skip_colors <- c(2:5, n-2, n-1)
+        }else if(length(levels_x) == 2){
+          skip_colors <- c(2, 3, 4, n-1)
+        }else if(length(levels_x) <= 4){
+          skip_colors <- c(2, n-1)
+        }else{
+          skip_colors <- NULL
+        }
+        
+        
+        out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, skip_colors, n)])(length(levels_x))
+        
+      }else if(palette %in% c("Oranges2", "Blues2")){
+        
+        palette_colors <- list(
+          "Oranges2" = grDevices::colorRampPalette(c("white", "#F69C26"))(9)[-c(1:4)],
+          "Blues2" = grDevices::colorRampPalette(c("white", "#297cbe"))(9)[-c(1:4)]
+        )
+        
+        out <- grDevices::colorRampPalette(palette_colors[[palette]])(length(levels_x))
         
         # barplot(rep(1, length(out)), col = out)
         
         
+        
       }else{
-        out <- grDevices::colorRampPalette(palette)(length(levels_x))
-        names(out) <- levels_x
+        
+        n <- 11  
+        
+        ### Skip the center light colors
+        
+        out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, 5, 6, 7, n)])(length(levels_x))
+        
       }
       
       
+      
+      
+      if(rev){
+        out <- rev(out)
+      }
+      
+      names(out) <- levels_x
+      
+      
+      # barplot(rep(1, length(out)), col = out)
+      
+      
+    }else{
+      out <- grDevices::colorRampPalette(palette)(length(levels_x))
+      names(out) <- levels_x
     }
+    
+    
     
     
     # barplot(rep(1, length(out)), col = out)
@@ -1481,7 +1517,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
 
 #' @rdname format_colors_cat
 #' @export
-format_colors <- function(x, colors = NULL, palette = NULL, rev = FALSE, allow_duplicated = TRUE){
+format_colors <- function(x, colors = NULL, palette = "d3_40_light_first", rev = FALSE, allow_duplicated = TRUE){
   
   format_colors_cat(x, colors = colors, palette = palette, rev = rev, allow_duplicated = allow_duplicated)
   
