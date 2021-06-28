@@ -2,69 +2,6 @@
 
 
 
-#' Dotplot of gene expression summarized per group
-#' 
-#' @param x Log transformed and normalized expression
-#' @param group Vector with grouping
-#' @export
-wrapper_summarized_expression_dotplot <- function(x, group){
-  
-  
-  x <- data.frame(group = group, t(x))
-  group_var <- "group"
-  
-  
-  ggdata_expr <- x %>% 
-    dplyr::group_by_at(group_var) %>% 
-    dplyr::summarize_all(list(~ mean(.))) %>% 
-    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr") %>% 
-    data.frame
-  
-  
-  ggdata_expr_no_zeros <- x %>% 
-    dplyr::group_by_at(group_var) %>% 
-    dplyr::summarize_all(list(~ mean(.[. != 0]))) %>% 
-    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr_no_zeros") %>% 
-    data.frame
-  
-  
-  ggdata_zeros <- x %>% 
-    dplyr::group_by_at(group_var) %>% 
-    dplyr::summarize_all(list(~ mean(. != 0))) %>% 
-    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Detected") %>% 
-    data.frame
-  
-  
-  ggdata <- full_join(ggdata_expr, ggdata_zeros, by = c(group_var, "Gene")) %>% 
-    full_join(ggdata_expr_no_zeros, by = c(group_var, "Gene"))
-  
-  
-  ggdata$Gene <- factor(ggdata$Gene, levels = rev(levels(factor(ggdata$Gene))))
-  
-  
-  
-  ### ------------------------------------------------------------------------
-  ### Dot plot
-  ### ------------------------------------------------------------------------
-  
-  
-  
-  ggplot(ggdata, aes(x = .data[[group_var]], y = .data[["Gene"]], size = .data[["Detected"]], color = .data[["Mean_expr"]])) +
-    geom_point() +
-    scale_size_area(max_size = 15, breaks = seq(0, 1, by = 0.25), limits = c(0, 1)) +
-    scale_colour_gradientn(colours = hcl.colors(20, palette = "viridis"), limits = c(0, max(ggdata[, "Mean_expr"])), oob = scales::squish) +
-    theme(axis.line = element_blank()) +
-    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
-    background_grid(major = "xy", minor = "none", size.major = 0.25)
-  
-  
-  
-  
-}
-
-
-
-
 
 #' Heatmap of gene expression summarized per group
 #' 
@@ -74,7 +11,7 @@ wrapper_summarized_expression_dotplot <- function(x, group){
 #' @param method Summarize and plot data 'asis' or transform it with 'z-score'.
 #' @export
 wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
-  method = "z-score", scale = TRUE,
+  method = "z-score", scale = TRUE, summary_fun = NULL, skip_zeros = FALSE, 
   title = "", name = NULL,
   centered = TRUE, palette = NULL, rev = FALSE,
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
@@ -103,15 +40,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     name <- ifelse(method == "z-score" || centered, "Mean\nz-score", "Mean\nexpr.")
   }
   
-  if(is.null(trim_values)){
-    if(method == "z-score" || centered){
-      trim_values <- 1.5
-    }else{
-      trim_values <- NULL
-    }
-  }
-  
-  
+
   if(!is.null(adjp)){
     
     levels_group <- levels(group)
@@ -167,9 +96,27 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   group_var <- "group"
   
   
+  if(is.null(summary_fun)){
+    summary_fun <- mean
+  }
+  
+  summary_fun_zeros <- function(x){
+    if(skip_zeros){
+      x <- x[x > 0]
+    }
+    if(length(x) == 0){
+      out <- 0
+    }else{
+      out <- summary_fun(x)  
+    }
+    out
+  }
+  
+  
+  
   ggdata <- x %>% 
     dplyr::group_by_at(group_var) %>% 
-    dplyr::summarize_all(list(~ mean(.))) %>% 
+    dplyr::summarize_all(list(~ summary_fun_zeros(.))) %>% 
     data.frame(check.names = FALSE)
   
   
@@ -386,6 +333,68 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
 
 
 
+
+
+
+#' Dotplot of gene expression summarized per group
+#' 
+#' @param x Log transformed and normalized expression
+#' @param group Vector with grouping
+#' @export
+wrapper_summarized_expression_dotplot <- function(x, group){
+  
+  
+  x <- data.frame(group = group, t(x))
+  group_var <- "group"
+  
+  
+  ggdata_expr <- x %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(.))) %>% 
+    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr") %>% 
+    data.frame
+  
+  
+  ggdata_expr_no_zeros <- x %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(.[. != 0]))) %>% 
+    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr_no_zeros") %>% 
+    data.frame
+  
+  
+  ggdata_zeros <- x %>% 
+    dplyr::group_by_at(group_var) %>% 
+    dplyr::summarize_all(list(~ mean(. != 0))) %>% 
+    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Detected") %>% 
+    data.frame
+  
+  
+  ggdata <- full_join(ggdata_expr, ggdata_zeros, by = c(group_var, "Gene")) %>% 
+    full_join(ggdata_expr_no_zeros, by = c(group_var, "Gene"))
+  
+  
+  ggdata$Gene <- factor(ggdata$Gene, levels = rev(levels(factor(ggdata$Gene))))
+  
+  
+  
+  ### ------------------------------------------------------------------------
+  ### Dot plot
+  ### ------------------------------------------------------------------------
+  
+  
+  
+  ggplot(ggdata, aes(x = .data[[group_var]], y = .data[["Gene"]], size = .data[["Detected"]], color = .data[["Mean_expr"]])) +
+    geom_point() +
+    scale_size_area(max_size = 15, breaks = seq(0, 1, by = 0.25), limits = c(0, 1)) +
+    scale_colour_gradientn(colours = hcl.colors(20, palette = "viridis"), limits = c(0, max(ggdata[, "Mean_expr"])), oob = scales::squish) +
+    theme(axis.line = element_blank()) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+    background_grid(major = "xy", minor = "none", size.major = 0.25)
+  
+  
+  
+  
+}
 
 
 

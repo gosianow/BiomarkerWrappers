@@ -1,11 +1,6 @@
 
 
 
-
-
-
-
-
 #' Heatmap with logFC or z-score normalized gene expression
 #' 
 #' 
@@ -14,9 +9,9 @@
 #' @export
 wrapper_gene_expression_heatmap <- function(x,  
   method = "z-score", scale = TRUE,
-  title = "", name = "z-score", 
+  title = "", name = NULL, 
   centered = TRUE, palette = NULL, rev = FALSE,
-  trim_values = 2.5, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
   rect_gp = grid::gpar(col = NA), 
   cluster_rows = FALSE, cluster_columns = FALSE, 
   row_dend_reorder = FALSE, column_dend_reorder = FALSE,
@@ -28,6 +23,10 @@ wrapper_gene_expression_heatmap <- function(x,
   
   
   stopifnot(method %in% c("asis", "z-score"))
+  
+  if(is.null(name)){
+    name <- ifelse(method == "z-score" || centered, "Z-score", "Expr.")
+  }
   
   
   ## Shorten the row names so they can be nicely displayed in the plots

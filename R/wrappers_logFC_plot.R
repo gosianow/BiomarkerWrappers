@@ -1,34 +1,166 @@
 
 
 
-
-
-# Cluster rows using hierarchical clustering
-
-# d <- dist(matrix, method = "euclidean")
-# cluster_rows <- hclust(d, method = "ward.D2")
-
-
-### Method from Crowell et al. 2020 https://www.nature.com/articles/s41467-020-19894-4
-
-# cols_lfc <- grep(paste0("^", lfc_prefix, sep), colnames(x), value = TRUE)
-# 
-# mydata <- t(x[, cols_lfc, drop = FALSE])
-# colnames(mydata) <- x[, gene_var]
-# 
-# consensus_clustering <- M3C::M3C(mydata, method = 2, silent = TRUE, seed = 123)
-# 
-# nr_clusters <- max(consensus_clustering$assignments)
-# 
-# gene_order <- rownames(consensus_clustering$realdataresults[[nr_clusters]]$ordered_annotation)
-# 
-# ### There is a bug in M3C and it removes 'X' from the names of genes. The code below is a way around.
-# rownames(x) <- names(consensus_clustering$realdataresults[[nr_clusters]]$assignments)
-# x <- x[gene_order, , drop = FALSE]
-# rownames(x) <- NULL
-
-
-
+#' Heatmap with logFC for multiple contrasts
+#' 
+#' @param x TopTable
+#' @export
+wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
+  lfc_prefix = "logFC", adjp_prefix = "adj.P.Val", sep = "_", 
+  title = "",
+  palette = c('#42399B', "white", '#D70131'), rev = FALSE,
+  trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
+  font_size = 10,
+  rect_gp = grid::gpar(col = "grey"), 
+  cluster_rows = FALSE, cluster_columns = FALSE, 
+  row_dend_reorder = FALSE, column_dend_reorder = FALSE,
+  show_row_names = TRUE, show_column_names = TRUE, 
+  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), 
+  row_names_max_width = unit(20, "cm"), column_names_max_height = unit(20, "cm"),
+  row_names_width = 80, draw = TRUE, return = "ht", ...){
+  
+  
+  stopifnot(length(gene_var) == 1)
+  
+  name <- lfc_prefix 
+  
+  ## Shorten the gene set names so they can be nicely displayed in the plots
+  rownames(x) <- stringr::str_wrap(x[, gene_var], width = row_names_width)
+  
+  
+  # ---------------------------------------------------------------------------
+  # Prepare matrix
+  # ---------------------------------------------------------------------------
+  
+  
+  data_lfc <- wrapper_extract_from_topTable(x, extract_prefix = lfc_prefix, sep = sep)
+  
+  matrix <- as.matrix(data_lfc)
+  
+  
+  # ---------------------------------------------------------------------------
+  # Prepare data_significance
+  # ---------------------------------------------------------------------------
+  
+  
+  data_adjp <- wrapper_extract_from_topTable(x, extract_prefix = adjp_prefix, sep = sep)
+  
+  
+  data_significance <- data.frame(apply(data_adjp, 2, function(x){
+    
+    x[is.na(x)] <- 1
+    
+    pval_asterisk <- ifelse(x < 0.001, "***", ifelse(x < 0.01, "**", ifelse(x < 0.05, "*", ifelse(x < 0.1, ".", ""))))
+    
+    pval_asterisk
+    
+  }), stringsAsFactors = FALSE)
+  
+  
+  
+  # ---------------------------------------------------------------------------
+  # Colors for the heatmap expression
+  # ---------------------------------------------------------------------------
+  
+  
+  colors_matrix <- format_colors_num(x = matrix, centered = TRUE, palette = palette, rev = rev, trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+  
+  
+  
+  # ---------------------------------------------------------------------------
+  # cell_fun
+  # ---------------------------------------------------------------------------
+  
+  # https://jokergoo.github.io/ComplexHeatmap-reference/book/a-single-heatmap.html#customize-the-heatmap-body
+  
+  
+  cell_fun <- function(j, i, x, y, width, height, fill){
+    
+    
+    # grid::grid.text(data_significance[i, j], x, y = y, gp = grid::gpar(col = "black", fontsize = font_size))
+    
+    ### Center the displayed items
+    
+    if(data_significance[i, j] == "."){
+      grid::grid.text(data_significance[i, j], x, y = y + (0.3 * unit(font_size, units = "points")), gp = grid::gpar(col = "black", fontsize = font_size))
+      
+    }else{
+      grid::grid.text(data_significance[i, j], x, y = y - (0.2 * unit(font_size, units = "points")), gp = grid::gpar(col = "black", fontsize = font_size))
+      
+    }
+    
+    
+  }
+  
+  
+  
+  # cell_fun <- function(j, i, x, y, width, height, fill){ 
+  #   
+  #   if(data_significance[i, j] == "***"){
+  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "black"))
+  #   }
+  #   
+  #   if(data_significance[i, j] == "**"){
+  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "dimgrey"))
+  #   }
+  #   
+  #   if(data_significance[i, j] == "*"){
+  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "darkgrey"))
+  #   }
+  #   
+  #   if(data_significance[i, j] == "."){
+  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "transparent"))
+  #   }
+  #   
+  # }
+  
+  
+  # ---------------------------------------------------------------------------
+  # Heatmap
+  # ---------------------------------------------------------------------------
+  
+  
+  ht <- ComplexHeatmap::Heatmap(matrix, 
+    name = name,
+    col = colors_matrix, 
+    na_col = "grey90",
+    rect_gp = rect_gp,
+    heatmap_legend_param = list(color_bar = "continuous"), 
+    
+    cell_fun = cell_fun,
+    
+    cluster_rows = cluster_rows, 
+    cluster_columns = cluster_columns, 
+    
+    row_dend_reorder = row_dend_reorder, 
+    column_dend_reorder = column_dend_reorder,
+    
+    show_row_names = show_row_names, 
+    show_column_names = show_column_names, 
+    
+    row_names_gp = row_names_gp,
+    column_names_gp = column_names_gp,
+    
+    row_names_max_width = row_names_max_width,
+    column_names_max_height = column_names_max_height,
+    
+    ...)
+  
+  
+  if(draw){
+    ComplexHeatmap::draw(ht, column_title = title)
+  }else{
+    
+    if(return == "ht"){
+      return(ht)  
+    }else{
+      return(matrix)  
+    }
+    
+  }
+  
+  
+}
 
 
 
@@ -146,174 +278,6 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   
 }
 
-
-
-
-
-
-
-
-
-#' Heatmap with logFC for multiple contrasts
-#' 
-#' @param x TopTable
-#' @export
-wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol", 
-  lfc_prefix = "logFC", adjp_prefix = "adj.P.Val", sep = "_", 
-  title = "",
-  palette = c('#42399B', "white", '#D70131'), rev = FALSE,
-  trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
-  font_size = 10,
-  rect_gp = grid::gpar(col = "grey"), 
-  cluster_rows = FALSE, cluster_columns = FALSE, 
-  row_dend_reorder = FALSE, column_dend_reorder = FALSE,
-  show_row_names = TRUE, show_column_names = TRUE, 
-  row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), 
-  row_names_max_width = unit(20, "cm"), column_names_max_height = unit(20, "cm"),
-  row_names_width = 80, draw = TRUE, return = "ht", ...){
-  
-  
-  stopifnot(length(gene_var) == 1)
-  
-  name <- lfc_prefix 
-  
-  ## Shorten the gene set names so they can be nicely displayed in the plots
-  rownames(x) <- stringr::str_wrap(x[, gene_var], width = row_names_width)
-  
-  
-  # ---------------------------------------------------------------------------
-  # Prepare matrix
-  # ---------------------------------------------------------------------------
-  
-  
-  data_lfc <- wrapper_extract_from_topTable(x, extract_prefix = lfc_prefix, sep = sep)
-  
-  matrix <- as.matrix(data_lfc)
-  
-  
-  # ---------------------------------------------------------------------------
-  # Prepare data_significance
-  # ---------------------------------------------------------------------------
-  
-  
-  data_adjp <- wrapper_extract_from_topTable(x, extract_prefix = adjp_prefix, sep = sep)
-  
-  
-  data_significance <- data.frame(apply(data_adjp, 2, function(x){
-    
-    x[is.na(x)] <- 1
-    
-    pval_asterisk <- ifelse(x < 0.001, "***", ifelse(x < 0.01, "**", ifelse(x < 0.05, "*", ifelse(x < 0.1, ".", ""))))
-    
-    pval_asterisk
-    
-  }), stringsAsFactors = FALSE)
-  
-
-  
-  # ---------------------------------------------------------------------------
-  # Colors for the heatmap expression
-  # ---------------------------------------------------------------------------
-  
-  
-  colors_matrix <- format_colors_num(x = matrix, centered = TRUE, palette = palette, rev = rev, trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
-  
-  
-  
-  # ---------------------------------------------------------------------------
-  # cell_fun
-  # ---------------------------------------------------------------------------
-  
-  # https://jokergoo.github.io/ComplexHeatmap-reference/book/a-single-heatmap.html#customize-the-heatmap-body
-  
-  
-  cell_fun <- function(j, i, x, y, width, height, fill){
-    
-    
-    # grid::grid.text(data_significance[i, j], x, y = y, gp = grid::gpar(col = "black", fontsize = font_size))
-    
-    ### Center the displayed items
-    
-    if(data_significance[i, j] == "."){
-      grid::grid.text(data_significance[i, j], x, y = y + (0.3 * unit(font_size, units = "points")), gp = grid::gpar(col = "black", fontsize = font_size))
-      
-    }else{
-      grid::grid.text(data_significance[i, j], x, y = y - (0.2 * unit(font_size, units = "points")), gp = grid::gpar(col = "black", fontsize = font_size))
-      
-    }
-    
-    
-  }
-  
-  
-  
-  # cell_fun <- function(j, i, x, y, width, height, fill){ 
-  #   
-  #   if(data_significance[i, j] == "***"){
-  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "black"))
-  #   }
-  #   
-  #   if(data_significance[i, j] == "**"){
-  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "dimgrey"))
-  #   }
-  #   
-  #   if(data_significance[i, j] == "*"){
-  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "darkgrey"))
-  #   }
-  #   
-  #   if(data_significance[i, j] == "."){
-  #     grid::grid.points(x, y, pch = 21, size = grid::unit(point_size, "mm"), gp = grid::gpar(fill = "transparent"))
-  #   }
-  #   
-  # }
-  
-  
-  # ---------------------------------------------------------------------------
-  # Heatmap
-  # ---------------------------------------------------------------------------
-  
-  
-  ht <- ComplexHeatmap::Heatmap(matrix, 
-    name = name,
-    col = colors_matrix, 
-    na_col = "grey90",
-    rect_gp = rect_gp,
-    heatmap_legend_param = list(color_bar = "continuous"), 
-    
-    cell_fun = cell_fun,
-    
-    cluster_rows = cluster_rows, 
-    cluster_columns = cluster_columns, 
-    
-    row_dend_reorder = row_dend_reorder, 
-    column_dend_reorder = column_dend_reorder,
-    
-    show_row_names = show_row_names, 
-    show_column_names = show_column_names, 
-    
-    row_names_gp = row_names_gp,
-    column_names_gp = column_names_gp,
-    
-    row_names_max_width = row_names_max_width,
-    column_names_max_height = column_names_max_height,
-    
-    ...)
-  
-  
-  if(draw){
-    ComplexHeatmap::draw(ht, column_title = title)
-  }else{
-    
-    if(return == "ht"){
-      return(ht)  
-    }else{
-      return(matrix)  
-    }
-    
-  }
-  
-  
-}
 
 
 
