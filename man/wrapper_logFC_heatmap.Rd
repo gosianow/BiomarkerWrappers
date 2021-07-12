@@ -2,13 +2,12 @@
 % Please edit documentation in R/wrappers_logFC_plot.R
 \name{wrapper_logFC_heatmap}
 \alias{wrapper_logFC_heatmap}
-\title{Heatmap with logFC for mutiple contrasts}
+\title{Heatmap with logFC for multiple contrasts}
 \usage{
 wrapper_logFC_heatmap(
   x,
   gene_var = "Hgnc_Symbol",
   lfc_prefix = "logFC",
-  pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",
   sep = "_",
   title = "",
@@ -40,5 +39,5 @@ wrapper_logFC_heatmap(
 \item{x}{TopTable}
 }
 \description{
-Heatmap with logFC for mutiple contrasts
+Heatmap with logFC for multiple contrasts
 }

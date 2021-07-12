@@ -9,7 +9,7 @@
 format_colors_cat(
   x,
   colors = NULL,
-  palette = NULL,
+  palette = "d3_40_light_first",
   rev = FALSE,
   allow_duplicated = TRUE
 )
@@ -17,7 +17,7 @@ format_colors_cat(
 format_colors(
   x,
   colors = NULL,
-  palette = NULL,
+  palette = "d3_40_light_first",
   rev = FALSE,
   allow_duplicated = TRUE
 )

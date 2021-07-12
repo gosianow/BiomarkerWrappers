@@ -658,7 +658,7 @@ wrapper_logFC_dotplot(topTable_significant_genes[clustering_order, ],
 ### logFC_heatmap
 
 wrapper_logFC_heatmap(topTable_significant_genes, 
-  gene_var = "HGNC_Symbol", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  gene_var = "HGNC_Symbol", lfc_prefix = "logFC", adjp_prefix = "adj.P.Val", 
   cluster_rows = cluster_rows, 
   row_names_gp = grid::gpar(fontsize = 7))
 
@@ -890,7 +890,7 @@ wrapper_logFC_dotplot(topTable_significant_gsea[clustering_order, ],
 ### logFC_heatmap
 
 wrapper_logFC_heatmap(topTable_significant_gsea, 
-  gene_var = "GenesetID", lfc_prefix = "NES", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  gene_var = "GenesetID", lfc_prefix = "NES", adjp_prefix = "adj.P.Val", 
   cluster_rows = cluster_rows, 
   row_names_gp = grid::gpar(fontsize = 8, lineheight = 0.8), 
   trim_values = 4)

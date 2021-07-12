@@ -1,7 +1,7 @@
 Package: BiomarkerWrappers
 Type: Package
 Title: Suite of functions for exploratory biomarker analysis
-Version: 0.0.0.28
+Version: 0.0.0.29
 Authors@R: 
     person(given = "Malgorzata",
            family = "Nowicka",
@@ -46,5 +46,6 @@ Collate:
     'wrappers_logistic_regression.R'
     'wrappers_pearsons_test.R'
     'wrappers_point_plot.R'
+    'wrappers_signature_plot.R'
     'wrappers_summarized_expression_plot.R'
     'wrappers_tile_plot.R'

@@ -12,6 +12,7 @@ wrapper_bar_plot_treatment(
   facet_var = NULL,
   strat2_var = NULL,
   colors_bar = NULL,
+  color_border = "black",
   variable_names = NULL,
   title = TRUE,
   xlab = TRUE,
