@@ -7,7 +7,7 @@
 wrapper_signature_heatmap(
   x,
   signature,
-  title,
+  title = "",
   plot_expr = FALSE,
   show_row_names = FALSE
 )

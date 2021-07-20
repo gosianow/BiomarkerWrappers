@@ -7,7 +7,7 @@
 #' @param signature Vector with precalculated signature.
 #' @param title Title.
 #' @export
-wrapper_signature_heatmap <- function(x, signature, title, plot_expr = FALSE, show_row_names = FALSE){
+wrapper_signature_heatmap <- function(x, signature, title = "", plot_expr = FALSE, show_row_names = FALSE){
   
   
   zscore <- apply(x, 1, scale, center = TRUE, scale = TRUE)
