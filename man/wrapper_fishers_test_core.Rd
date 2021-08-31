@@ -13,7 +13,8 @@ wrapper_fishers_test_core(
   caption = NULL,
   margin = 1,
   force_empty_cols = FALSE,
-  print_pvalues = TRUE
+  print_pvalues = TRUE,
+  print_OR = TRUE
 )
 
 wrapper_fishers_test_core_strat(
@@ -27,7 +28,8 @@ wrapper_fishers_test_core_strat(
   margin = 1,
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_OR = TRUE
 )
 }
 \arguments{

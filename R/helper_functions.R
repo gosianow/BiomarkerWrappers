@@ -1306,7 +1306,7 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 #' 
 #' @param x Vector of categorical values for which we want to specify colors.
 #' @param colors Vector of colors longer or equal the number of unique levels of x. Can be named or non-named. If NULL, colors are generated.
-#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral".
+#' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral". Other possible values: "d3_40_light_first", "d3_20", "d3_10", "paired", "ggplot", "Oranges2", "Blues2".
 #' @return Named vector of unique colors for all unique values of x.
 #' 
 #' @examples 

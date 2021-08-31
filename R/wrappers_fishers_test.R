@@ -8,7 +8,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE){
+wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -109,6 +109,9 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
     out$`P-value` <- NULL
   }
   
+  if(!print_OR){
+    out$OR <- NULL
+  }
   
   ### If all OR are empty, do not display that column.
   if(all(out$OR %in% c("", "NA")) && !force_empty_cols){
@@ -161,7 +164,7 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -231,7 +234,7 @@ wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var =
       }
       
       
-      wrapper_res <- wrapper_fishers_test_core(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues)
+      wrapper_res <- wrapper_fishers_test_core(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues, print_OR = print_OR)
       
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
@@ -327,7 +330,7 @@ wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var =
 #' @inheritParams wrapper_fishers_test_core_strat
 #' @param row_vars Vector with names of categorical variables.
 #' @export
-wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -351,7 +354,7 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
     
     row_var <- row_vars[i]
     
-    wrapper_res <- wrapper_fishers_test_core_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_fishers_test_core_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     return(wrapper_res)
     
@@ -373,16 +376,19 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
   }
   
   
-  ### If all OR are empty, do not display that column.
-  if(all(out$OR %in% c("", "NA")) && !force_empty_cols){
-    out$OR <- NULL
-    ### Update header
-    if(hdr[3] == 1){
-      hdr <- hdr[-3]
-    }else{
-      hdr[3] <- hdr[3] - 1
+  if("OR" %in% colnames(out)){
+    ### If all OR are empty, do not display that column.
+    if(all(out$OR %in% c("", "NA")) && !force_empty_cols){
+      out$OR <- NULL
+      ### Update header
+      if(hdr[3] == 1){
+        hdr <- hdr[-3]
+      }else{
+        hdr[3] <- hdr[3] - 1
+      }
     }
   }
+  
   
   
   rownames(res) <- NULL

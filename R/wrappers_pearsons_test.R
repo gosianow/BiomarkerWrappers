@@ -80,7 +80,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   # Calculate response rates
   # ----------------------------------------------------------------------
   
-  tbl <- table(data[, covariate_var])
+  tbl_marginal <- table(data[, covariate_var])
   
   ## Calculate nresponse and propresponse
   tbl_response <- table(data[, covariate_var], data[, response_var])
@@ -97,7 +97,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   
   
   res <- data.frame(covariate = covariate_var, subgroup = levels(data[, covariate_var]), 
-    n = as.numeric(tbl), 
+    n = as.numeric(tbl_marginal), 
     ndf, propdf,
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
@@ -138,6 +138,11 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   
   tbl_test <- tbl[, rev(seq_len(ncol(tbl)))]
   
+  ### For testing skip rows that have zero counts
+  
+  tbl_non_zero <- tbl[tbl_marginal > 0, , drop = FALSE]
+  tbl_test_non_zero <- tbl_test[tbl_marginal > 0, , drop = FALSE]
+  
   
   if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
     
@@ -146,10 +151,10 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
       
       ## Pearson's Chi-squared test
       ## Success category is defined by the first column
-      prop_test_res <- prop.test(tbl_test, correct = TRUE)
+      prop_test_res <- prop.test(tbl_test_non_zero, correct = TRUE)
       
       
-      if(!is.null(prop_test_res$conf.int)){
+      if(!is.null(prop_test_res$conf.int) && nrow(tbl_test) == nrow(tbl_test_non_zero)){
         difference <- (prop_test_res$estimate[2] - prop_test_res$estimate[1]) * 100
         difference_CI95_upper <- -prop_test_res$conf.int[1] * 100
         difference_CI95_lower <- -prop_test_res$conf.int[2] * 100

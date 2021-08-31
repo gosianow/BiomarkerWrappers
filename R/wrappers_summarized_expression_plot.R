@@ -20,7 +20,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   cluster_rows = FALSE, cluster_columns = FALSE, 
   row_dend_reorder = FALSE, column_dend_reorder = FALSE,
   show_row_names = TRUE, show_column_names = TRUE, 
-  top_annotation = NULL,
+  top_annotation = NULL, extra_top_annotation = NULL, 
   row_names_gp = grid::gpar(fontsize = 9), column_names_gp = grid::gpar(fontsize = 9), 
   row_names_max_width = unit(20, "cm"), column_names_max_height = unit(20, "cm"),
   row_names_width = 80, draw = TRUE, return = "ht", ...){
@@ -124,7 +124,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   ggdata[, group_var] <- NULL
   
-  matrix <- as.matrix(t(ggdata))
+  matrix <- t(as.matrix(ggdata))
   
   
   # ---------------------------------------------------------------------------
@@ -148,6 +148,10 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
       top_annotation <- NULL
     }
     
+  }
+  
+  if(!is.null(extra_top_annotation)){
+    top_annotation <- c(extra_top_annotation, top_annotation)
   }
   
   

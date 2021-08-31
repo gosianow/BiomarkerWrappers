@@ -15,7 +15,8 @@ wrapper_fishers_test(
   margin = 1,
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_OR = TRUE
 )
 }
 \arguments{

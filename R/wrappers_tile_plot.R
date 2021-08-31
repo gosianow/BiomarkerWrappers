@@ -141,6 +141,8 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
+  levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
+  names(levels_original) <- y_vars
   
   
   if(length(rev) == 1){
@@ -154,9 +156,9 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
     if(rev[i]){
       
-      levels_original <- levels(data[, y_vars[i]])
-      levels_skip <- levels_original[levels_original %in% rev_levels_skip]
-      levels_rev <- levels_original[!levels_original %in% rev_levels_skip]
+      levels_orig <- levels(data[, y_vars[i]])
+      levels_skip <- levels_orig[levels_orig %in% rev_levels_skip]
+      levels_rev <- levels_orig[!levels_orig %in% rev_levels_skip]
       levels_new <- c(rev(levels_rev), levels_skip)
       
       data[, y_vars[i]] <- factor(data[, y_vars[i]], levels = levels_new)
@@ -164,6 +166,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     }
     
   }
+  
   
   ### In barplots the order is reversed 
   for(i in seq_along(y_vars)){
@@ -187,10 +190,9 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   
   ### Skip unused levels 
   
-  data <- mutate_at(data, y_vars, factor)
-  
-  levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
-  names(levels_original) <- y_vars
+  # data <- mutate_at(data, y_vars, factor)
+  # levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
+  # names(levels_original) <- y_vars
   
   
   if(any(skip_NAs == FALSE)){
@@ -263,7 +265,11 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     ### Update colors 
     
     colors_tmp <- format_colors(levels_original[[y_var]], colors = colors[[y_var]])
-    colors_tmp <- c(colors_tmp, "NA" = "gray95")
+    
+    if(any(is.na(data[, y_var]))){
+      colors_tmp <- c(colors_tmp, "NA" = "gray95")
+    }
+    
     
     ### Use names with proportions
     

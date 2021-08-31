@@ -38,6 +38,7 @@ Collate:
     'wrappers_logFC_plot.R'
     'wrappers_cooccurrence.R'
     'wrappers_cox_regression.R'
+    'wrappers_error_line_plot.R'
     'wrappers_fishers_test.R'
     'wrappers_gene_expression_plot.R'
     'wrappers_kruskal_test.R'
