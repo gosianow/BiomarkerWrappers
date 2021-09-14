@@ -168,6 +168,10 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   }
   
   
+  levels_rev <- lapply(data[, y_vars, drop = FALSE], levels)
+  names(levels_rev) <- y_vars
+  
+
   ### In barplots the order is reversed 
   for(i in seq_along(y_vars)){
     # i = 1
@@ -176,7 +180,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
   }
   
-
+  
   if(any(skip_NAs)){
     
     if(length(skip_NAs) == 1){
@@ -188,16 +192,10 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   }
   
   
-  ### Skip unused levels 
   
-  # data <- mutate_at(data, y_vars, factor)
-  # levels_original <- lapply(data[, y_vars, drop = FALSE], levels)
-  # names(levels_original) <- y_vars
-  
+  ### To calculate proportions of interaction factors we have to add NA as a factor level
   
   if(any(skip_NAs == FALSE)){
-    
-    ### To calculate proportions of interaction factors we have to add NA as a factor level
     
     for(i in seq_along(y_vars)){
       # i = 2
@@ -213,12 +211,16 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
   }
   
   
+  levels_barplot <- lapply(data[, y_vars, drop = FALSE], levels)
+  names(levels_barplot) <- y_vars
   
   
   ### Compute tile size 
   
   data_tile_size_list <- lapply(seq_along(y_vars), function(i){
     # i = 2
+    
+    # print(i)
     
     value_interaction <- interaction(data[, y_vars[1:i], drop = FALSE], sep = " /dummy-dummy/ ", lex.order = TRUE)
     
@@ -230,9 +232,20 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
     ### Information about marginal proportions
     
-    tbl_y_var <- table(data[, y_vars[i]])
-    prop_y_var <- tbl_y_var / nrow(data) * 100
-    
+    if("NA" %in% levels(data[, y_vars[i]])){
+      
+      data_noNA <- data[!data[, y_vars[i]] %in% "NA", , drop = FALSE]
+      data_noNA[, y_vars[i]] <- factor(data_noNA[, y_vars[i]], levels = setdiff(levels(data_noNA[, y_vars[i]]), "NA"))
+      
+      tbl_y_var <- table(data_noNA[, y_vars[i]])
+      prop_y_var <- tbl_y_var / nrow(data_noNA) * 100
+      
+      prop_y_var <- c("NA" = NA, prop_y_var)
+      
+    }else{
+      tbl_y_var <- table(data[, y_vars[i]])
+      prop_y_var <- tbl_y_var / nrow(data) * 100
+    }
     
     
     out <- data.frame(y_var = y_vars[i], 
@@ -266,10 +279,9 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
     colors_tmp <- format_colors(levels_original[[y_var]], colors = colors[[y_var]])
     
-    if(any(is.na(data[, y_var]))){
+    if("NA" %in% levels(data[, y_var])){
       colors_tmp <- c(colors_tmp, "NA" = "gray95")
     }
-    
     
     ### Use names with proportions
     
@@ -278,6 +290,20 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     mm <- match(names(colors_tmp), prop_tbl$levels_y_var)
     names(colors_tmp) <- prop_tbl$levels_with_prop_y_var[mm]
     
+    
+    ### Set the right order for colors
+    colors_tmp <- colors_tmp[rev(levels(data_tile_size$levels_with_prop_y_var))]
+    
+    ### ?!?! with the new ggplot2 version, the legend is specified exactly as the values in scale_fill_manual
+    
+    # ggplot(mpg, aes(class)) +
+    #   geom_bar(aes(fill = drv)) +
+    #   scale_fill_manual(values = c(`f` = "blue", `4` = "red", `r` = "orange"))
+    #   
+    # 
+    # ggplot(mpg, aes(x = class, y = cty)) +
+    #   geom_boxplot(aes(fill = drv)) +
+    #   scale_fill_manual(values = c(`f` = "blue", `4` = "red", `r` = "orange"))
     
     
     ggplot(data_tile_size) +
@@ -296,7 +322,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
       scale_fill_manual(values = colors_tmp) +
       scale_y_discrete(expand = c(0,0)) +
       scale_x_discrete(expand = c(0,0)) +
-      guides(fill = guide_legend(nrow = nrow_legend, reverse = TRUE))
+      guides(fill = guide_legend(nrow = nrow_legend, reverse = FALSE))
     
     
   })

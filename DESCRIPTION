@@ -16,7 +16,7 @@ Depends: R (>= 3.5)
 Imports: ggplot2, rlang, tidyr, plyr, dplyr, magrittr, cowplot, RColorBrewer, grDevices, grid, circlize, ComplexHeatmap, ggbeeswarm, ggnewscale, survival, survminer, forestplot, utils, stats, methods, knitr, kableExtra, fgsea, lme4, multcomp, limma, Biobase, GSEABase, scales, stringr
 Suggests: BiocStyle, testthat, rmarkdown, SummarizedExperiment, edgeR, msigdbr, corrplot
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Collate: 
     'BiomarkerWrappers.R'
     'class_Bclass.R'
