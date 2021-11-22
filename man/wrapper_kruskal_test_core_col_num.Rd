@@ -3,19 +3,22 @@
 \name{wrapper_kruskal_test_core_col_num}
 \alias{wrapper_kruskal_test_core_col_num}
 \alias{wrapper_kruskal_test_core_col_num_strat}
-\title{Kruskal-Wallis H test or Wilcoxon Rank-Sum test}
+\title{Kruskal-Wallis H test or Wilcoxon Rank-Sum test (know also as Wilcoxon-Mann-Whitney test) or t-test}
 \usage{
 wrapper_kruskal_test_core_col_num(
   data,
   num_var,
   cat_var,
   method = "kruskal",
+  alternative = "two.sided",
+  paired = FALSE,
   pairwise = FALSE,
   variable_names = NULL,
   caption = NULL,
   display_statistics = c("N", "Median"),
   force_empty_cols = FALSE,
-  print_pvalues = TRUE
+  print_pvalues = TRUE,
+  drop = FALSE
 )
 
 wrapper_kruskal_test_core_col_num_strat(
@@ -25,13 +28,16 @@ wrapper_kruskal_test_core_col_num_strat(
   strat1_var = NULL,
   strat2_var = NULL,
   method = "kruskal",
+  alternative = "two.sided",
+  paired = FALSE,
   pairwise = FALSE,
   variable_names = NULL,
   caption = NULL,
   display_statistics = c("N", "Median"),
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  drop = FALSE
 )
 }
 \arguments{
@@ -40,6 +46,10 @@ wrapper_kruskal_test_core_col_num_strat(
 \item{num_var}{Name of a numerical variable.}
 
 \item{cat_var}{Name of a categorical variable. That variable must be a factor with at least two levels.}
+
+\item{method}{Test to be used. Possible values: "kruskal", "wilcox", "t".}
+
+\item{display_statistics}{Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".}
 
 \item{strat1_var}{Name of the second stratification variable.}
 }

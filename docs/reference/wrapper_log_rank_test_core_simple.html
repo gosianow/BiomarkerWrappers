@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
       </span>
     </div>
 
@@ -228,67 +228,70 @@
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span>
-
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span>
-<span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span>
-<span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span>
-<span class='va'>covariate_var</span> <span class='op'>&lt;-</span> <span class='st'>"Treatment_Arm"</span>
-
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_log_rank_test_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_var <span class='op'>=</span> <span class='va'>covariate_var</span><span class='op'>)</span>
-
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;       Covariate Subgroup   N      Events  MST  MST 95% CI   HR     HR 95% CI
-#&gt; 1 Treatment Arm     CTRL 252 109 (43.3%) 83.1 (78.3 - NA)                   
-#&gt; 2                    TRT 248 105 (42.3%) 99.9 (87.5 - NA) 0.79 (0.60 - 1.03)
-#&gt;    P-value
-#&gt; 1 0.0806 .
-#&gt; 2         </div><div class='input'>
-
-<span class='co'>### Fit a stratified model </span>
-
-<span class='va'>strata_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span>
-
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_log_rank_test_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_var <span class='op'>=</span> <span class='va'>covariate_var</span>, strata_vars <span class='op'>=</span> <span class='va'>strata_vars</span><span class='op'>)</span>
-
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;       Covariate Subgroup   N     Events    MST  MST 95% CI   HR     HR 95% CI
-#&gt; 1 Treatment Arm     CTRL 223 95 (42.6%)   83.3 (80.3 - NA)                   
-#&gt; 2                    TRT 222 90 (40.5%) &gt;100.0 (88.7 - NA) 0.70 (0.52 - 0.94)
-#&gt;    P-value
-#&gt; 1 0.0167 *
-#&gt; 2         </div><div class='input'>
-
-
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span>
-
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span>
-<span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span>
-<span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span>
-<span class='va'>covariate_var</span> <span class='op'>&lt;-</span> <span class='st'>"Treatment_Arm"</span>
-
-<span class='va'>strat1_var</span> <span class='op'>=</span> <span class='st'>"Cell_Of_Origin"</span>
-
-
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_log_rank_test_core_simple_strat</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_var <span class='op'>=</span> <span class='va'>covariate_var</span>, strat1_var <span class='op'>=</span> <span class='va'>strat1_var</span><span class='op'>)</span>
-
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   Cell Of Origin     Covariate Subgroup Total N Total Events   N     Events
-#&gt; 1            GCB Treatment Arm     CTRL     252           91 135 56 (41.5%)
-#&gt; 2                                   TRT     252           91 117 35 (29.9%)
-#&gt; 3   UNCLASSIFIED Treatment Arm     CTRL      69           37  32 15 (46.9%)
-#&gt; 4                                   TRT      69           37  37 22 (59.5%)
-#&gt; 5            ABC Treatment Arm     CTRL     124           57  56 24 (42.9%)
-#&gt; 6                                   TRT     124           57  68 33 (48.5%)
-#&gt;    MST    MST 95% CI   HR     HR 95% CI   P-value Adj. P-value
-#&gt; 1 85.6   (78.3 - NA)                    0.0090 **     0.0269 *
-#&gt; 2   NA  (100.3 - NA) 0.57 (0.37 - 0.87)                       
-#&gt; 3 83.3   (55.1 - NA)                       0.6926       0.6926
-#&gt; 4 82.1 (57.4 - 92.1) 1.14 (0.59 - 2.20)                       
-#&gt; 5 82.6   (63.6 - NA)                       0.5822       0.6926
-#&gt; 6 92.0   (71.9 - NA) 0.86 (0.51 - 1.46)                       </div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span></span>
+<span class='r-in'><span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span></span>
+<span class='r-in'><span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span></span>
+<span class='r-in'><span class='va'>covariate_var</span> <span class='op'>&lt;-</span> <span class='st'>"Treatment_Arm"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_log_rank_test_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_var <span class='op'>=</span> <span class='va'>covariate_var</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       Covariate Subgroup   N      Events  MST  MST 95% CI   HR     HR 95% CI</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 Treatment Arm     CTRL 252 109 (43.3%) 83.1 (78.3 - NA)                   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2                    TRT 248 105 (42.3%) 99.9 (87.5 - NA) 0.79 (0.60 - 1.03)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 0.0806 .</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2         </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Fit a stratified model </span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>strata_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_log_rank_test_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_var <span class='op'>=</span> <span class='va'>covariate_var</span>, strata_vars <span class='op'>=</span> <span class='va'>strata_vars</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       Covariate Subgroup   N     Events    MST  MST 95% CI   HR     HR 95% CI</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 Treatment Arm     CTRL 223 95 (42.6%)   83.3 (80.3 - NA)                   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2                    TRT 222 90 (40.5%) &gt;100.0 (88.7 - NA) 0.70 (0.52 - 0.94)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 0.0167 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2         </span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span></span>
+<span class='r-in'><span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span></span>
+<span class='r-in'><span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span></span>
+<span class='r-in'><span class='va'>covariate_var</span> <span class='op'>&lt;-</span> <span class='st'>"Treatment_Arm"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>strat1_var</span> <span class='op'>=</span> <span class='st'>"Cell_Of_Origin"</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_log_rank_test_core_simple_strat</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_var <span class='op'>=</span> <span class='va'>covariate_var</span>, strat1_var <span class='op'>=</span> <span class='va'>strat1_var</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   Cell Of Origin     Covariate Subgroup Total N Total Events   N     Events</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1            GCB Treatment Arm     CTRL     252           91 135 56 (41.5%)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2                                   TRT     252           91 117 35 (29.9%)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3   UNCLASSIFIED Treatment Arm     CTRL      69           37  32 15 (46.9%)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4                                   TRT      69           37  37 22 (59.5%)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5            ABC Treatment Arm     CTRL     124           57  56 24 (42.9%)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6                                   TRT     124           57  68 33 (48.5%)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    MST    MST 95% CI   HR     HR 95% CI   P-value Adj. P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 85.6   (78.3 - NA)                    0.0090 **     0.0269 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2   NA  (100.3 - NA) 0.57 (0.37 - 0.87)                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3 83.3   (55.1 - NA)                       0.6926       0.6926</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4 82.1 (57.4 - 92.1) 1.14 (0.59 - 2.20)                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5 82.6   (63.6 - NA)                       0.5822       0.6926</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6 92.0   (71.9 - NA) 0.86 (0.51 - 1.46)                       </span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

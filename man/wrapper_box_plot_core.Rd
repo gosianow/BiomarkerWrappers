@@ -37,6 +37,7 @@ wrapper_box_plot_core(
   facet_nrow = NULL,
   facet_ncol = NULL,
   ylim = NULL,
+  drop = FALSE,
   axis_text_x_angle = 0,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,
@@ -78,6 +79,7 @@ wrapper_box_plot_core_strat(
   facet_nrow = NULL,
   facet_ncol = NULL,
   ylim = NULL,
+  drop = FALSE,
   axis_text_x_angle = 0,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,
@@ -87,6 +89,10 @@ wrapper_box_plot_core_strat(
   strat1_ncol = NULL,
   strat2_nrow = NULL,
   strat2_ncol = 1,
+  strat1_rel_widths = 1,
+  strat1_rel_heights = 1,
+  strat2_rel_widths = 1,
+  strat2_rel_heights = 1,
   less_legends = FALSE
 )
 }

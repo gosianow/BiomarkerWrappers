@@ -40,7 +40,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     name <- ifelse(method == "z-score" || centered, "Mean\nz-score", "Mean\nexpr.")
   }
   
-
+  
   if(!is.null(adjp)){
     
     levels_group <- levels(group)
@@ -73,27 +73,49 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   rownames(x) <- stringr::str_wrap(rownames(x), width = row_names_width)
   
   
+  x <- as.matrix(x)
+  
+  
+  # ---------------------------------------------------------------------------
+  # Prepare data_zeros
+  # ---------------------------------------------------------------------------
+  
+  x <- data.frame(group = group, t(x), check.names = FALSE)
+  group_var <- "group"
+  
+  
+  if(cell_fun_method %in% c("circle", "rect")){
+    
+    ggdata <- x %>% 
+      dplyr::group_by_at(group_var) %>% 
+      dplyr::summarize_all(list(~ mean(. != 0))) %>% 
+      data.frame(check.names = FALSE)
+    
+    rownames(ggdata) <- ggdata[, group_var]
+    
+    ggdata[, group_var] <- NULL
+    
+    data_zeros <- as.matrix(t(ggdata))
+    
+  }
+  
+  
   # ---------------------------------------------------------------------------
   # Prepare matrix
   # ---------------------------------------------------------------------------
   
   
-  x <- as.matrix(x)
-  
   if(method == "z-score"){
     
-    zscore <- t(apply(x, 1, scale, center = TRUE, scale = scale))
-    colnames(zscore) <- colnames(x)
+    zscore <- apply(x[, -1], 2, scale, center = TRUE, scale = scale)
+    colnames(zscore) <- colnames(x)[-1]
     
-    x <- zscore
+    x <- data.frame(group = group, zscore, check.names = FALSE)
+    group_var <- "group"
     
     centered <- TRUE
     
   }
-  
-  
-  x <- data.frame(group = group, t(x), check.names = FALSE)
-  group_var <- "group"
   
   
   if(is.null(summary_fun)){
@@ -111,7 +133,6 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     }
     out
   }
-  
   
   
   ggdata <- x %>% 
@@ -154,27 +175,6 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     top_annotation <- c(extra_top_annotation, top_annotation)
   }
   
-  
-  
-  # ---------------------------------------------------------------------------
-  # Prepare data_zeros
-  # ---------------------------------------------------------------------------
-  
-  
-  if(cell_fun_method %in% c("circle", "rect")){
-    
-    ggdata <- x %>% 
-      dplyr::group_by_at(group_var) %>% 
-      dplyr::summarize_all(list(~ mean(. != 0))) %>% 
-      data.frame(check.names = FALSE)
-    
-    rownames(ggdata) <- ggdata[, group_var]
-    
-    ggdata[, group_var] <- NULL
-    
-    data_zeros <- as.matrix(t(ggdata))
-    
-  }
   
   
   
@@ -256,12 +256,17 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
       
       ### Scale the radius
       
-      # grid.circle(x = x, y = y, r = min(unit.c(width, height))/2 * (data_zeros[i, j] + 0.01), 
+      ## Somehow when I divide by 2, the circles are very small.
+      
+      # grid.circle(x = x, y = y, r = min(unit.c(width, height))/2 * (data_zeros[i, j] + 0.02),
+      #   gp = gpar(fill = colors_matrix(matrix[i, j]), col = NA))
+      
+      # grid.circle(x = x, y = y, r = min(unit.c(width, height)) * (data_zeros[i, j] + 0.02),
       #   gp = gpar(fill = colors_matrix(matrix[i, j]), col = NA))
       
       ### Scale the area
       
-      grid.circle(x = x, y = y, r = min(unit.c(width, height))/2 * sqrt(data_zeros[i, j]), 
+      grid.circle(x = x, y = y, r = min(unit.c(width, height)) * sqrt(data_zeros[i, j]),
         gp = gpar(fill = colors_matrix(matrix[i, j]), col = NA))
       
     }
@@ -272,10 +277,11 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     
     cell_fun <- function(j, i, x, y, width, height, fill){
       
-      grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "grey", fill = NA))
-      
       grid.rect(x = x - (width * (1 - data_zeros[i, j]) / 2), y = y, width = width * data_zeros[i, j], height = height, 
         gp = gpar(col = NA, fill = colors_matrix(matrix[i, j])))
+      
+      grid.rect(x = x, y = y, width = width, height = height, gp = gpar(col = "grey", fill = NA))
+      
       
     }
     

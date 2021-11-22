@@ -1,5 +1,16 @@
 
 
+# mpg$class <- factor(mpg$class)
+# mpg$manufacturer <- factor(mpg$manufacturer)
+# 
+# 
+# ggplot(mpg, aes(x = manufacturer, y = hwy)) +
+#   geom_boxplot() +
+#   geom_jitter() +
+#   scale_x_discrete(drop = FALSE) +
+#   facet_wrap(~class, scales = "free_x")
+
+
 
 
 #' Boxplot
@@ -25,7 +36,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
-  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE,
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
   background_grid_major = "none"){
   
@@ -104,6 +115,10 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   }
   
   
+  ### Drop unused levels 
+  if(drop){
+    data[, x_var] <- factor(data[, x_var])
+  }
   
   
   # -------------------------------------------------------------------------
@@ -284,7 +299,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
       panel.border = element_rect(colour = "black", size = 0.8),
       legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
-    scale_x_discrete(drop = FALSE) +
+    scale_x_discrete(drop = ifelse(facet_scales %in% c("free", "free_x"), TRUE, FALSE)) +
     coord_cartesian(ylim = ylim)
   
   
@@ -380,10 +395,11 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
   show_total_counts = FALSE, show_median = FALSE, 
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5, label_nudge = 0.025,
-  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE, 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
-  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, 
+  strat1_rel_widths = 1, strat1_rel_heights = 1, strat2_rel_widths = 1, strat2_rel_heights = 1, less_legends = FALSE){
   
   
   
@@ -418,11 +434,24 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
   # Scales, xlim, ylim
   # -------------------------------------------------------------------------
   
-  if(strat_scales == "fixed"){
-    if(is.null(ylim)){
-      ylim <- range(data[, y_var])
+  if(!drop){
+    if(strat_scales == "fixed"){
+      if(is.null(ylim)){
+        ylim <- range(data[, y_var])
+      }
+      drop <- FALSE
+    }else if(strat_scales == "free_x"){
+      if(is.null(ylim)){
+        ylim <- range(data[, y_var])
+      }
+      drop <- TRUE
+    }else if(strat_scales == "free_y"){
+      drop <- FALSE
+    }else if(strat_scales == "free"){
+      drop <- TRUE
     }
   }
+  
   
   # -------------------------------------------------------------------------
   # Lapply to make the stratified plots
@@ -488,7 +517,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
         legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         show_total_counts = show_total_counts, show_median = show_median, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
-        title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
+        title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, drop = drop,
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
         label_size = label_size, label_nudge = label_nudge, 
         background_grid_major = background_grid_major)
@@ -515,25 +544,20 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
       
     }
     
-    ggpl <- plot_grid(plotlist = ggpl, nrow = strat1_nrow, ncol = strat1_ncol)
+    ggpl <- cowplot::plot_grid(plotlist = ggpl, nrow = strat1_nrow, ncol = strat1_ncol, rel_widths = strat1_rel_widths, rel_heights = strat1_rel_heights, align = "hv", axis = "tblr")
     
     return(ggpl)
     
   })
   
   
-  ggpl <- plot_grid(plotlist = ggpl, nrow = strat2_nrow, ncol = strat2_ncol)
+  ggpl <- cowplot::plot_grid(plotlist = ggpl, nrow = strat2_nrow, ncol = strat2_ncol, rel_widths = strat2_rel_widths, rel_heights = strat2_rel_heights, align = "hv", axis = "tblr")
   
   
   ggpl
   
   
 }
-
-
-
-
-
 
 
 

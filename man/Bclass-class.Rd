@@ -146,7 +146,8 @@ bheader(x) <- value
   xticks = NULL,
   xticks_by = NULL,
   lineheight = "auto",
-  label_fontsize = 14
+  label_fontsize = 14,
+  caption_width = NULL
 )
 }
 \arguments{

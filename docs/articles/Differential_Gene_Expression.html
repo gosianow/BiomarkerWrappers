@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
       </span>
     </div>
 
@@ -72,14 +72,14 @@
 
       
 
-      </header><script src="Differential_Gene_Expression_files/header-attrs-2.9/header-attrs.js"></script><script src="Differential_Gene_Expression_files/kePrint-0.0.1/kePrint.js"></script><link href="Differential_Gene_Expression_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+      </header><script src="Differential_Gene_Expression_files/header-attrs-2.11/header-attrs.js"></script><script src="Differential_Gene_Expression_files/kePrint-0.0.1/kePrint.js"></script><link href="Differential_Gene_Expression_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Differential gene expression</h1>
                         <h4 class="author">Malgorzata Nowicka</h4>
             
-            <h4 class="date">2021-08-31</h4>
+            <h4 class="date">2021-11-22</h4>
       
       
       <div class="hidden name"><code>Differential_Gene_Expression.Rmd</code></div>
@@ -291,12 +291,12 @@
 
 
 <span class="co">### Skip genes that are missing</span>
-<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">geneset_df_hallmark</span><span class="op">$</span><span class="va">human_gene_symbol</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">gse</span><span class="op">)</span><span class="op">$</span><span class="va">HGNC_Symbol</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">geneset_df_hallmark</span><span class="op">$</span><span class="va">human_gene_symbol</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">gse</span><span class="op">)</span><span class="op">$</span><span class="va">HGNC_Symbol</span><span class="op">)</span></code></pre></div>
 <pre><code>## 
 ## FALSE  TRUE 
 ##   103  8069</code></pre>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">geneset_df_hallmark</span> <span class="op">&lt;-</span> <span class="va">geneset_df_hallmark</span><span class="op">[</span><span class="va">geneset_df_hallmark</span><span class="op">$</span><span class="va">human_gene_symbol</span> <span class="op">%in%</span>
+<code class="sourceCode R"><span class="va">geneset_df_hallmark</span> <span class="op">&lt;-</span> <span class="va">geneset_df_hallmark</span><span class="op">[</span><span class="va">geneset_df_hallmark</span><span class="op">$</span><span class="va">human_gene_symbol</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span>
     <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">gse</span><span class="op">)</span><span class="op">$</span><span class="va">HGNC_Symbol</span>, <span class="op">]</span>
 
 
@@ -341,7 +341,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html">gsub</a></span><span class="op">(</span><span class="st">"_"</span>, <span class="st">" "</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
 
 
-<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">x</span>, caption <span class="op">=</span> <span class="st">"Number of samples used for the analysis."</span>, booktabs <span class="op">=</span> <span class="cn">TRUE</span>, linesep <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">x</span>, caption <span class="op">=</span> <span class="st">"Number of samples used for the analysis."</span>, booktabs <span class="op">=</span> <span class="cn">TRUE</span>, linesep <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op"><a href="https://igordot.github.io/msigdbr/reference/pipe.html">%&gt;%</a></span>
     <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"condensed"</span>, <span class="st">"bordered"</span>, <span class="st">"striped"</span><span class="op">)</span>, latex_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"HOLD_position"</span>,
         <span class="st">"striped"</span><span class="op">)</span>, full_width <span class="op">=</span> <span class="cn">FALSE</span>, font_size <span class="op">=</span> <span class="va">font_size</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered table-striped">
@@ -467,9 +467,9 @@ ABC
 <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">summa_fit_lfc0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">x</span>, caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Number of DE genes (adj. p-value &lt; "</span>, <span class="va">pval</span>, <span class="st">", |LogFC| &gt; 0)."</span><span class="op">)</span>,
-    booktabs <span class="op">=</span> <span class="cn">TRUE</span>, linesep <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    booktabs <span class="op">=</span> <span class="cn">TRUE</span>, linesep <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op"><a href="https://igordot.github.io/msigdbr/reference/pipe.html">%&gt;%</a></span>
     <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"condensed"</span>, <span class="st">"bordered"</span>, <span class="st">"striped"</span><span class="op">)</span>, latex_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"HOLD_position"</span>,
-        <span class="st">"striped"</span><span class="op">)</span>, full_width <span class="op">=</span> <span class="cn">FALSE</span>, font_size <span class="op">=</span> <span class="va">font_size</span><span class="op">)</span> <span class="op">%&gt;%</span>
+        <span class="st">"striped"</span><span class="op">)</span>, full_width <span class="op">=</span> <span class="cn">FALSE</span>, font_size <span class="op">=</span> <span class="va">font_size</span><span class="op">)</span> <span class="op"><a href="https://igordot.github.io/msigdbr/reference/pipe.html">%&gt;%</a></span>
     <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered table-striped">
 <caption style="font-size: initial !important;">
@@ -526,9 +526,9 @@ ABC_vs_GCB
 
 
 <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">x</span>, caption <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Number of DE genes (adj. p-value &lt; "</span>, <span class="va">pval</span>, <span class="st">", |LogFC| &gt; 1)."</span><span class="op">)</span>,
-    booktabs <span class="op">=</span> <span class="cn">TRUE</span>, linesep <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    booktabs <span class="op">=</span> <span class="cn">TRUE</span>, linesep <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op"><a href="https://igordot.github.io/msigdbr/reference/pipe.html">%&gt;%</a></span>
     <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"condensed"</span>, <span class="st">"bordered"</span>, <span class="st">"striped"</span><span class="op">)</span>, latex_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"HOLD_position"</span>,
-        <span class="st">"striped"</span><span class="op">)</span>, full_width <span class="op">=</span> <span class="cn">FALSE</span>, font_size <span class="op">=</span> <span class="va">font_size</span><span class="op">)</span> <span class="op">%&gt;%</span>
+        <span class="st">"striped"</span><span class="op">)</span>, full_width <span class="op">=</span> <span class="cn">FALSE</span>, font_size <span class="op">=</span> <span class="va">font_size</span><span class="op">)</span> <span class="op"><a href="https://igordot.github.io/msigdbr/reference/pipe.html">%&gt;%</a></span>
     <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <table class="table table table-condensed table-bordered table-striped">
 <caption style="font-size: initial !important;">
@@ -696,7 +696,7 @@ ABC_vs_GCB
     <span class="va">ggdata</span><span class="op">$</span><span class="va">P.Value</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">ggdata</span><span class="op">$</span><span class="va">P.Value</span><span class="op">)</span>
 
     <span class="va">ggdata</span><span class="op">$</span><span class="va">Label</span> <span class="op">&lt;-</span> <span class="va">ggdata</span><span class="op">$</span><span class="va">HGNC_Symbol</span>
-    <span class="va">ggdata</span><span class="op">$</span><span class="va">Label</span><span class="op">[</span><span class="op">!</span><span class="va">ggdata</span><span class="op">$</span><span class="va">Label</span> <span class="op">%in%</span> <span class="fu"><a href="../reference/Bclass-class.html">bresults</a></span><span class="op">(</span><span class="va">topTable_both</span><span class="op">)</span><span class="op">$</span><span class="va">HGNC_Symbol</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
+    <span class="va">ggdata</span><span class="op">$</span><span class="va">Label</span><span class="op">[</span><span class="op">!</span><span class="va">ggdata</span><span class="op">$</span><span class="va">Label</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="../reference/Bclass-class.html">bresults</a></span><span class="op">(</span><span class="va">topTable_both</span><span class="op">)</span><span class="op">$</span><span class="va">HGNC_Symbol</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>
 
     <span class="va">ggdata</span><span class="op">$</span><span class="va">Highlight</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">ggdata</span><span class="op">$</span><span class="va">Label</span><span class="op">)</span>
 
@@ -741,7 +741,7 @@ ABC_vs_GCB
 <span class="va">logFC_cor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">ggdf</span><span class="op">[</span>, <span class="va">logFC1</span><span class="op">]</span>, <span class="va">ggdf</span><span class="op">[</span>, <span class="va">logFC2</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"spearman"</span>, use <span class="op">=</span> <span class="st">"pairwise.complete.obs"</span><span class="op">)</span>,
     <span class="fl">2</span><span class="op">)</span>
 
-<span class="va">logfc_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ggdf</span><span class="op">[</span>, <span class="va">logFC1</span><span class="op">]</span>, <span class="va">ggdf</span><span class="op">[</span>, <span class="va">logFC2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
+<span class="va">logfc_range</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/inter-range-methods.html">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">ggdf</span><span class="op">[</span>, <span class="va">logFC1</span><span class="op">]</span>, <span class="va">ggdf</span><span class="op">[</span>, <span class="va">logFC2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span><span class="op">(</span><span class="va">ggdf</span>, x_var <span class="op">=</span> <span class="va">logFC1</span>, y_var <span class="op">=</span> <span class="va">logFC2</span>, title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Spearman's R = "</span>,
     <span class="va">logFC_cor</span><span class="op">)</span>, point_shape <span class="op">=</span> <span class="fl">20</span>, background_grid_major <span class="op">=</span> <span class="st">"xy"</span>, xlim <span class="op">=</span> <span class="va">logfc_range</span>,
@@ -4442,65 +4442,65 @@ EFNA5, CRYBG1, AKAP7, THY1, PKHD1, SHROOM2, DCBLD2, GAS1, GHRL, PLAUR, GSTM3, HS
 <p><img src="Differential_Gene_Expression_files/figure-html/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.1.0 (2021-05-18)
+<pre><code>## R version 4.1.2 (2021-11-01)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Catalina 10.15.7
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.0.dylib
 ## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] parallel  stats4    stats     graphics  grDevices utils     datasets 
-## [8] methods   base     
+## [1] stats4    stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
 ## 
 ## other attached packages:
-##  [1] BiomarkerWrappers_0.0.0.29  msigdbr_7.4.1              
-##  [3] edgeR_3.34.0                limma_3.48.0               
-##  [5] SummarizedExperiment_1.22.0 Biobase_2.52.0             
-##  [7] GenomicRanges_1.44.0        GenomeInfoDb_1.28.0        
-##  [9] IRanges_2.26.0              S4Vectors_0.30.0           
-## [11] BiocGenerics_0.38.0         MatrixGenerics_1.4.0       
-## [13] matrixStats_0.59.0          ggplot2_3.3.4              
-## [15] kableExtra_1.3.4            rmarkdown_2.9              
-## [17] knitr_1.33                 
+##  [1] BiomarkerWrappers_0.0.0.30  msigdbr_7.4.1              
+##  [3] edgeR_3.36.0                limma_3.50.0               
+##  [5] SummarizedExperiment_1.24.0 Biobase_2.54.0             
+##  [7] GenomicRanges_1.46.0        GenomeInfoDb_1.30.0        
+##  [9] IRanges_2.28.0              S4Vectors_0.32.1           
+## [11] BiocGenerics_0.40.0         MatrixGenerics_1.6.0       
+## [13] matrixStats_0.61.0          ggplot2_3.3.5              
+## [15] kableExtra_1.3.4            rmarkdown_2.11             
+## [17] knitr_1.36                 
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bitops_1.0-7           fs_1.5.0               RColorBrewer_1.1-2    
 ##  [4] doParallel_1.0.16      webshot_0.5.2          httr_1.4.2            
-##  [7] rprojroot_2.0.2        tools_4.1.0            bslib_0.2.5.1         
-## [10] utf8_1.2.1             R6_2.5.0               DBI_1.1.1             
-## [13] colorspace_2.0-1       GetoptLong_1.0.5       withr_2.4.2           
-## [16] gridExtra_2.3          tidyselect_1.1.1       compiler_4.1.0        
-## [19] textshaping_0.3.5      rvest_1.0.0            formatR_1.11          
-## [22] Cairo_1.5-12.2         xml2_1.3.2             desc_1.3.0            
-## [25] DelayedArray_0.18.0    labeling_0.4.2         sass_0.4.0            
-## [28] scales_1.1.1           pkgdown_1.6.1          systemfonts_1.0.2     
-## [31] stringr_1.4.0          digest_0.6.27          svglite_2.0.0         
-## [34] XVector_0.32.0         pkgconfig_2.0.3        htmltools_0.5.1.1     
-## [37] highr_0.9              fastmap_1.1.0          rlang_0.4.11          
-## [40] GlobalOptions_0.1.2    rstudioapi_0.13        farver_2.1.0          
-## [43] shape_1.4.6            jquerylib_0.1.4        generics_0.1.0        
-## [46] jsonlite_1.7.2         BiocParallel_1.26.0    dplyr_1.0.7           
-## [49] RCurl_1.98-1.3         magrittr_2.0.1         GenomeInfoDbData_1.2.6
-## [52] Matrix_1.3-4           Rcpp_1.0.6             munsell_0.5.0         
-## [55] fansi_0.5.0            babelgene_21.4         lifecycle_1.0.0       
-## [58] stringi_1.6.2          yaml_2.2.1             zlibbioc_1.38.0       
-## [61] plyr_1.8.6             grid_4.1.0             ggrepel_0.9.1         
-## [64] crayon_1.4.1           lattice_0.20-44        cowplot_1.1.1         
-## [67] splines_4.1.0          circlize_0.4.13        locfit_1.5-9.4        
-## [70] ComplexHeatmap_2.8.0   pillar_1.6.1           fgsea_1.18.0          
-## [73] rjson_0.2.20           codetools_0.2-18       fastmatch_1.1-0       
-## [76] glue_1.4.2             evaluate_0.14          data.table_1.14.0     
+##  [7] rprojroot_2.0.2        tools_4.1.2            bslib_0.3.1           
+## [10] utf8_1.2.2             R6_2.5.1               DBI_1.1.1             
+## [13] colorspace_2.0-2       GetoptLong_1.0.5       withr_2.4.2           
+## [16] gridExtra_2.3          tidyselect_1.1.1       compiler_4.1.2        
+## [19] textshaping_0.3.6      rvest_1.0.2            formatR_1.11          
+## [22] xml2_1.3.2             desc_1.4.0             DelayedArray_0.20.0   
+## [25] labeling_0.4.2         sass_0.4.0             scales_1.1.1          
+## [28] pkgdown_1.6.1          systemfonts_1.0.2      stringr_1.4.0         
+## [31] digest_0.6.28          svglite_2.0.0          XVector_0.34.0        
+## [34] pkgconfig_2.0.3        htmltools_0.5.2        highr_0.9             
+## [37] fastmap_1.1.0          rlang_0.4.12           GlobalOptions_0.1.2   
+## [40] rstudioapi_0.13        farver_2.1.0           shape_1.4.6           
+## [43] jquerylib_0.1.4        generics_0.1.1         jsonlite_1.7.2        
+## [46] BiocParallel_1.28.0    dplyr_1.0.7            RCurl_1.98-1.5        
+## [49] magrittr_2.0.1         GenomeInfoDbData_1.2.7 Matrix_1.3-4          
+## [52] Rcpp_1.0.7             munsell_0.5.0          fansi_0.5.0           
+## [55] babelgene_21.4         lifecycle_1.0.1        stringi_1.7.5         
+## [58] yaml_2.2.1             zlibbioc_1.40.0        plyr_1.8.6            
+## [61] grid_4.1.2             ggrepel_0.9.1          parallel_4.1.2        
+## [64] crayon_1.4.2           lattice_0.20-45        cowplot_1.1.1         
+## [67] splines_4.1.2          circlize_0.4.13        locfit_1.5-9.4        
+## [70] ComplexHeatmap_2.10.0  pillar_1.6.4           fgsea_1.20.0          
+## [73] rjson_0.2.20           codetools_0.2-18       fastmatch_1.1-3       
+## [76] glue_1.4.2             evaluate_0.14          data.table_1.14.2     
 ## [79] vctrs_0.3.8            png_0.1-7              foreach_1.5.1         
-## [82] tidyr_1.1.3            gtable_0.3.0           purrr_0.3.4           
-## [85] clue_0.3-59            assertthat_0.2.1       cachem_1.0.5          
-## [88] xfun_0.24              survival_3.2-11        ragg_1.1.3            
-## [91] viridisLite_0.4.0      tibble_3.1.2           iterators_1.0.13      
-## [94] memoise_2.0.0          corrplot_0.89          cluster_2.1.2         
+## [82] tidyr_1.1.4            gtable_0.3.0           purrr_0.3.4           
+## [85] clue_0.3-60            assertthat_0.2.1       cachem_1.0.6          
+## [88] xfun_0.28              survival_3.2-13        ragg_1.1.3            
+## [91] viridisLite_0.4.0      tibble_3.1.5           iterators_1.0.13      
+## [94] memoise_2.0.0          corrplot_0.90          cluster_2.1.2         
 ## [97] ellipsis_0.3.2</code></pre>
 </div>
 </div>

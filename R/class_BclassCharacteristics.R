@@ -81,7 +81,7 @@ setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header 
   
   ## Rows with names of covariates. They contain "".
   
-  which_row_spec <- which(rowSums(out == "") >= 1)
+  which_row_spec <- which(rowSums(out[, -1, drop = FALSE] == "") >= 1)
   
   which_row_spec_isna <- which(out[, 1] %in% c("N", "NAs"))
   

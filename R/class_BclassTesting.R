@@ -129,7 +129,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14, caption_width = NULL){
   
   # lineheight = unit(1, "cm")
   
@@ -137,6 +137,10 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   out <- boutput(x)
   res <- bresults(x)
   caption <- bcaption(x)
+  
+  if(!is.null(caption_width)){
+    caption <- stringr::str_wrap(caption, width = caption_width)
+  }
   
   
   ### ----------------------------------------------------------------------

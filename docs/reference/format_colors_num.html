@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
       </span>
     </div>
 
@@ -160,78 +160,79 @@
     <p>Vector of unique colors for all unique values of x.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>20</span><span class='op'>)</span>
-
-<span class='va'>palette</span> <span class='op'>&lt;-</span> <span class='st'>"Spectral"</span>
-
-<span class='fu'>format_colors_num</span><span class='op'>(</span><span class='va'>x</span>, trim_values <span class='op'>=</span> <span class='fl'>2.5</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; function (x = NULL, return_rgb = FALSE, max_value = 1) 
-#&gt; {
-#&gt;     if (is.null(x)) {
-#&gt;         stop_wrap("Please specify `x`\n")
-#&gt;     }
-#&gt;     att = attributes(x)
-#&gt;     if (is.data.frame(x)) 
-#&gt;         x = as.matrix(x)
-#&gt;     l_na = is.na(x)
-#&gt;     if (all(l_na)) {
-#&gt;         return(rep(NA, length(l_na)))
-#&gt;     }
-#&gt;     x2 = x[!l_na]
-#&gt;     x2 = ifelse(x2 &lt; breaks[1], breaks[1], ifelse(x2 &gt; breaks[length(breaks)], 
-#&gt;         breaks[length(breaks)], x2))
-#&gt;     ibin = .bincode(x2, breaks, right = TRUE, include.lowest = TRUE)
-#&gt;     res_col = character(length(x2))
-#&gt;     for (i in unique(ibin)) {
-#&gt;         l = ibin == i
-#&gt;         res_col[l] = .get_color(x2[l], breaks[i], breaks[i + 
-#&gt;             1], colors[i, ], colors[i + 1, ], space = space)
-#&gt;     }
-#&gt;     res_col = paste(res_col, transparency_str[1], sep = "")
-#&gt;     if (return_rgb) {
-#&gt;         res_col = t(col2rgb(as.vector(res_col), alpha = TRUE)/255)
-#&gt;         return(res_col)
-#&gt;     }
-#&gt;     else {
-#&gt;         res_col2 = character(length(x))
-#&gt;         res_col2[l_na] = NA
-#&gt;         res_col2[!l_na] = res_col
-#&gt;         attributes(res_col2) = att
-#&gt;         return(res_col2)
-#&gt;     }
-#&gt; }
-#&gt; &lt;bytecode: 0x7fb5e2e746f0&gt;
-#&gt; &lt;environment: 0x7fb5e2e77df8&gt;
-#&gt; attr(,"breaks")
-#&gt;  [1] -2.5000000 -2.2058824 -1.9117647 -1.6176471 -1.3235294 -1.0294118
-#&gt;  [7] -0.7352941 -0.4411765 -0.1470588  0.1470588  0.4411765  0.7352941
-#&gt; [13]  1.0294118  1.3235294  1.6176471  1.9117647  2.2058824  2.5000000
-#&gt; attr(,"colors")
-#&gt;              red     green        blue
-#&gt;  [1,] 0.03137255 0.1882353 0.419607843
-#&gt;  [2,] 0.03137255 0.3176471 0.611764706
-#&gt;  [3,] 0.12941176 0.4431373 0.709803922
-#&gt;  [4,] 0.25882353 0.5725490 0.776470588
-#&gt;  [5,] 0.41960784 0.6823529 0.839215686
-#&gt;  [6,] 0.61960784 0.7921569 0.882352941
-#&gt;  [7,] 0.77647059 0.8588235 0.937254902
-#&gt;  [8,] 0.87058824 0.9215686 0.968627451
-#&gt;  [9,] 0.96862745 0.9843137 1.000000000
-#&gt; [10,] 1.00000000 0.9607843 0.921568627
-#&gt; [11,] 0.99607843 0.9019608 0.807843137
-#&gt; [12,] 0.99215686 0.8156863 0.635294118
-#&gt; [13,] 0.99215686 0.6823529 0.419607843
-#&gt; [14,] 0.99215686 0.5529412 0.235294118
-#&gt; [15,] 0.94509804 0.4117647 0.074509804
-#&gt; [16,] 0.85098039 0.2823529 0.003921569
-#&gt; [17,] 0.65098039 0.2117647 0.011764706
-#&gt; [18,] 0.49803922 0.1529412 0.015686275
-#&gt; attr(,"transparency")
-#&gt; [1] 0
-#&gt; attr(,"space")
-#&gt; [1] "LAB"</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>20</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>palette</span> <span class='op'>&lt;-</span> <span class='st'>"Spectral"</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'>format_colors_num</span><span class='op'>(</span><span class='va'>x</span>, trim_values <span class='op'>=</span> <span class='fl'>2.5</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> function (x = NULL, return_rgb = FALSE, max_value = 1) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (is.null(x)) {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         stop_wrap("Please specify `x`\n")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     att = attributes(x)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (is.data.frame(x)) </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         x = as.matrix(x)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     l_na = is.na(x)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (all(l_na)) {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         return(rep(NA, length(l_na)))</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     x2 = x[!l_na]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     x2 = ifelse(x2 &lt; breaks[1], breaks[1], ifelse(x2 &gt; breaks[length(breaks)], </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         breaks[length(breaks)], x2))</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     ibin = .bincode(x2, breaks, right = TRUE, include.lowest = TRUE)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     res_col = character(length(x2))</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     for (i in unique(ibin)) {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         l = ibin == i</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         res_col[l] = .get_color(x2[l], breaks[i], breaks[i + </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             1], colors[i, ], colors[i + 1, ], space = space)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     res_col = paste(res_col, transparency_str[1], sep = "")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     if (return_rgb) {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         res_col = t(col2rgb(as.vector(res_col), alpha = TRUE)/255)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         return(res_col)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     else {</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         res_col2 = character(length(x))</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         res_col2[l_na] = NA</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         res_col2[!l_na] = res_col</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         attributes(res_col2) = att</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         return(res_col2)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> }</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;bytecode: 0x7fb0a2ab02b0&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> &lt;environment: 0x7fb0a2ab98c8&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> attr(,"breaks")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] -2.5000000 -2.2058824 -1.9117647 -1.6176471 -1.3235294 -1.0294118</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7] -0.7352941 -0.4411765 -0.1470588  0.1470588  0.4411765  0.7352941</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13]  1.0294118  1.3235294  1.6176471  1.9117647  2.2058824  2.5000000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> attr(,"colors")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              red     green        blue</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1,] 0.03137255 0.1882353 0.419607843</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2,] 0.03137255 0.3176471 0.611764706</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3,] 0.12941176 0.4431373 0.709803922</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4,] 0.25882353 0.5725490 0.776470588</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [5,] 0.41960784 0.6823529 0.839215686</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [6,] 0.61960784 0.7921569 0.882352941</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [7,] 0.77647059 0.8588235 0.937254902</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [8,] 0.87058824 0.9215686 0.968627451</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [9,] 0.96862745 0.9843137 1.000000000</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [10,] 1.00000000 0.9607843 0.921568627</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [11,] 0.99607843 0.9019608 0.807843137</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [12,] 0.99215686 0.8156863 0.635294118</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [13,] 0.99215686 0.6823529 0.419607843</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [14,] 0.99215686 0.5529412 0.235294118</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [15,] 0.94509804 0.4117647 0.074509804</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [16,] 0.85098039 0.2823529 0.003921569</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [17,] 0.65098039 0.2117647 0.011764706</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [18,] 0.49803922 0.1529412 0.015686275</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> attr(,"transparency")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 0</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> attr(,"space")</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "LAB"</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

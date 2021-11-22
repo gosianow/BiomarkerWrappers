@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
       </span>
     </div>
 
@@ -238,133 +238,147 @@
     <p>If for a factor covariate that should be returned the reference level has zero count, results are set to NAs because this levels is not used as a reference which means that it is not possible to fit the model that we want.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span>
-
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span>
-<span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span>
-<span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span>
-<span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span>, <span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span>
-
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         Covariate          Subgroup Total N   N   HR     HR 95% CI    P-value
-#&gt; 1   Treatment Arm              CTRL     391 200                              
-#&gt; 2                               TRT     391 191 0.73 (0.53 - 0.99)   0.0444 *
-#&gt; 3           GeneA                       391     1.03 (0.89 - 1.20)     0.6919
-#&gt; 4             IPI               Low     391  78                              
-#&gt; 5                  Low-Intermediate     391 144 1.17 (0.72 - 1.91)     0.5157
-#&gt; 6                 High-Intermediate     391 103 1.79 (1.10 - 2.93)   0.0202 *
-#&gt; 7                              High     391  66 2.70 (1.62 - 4.51) 0.0001 ***
-#&gt; 8  Cell Of Origin               GCB     391 218                              
-#&gt; 9                      UNCLASSIFIED     391  62 1.62 (1.07 - 2.44)   0.0214 *
-#&gt; 10                              ABC     391 111 1.23 (0.86 - 1.75)     0.2659
-#&gt;    Adj. P-value
-#&gt; 1              
-#&gt; 2      0.0777 .
-#&gt; 3        0.6919
-#&gt; 4              
-#&gt; 5        0.6017
-#&gt; 6      0.0500 *
-#&gt; 7    0.0010 ***
-#&gt; 8              
-#&gt; 9      0.0500 *
-#&gt; 10       0.3723</div><div class='input'>
-<span class='fu'><a href='Bclass-class.html'>bforest</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='img'><img src='wrapper_cox_regression_core_simple-1.png' alt='' width='700' height='433' /></div><div class='input'>
-
-<span class='co'>### Fit a stratified model </span>
-
-<span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span><span class='op'>)</span>
-<span class='va'>strata_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span>
-
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span>, strata_vars <span class='op'>=</span> <span class='va'>strata_vars</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;       Covariate Subgroup Total N   N   HR     HR 95% CI  P-value Adj. P-value
-#&gt; 1 Treatment Arm     CTRL     391 200                                         
-#&gt; 2                    TRT     391 191 0.74 (0.54 - 1.01) 0.0555 .       0.1110
-#&gt; 3         GeneA              391     0.99 (0.85 - 1.16)   0.9334       0.9334</div><div class='input'>
-
-
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span>
-
-<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span>
-<span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span>
-<span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span>
-<span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"GeneA"</span><span class='op'>)</span>
-
-<span class='va'>strat1_var</span> <span class='op'>=</span> <span class='st'>"Cell_Of_Origin"</span>
-<span class='va'>strat2_var</span> <span class='op'>=</span> <span class='st'>"Treatment_Arm"</span>
-
-
-<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_simple_strat</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span>, strat1_var <span class='op'>=</span> <span class='va'>strat1_var</span>, strat2_var <span class='op'>=</span> <span class='va'>strat2_var</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='output co'>#&gt; <span class='warning'>Warning: row names were found from a short variable and have been discarded</span></div><div class='input'>
-<span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    Treatment Arm Cell Of Origin Covariate          Subgroup Total N  N    HR
-#&gt; 1           CTRL            GCB       IPI               Low     121 32      
-#&gt; 2                                          Low-Intermediate     121 44  0.97
-#&gt; 3                                         High-Intermediate     121 32  2.22
-#&gt; 4                                                      High     121 13  1.89
-#&gt; 5           CTRL            GCB     GeneA                       121     0.99
-#&gt; 6           CTRL   UNCLASSIFIED       IPI               Low      28  7      
-#&gt; 7                                          Low-Intermediate      28 10  1.65
-#&gt; 8                                         High-Intermediate      28  7  1.29
-#&gt; 9                                                      High      28  4  1.74
-#&gt; 10          CTRL   UNCLASSIFIED     GeneA                        28     0.93
-#&gt; 11          CTRL            ABC       IPI               Low      51  5      
-#&gt; 12                                         Low-Intermediate      51 17  0.23
-#&gt; 13                                        High-Intermediate      51 18  0.91
-#&gt; 14                                                     High      51 11  2.91
-#&gt; 15          CTRL            ABC     GeneA                        51     1.68
-#&gt; 16           TRT            GCB       IPI               Low      97 23      
-#&gt; 17                                         Low-Intermediate      97 36  2.19
-#&gt; 18                                        High-Intermediate      97 20  3.06
-#&gt; 19                                                     High      97 18  6.13
-#&gt; 20           TRT            GCB     GeneA                        97     1.08
-#&gt; 21           TRT   UNCLASSIFIED       IPI               Low      34  5      
-#&gt; 22                                         Low-Intermediate      34 14  3.53
-#&gt; 23                                        High-Intermediate      34 10  4.07
-#&gt; 24                                                     High      34  5 10.54
-#&gt; 25           TRT   UNCLASSIFIED     GeneA                        34     1.02
-#&gt; 26           TRT            ABC       IPI               Low      60  6      
-#&gt; 27                                         Low-Intermediate      60 23  0.70
-#&gt; 28                                        High-Intermediate      60 16  0.63
-#&gt; 29                                                     High      60 15  1.03
-#&gt; 30           TRT            ABC     GeneA                        60     0.81
-#&gt;          HR 95% CI   P-value Adj. P-value
-#&gt; 1                                        
-#&gt; 2    (0.45 - 2.11)    0.9439       0.9676
-#&gt; 3    (1.05 - 4.70)  0.0374 *       0.2777
-#&gt; 4    (0.74 - 4.82)    0.1860       0.5209
-#&gt; 5    (0.73 - 1.34)    0.9417       0.9676
-#&gt; 6                                        
-#&gt; 7    (0.37 - 7.43)    0.5120       0.8292
-#&gt; 8    (0.25 - 6.61)    0.7592       0.9590
-#&gt; 9   (0.28 - 10.74)    0.5528       0.8292
-#&gt; 10   (0.59 - 1.45)    0.7359       0.9590
-#&gt; 11                                       
-#&gt; 12   (0.03 - 1.53)    0.1271       0.5085
-#&gt; 13   (0.18 - 4.62)    0.9130       0.9676
-#&gt; 14  (0.59 - 14.20)    0.1874       0.5209
-#&gt; 15   (1.01 - 2.79)  0.0463 *       0.2777
-#&gt; 16                                       
-#&gt; 17   (0.59 - 8.13)    0.2396       0.5229
-#&gt; 18  (0.79 - 11.86)    0.1065       0.5085
-#&gt; 19  (1.70 - 22.09) 0.0055 **       0.1328
-#&gt; 20   (0.71 - 1.64)    0.7348       0.9590
-#&gt; 21                                       
-#&gt; 22  (0.44 - 28.27)    0.2346       0.5229
-#&gt; 23  (0.49 - 34.00)    0.1954       0.5209
-#&gt; 24 (1.07 - 103.38)  0.0433 *       0.2777
-#&gt; 25   (0.67 - 1.54)    0.9268       0.9676
-#&gt; 26                                       
-#&gt; 27   (0.22 - 2.20)    0.5411       0.8292
-#&gt; 28   (0.18 - 2.15)    0.4583       0.8292
-#&gt; 29   (0.31 - 3.42)    0.9676       0.9676
-#&gt; 30   (0.53 - 1.25)    0.3499       0.6999</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span></span>
+<span class='r-in'><span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span></span>
+<span class='r-in'><span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span></span>
+<span class='r-in'><span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span>, <span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         Covariate          Subgroup Total N   N   HR     HR 95% CI    P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1   Treatment Arm              CTRL     391 200                              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2                               TRT     391 191 0.73 (0.53 - 0.99)   0.0444 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3           GeneA                       391     1.03 (0.89 - 1.20)     0.6919</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4             IPI               Low     391  78                              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5                  Low-Intermediate     391 144 1.17 (0.72 - 1.91)     0.5157</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6                 High-Intermediate     391 103 1.79 (1.10 - 2.93)   0.0202 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7                              High     391  66 2.70 (1.62 - 4.51) 0.0001 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8  Cell Of Origin               GCB     391 218                              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9                      UNCLASSIFIED     391  62 1.62 (1.07 - 2.44)   0.0214 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10                              ABC     391 111 1.23 (0.86 - 1.75)     0.2659</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    Adj. P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2      0.0777 .</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3        0.6919</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5        0.6017</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6      0.0500 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7    0.0010 ***</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8              </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9      0.0500 *</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10       0.3723</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>bforest</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='wrapper_cox_regression_core_simple-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>### Fit a stratified model </span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Treatment_Arm"</span>, <span class='st'>"GeneA"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>strata_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_simple</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span>, strata_vars <span class='op'>=</span> <span class='va'>strata_vars</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>       Covariate Subgroup Total N   N   HR     HR 95% CI  P-value Adj. P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 Treatment Arm     CTRL     391 200                                         </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2                    TRT     391 191 0.74 (0.54 - 1.01) 0.0555 .       0.1110</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3         GeneA              391     0.99 (0.85 - 1.16)   0.9334       0.9334</span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>bdata</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>data</span> <span class='op'>&lt;-</span> <span class='va'>bdata</span></span>
+<span class='r-in'><span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span></span>
+<span class='r-in'><span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span></span>
+<span class='r-in'><span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"GeneA"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>strat1_var</span> <span class='op'>=</span> <span class='st'>"Cell_Of_Origin"</span></span>
+<span class='r-in'><span class='va'>strat2_var</span> <span class='op'>=</span> <span class='st'>"Treatment_Arm"</span></span>
+<span class='r-in'></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_simple_strat</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span>, strat1_var <span class='op'>=</span> <span class='va'>strat1_var</span>, strat2_var <span class='op'>=</span> <span class='va'>strat2_var</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>row names were found from a short variable and have been discarded</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    Treatment Arm Cell Of Origin Covariate          Subgroup Total N  N    HR</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1           CTRL            GCB       IPI               Low     121 32      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2                                          Low-Intermediate     121 44  0.97</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3                                         High-Intermediate     121 32  2.22</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4                                                      High     121 13  1.89</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5           CTRL            GCB     GeneA                       121     0.99</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6           CTRL   UNCLASSIFIED       IPI               Low      28  7      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7                                          Low-Intermediate      28 10  1.65</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8                                         High-Intermediate      28  7  1.29</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9                                                      High      28  4  1.74</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10          CTRL   UNCLASSIFIED     GeneA                        28     0.93</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11          CTRL            ABC       IPI               Low      51  5      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12                                         Low-Intermediate      51 17  0.23</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13                                        High-Intermediate      51 18  0.91</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14                                                     High      51 11  2.91</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15          CTRL            ABC     GeneA                        51     1.68</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16           TRT            GCB       IPI               Low      97 23      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17                                         Low-Intermediate      97 36  2.19</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18                                        High-Intermediate      97 20  3.06</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19                                                     High      97 18  6.13</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20           TRT            GCB     GeneA                        97     1.08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21           TRT   UNCLASSIFIED       IPI               Low      34  5      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22                                         Low-Intermediate      34 14  3.53</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23                                        High-Intermediate      34 10  4.07</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24                                                     High      34  5 10.54</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25           TRT   UNCLASSIFIED     GeneA                        34     1.02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26           TRT            ABC       IPI               Low      60  6      </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27                                         Low-Intermediate      60 23  0.70</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28                                        High-Intermediate      60 16  0.63</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29                                                     High      60 15  1.03</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30           TRT            ABC     GeneA                        60     0.81</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>          HR 95% CI   P-value Adj. P-value</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1                                        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2    (0.45 - 2.11)    0.9439       0.9676</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3    (1.05 - 4.70)  0.0374 *       0.2777</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4    (0.74 - 4.82)    0.1860       0.5209</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5    (0.73 - 1.34)    0.9417       0.9676</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6                                        </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 7    (0.37 - 7.43)    0.5120       0.8292</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 8    (0.25 - 6.61)    0.7592       0.9590</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 9   (0.28 - 10.74)    0.5528       0.8292</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 10   (0.59 - 1.45)    0.7359       0.9590</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 11                                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 12   (0.03 - 1.53)    0.1271       0.5085</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 13   (0.18 - 4.62)    0.9130       0.9676</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 14  (0.59 - 14.20)    0.1874       0.5209</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 15   (1.01 - 2.79)  0.0463 *       0.2777</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 16                                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 17   (0.59 - 8.13)    0.2396       0.5229</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 18  (0.79 - 11.86)    0.1065       0.5085</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 19  (1.70 - 22.09) 0.0055 **       0.1328</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 20   (0.71 - 1.64)    0.7348       0.9590</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 21                                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 22  (0.44 - 28.27)    0.2346       0.5229</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 23  (0.49 - 34.00)    0.1954       0.5209</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 24 (1.07 - 103.38)  0.0433 *       0.2777</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 25   (0.67 - 1.54)    0.9268       0.9676</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 26                                       </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 27   (0.22 - 2.20)    0.5411       0.8292</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 28   (0.18 - 2.15)    0.4583       0.8292</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 29   (0.31 - 3.42)    0.9676       0.9676</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 30   (0.53 - 1.25)    0.3499       0.6999</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

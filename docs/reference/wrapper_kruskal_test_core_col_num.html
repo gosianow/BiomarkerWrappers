@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Kruskal-Wallis H test or Wilcoxon Rank-Sum test — wrapper_kruskal_test_core_col_num • BiomarkerWrappers</title>
+<title>Kruskal-Wallis H test or Wilcoxon Rank-Sum test (know also as Wilcoxon-Mann-Whitney test) or t-test — wrapper_kruskal_test_core_col_num • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Kruskal-Wallis H test or Wilcoxon Rank-Sum test — wrapper_kruskal_test_core_col_num" />
+<meta property="og:title" content="Kruskal-Wallis H test or Wilcoxon Rank-Sum test (know also as Wilcoxon-Mann-Whitney test) or t-test — wrapper_kruskal_test_core_col_num" />
 <meta property="og:description" content="Returns a table where stratification subgroups are in rows and distribution summary statistics for the numerical variable are in columns." />
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.29</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Kruskal-Wallis H test or Wilcoxon Rank-Sum test</h1>
+    <h1>Kruskal-Wallis H test or Wilcoxon Rank-Sum test (know also as Wilcoxon-Mann-Whitney test) or t-test</h1>
     
     <div class="hidden name"><code>wrapper_kruskal_test_core_col_num.Rd</code></div>
     </div>
@@ -132,12 +132,15 @@
   <span class='va'>num_var</span>,
   <span class='va'>cat_var</span>,
   method <span class='op'>=</span> <span class='st'>"kruskal"</span>,
+  alternative <span class='op'>=</span> <span class='st'>"two.sided"</span>,
+  paired <span class='op'>=</span> <span class='cn'>FALSE</span>,
   pairwise <span class='op'>=</span> <span class='cn'>FALSE</span>,
   variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
   display_statistics <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"N"</span>, <span class='st'>"Median"</span><span class='op'>)</span>,
   force_empty_cols <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  print_pvalues <span class='op'>=</span> <span class='cn'>TRUE</span>
+  print_pvalues <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  drop <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>wrapper_kruskal_test_core_col_num_strat</span><span class='op'>(</span>
@@ -147,13 +150,16 @@
   strat1_var <span class='op'>=</span> <span class='cn'>NULL</span>,
   strat2_var <span class='op'>=</span> <span class='cn'>NULL</span>,
   method <span class='op'>=</span> <span class='st'>"kruskal"</span>,
+  alternative <span class='op'>=</span> <span class='st'>"two.sided"</span>,
+  paired <span class='op'>=</span> <span class='cn'>FALSE</span>,
   pairwise <span class='op'>=</span> <span class='cn'>FALSE</span>,
   variable_names <span class='op'>=</span> <span class='cn'>NULL</span>,
   caption <span class='op'>=</span> <span class='cn'>NULL</span>,
   display_statistics <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"N"</span>, <span class='st'>"Median"</span><span class='op'>)</span>,
   force_empty_cols <span class='op'>=</span> <span class='cn'>FALSE</span>,
   print_pvalues <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  print_adjpvalues <span class='op'>=</span> <span class='cn'>TRUE</span>
+  print_adjpvalues <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  drop <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -170,6 +176,14 @@
     <tr>
       <th>cat_var</th>
       <td><p>Name of a categorical variable. That variable must be a factor with at least two levels.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>Test to be used. Possible values: "kruskal", "wilcox", "t".</p></td>
+    </tr>
+    <tr>
+      <th>display_statistics</th>
+      <td><p>Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".</p></td>
     </tr>
     <tr>
       <th>strat1_var</th>

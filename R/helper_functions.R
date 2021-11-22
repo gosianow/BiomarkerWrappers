@@ -788,6 +788,7 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE, non_empty = NULL){
       non_empty_logical <- rep(FALSE, length(x))
       non_empty_logical[non_empty] <- TRUE
       non_empty <- non_empty_logical
+      stopifnot(length(non_empty) == length(x))
     }
   }
   
@@ -906,6 +907,7 @@ format_or <- function(x, digits = 2, non_empty = NULL){
       non_empty_logical <- rep(FALSE, length(x))
       non_empty_logical[non_empty] <- TRUE
       non_empty <- non_empty_logical
+      stopifnot(length(non_empty) == length(x))
     }
   }
   
@@ -939,7 +941,6 @@ format_or <- function(x, digits = 2, non_empty = NULL){
 }
 
 
-
 #' Format difference 
 #' 
 #' @param x Vector with differences.
@@ -956,6 +957,7 @@ format_difference <- function(x, digits = 2, non_empty = NULL){
       non_empty_logical <- rep(FALSE, length(x))
       non_empty_logical[non_empty] <- TRUE
       non_empty <- non_empty_logical
+      stopifnot(length(non_empty) == length(x))
     }
   }
   
@@ -1003,6 +1005,7 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
       non_empty_logical <- rep(FALSE, length(CI_lower))
       non_empty_logical[non_empty] <- TRUE
       non_empty <- non_empty_logical
+      stopifnot(length(non_empty) == length(CI_lower))
     }
   }
   
@@ -1353,7 +1356,23 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
     if(length(palette) == 1){
       
       
-      if(palette == "d3_40_light_first"){
+      if(palette == "d3_40"){
+        
+        ### d3_20 + Add another 20 colors
+        
+        colors_default <- c("#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
+          "#CD5B45", "#FF7256", "#CD950C", "#FFB90F", "#66CDAA", "#7FFFD4", "#3A5FCD", "#1E90FF", "#CD00CD", "#FF00FF", "#698B22", "#C0FF3E", "#6C7B8B", "#B9D3EE", "#CDCD00", "#FFFF00", "#008B45", "#00FF7F", "#CDB5CD", "#FFE1FF")
+        
+        
+        # barplot(rep(1, length(colors_default)), col = colors_default)
+        
+        stopifnot(length(levels_x) <= 40)
+        
+        out <- colors_default[1:length(levels_x)]
+        names(out) <- levels_x
+        
+        
+      }else if(palette == "d3_40_light_first"){
         
         ### Mix d3 20 - light color first with paired colors from brewer.pal + Add another 20 colors
         

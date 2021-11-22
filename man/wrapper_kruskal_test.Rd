@@ -11,6 +11,8 @@ wrapper_kruskal_test(
   strat1_var = NULL,
   strat2_var = NULL,
   method = "kruskal",
+  alternative = "two.sided",
+  paired = FALSE,
   pairwise = FALSE,
   variable_names = NULL,
   caption = NULL,
@@ -18,7 +20,8 @@ wrapper_kruskal_test(
   display_in_column = "cat",
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  drop = FALSE
 )
 }
 \arguments{
@@ -29,6 +32,12 @@ wrapper_kruskal_test(
 \item{cat_vars}{Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.}
 
 \item{strat1_var}{Name of the second stratification variable.}
+
+\item{method}{Test to be used. Possible values: "kruskal", "wilcox", "t".}
+
+\item{display_statistics}{Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".}
+
+\item{display_in_column}{Possible values: "cat", "num".}
 }
 \description{
 Run Kruskal-Wallis H test or Wilcoxon Rank-Sum test for multiple covariates
