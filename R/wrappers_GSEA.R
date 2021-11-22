@@ -30,7 +30,7 @@ NULL
 #' @export
 wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
-  min_GS_size = 10, max_GS_size = 500, topn_genes = 20, statistic_name = "t"){
+  min_GS_size = 10, max_GS_size = 500, topn_genes = 20, statistic_name = "t", scoreType = NULL){
   
   
   # -------------------------------------------------------------------------
@@ -107,14 +107,15 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   # Run fgseaMultilevel
   # -------------------------------------------------------------------------
   
-  scoreType <- "std"
-  
-  if(all(statistic > 0)){
-    scoreType <- "pos"
-  }else if(all(statistic < 0)){
-    scoreType <- "neg"
+  if(is.null(scoreType)){
+    scoreType <- "std"
+    
+    if(all(statistic >= 0)){
+      scoreType <- "pos"
+    }else if(all(statistic <= 0)){
+      scoreType <- "neg"
+    }
   }
-  
   
   ## fgsea sorts the statistic in the descending order
   fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic, eps = 0, scoreType = scoreType)
@@ -225,7 +226,7 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
 wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
   min_GS_size = 10, max_GS_size = 500,
-  topn_genes = 20){
+  topn_genes = 20, scoreType = NULL){
   
   
   # -------------------------------------------------------------------------
@@ -271,7 +272,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
     
     res_gsea <- wrapper_gsea_core(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
       name = name, sep = sep,
-      min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes, statistic_name = statistic_prefix)
+      min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes, statistic_name = statistic_prefix, scoreType = scoreType)
     
     
     return(res_gsea)
