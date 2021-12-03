@@ -14,7 +14,8 @@ wrapper_gsea(
   sep = "_",
   min_GS_size = 10,
   max_GS_size = 500,
-  topn_genes = 20
+  topn_genes = 20,
+  scoreType = NULL
 )
 }
 \arguments{

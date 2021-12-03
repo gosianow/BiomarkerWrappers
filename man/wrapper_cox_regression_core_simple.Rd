@@ -16,11 +16,13 @@ wrapper_cox_regression_core_simple(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
+  sr_times = NULL,
   print_nevent = TRUE,
   print_mst = TRUE,
   print_total = TRUE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_hr = TRUE
 )
 
 wrapper_cox_regression_core_simple_strat(
@@ -35,11 +37,13 @@ wrapper_cox_regression_core_simple_strat(
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
+  sr_times = NULL,
   print_nevent = TRUE,
   print_mst = TRUE,
   print_total = TRUE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_hr = TRUE
 )
 }
 \arguments{
@@ -60,6 +64,8 @@ wrapper_cox_regression_core_simple_strat(
 \item{caption}{Caption for the table with results.}
 
 \item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
+
+\item{sr_times}{Vector of times used to compute survival rates.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 

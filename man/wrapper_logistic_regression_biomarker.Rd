@@ -16,7 +16,8 @@ wrapper_logistic_regression_biomarker(
   print_total = TRUE,
   print_non_response = TRUE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_OR = TRUE
 )
 }
 \arguments{

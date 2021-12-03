@@ -16,7 +16,8 @@ wrapper_logistic_regression_core_simple(
   print_total = TRUE,
   print_non_response = TRUE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_OR = TRUE
 )
 
 wrapper_logistic_regression_core_simple_strat(
@@ -32,7 +33,8 @@ wrapper_logistic_regression_core_simple_strat(
   print_total = TRUE,
   print_non_response = TRUE,
   print_pvalues = TRUE,
-  print_adjpvalues = TRUE
+  print_adjpvalues = TRUE,
+  print_OR = TRUE
 )
 }
 \arguments{

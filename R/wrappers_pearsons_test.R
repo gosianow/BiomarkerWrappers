@@ -32,7 +32,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.factor(data[, covariate_var]))
-  stopifnot(nlevels(data[, covariate_var]) >= 2)
+  # stopifnot(nlevels(data[, covariate_var]) >= 2)
   
   
   stopifnot(method %in% c("pearson", "fisher"))
@@ -108,7 +108,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   # --------------------------------------------
   
   
-  tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response)))]
+  tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response))), drop = FALSE]
   
   
   response_CI <- lapply(1:nrow(tbl_test), function(k){
@@ -136,7 +136,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   
   tbl <- table(data[, covariate_var], data[, response_var])
   
-  tbl_test <- tbl[, rev(seq_len(ncol(tbl)))]
+  tbl_test <- tbl[, rev(seq_len(ncol(tbl))), drop = FALSE]
   
   ### For testing skip rows that have zero counts
   

@@ -21,7 +21,7 @@
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 #' @export
-wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -111,7 +111,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       # --------------------------------------------------------------------------
 
       
-      tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response)))]
+      tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response))), drop = FALSE]
       
       
       response_CI <- lapply(1:nrow(tbl_test), function(k){
@@ -311,6 +311,11 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     out$`Adj. P-value` <- NULL
   }
   
+  if(!print_OR){
+    out$OR <- NULL
+    out$`OR 95% CI` <- NULL
+  }
+  
   
   ### Set repeating Covariate names to empty
   out$Covariate[indicate_blocks(out, block_vars = "Covariate", return = "empty")] <- ""
@@ -353,7 +358,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -413,7 +418,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
       }
       
       
-      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
       
       
       
@@ -512,7 +517,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -540,7 +545,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     
     return(wrapper_res)
@@ -622,7 +627,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Checks
@@ -657,7 +662,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
@@ -951,7 +956,7 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
     Effect2 = format_vs(res$levels2, res$reference2),
     `Total n` = as.character(res$n),
     `OR` = as.character(round(res$OR, 2)),
-    `95% CI` = format_CIs(res$CI95_lower, res$CI95_upper),
+    `OR 95% CI` = format_CIs(res$CI95_lower, res$CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
     check.names = FALSE, stringsAsFactors = FALSE)

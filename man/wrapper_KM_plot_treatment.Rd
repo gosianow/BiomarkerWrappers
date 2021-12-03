@@ -32,6 +32,7 @@ wrapper_KM_plot_treatment(
   label_size = 4.5,
   rel_heights = c(5, 1),
   background_grid_major = "none",
+  risk_table_labels = TRUE,
   strat_scales = "fixed",
   strat1_nrow = 1,
   strat1_ncol = NULL,
@@ -49,6 +50,8 @@ wrapper_KM_plot_treatment(
 \item{strat2_var}{Name of the second stratification variable.}
 
 \item{colors}{Vector with colors for treatment X biomarker levels.}
+
+\item{risk_table_labels}{Possible values: "levels", "shape"}
 }
 \description{
 KM plot with treatment effect per biomarker subgroup

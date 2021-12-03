@@ -9,7 +9,8 @@
 #' @param tte_var Name of the variable containing time-to-event data.
 #' @param censor_var Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.
 #' @param covariate_var Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.
-#' @param level_mapping Named vector with level mapping. The names correspond to the original levels of covariate_var. 
+#' @param level_mapping Named vector with level mapping. The names correspond to the original levels of covariate_var.
+#' @param risk_table_labels Possible values: "levels", "shape"
 #' 
 #' @examples 
 #' 
@@ -33,7 +34,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14), 
   line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
-  background_grid_major = "none", level_mapping = NULL){
+  background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE){
   
   
   # -------------------------------------------------------------------------
@@ -49,7 +50,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   stopifnot(nrow(data) > 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
-
+  
   
   ## Time to event variable must be numeric
   stopifnot(length(tte_var) == 1)
@@ -222,15 +223,28 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   
   if(risk_table %in% c(TRUE, "nrisk_cumcensor")){
     
-    suppressMessages(ggpl_table <- ggpl$table +
-        theme(plot.title = element_text(size = title_size, face = "plain"),
-          axis.title = element_blank(), 
-          axis.text.x = element_blank(),
-          axis.ticks = element_blank(), 
-          axis.line = element_blank(),
-          plot.margin = margin(t = 1, r = 7, b = 5, l = 7, unit = "pt")) +
-        scale_y_discrete(labels = rev(levels(data[, covariate_var]))) +
-        coord_cartesian(xlim = c(0, max_tte)))
+    if(risk_table_labels){
+      suppressMessages(ggpl_table <- ggpl$table +
+          theme(plot.title = element_text(size = title_size, face = "plain"),
+            axis.title = element_blank(),
+            axis.text.x = element_blank(),
+            axis.ticks = element_blank(),
+            axis.line = element_blank(),
+            plot.margin = margin(t = 1, r = 7, b = 5, l = 7, unit = "pt")) +
+          scale_y_discrete(labels = rev(levels(data[, covariate_var]))) +
+          coord_cartesian(xlim = c(0, max_tte)))
+    }else{
+      suppressMessages(ggpl_table <- ggpl$table +
+          theme(plot.title = element_text(size = title_size, face = "plain"),
+            axis.title = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text = element_text(size = 40),
+            axis.ticks = element_blank(),
+            axis.line = element_blank(),
+            plot.margin = margin(t = 1, r = 7, b = 5, l = 7, unit = "pt")) +
+          scale_y_discrete(labels = rep("\\-", nlevels(data[, covariate_var]))) +
+          coord_cartesian(xlim = c(0, max_tte)))
+    }
     
     
     ggpl_new <- cowplot::plot_grid(ggpl_plot, ggpl_table, ncol = 1, nrow = 2, align = 'v', axis = 'lr', rel_heights = rel_heights)
@@ -283,7 +297,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
   line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
-  background_grid_major = "none", level_mapping = NULL,
+  background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE, 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -400,7 +414,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
         break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
         ggtheme = ggtheme,
         line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-        background_grid_major = background_grid_major, level_mapping = level_mapping)
+        background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels)
       
       
       return(ggpl)
@@ -446,7 +460,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
   line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1.5), 
-  background_grid_major = "none",
+  background_grid_major = "none", risk_table_labels = TRUE,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -512,7 +526,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-    background_grid_major = background_grid_major,
+    background_grid_major = background_grid_major, risk_table_labels = risk_table_labels,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -539,10 +553,10 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
   line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
-  background_grid_major = "none",
+  background_grid_major = "none", risk_table_labels = TRUE,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
-
-
+  
+  
   ## biomarker_var and treatment_var must be factors for the color definition
   stopifnot(length(biomarker_var) == 1)
   stopifnot(is.factor(data[, biomarker_var]))
@@ -553,7 +567,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   }
   
   
-
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   if(is.logical(title)){
@@ -632,7 +646,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-    background_grid_major = background_grid_major, level_mapping = level_mapping,
+    background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -667,7 +681,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = cowplot::theme_cowplot(14),
   line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
-  background_grid_major = "none",
+  background_grid_major = "none", risk_table_labels = TRUE,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -740,7 +754,16 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     
     covariate_var <- treatment_var
     
-    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+    if(is.null(colors)){
+      
+      colors <- format_colors_cat_strata("one_level", strata = levels(data[, treatment_var]))
+      names(colors) <- levels(data[, treatment_var])
+      
+    }else{
+      
+      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+      
+    }
     
     strat1_var <- NULL
     
@@ -763,7 +786,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-    background_grid_major = background_grid_major, level_mapping = level_mapping, 
+    background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels, 
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
