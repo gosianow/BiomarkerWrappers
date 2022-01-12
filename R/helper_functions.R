@@ -2046,7 +2046,7 @@ wrapper_renumber_clusters <- function(x, method = "new", threshold = 70){
   
   
   ranks <- unlist(lapply(x, function(xx){
-    length(unique(xx))
+    length(unique(xx[!is.na(xx)]))
   }))
   
   original_col_order <- colnames(x)

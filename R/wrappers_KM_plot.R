@@ -32,8 +32,8 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   title = TRUE, subtitle = TRUE, xlab = TRUE,
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
-  ggtheme = cowplot::theme_cowplot(14), 
-  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
+  ggtheme = ggplot2::theme_get(), 
+  line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE){
   
   
@@ -62,6 +62,18 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.factor(data[, covariate_var]))
+  
+  # -------------------------------------------------------------------------
+  # Theme
+  # -------------------------------------------------------------------------
+  
+  if(is.null(title_size)){
+    title_size <- ggtheme$text$size
+  }
+  ### For title size 14 we use label size 4.5
+  if(is.null(label_size)){
+    label_size <- (title_size * 4.5) / 14
+  }
   
   
   # -------------------------------------------------------------------------
@@ -224,6 +236,17 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   if(risk_table %in% c(TRUE, "nrisk_cumcensor")){
     
     if(risk_table_labels){
+      
+      ### Replace special characters. Otherwise, error 
+      # Error: gridtext has encountered a tag that isn't supported yet: <blockquote>
+      # Only a very limited number of tags are currently supported.
+      
+      labels_tmp <- rev(levels(data[, covariate_var]))
+      labels_tmp <- gsub("<", "\\\\\\<", labels_tmp)
+      labels_tmp <- gsub(">", "\\\\\\>", labels_tmp)
+      labels_tmp <- gsub("-", "\\\\\\-", labels_tmp)
+      
+      
       suppressMessages(ggpl_table <- ggpl$table +
           theme(plot.title = element_text(size = title_size, face = "plain"),
             axis.title = element_blank(),
@@ -231,8 +254,9 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
             axis.ticks = element_blank(),
             axis.line = element_blank(),
             plot.margin = margin(t = 1, r = 7, b = 5, l = 7, unit = "pt")) +
-          scale_y_discrete(labels = rev(levels(data[, covariate_var]))) +
+          scale_y_discrete(labels = labels_tmp) +
           coord_cartesian(xlim = c(0, max_tte)))
+      
     }else{
       suppressMessages(ggpl_table <- ggpl$table +
           theme(plot.title = element_text(size = title_size, face = "plain"),
@@ -265,8 +289,6 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
 
 
 
-
-
 #' @rdname wrapper_KM_plot_core
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat2_var Name of the second stratification variable.
@@ -295,8 +317,8 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
-  ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
+  ggtheme = ggplot2::theme_get(),
+  line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE, 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
@@ -458,8 +480,8 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
-  ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1.5), 
+  ggtheme = ggplot2::theme_get(),
+  line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1.5), 
   background_grid_major = "none", risk_table_labels = TRUE,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
@@ -551,8 +573,8 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
-  ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
+  ggtheme = ggplot2::theme_get(),
+  line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", risk_table_labels = TRUE,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
@@ -679,8 +701,8 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
-  ggtheme = cowplot::theme_cowplot(14),
-  line_size = 1, title_size = 14, label_size = 4.5, rel_heights = c(5, 1), 
+  ggtheme = ggplot2::theme_get(),
+  line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", risk_table_labels = TRUE,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   

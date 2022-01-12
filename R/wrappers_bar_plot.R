@@ -99,6 +99,14 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
+  # -------------------------------------------------------------------------
+  # Theme
+  # -------------------------------------------------------------------------
+  
+  if(is.null(title_size)){
+    title_size <- ggplot2::theme_get()$text$size
+  }
+  
   
   # -------------------------------------------------------------------------
   # Colors
