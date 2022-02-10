@@ -8,7 +8,7 @@
 # line_size = 1; line_type = 1; line_alpha = 1;
 # smooth_method = "lm"; smooth_formula = y ~ x; smooth_se = FALSE;
 # smooth_size = 2; smooth_linetype = 1; 
-# point_size = 1.5; point_shape = 16; point_alpha = 1; 
+# point_size = 1.5; point_alpha = 1; 
 # title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
 # background_grid_major = "none"
 
@@ -20,16 +20,19 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, facet_var = NULL, 
-  colors_line = NULL, 
+wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, shape_point_var = NULL, 
+  facet_var = NULL, 
+  colors_line = NULL, shapes_point = NULL,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
-  legend_colors_line_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
+  legend_colors_line_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1, 
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
-  point_size = 1.5, point_shape = 16, point_alpha = 1, 
-  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  point_size = 1.5, point_alpha = 1, 
+  title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL,
+  scale_y_continuous_custome = scale_y_continuous(), 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5,
   background_grid_major = "none"){
   
   
@@ -52,6 +55,11 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     stopifnot(is.factor(data[, color_line_var]))
   }
   
+  if(!is.null(shape_point_var)){
+    stopifnot(length(shape_point_var) == 1)
+    stopifnot(is.factor(data[, shape_point_var]))
+  }
+  
   if(!is.null(facet_var)){
     stopifnot(length(facet_var) == 1)
     stopifnot(is.factor(data[, facet_var]))
@@ -61,15 +69,13 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   stopifnot(smooth %in% c("none", "pooled", "strat"))
   
   ### Keep non-missing data
-  
-  ## We do not exclude the missing values in color_line_var
   data <- data[stats::complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
   # -------------------------------------------------------------------------
-  # Colors
+  # Colors for lines
   # -------------------------------------------------------------------------
   
   if(is.null(color_line_var)){
@@ -86,6 +92,27 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     }
   }else{
     colors_line <- format_colors(levels(data[, color_line_var]), colors = colors_line)
+  }
+  
+  
+  # -------------------------------------------------------------------------
+  # Shapes for points
+  # -------------------------------------------------------------------------
+  
+  if(is.null(shape_point_var)){
+    
+    ### Create a dummy variable 
+    stopifnot(!"shape_point_dummy" %in% colnames(data))
+    data[, "shape_point_dummy"] <- factor("shape_point_dummy")
+    shape_point_var <- "shape_point_dummy"
+    
+    if(is.null(shapes_point)){
+      shapes_point <- 16
+    }else{
+      shapes_point <- shapes_point[1]
+    }
+  }else{
+    shapes_point <- format_shapes(levels(data[, shape_point_var]), shapes = shapes_point)
   }
   
   
@@ -126,33 +153,46 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     }
   }
   
+  if(is.logical(legend_shapes_point_title)){
+    if(legend_shapes_point_title){
+      legend_shapes_point_title <- variable_names[shape_point_var]
+    }else{
+      legend_shapes_point_title <- NULL
+    }
+  }
   
   # -------------------------------------------------------------------------
   # Make the plot
   # -------------------------------------------------------------------------
   
   legend_show_colors_line <- color_line_var != "color_line_dummy"
-  
+  legend_show_shapes_point <- shape_point_var != "shape_point_dummy"
   
   
   ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]], group = .data[[group_var]])) +
-    geom_line(aes(color = .data[[color_line_var]]), linetype = line_type, size = line_size, alpha = line_alpha, show.legend = legend_show_colors_line) +
-    scale_color_manual(name = legend_colors_line_title, values = colors_line, drop = FALSE, na.value = "grey")
+    geom_line(aes(color = .data[[color_line_var]]), linetype = line_type, size = line_size, alpha = line_alpha) +
+    scale_color_manual(name = legend_colors_line_title, values = colors_line, drop = FALSE, na.value = "grey") +
+    guides(color = ifelse(legend_show_colors_line, guide_legend(), "none"))
   
   
-  if(point_shape %in% 21:25){
+  if(all(shapes_point %in% 21:25)){
     
     ggpl <- ggpl +
-      geom_point(aes(fill = .data[[color_line_var]]), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) +
-      scale_fill_manual(name = legend_colors_line_title, values = colors_line, drop = FALSE, na.value = "grey")
+      geom_point(aes(fill = .data[[color_line_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
+      scale_fill_manual(name = legend_colors_line_title, values = colors_line, drop = FALSE, na.value = "grey") +
+      scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
+      guides(fill = ifelse(legend_show_colors_line, guide_legend(), "none"), shape = ifelse(legend_show_shapes_point, guide_legend(), "none"))
     
     
   }else{
     
     ggpl <- ggpl +
-      geom_point(aes(color = .data[[color_line_var]]), size = point_size, shape = point_shape, alpha = point_alpha, show.legend = legend_show_colors_line) 
+      geom_point(aes(color = .data[[color_line_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
+      scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
+      guides(shape = ifelse(legend_show_shapes_point, guide_legend(), "none"))
     
   }
+  
   
   
   ggpl <- ggpl +
@@ -161,12 +201,22 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     xlab(xlab) +
     theme(plot.title = element_text(size = title_size, face = "bold"),
       plot.subtitle = element_text(size = title_size),
+      axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       axis.line = element_blank(),
       axis.ticks = element_line(color = "black", size = 0.5),
       panel.border = element_rect(colour = "black", size = 0.8),
       legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
-    coord_cartesian(xlim = xlim, ylim = ylim)
+    coord_cartesian(xlim = xlim, ylim = ylim) +
+    scale_y_continuous_custome
+  
+  
+  if(is.factor(data[, x_var])){
+    
+    ggpl <- ggpl + 
+      scale_x_discrete(drop = FALSE)
+    
+  }
   
   
   
@@ -245,17 +295,19 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, facet_var = NULL, 
+wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, shape_point_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
-  colors_line = NULL, 
+  colors_line = NULL, shapes_point = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_line_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
+  legend_colors_line_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1,
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
-  point_size = 1.5, point_shape = 16, point_alpha = 1, 
+  point_size = 1.5, point_alpha = 1, 
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  scale_y_continuous_custome = scale_y_continuous(), 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5,
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
@@ -317,7 +369,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   ggpl <- lapply(1:length(strata2_levels), function(j){
     # j = 1
     
-    data_strata2 <- data[data[, strat2_var] == strata2_levels[j] & !is.na(data[, strat2_var]), ]
+    data_strata2 <- data[data[, strat2_var] %in% strata2_levels[j], ]
     
     if(nrow(data_strata2) == 0){
       return(NULL)
@@ -338,7 +390,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
     ggpl <- lapply(1:length(strata1_levels), function(i){
       # i = 1
       
-      data_strata1 <- data_strata2[data_strata2[, strat1_var] == strata1_levels[i] & !is.na(data_strata2[, strat1_var]), ]
+      data_strata1 <- data_strata2[data_strata2[, strat1_var] %in% strata1_levels[i], ]
       
       if(nrow(data_strata1) == 0){
         return(NULL)
@@ -361,17 +413,19 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
       }
       
       
-      ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, smooth = smooth, facet_var = facet_var, 
-        colors_line = colors_line, 
+      ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, shape_point_var = shape_point_var, facet_var = facet_var, 
+        colors_line = colors_line, shapes_point = shapes_point, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,
-        legend_colors_line_title = legend_colors_line_title, legend_position = legend_position, facet_label_both = facet_label_both, 
+        legend_colors_line_title = legend_colors_line_title, legend_shapes_point_title = legend_shapes_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         line_size = line_size, line_type = line_type, line_alpha = line_alpha,
-        smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
+        smooth = smooth, smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
         smooth_size = smooth_size, smooth_linetype = smooth_linetype, 
-        point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, 
+        point_size = point_size, point_alpha = point_alpha, 
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim,
-        background_grid_major = background_grid_major)
+        scale_y_continuous_custome = scale_y_continuous_custome,
+        background_grid_major = background_grid_major,
+        axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust)
       
       
       return(ggpl)
@@ -381,10 +435,12 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
     
     if(less_legends && legend_position == "right"){
       
+      ggpl_non_empty <- ggpl[!sapply(ggpl, is.null)]
+      
       # Extract the legend from one of the plots
       legend <- get_legend(
         # Create some space to the left of the legend
-        ggpl[[1]] + theme(legend.box.margin = margin(0, 0, 0, 12))
+        ggpl_non_empty[[1]] + theme(legend.box.margin = margin(0, 0, 0, 12))
       )
       
       # Remove legends in the plots

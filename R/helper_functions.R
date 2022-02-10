@@ -1302,6 +1302,57 @@ format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
 }
 
 
+#' Format or create shapes for a vector with categorical values
+#' 
+#' @param x Vector of categorical values for which we want to specify shapes.
+#' @param shapes Vector of shapes longer or equal the number of unique levels of x. Can be named or non-named. If NULL, shapes are generated.
+#' @return Named vector of shapes for all unique values of x.
+#' 
+#' @export
+format_shapes <- function(x, shapes = NULL, allow_duplicated = TRUE){
+  
+  
+  x <- x[!is.na(x)]
+  
+  if(!is.factor(x)){
+    x <- factor(x, levels = unique(x))
+  }
+  
+  levels_x <- levels(x)
+  
+  
+  if(is.null(shapes)){
+    
+    out <- c(16, 17, 15, 18, 0:14)[seq_along(levels_x)]
+    names(out) <- levels_x
+    
+  }else{
+    
+    stopifnot(length(shapes) >= length(levels_x))
+    
+    if(is.null(names(shapes))){
+      out <- shapes[seq_along(levels_x)]
+      names(out) <- levels_x
+    }else{
+      stopifnot(all(levels_x %in% names(shapes)))
+      out <- shapes[levels_x]
+    }
+    
+    
+    if(!allow_duplicated){
+      stopifnot(sum(duplicated(out)) == 0)
+    }
+    
+    
+  }
+  
+  
+  return(out)
+  
+  
+}
+
+
 
 #' Format or create colors for a vector with categorical values
 #' 

@@ -28,8 +28,19 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   stopifnot(is.factor(group))
   
+  nas <- is.na(group)
+  
+  group <- group[!nas]
+  x <- x[, !nas, drop = FALSE]
+  
+  levels_original <- levels(group)
+  
   ### Remove unused levels
   group <- factor(group)
+  
+  if(!is.null(extra_top_annotation)){
+    extra_top_annotation <- extra_top_annotation[levels_original %in% levels(group), ]
+  }
   
   
   stopifnot(method %in% c("asis", "z-score"))
@@ -365,11 +376,11 @@ wrapper_summarized_expression_dotplot <- function(x, group){
     data.frame
   
   
-  ggdata_expr_no_zeros <- x %>% 
-    dplyr::group_by_at(group_var) %>% 
-    dplyr::summarize_all(list(~ mean(.[. != 0]))) %>% 
-    tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr_no_zeros") %>% 
-    data.frame
+  # ggdata_expr_no_zeros <- x %>% 
+  #   dplyr::group_by_at(group_var) %>% 
+  #   dplyr::summarize_all(list(~ mean(.[. != 0]))) %>% 
+  #   tidyr::pivot_longer(!all_of(group_var), names_to = "Gene", values_to = "Mean_expr_no_zeros") %>% 
+  #   data.frame
   
   
   ggdata_zeros <- x %>% 
@@ -379,8 +390,7 @@ wrapper_summarized_expression_dotplot <- function(x, group){
     data.frame
   
   
-  ggdata <- full_join(ggdata_expr, ggdata_zeros, by = c(group_var, "Gene")) %>% 
-    full_join(ggdata_expr_no_zeros, by = c(group_var, "Gene"))
+  ggdata <- full_join(ggdata_expr, ggdata_zeros, by = c(group_var, "Gene"))
   
   
   ggdata$Gene <- factor(ggdata$Gene, levels = rev(levels(factor(ggdata$Gene))))
