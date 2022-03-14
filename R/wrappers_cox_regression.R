@@ -407,22 +407,22 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   
   ### When all covariates are numerical, some outputs are empty, and we remove them
   if(!force_empty_cols){
-    for(i in seq_len(ncol(out))){
-      if(all(out[, i] %in% "")){
-        out[, i] <- NULL
+    for(x in colnames(out)){
+      if(all(out[, x] %in% "")){
+        out[, x] <- NULL
       }
     }
   }
   
   
-  if(!print_nevent || !force_empty_cols){
+  if(!print_nevent){
     col_events <- grep("Events$", colnames(out), value = TRUE)
     for(i in seq_along(col_events)){
       out[, col_events[i]] <- NULL
     }
   }
   
-  if(!print_mst || !force_empty_cols){
+  if(!print_mst){
     out$`MST` <- NULL
     out$`MST 95% CI` <- NULL
   }
@@ -935,7 +935,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' Cox regression with additive model with interaction
 #' 
 #' @inheritParams wrapper_cox_regression_core_simple
-#' @param interaction1_var Name of the first interaction variable.
+#' @param interaction1_vars Names of the first interaction variables.
 #' @param interaction2_var Name of the second interaction variable.
 #' 
 #' @examples 
@@ -949,16 +949,16 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' tte_var <- "PFS"
 #' censor_var <- "PFS_Event"
 #' 
-#' interaction1_var <- "GeneA_cat2"
+#' interaction1_vars <- "GeneA_cat2"
 #' interaction2_var <- "Treatment_Arm"
 #' covariate_vars <- c("IPI", "Cell_Of_Origin")
 #' 
-#' x <- wrapper_cox_regression_core_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+#' x <- wrapper_cox_regression_core_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_vars = interaction1_vars, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
 #' 
 #' boutput(x)
 #' 
 #' @export
-wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strata_vars = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, interaction1_vars, interaction2_var, covariate_vars = NULL, strata_vars = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -981,7 +981,7 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1)))
   
   
-  covariate_class <- sapply(data[, c(interaction1_var, interaction2_var, covariate_vars)], class)
+  covariate_class <- sapply(data[, c(interaction1_vars, interaction2_var, covariate_vars)], class)
   stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
   
   
@@ -994,7 +994,7 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   ### Keep non-missing data
   
   data <- data[keep_obs, , drop = FALSE]
-  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars, strata_vars)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_vars, interaction2_var, covariate_vars, strata_vars)]), , drop = FALSE]
   
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -1010,7 +1010,8 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     
     ## Create the formula
     
-    formula_covariates <- paste0(paste0(covariate_vars, collapse = " + "), " + ", interaction1_var, " * ", interaction2_var)
+    formula_covariates <- paste0(paste0(c(covariate_vars, interaction1_vars, interaction2_var), collapse = " + "), " + ", paste0(paste0(interaction1_vars, " : ", interaction2_var), collapse = " + "))
+    
     
     if(!is.null(strata_vars)){
       formula_strata <- paste0("strata(", paste0(strata_vars, collapse = ", "), ")")
@@ -1020,8 +1021,9 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     }
     
     
-    f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
     
+    f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
+
     
     ## Fit the Cox model
     regression_fit <- NULL
@@ -1035,8 +1037,11 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     }
     
     
+    
     # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
     # h(mm)
+    
+    
     
   }else{
     
@@ -1052,98 +1057,114 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   
   ## Generate data frame with coefficient names and levels and information about reference groups
   
-  if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
+  
+  out <- lapply(seq_along(interaction1_vars), function(i){
+    # i = 1
     
-    out <- data.frame(covariate1 = interaction1_var, subgroup1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, subgroup2 = "", reference2 = "", reference2_indx = 0, 
-      stringsAsFactors = FALSE)
-    
-    
-    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+    interaction1_var <- interaction1_vars[i]
     
     
-  }else if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("factor")){
-    
-    ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
-    tbl <- table(data[, interaction2_var])
-    
-    if(tbl[1] > 0){
-      reference_indx <- 1
-      names(reference_indx) <- names(tbl[1])
+    if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
+      
+      out <- data.frame(covariate1 = interaction1_var, subgroup1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, subgroup2 = "", reference2 = "", reference2_indx = 0, 
+        stringsAsFactors = FALSE)
+      
+      
+      out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+      
+      
+    }else if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("factor")){
+      
+      ## Check if the first level has non zero counts so it can be used as a reference group in the regression
+      ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+      tbl <- table(data[, interaction2_var])
+      
+      if(tbl[1] > 0){
+        reference_indx <- 1
+        names(reference_indx) <- names(tbl[1])
+      }else{
+        reference_indx <- rev(which(tbl > 0))[1]
+      }
+      
+      
+      out <- data.frame(covariate1 = interaction1_var, subgroup1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, subgroup2 = levels(data[, interaction2_var]), reference2 = names(tbl[1]), reference2_indx = as.numeric(reference_indx),
+        stringsAsFactors = FALSE)
+      
+      out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+      
+      out <- out[out$coefficient %in% paste0(interaction1_var, ":", interaction2_var, levels(data[, interaction2_var])[-1]), , drop = FALSE]
+      
+      
+    }else if(class(data[, interaction1_var]) %in% c("factor") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
+      
+      ## Check if the first level has non zero counts so it can be used as a reference group in the regression
+      ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+      tbl <- table(data[, interaction1_var])
+      
+      if(tbl[1] > 0){
+        reference_indx <- 1
+        names(reference_indx) <- names(tbl[1])
+      }else{
+        reference_indx <- rev(which(tbl > 0))[1]
+      }
+      
+      
+      out <- data.frame(covariate1 = interaction1_var, subgroup1 = levels(data[, interaction1_var]), reference1 = names(tbl[1]), reference1_indx = as.numeric(reference_indx), covariate2 = interaction2_var, subgroup2 = "", reference2 = "", reference2_indx = 0,
+        stringsAsFactors = FALSE)
+      
+      out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+      
+      out <- out[out$coefficient %in% paste0(interaction1_var, levels(data[, interaction1_var])[-1], ":", interaction2_var), , drop = FALSE]
+      
+      
+      
     }else{
-      reference_indx <- rev(which(tbl > 0))[1]
+      
+      ## Check if the first level has non zero counts so it can be used as a reference group in the regression
+      ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+      tbl1 <- table(data[, interaction1_var])
+      
+      if(tbl1[1] > 0){
+        reference1_indx <- 1
+        names(reference1_indx) <- names(tbl1[1])
+      }else{
+        reference1_indx <- rev(which(tbl1 > 0))[1]
+      }
+      
+      tbl2 <- table(data[, interaction2_var])
+      
+      if(tbl2[1] > 0){
+        reference2_indx <- 1
+        names(reference2_indx) <- names(tbl2[1])
+      }else{
+        reference2_indx <- rev(which(tbl2 > 0))[1]
+      }
+      
+      
+      out <- data.frame(covariate1 = interaction1_var, subgroup1 = rep(levels(data[, interaction1_var]), times = nlevels(data[, interaction2_var])), reference1 = names(tbl1[1]), reference1_indx = as.numeric(reference1_indx), covariate2 = interaction2_var, subgroup2 = rep(levels(data[, interaction2_var]), each = nlevels(data[, interaction1_var])), reference2 = names(tbl2[1]), reference2_indx = as.numeric(reference2_indx),
+        stringsAsFactors = FALSE)
+      
+      
+      out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+      
+      coeff_var1 <- paste0(interaction1_var, levels(data[, interaction1_var])[-1])
+      coeff_var1 <- factor(coeff_var1, levels = coeff_var1)
+      coeff_var2 <- paste0(interaction2_var, levels(data[, interaction2_var])[-1])
+      coeff_var2 <- factor(coeff_var2, levels = coeff_var2)
+      
+      out <- out[out$coefficient %in% interaction(coeff_var1, coeff_var2, sep = ":", lex.order = TRUE), , drop = FALSE]
+      
+      
     }
     
     
-    out <- data.frame(covariate1 = interaction1_var, subgroup1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, subgroup2 = levels(data[, interaction2_var]), reference2 = names(tbl[1]), reference2_indx = as.numeric(reference_indx),
-      stringsAsFactors = FALSE)
+    return(out)
     
-    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
-    
-    out <- out[out$coefficient %in% paste0(interaction1_var, ":", interaction2_var, levels(data[, interaction2_var])[-1]), , drop = FALSE]
-    
-    
-  }else if(class(data[, interaction1_var]) %in% c("factor") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
-    
-    ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
-    tbl <- table(data[, interaction1_var])
-    
-    if(tbl[1] > 0){
-      reference_indx <- 1
-      names(reference_indx) <- names(tbl[1])
-    }else{
-      reference_indx <- rev(which(tbl > 0))[1]
-    }
-    
-    
-    out <- data.frame(covariate1 = interaction1_var, subgroup1 = levels(data[, interaction1_var]), reference1 = names(tbl[1]), reference1_indx = as.numeric(reference_indx), covariate2 = interaction2_var, subgroup2 = "", reference2 = "", reference2_indx = 0,
-      stringsAsFactors = FALSE)
-    
-    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
-    
-    out <- out[out$coefficient %in% paste0(interaction1_var, levels(data[, interaction1_var])[-1], ":", interaction2_var), , drop = FALSE]
-    
-    
-    
-  }else{
-    
-    ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
-    tbl1 <- table(data[, interaction1_var])
-    
-    if(tbl1[1] > 0){
-      reference1_indx <- 1
-      names(reference1_indx) <- names(tbl1[1])
-    }else{
-      reference1_indx <- rev(which(tbl1 > 0))[1]
-    }
-    
-    tbl2 <- table(data[, interaction2_var])
-    
-    if(tbl2[1] > 0){
-      reference2_indx <- 1
-      names(reference2_indx) <- names(tbl2[1])
-    }else{
-      reference2_indx <- rev(which(tbl2 > 0))[1]
-    }
-    
-    
-    out <- data.frame(covariate1 = interaction1_var, subgroup1 = rep(levels(data[, interaction1_var]), times = nlevels(data[, interaction2_var])), reference1 = names(tbl1[1]), reference1_indx = as.numeric(reference1_indx), covariate2 = interaction2_var, subgroup2 = rep(levels(data[, interaction2_var]), each = nlevels(data[, interaction1_var])), reference2 = names(tbl2[1]), reference2_indx = as.numeric(reference2_indx),
-      stringsAsFactors = FALSE)
-    
-    
-    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
-    
-    coeff_var1 <- paste0(interaction1_var, levels(data[, interaction1_var])[-1])
-    coeff_var1 <- factor(coeff_var1, levels = coeff_var1)
-    coeff_var2 <- paste0(interaction2_var, levels(data[, interaction2_var])[-1])
-    coeff_var2 <- factor(coeff_var2, levels = coeff_var2)
-    
-    out <- out[out$coefficient %in% interaction(coeff_var1, coeff_var2, sep = ":", lex.order = TRUE), , drop = FALSE]
-    
-    
-  }
+  })
+  
+  
+  out <- plyr::rbind.fill(out)
+  
   
   
   coef_info <- out
@@ -1237,30 +1258,30 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   
   if(is.null(caption)){
     
-    caption <- paste0("Effect of interaction between ", variable_names[interaction1_var], " and ", variable_names[interaction2_var], " on ", variable_names[tte_var], ". ")
+    caption <- paste0("Effect of interaction between ", paste0(variable_names[interaction1_vars], collapse = ", "), " and ", variable_names[interaction2_var], " on ", variable_names[tte_var], ". ")
     
     if(is.null(covariate_vars) && is.null(strata_vars)){
       
-      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes only: ", paste0(variable_names[c(interaction1_var, interaction2_var)], collapse = ", "), ".")
+      caption <- paste0(caption, "Unadjusted, unstratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_vars, interaction2_var)], collapse = ", "), ".")
       
     }else if(!is.null(covariate_vars) && is.null(strata_vars)){
       
-      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_var, interaction2_var, covariate_vars)], collapse = ", "), ". ")
+      caption <- paste0(caption, "Adjusted, unstratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_vars, interaction2_var, covariate_vars)], collapse = ", "), ". ")
       
     }else if(is.null(covariate_vars) && !is.null(strata_vars)){
       
-      caption <- paste0(caption, "Unadjusted, stratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_var, interaction2_var)], collapse = ", "), " and stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Unadjusted, stratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_vars, interaction2_var)], collapse = ", "), " and stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
       
     }else{
       
-      caption <- paste0(caption, "Adjusted, stratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_var, interaction2_var, covariate_vars)], collapse = ", "), " and stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
+      caption <- paste0(caption, "Adjusted, stratified analysis. Cox regression model includes: ", paste0(variable_names[c(interaction1_vars, interaction2_var, covariate_vars)], collapse = ", "), " and stratification factors: ", paste0(variable_names[strata_vars], collapse = ", "), ". ")
       
     }
     
   }
   
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   
@@ -1283,7 +1304,7 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_cox_regression_core_interaction_strat <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_cox_regression_core_interaction_strat <- function(data, tte_var, censor_var, interaction1_vars, interaction2_var, covariate_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -1308,7 +1329,7 @@ wrapper_cox_regression_core_interaction_strat <- function(data, tte_var, censor_
   }
   
   ### Covariates cannot include strata
-  stopifnot(length(intersect(c(strat1_var, strat2_var), c(interaction1_var, interaction2_var, covariate_vars, strata_vars))) == 0)
+  stopifnot(length(intersect(c(strat1_var, strat2_var), c(interaction1_vars, interaction2_var, covariate_vars, strata_vars))) == 0)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -1325,7 +1346,7 @@ wrapper_cox_regression_core_interaction_strat <- function(data, tte_var, censor_
       
       keep_obs <- data[, strat2_var] %in% strata2_levels[j] & data[, strat1_var] %in% strata1_levels[i]
       
-      wrapper_res <- wrapper_cox_regression_core_interaction(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_cox_regression_core_interaction(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_vars = interaction1_vars, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       res <- bresults(wrapper_res)
@@ -1435,11 +1456,11 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   wrapper_res <- lapply(1:length(biomarker_vars), function(i){
     # i = 1
     
-    interaction1_var <- biomarker_vars[i]
+    interaction1_vars <- biomarker_vars[i]
     interaction2_var <- treatment_var
     
     
-    wrapper_res <- wrapper_cox_regression_core_interaction_strat(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_cox_regression_core_interaction_strat(data = data, tte_var = tte_var, censor_var = censor_var, interaction1_vars = interaction1_vars, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     
