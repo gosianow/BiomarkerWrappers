@@ -41,6 +41,8 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   # Checks about data
   # -------------------------------------------------------------------------
   
+  stopifnot(isValidAndUnreservedName(c(tte_var, censor_var, covariate_var)))
+  
   stopifnot(is.data.frame(data))
   
   ### Keep non-missing data

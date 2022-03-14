@@ -49,6 +49,8 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
+  stopifnot(isValidAndUnreservedName(c(tte_var, censor_var, covariate_var, strata_vars)))
+  
   stopifnot(is.data.frame(data))
   
   if(length(keep_obs) == 1){

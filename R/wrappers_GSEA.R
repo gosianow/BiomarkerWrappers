@@ -30,7 +30,7 @@ NULL
 #' @export
 wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   name = "", sep = "_",
-  min_GS_size = 10, max_GS_size = 500, topn_genes = 20, statistic_name = "t", scoreType = NULL){
+  min_GS_size = 10, max_GS_size = 500, topn_genes = 20, statistic_name = "t", scoreType = NULL, nPermSimple = 1000){
   
   
   # -------------------------------------------------------------------------
@@ -117,8 +117,9 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
     }
   }
   
+  
   ## fgsea sorts the statistic in the descending order
-  fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic, eps = 0, scoreType = scoreType)
+  fgsea_out <- fgsea::fgseaMultilevel(pathways = genesets, stats = statistic, eps = 0, scoreType = scoreType, nPermSimple = nPermSimple)
   
   
   # out <- fgsea_out[order(fgsea_out$pval, decreasing = FALSE), ]
@@ -212,11 +213,9 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
 
 
 
-# x <- topTable
-# statistic_prefix = "t"; sep = "_";
+# x = topTable; statistic_prefix = "t"; sep = "_"; 
 # min_GS_size = 10; max_GS_size = 500;
-# topn_genes = 10
-
+# topn_genes = Inf; scoreType = NULL
 
 
 #' Run GSEA
@@ -226,7 +225,7 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
 wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
   gene_var = "EntrezIDs", statistic_prefix = "t", sep = "_", 
   min_GS_size = 10, max_GS_size = 500,
-  topn_genes = 20, scoreType = NULL){
+  topn_genes = 20, scoreType = NULL, nPermSimple = 1000){
   
   
   # -------------------------------------------------------------------------
@@ -261,7 +260,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
   
   
   res_gsea <- lapply(1:length(contrasts), function(i){
-    # i = 1
+    # i = 2
     
     contrast <- contrasts[i]
     
@@ -272,7 +271,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
     
     res_gsea <- wrapper_gsea_core(statistic = statistic, genesets = genesets, genesets_extra_info = genesets_extra_info, gene_mapping = gene_mapping, 
       name = name, sep = sep,
-      min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes, statistic_name = statistic_prefix, scoreType = scoreType)
+      min_GS_size = min_GS_size, max_GS_size = max_GS_size, topn_genes = topn_genes, statistic_name = statistic_prefix, scoreType = scoreType, nPermSimple = nPermSimple)
     
     
     return(res_gsea)
@@ -297,7 +296,7 @@ wrapper_gsea <- function(x, genesets, genesets_extra_info = NULL, gene_mapping =
 wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, 
   geneset_vars = "GenesetID", direction_prefix = "Direction", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
-  stats_prefixes = c("Size", "Leading.Genes", "Median.t", "NES"), sep = "_", 
+  stats_prefixes = c("Size", "Leading.Genes", "NES"), sep = "_", 
   caption = NULL){
   
   

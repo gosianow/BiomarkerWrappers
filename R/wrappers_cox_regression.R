@@ -58,6 +58,8 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
+  stopifnot(isValidAndUnreservedName(c(tte_var, censor_var, covariate_vars, strata_vars, return_vars)))
+  
   stopifnot(is.data.frame(data))
   
   if(length(keep_obs) == 1){

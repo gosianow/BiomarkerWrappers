@@ -32,9 +32,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
       
     }
     
-    summary_vars <- grep("^summary_", colnames(topTable_out), value = TRUE)
-    
-    colnames2change <- colnames(topTable_out) %in% c(res_vars, summary_vars)
+    colnames2change <- ! colnames(topTable_out) %in% gene_vars
     
     colnames(topTable_out)[colnames2change] <- paste(colnames(topTable_out)[colnames2change], contrast, sep = sep)
     
@@ -74,6 +72,75 @@ wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"
 
 
 
+
+#' Convert results from Cox regression into a topTable
+#' 
+#' @param x "BclassTesting" object, for example, output of the wrapper_cox_regression_biomarker function. It does not work with log-rank test results.
+#' @export
+wrapper_bresults_to_topTable <- function(x, contrast_vars){
+  
+  res <- bresults(x)
+  
+  if("HR_non_empty" %in% colnames(res)){
+    res <- res[res$HR_non_empty, ]
+  }
+  
+  res$logHR <- log2(res$HR)
+  
+  
+  ### Add statistic for GSEA
+  res$statistic <- -log10(res$pvalue) * sign(res$logHR)
+  
+  
+  ### Format contrasts
+  
+  for(i in seq_along(contrast_vars)){
+    # i = 1
+    
+    res[, contrast_vars[i]] <- factor(res[, contrast_vars[i]], levels = unique(res[, contrast_vars[i]]))
+    
+  }
+  
+  res$contrast <- interaction(res[, contrast_vars, drop = FALSE], sep = "_", lex.order = TRUE)
+  
+  
+  table(res$contrast)
+  
+  
+  ### Extract statistics 
+  
+  data_logHR <- pivot_wider(res, id_cols = "biomarker", names_from = all_of("contrast"), values_from = "logHR", values_fn = na.omit)
+  colnames(data_logHR)[-1] <- paste0("logHR_", colnames(data_logHR)[-1])
+  
+  
+  data_P.Value <- pivot_wider(res, id_cols = "biomarker", names_from = all_of("contrast"), values_from = "pvalue", values_fn = na.omit)
+  colnames(data_P.Value)[-1] <- paste0("P.Value_", colnames(data_P.Value)[-1])
+  
+  
+  # data_adj.P.Val <- pivot_wider(res, id_cols = "biomarker", names_from = all_of("contrast"), values_from = "adj_pvalue", values_fn = na.omit)
+  # colnames(data_adj.P.Val)[-1] <- paste0("adj.P.Val_", colnames(data_adj.P.Val)[-1])
+  
+  
+  ### Re-adjust p-values per contrast 
+  
+  data_adj.P.Val <- mutate_at(data_P.Value, -1, stats::p.adjust, method = "BH")
+  colnames(data_adj.P.Val)[-1] <- gsub("^P.Value_", "adj.P.Val_", colnames(data_adj.P.Val)[-1])
+  
+  
+  data_statistic <- pivot_wider(res, id_cols = "biomarker", names_from = all_of("contrast"), values_from = "statistic", values_fn = na.omit)
+  colnames(data_statistic)[-1] <- paste0("statistic_", colnames(data_statistic)[-1])
+  
+  
+  topTable <- data_logHR %>% 
+    left_join(data_P.Value, by = "biomarker") %>% 
+    left_join(data_adj.P.Val, by = "biomarker") %>% 
+    left_join(data_statistic, by = "biomarker") %>% 
+    data.frame(check.names = FALSE)
+  
+  
+  return(topTable)
+  
+}
 
 
 

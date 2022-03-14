@@ -28,6 +28,8 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
+  stopifnot(isValidAndUnreservedName(c(response_var, covariate_vars)))
+  
   stopifnot(is.data.frame(data))
   
   ## Response variable must be factor with two levels

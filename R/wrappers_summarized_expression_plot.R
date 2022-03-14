@@ -393,7 +393,7 @@ wrapper_summarized_expression_dotplot <- function(x, group){
   ggdata <- full_join(ggdata_expr, ggdata_zeros, by = c(group_var, "Gene"))
   
   
-  ggdata$Gene <- factor(ggdata$Gene, levels = rev(levels(factor(ggdata$Gene))))
+  ggdata$Gene <- factor(ggdata$Gene, levels = rev(colnames(x[, -1, drop = FALSE])))
   
   
   

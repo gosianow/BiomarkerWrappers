@@ -1,7 +1,11 @@
 
 
-
-
+#' Check if a vector consists of valid names
+#' 
+#' @export
+isValidAndUnreservedName <- function(x){
+  all(make.names(x) == x)
+}
 
 
 #' Load content from a CSV file into an eSet 
@@ -1763,7 +1767,7 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
     
     if(!is.null(trim_prop)){
       ### Use quantiles 
-      range_value <- quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)
+      range_value <- quantile(x, probs = c(trim_prop[1], trim_prop[2]), na.rm = TRUE)
     }
     
     if(ceiling){

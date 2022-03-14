@@ -129,7 +129,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14, caption_width = NULL){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, xlog = FALSE, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14, caption_width = 160){
   
   # lineheight = unit(1, "cm")
   
@@ -171,7 +171,11 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   if(mean_var %in% c("HR", "OR") && is.null(clip)){
-    clip = c(0, 4)
+    if(xlog){
+      clip = c(0.1, 10)
+    }else{
+      clip = c(0, 4)
+    }
   }else if(is.null(clip)){
     clip = c(-40, 40)
   }
@@ -183,46 +187,82 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   }
   
   
+  ### ----------------------------------------------------------------------
+  ### Make the xticks
+  ### ----------------------------------------------------------------------
+  
+  
   if(is.null(xticks)){
     
-    
-    if(is.null(xticks_by)){
+    if(!xlog){
       
-      res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
-      res_width <- min(c(res_range[2], clip[2])) - max(c(res_range[1], clip[1]))
+      if(is.null(xticks_by)){
+        
+        res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
+        res_width <- min(c(res_range[2], clip[2])) - max(c(res_range[1], clip[1]))
+        
+        tick_width_original <- res_width / 7
+        
+        tick_width_rounded <- cut(tick_width_original, breaks = c(0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500), labels = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500))
+        tick_width_rounded <- as.numeric(as.character(tick_width_rounded))
+        
+        xticks_by <- tick_width_rounded
+        
+      }
       
-      tick_width_original <- res_width / 7
       
-      tick_width_rounded <- cut(tick_width_original, breaks = c(0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500), labels = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500))
-      tick_width_rounded <- as.numeric(as.character(tick_width_rounded))
-      
-      xticks_by <- tick_width_rounded
-      
-    }
-    
-    
-    if(mean_var %in% c("HR", "OR")){
-      
-      xticks_by <- min(xticks_by, 1)
-      
-      xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
-      xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
-      xticks <- sort(unique(c(xticks_left, xticks_right)))
+      if(mean_var %in% c("HR", "OR")){
+        
+        xticks_by <- min(xticks_by, 1)
+        
+        xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
+        xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
+        xticks <- sort(unique(c(xticks_left, xticks_right)))
+        
+      }else{
+        
+        xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
+        xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
+        xticks <- sort(unique(c(xticks_left, xticks_right)))
+        
+      }
       
     }else{
       
-      xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
-      xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
-      xticks <- sort(unique(c(xticks_left, xticks_right)))
+      res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
+      res_range_with_clip <- c(max(c(res_range[1], clip[1])), min(c(res_range[2], clip[2])))
+      
+      # xticks_initial = c(0.1, 0.25, 0.5, 0.7, 1, 1.5, 2, 4, 10)
+      xticks_initial = c(0.1, 0.2, 0.5, 1, 2, 5, 10)
+      
+      
+      xticks_index1 <- xticks_initial <= max(res_range_with_clip)
+      xticks_index1_to_add <- max(which(xticks_index1)) + 1
+      if(xticks_index1_to_add <= length(xticks_initial)){
+        xticks_index1[xticks_index1_to_add] <- TRUE
+      }
+      
+      xticks_index2 <- xticks_initial >= min(res_range_with_clip)
+      xticks_index2_to_add <- min(which(xticks_index2)) - 1
+      if(xticks_index2_to_add > 0){
+        xticks_index2[xticks_index2_to_add] <- TRUE
+      }
+      
+      xticks_index <- xticks_index1 & xticks_index2
+      
+      xticks <- xticks_initial[xticks_index]
       
     }
+    
     
     
   }
   
-
+  
 
   
+  ### ----------------------------------------------------------------------
+  ### Displayed text
   ### ----------------------------------------------------------------------
   
   res[res[, upper_var] %in% Inf, upper_var] <- NA
@@ -232,7 +272,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   ### ----------------------------------------------------------------------
   ### To separate Biomarkers with a horizontal line
-  
+  ### ----------------------------------------------------------------------
   
   ## By default color per covariate/biomarker block
   if(is.null(block_vars)){
@@ -261,15 +301,15 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   
   ### ----------------------------------------------------------------------
-  
-  
+  ### Generate plot
+  ### ----------------------------------------------------------------------
   
   forestplot::forestplot(labeltext, 
     mean = c(NA, res[, mean_var]), 
     lower = c(NA, res[, lower_var]), 
     upper = c(NA, res[, upper_var]), 
     is.summary = c(TRUE, rep(FALSE, nrow(res))), xlab = xlab, zero = zero,
-    title = caption,
+    title = "\n",
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
     boxsize = 0.4,
     hrzl_lines = hrzl_lines, 
@@ -283,19 +323,14 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     align = "l",
     xticks = xticks,
     xticks.digits = 2,
-    xlog = FALSE)
+    xlog = xlog) %>% 
+    print()
+  
+  grid::grid.text(caption, 0.5, 0.99, just = c("center", "top"), gp = grid::gpar(fontsize = 15, fontface = "bold"))
+  
   
   
 })
-
-
-
-
-
-
-
-
-
 
 
 
