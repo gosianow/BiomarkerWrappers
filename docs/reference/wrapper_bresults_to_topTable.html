@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Internal function used in bkable to highlight the rows — indicate_blocks • BiomarkerWrappers</title>
+<title>Convert results from Cox regression into a topTable — wrapper_bresults_to_topTable • BiomarkerWrappers</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Internal function used in bkable to highlight the rows — indicate_blocks" />
-<meta property="og:description" content="Internal function used in bkable to highlight the rows" />
+<meta property="og:title" content="Convert results from Cox regression into a topTable — wrapper_bresults_to_topTable" />
+<meta property="og:description" content="Convert results from Cox regression into a topTable" />
 
 
 
@@ -118,17 +118,25 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Internal function used in bkable to highlight the rows</h1>
+    <h1>Convert results from Cox regression into a topTable</h1>
     
-    <div class="hidden name"><code>indicate_blocks.Rd</code></div>
+    <div class="hidden name"><code>wrapper_bresults_to_topTable.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Internal function used in bkable to highlight the rows</p>
+    <p>Convert results from Cox regression into a topTable</p>
     </div>
 
-    <pre class="usage"><span class='fu'>indicate_blocks</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>block_vars</span>, return <span class='op'>=</span> <span class='st'>"block"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>wrapper_bresults_to_topTable</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>contrast_vars</span>, id_cols <span class='op'>=</span> <span class='st'>"biomarker"</span><span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>"BclassTesting" object, for example, output of the wrapper_cox_regression_biomarker function. It does not work with log-rank test results.</p></td>
+    </tr>
+    </table>
 
 
   </div>

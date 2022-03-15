@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.34</span>
       </span>
     </div>
 
@@ -131,7 +131,7 @@
   <span class='va'>data</span>,
   <span class='va'>tte_var</span>,
   <span class='va'>censor_var</span>,
-  <span class='va'>interaction1_var</span>,
+  <span class='va'>interaction1_vars</span>,
   <span class='va'>interaction2_var</span>,
   covariate_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
   strata_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -146,7 +146,7 @@
   <span class='va'>data</span>,
   <span class='va'>tte_var</span>,
   <span class='va'>censor_var</span>,
-  <span class='va'>interaction1_var</span>,
+  <span class='va'>interaction1_vars</span>,
   <span class='va'>interaction2_var</span>,
   covariate_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
   strata_vars <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -174,8 +174,8 @@
       <td><p>Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.</p></td>
     </tr>
     <tr>
-      <th>interaction1_var</th>
-      <td><p>Name of the first interaction variable.</p></td>
+      <th>interaction1_vars</th>
+      <td><p>Names of the first interaction variables.</p></td>
     </tr>
     <tr>
       <th>interaction2_var</th>
@@ -227,11 +227,11 @@
 <span class='r-in'><span class='va'>tte_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS"</span></span>
 <span class='r-in'><span class='va'>censor_var</span> <span class='op'>&lt;-</span> <span class='st'>"PFS_Event"</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='va'>interaction1_var</span> <span class='op'>&lt;-</span> <span class='st'>"GeneA_cat2"</span></span>
+<span class='r-in'><span class='va'>interaction1_vars</span> <span class='op'>&lt;-</span> <span class='st'>"GeneA_cat2"</span></span>
 <span class='r-in'><span class='va'>interaction2_var</span> <span class='op'>&lt;-</span> <span class='st'>"Treatment_Arm"</span></span>
 <span class='r-in'><span class='va'>covariate_vars</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"IPI"</span>, <span class='st'>"Cell_Of_Origin"</span><span class='op'>)</span></span>
 <span class='r-in'></span>
-<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_interaction</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, interaction1_var <span class='op'>=</span> <span class='va'>interaction1_var</span>, interaction2_var <span class='op'>=</span> <span class='va'>interaction2_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'>wrapper_cox_regression_core_interaction</span><span class='op'>(</span><span class='va'>data</span>, tte_var <span class='op'>=</span> <span class='va'>tte_var</span>, censor_var <span class='op'>=</span> <span class='va'>censor_var</span>, interaction1_vars <span class='op'>=</span> <span class='va'>interaction1_vars</span>, interaction2_var <span class='op'>=</span> <span class='va'>interaction2_var</span>, covariate_vars <span class='op'>=</span> <span class='va'>covariate_vars</span><span class='op'>)</span></span>
 <span class='r-in'></span>
 <span class='r-in'><span class='fu'><a href='Bclass-class.html'>boutput</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>   Covariate1     Effect1    Covariate2     Effect2 Total N   HR     HR 95% CI</span>

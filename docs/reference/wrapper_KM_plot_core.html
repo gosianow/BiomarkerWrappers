@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.30</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.34</span>
       </span>
     </div>
 
@@ -146,13 +146,14 @@
   risk_table <span class='op'>=</span> <span class='cn'>TRUE</span>,
   conf_int <span class='op'>=</span> <span class='cn'>FALSE</span>,
   surv_median_line <span class='op'>=</span> <span class='st'>"none"</span>,
-  ggtheme <span class='op'>=</span> <span class='fu'>cowplot</span><span class='fu'>::</span><span class='fu'><a href='https://wilkelab.org/cowplot/reference/theme_cowplot.html'>theme_cowplot</a></span><span class='op'>(</span><span class='fl'>14</span><span class='op'>)</span>,
+  ggtheme <span class='op'>=</span> <span class='fu'>ggplot2</span><span class='fu'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme_get.html'>theme_get</a></span><span class='op'>(</span><span class='op'>)</span>,
   line_size <span class='op'>=</span> <span class='fl'>1</span>,
-  title_size <span class='op'>=</span> <span class='fl'>14</span>,
-  label_size <span class='op'>=</span> <span class='fl'>4.5</span>,
+  title_size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  label_size <span class='op'>=</span> <span class='cn'>NULL</span>,
   rel_heights <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>)</span>,
   background_grid_major <span class='op'>=</span> <span class='st'>"none"</span>,
-  level_mapping <span class='op'>=</span> <span class='cn'>NULL</span>
+  level_mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
+  risk_table_labels <span class='op'>=</span> <span class='cn'>TRUE</span>
 <span class='op'>)</span>
 
 <span class='fu'>wrapper_KM_plot_core_strat</span><span class='op'>(</span>
@@ -177,13 +178,14 @@
   risk_table <span class='op'>=</span> <span class='cn'>TRUE</span>,
   conf_int <span class='op'>=</span> <span class='cn'>FALSE</span>,
   surv_median_line <span class='op'>=</span> <span class='st'>"none"</span>,
-  ggtheme <span class='op'>=</span> <span class='fu'>cowplot</span><span class='fu'>::</span><span class='fu'><a href='https://wilkelab.org/cowplot/reference/theme_cowplot.html'>theme_cowplot</a></span><span class='op'>(</span><span class='fl'>14</span><span class='op'>)</span>,
+  ggtheme <span class='op'>=</span> <span class='fu'>ggplot2</span><span class='fu'>::</span><span class='fu'><a href='https://ggplot2.tidyverse.org/reference/theme_get.html'>theme_get</a></span><span class='op'>(</span><span class='op'>)</span>,
   line_size <span class='op'>=</span> <span class='fl'>1</span>,
-  title_size <span class='op'>=</span> <span class='fl'>14</span>,
-  label_size <span class='op'>=</span> <span class='fl'>4.5</span>,
+  title_size <span class='op'>=</span> <span class='cn'>NULL</span>,
+  label_size <span class='op'>=</span> <span class='cn'>NULL</span>,
   rel_heights <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>5</span>, <span class='fl'>1</span><span class='op'>)</span>,
   background_grid_major <span class='op'>=</span> <span class='st'>"none"</span>,
   level_mapping <span class='op'>=</span> <span class='cn'>NULL</span>,
+  risk_table_labels <span class='op'>=</span> <span class='cn'>TRUE</span>,
   strat_scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
   strat1_nrow <span class='op'>=</span> <span class='fl'>1</span>,
   strat1_ncol <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -213,6 +215,10 @@
     <tr>
       <th>level_mapping</th>
       <td><p>Named vector with level mapping. The names correspond to the original levels of covariate_var.</p></td>
+    </tr>
+    <tr>
+      <th>risk_table_labels</th>
+      <td><p>Possible values: "levels", "shape"</p></td>
     </tr>
     <tr>
       <th>strat1_var</th>
