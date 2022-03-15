@@ -9,7 +9,7 @@ wrapper_cox_regression_core_interaction(
   data,
   tte_var,
   censor_var,
-  interaction1_var,
+  interaction1_vars,
   interaction2_var,
   covariate_vars = NULL,
   strata_vars = NULL,
@@ -24,7 +24,7 @@ wrapper_cox_regression_core_interaction_strat(
   data,
   tte_var,
   censor_var,
-  interaction1_var,
+  interaction1_vars,
   interaction2_var,
   covariate_vars = NULL,
   strata_vars = NULL,
@@ -43,7 +43,7 @@ wrapper_cox_regression_core_interaction_strat(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{interaction1_var}{Name of the first interaction variable.}
+\item{interaction1_vars}{Names of the first interaction variables.}
 
 \item{interaction2_var}{Name of the second interaction variable.}
 
@@ -77,11 +77,11 @@ data$GeneA_cat2 <- wrapper_cut_2groups(data$GeneA)
 tte_var <- "PFS"
 censor_var <- "PFS_Event"
 
-interaction1_var <- "GeneA_cat2"
+interaction1_vars <- "GeneA_cat2"
 interaction2_var <- "Treatment_Arm"
 covariate_vars <- c("IPI", "Cell_Of_Origin")
 
-x <- wrapper_cox_regression_core_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
+x <- wrapper_cox_regression_core_interaction(data, tte_var = tte_var, censor_var = censor_var, interaction1_vars = interaction1_vars, interaction2_var = interaction2_var, covariate_vars = covariate_vars)
 
 boutput(x)
 

@@ -15,7 +15,7 @@ wrapper_dispaly_significant_gsea(
   direction_prefix = "Direction",
   pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",
-  stats_prefixes = c("Size", "Leading.Genes", "Median.t", "NES"),
+  stats_prefixes = c("Size", "Leading.Genes", "NES"),
   sep = "_",
   caption = NULL
 )

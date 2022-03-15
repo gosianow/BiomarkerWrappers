@@ -142,12 +142,13 @@ bheader(x) <- value
   upper_var = NULL,
   block_vars = NULL,
   xlab = NULL,
+  xlog = FALSE,
   clip = NULL,
   xticks = NULL,
   xticks_by = NULL,
   lineheight = "auto",
   label_fontsize = 14,
-  caption_width = NULL
+  caption_width = 160
 )
 }
 \arguments{

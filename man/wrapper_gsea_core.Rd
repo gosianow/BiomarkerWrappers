@@ -15,7 +15,8 @@ wrapper_gsea_core(
   max_GS_size = 500,
   topn_genes = 20,
   statistic_name = "t",
-  scoreType = NULL
+  scoreType = NULL,
+  nPermSimple = 1000
 )
 }
 \arguments{
