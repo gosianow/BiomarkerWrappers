@@ -69,7 +69,7 @@ ggplot2::theme_set(cowplot::theme_cowplot(12))
 ```{r library2, echo = FALSE}
 
 
-devtools::load_all()
+# devtools::load_all()
 
 
 ```
