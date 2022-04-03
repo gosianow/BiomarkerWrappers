@@ -1734,7 +1734,7 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
     
     if(!is.null(trim_prop)){
       ### Use quantiles 
-      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop, 1 - trim_prop), na.rm = TRUE)))
+      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop[1], 1 - trim_prop[1]), na.rm = TRUE)))
     }
     
     
@@ -1784,12 +1784,78 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
 
 
 
-
-
-
-#' Generate colors for ComplexHeatmap for numerical variables 
+#' Trim data to a specified range
 #' 
-#' @param x Vector of numerical values for which we want to specify colors.
+#' @param x Vector or matrix of continuous values that should be trimmed.
+#' @param centered Logical. Default value TRUE.
+#' 
+#' @return Vector or matrix where the values outside the specified range are squished.
+#' 
+#' @examples 
+#' 
+#' set.seed(123)
+#' 
+#' x <- rnorm(10)
+#' 
+#' x
+#' 
+#' apply_trim_values(x, trim_values = 1)
+#' 
+#' @export
+apply_trim_values <- function(x, centered = TRUE, trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
+  
+  
+  x_orig <- x
+  
+  x <- c(x)
+  x <- x[!is.na(x)]
+  
+
+  # ---------------------------------------------------------------------
+  # Define trim values
+  # ---------------------------------------------------------------------
+  
+  
+  if(centered){
+    
+    
+    if(is.null(trim_values)){
+      trim_values <- compute_trim_values(x, centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+    }else{
+      max_abs_value <- max(abs(trim_values))
+      trim_values <- c(-max_abs_value, max_abs_value)
+    }
+    
+    
+  }else{
+    
+    
+    if(is.null(trim_values)){
+      trim_values <- compute_trim_values(x, centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+    }
+    
+    
+  }
+  
+
+  x_out <- x_orig
+  
+  x_out[x_out < trim_values[1]] <- trim_values[1]
+  x_out[x_out > trim_values[2]] <- trim_values[2]
+  
+  return(x_out)
+  
+  
+}
+
+
+
+
+
+
+#' Generate colors for ComplexHeatmap for continuous variables 
+#' 
+#' @param x Vector or matrix of continuous values for which we want to specify colors.
 #' @param centered Logical. Default value TRUE.
 #' @param palette Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Spectral".
 #' 

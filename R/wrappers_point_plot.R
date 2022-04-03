@@ -34,6 +34,7 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  display_correlation = FALSE, 
   background_grid_major = "none"){
   
   
@@ -245,6 +246,19 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   }
   
   
+  if(is.null(facet_var) && display_correlation){
+    
+    correlation <- cor(x = data[, x_var], y = data[, y_var], method = "spearman", use = "complete.obs")
+    correlation <- paste0("R = ", round(correlation, digits = 2))
+    
+    ggpl <- ggpl +
+      annotate("label",  x = Inf, y = Inf, label = correlation, vjust = 1, hjust = 1, size = 6)
+    
+  }
+  
+  
+  
+  
   ggpl
   
   
@@ -268,6 +282,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
+  display_correlation = FALSE, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
@@ -384,6 +399,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
         smooth = smooth, smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
         smooth_size = smooth_size, smooth_linetype = smooth_linetype,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim, 
+        display_correlation = display_correlation, 
         background_grid_major = background_grid_major)
       
       

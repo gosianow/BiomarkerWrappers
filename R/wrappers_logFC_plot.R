@@ -50,7 +50,7 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
     
     x[is.na(x)] <- 1
     
-    pval_asterisk <- ifelse(x < 0.001, "***", ifelse(x < 0.01, "**", ifelse(x < 0.05, "*", ifelse(x < 0.1, ".", ""))))
+    pval_asterisk <- ifelse(x < 0.0001, "****", ifelse(x < 0.001, "***", ifelse(x < 0.01, "**", ifelse(x < 0.05, "*", ifelse(x < 0.1, ".", "")))))
     
     pval_asterisk
     
@@ -175,7 +175,7 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 #' @export
 wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
-  sep = "_", pval = 0.05, title = "", 
+  sep = "_", pval = 0.05, pval_cut = NULL, title = "", 
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
   radius_range = c(10, 3), legend_position = "right", 
@@ -230,8 +230,19 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   data[, gene_var] <- factor(stringr::str_wrap(data[, gene_var], width = axis_text_y_width), levels = stringr::str_wrap(rev(x[, gene_var]), width = axis_text_y_width))
   
   
-  pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.1, 0.2, 1)
-  data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut[-1]))
+  if(is.null(pval_cut)){
+    
+    if(lfc_prefix %in% c("logFC", "NES")){
+      pval_cut <- c(-1, 0.00001, 0.0001, 0.001, 0.01, 0.05, 0.1, 1)
+    }else{
+      pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.1, 0.2, 1)  
+    }
+    
+  }
+  
+  
+  pval_cut_labels <- formatC(pval_cut, format = "f", drop0trailing = TRUE, digits = 10)
+  data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut_labels[-1]))
   
   
   
@@ -263,7 +274,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
       legend.position = legend_position) +
     panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
-    scale_radius(name = pval_prefix, range = radius_range, breaks = 1:(length(pval_cut) - 1), labels = pval_cut[-1], limits = c(1, length(pval_cut) - 1)) +
+    scale_radius(name = pval_prefix, range = radius_range, breaks = 1:(length(pval_cut) - 1), labels = pval_cut_labels[-1], limits = c(1, length(pval_cut) - 1)) +
     scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
     scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE)
   

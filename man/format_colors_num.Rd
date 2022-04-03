@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_functions.R
 \name{format_colors_num}
 \alias{format_colors_num}
-\title{Generate colors for ComplexHeatmap for numerical variables}
+\title{Generate colors for ComplexHeatmap for continuous variables}
 \usage{
 format_colors_num(
   x,
@@ -16,7 +16,7 @@ format_colors_num(
 )
 }
 \arguments{
-\item{x}{Vector of numerical values for which we want to specify colors.}
+\item{x}{Vector or matrix of continuous values for which we want to specify colors.}
 
 \item{centered}{Logical. Default value TRUE.}
 
@@ -26,7 +26,7 @@ format_colors_num(
 Vector of unique colors for all unique values of x.
 }
 \description{
-Generate colors for ComplexHeatmap for numerical variables
+Generate colors for ComplexHeatmap for continuous variables
 }
 \examples{
 

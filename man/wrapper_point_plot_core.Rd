@@ -40,6 +40,7 @@ wrapper_point_plot_core(
   facet_scales = "fixed",
   xlim = NULL,
   ylim = NULL,
+  display_correlation = FALSE,
   background_grid_major = "none"
 )
 
@@ -81,6 +82,7 @@ wrapper_point_plot_core_strat(
   facet_scales = "fixed",
   xlim = NULL,
   ylim = NULL,
+  display_correlation = FALSE,
   background_grid_major = "none",
   strat_scales = "fixed",
   strat1_nrow = 1,

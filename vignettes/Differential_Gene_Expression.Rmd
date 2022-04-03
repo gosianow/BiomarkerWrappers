@@ -69,7 +69,7 @@ ggplot2::theme_set(cowplot::theme_cowplot(12))
 ```{r library2, echo = FALSE}
 
 
-# devtools::load_all()
+devtools::load_all()
 
 
 ```
@@ -101,16 +101,25 @@ colData(gse)
 
 rowData(gse)
 
-
-
-## There are some duplicated Hgnc_Symbol. Replace them with EntrezIDs
-table(duplicated2(rowData(gse)$Hgnc_Symbol, value = TRUE))
-
-
 rowData(gse)$HGNC_Symbol <- rowData(gse)$Hgnc_Symbol
 
 
-rowData(gse)$HGNC_Symbol[duplicated2(rowData(gse)$HGNC_Symbol)] <- rowData(gse)$EntrezIDs[duplicated2(rowData(gse)$HGNC_Symbol)]
+## There are some duplicated Hgnc_Symbol. Replace them with EntrezIDs
+table(duplicated2(rowData(gse)$HGNC_Symbol, value = TRUE))
+
+
+rowData(gse)$HGNC_Symbol[is.na(rowData(gse)$HGNC_Symbol) | rowData(gse)$HGNC_Symbol %in% ""] <- rowData(gse)$EntrezIDs[is.na(rowData(gse)$HGNC_Symbol) | rowData(gse)$HGNC_Symbol %in% ""]
+
+
+table(duplicated2(rowData(gse)$HGNC_Symbol, value = TRUE))
+
+
+rowData(gse)$HGNC_Symbol[duplicated(rowData(gse)$HGNC_Symbol)] <- rowData(gse)$EntrezIDs[duplicated(rowData(gse)$HGNC_Symbol)]
+
+
+table(duplicated2(rowData(gse)$HGNC_Symbol, value = TRUE))
+
+
 
 # Use HGNC_Symbol as row names. They are needed for the gene set enrichment analysis. 
 
@@ -679,7 +688,8 @@ expr_de <- v$E[significant_genes, , drop = FALSE]
 
 wrapper_gene_expression_heatmap(expr_de,
   cluster_rows = cluster_rows, column_split = pdata[, group_var],
-  row_names_gp = grid::gpar(fontsize = 7))
+  row_names_gp = grid::gpar(fontsize = 7), 
+  trim_prop = 0.05)
 
 
 

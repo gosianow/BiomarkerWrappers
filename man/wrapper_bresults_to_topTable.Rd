@@ -4,7 +4,12 @@
 \alias{wrapper_bresults_to_topTable}
 \title{Convert results from Cox regression into a topTable}
 \usage{
-wrapper_bresults_to_topTable(x, contrast_vars, id_cols = "biomarker")
+wrapper_bresults_to_topTable(
+  x,
+  contrast_vars,
+  id_cols = "biomarker",
+  readjust_pvalues = TRUE
+)
 }
 \arguments{
 \item{x}{"BclassTesting" object, for example, output of the wrapper_cox_regression_biomarker function. It does not work with log-rank test results.}

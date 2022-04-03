@@ -77,9 +77,16 @@ wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"
 #' 
 #' @param x "BclassTesting" object, for example, output of the wrapper_cox_regression_biomarker function. It does not work with log-rank test results.
 #' @export
-wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"){
+wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker", readjust_pvalues = TRUE){
   
   res <- bresults(x)
+  
+  stopifnot(all(c("HR", "pvalue") %in% colnames(res)))
+  
+  if(readjust_pvalues){
+    stopifnot(all(c("adj_pvalue") %in% colnames(res)))
+  }
+  
   
   if("HR_non_empty" %in% colnames(res)){
     res <- res[res$HR_non_empty, ]
@@ -109,29 +116,40 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   
   ### Extract statistics 
   
-  data_logHR <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "logHR", values_fn = na.omit)
+  data_HR <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "HR")
+  colnames(data_HR)[-1] <- paste0("HR_", colnames(data_HR)[-1])
+  
+  
+  data_logHR <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "logHR")
   colnames(data_logHR)[-1] <- paste0("logHR_", colnames(data_logHR)[-1])
   
   
-  data_P.Value <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "pvalue", values_fn = na.omit)
+  data_P.Value <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "pvalue")
   colnames(data_P.Value)[-1] <- paste0("P.Value_", colnames(data_P.Value)[-1])
   
   
-  # data_adj.P.Val <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "adj_pvalue", values_fn = na.omit)
-  # colnames(data_adj.P.Val)[-1] <- paste0("adj.P.Val_", colnames(data_adj.P.Val)[-1])
+  
+  if(readjust_pvalues){
+    
+    ### Re-adjust p-values per contrast 
+    
+    data_adj.P.Val <- mutate_at(data_P.Value, -1, stats::p.adjust, method = "BH")
+    colnames(data_adj.P.Val)[-1] <- gsub("^P.Value_", "adj.P.Val_", colnames(data_adj.P.Val)[-1])
+    
+  }else{
+    
+    data_adj.P.Val <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "adj_pvalue")
+    colnames(data_adj.P.Val)[-1] <- paste0("adj.P.Val_", colnames(data_adj.P.Val)[-1])
+    
+  }
   
   
-  ### Re-adjust p-values per contrast 
-  
-  data_adj.P.Val <- mutate_at(data_P.Value, -1, stats::p.adjust, method = "BH")
-  colnames(data_adj.P.Val)[-1] <- gsub("^P.Value_", "adj.P.Val_", colnames(data_adj.P.Val)[-1])
-  
-  
-  data_statistic <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "statistic", values_fn = na.omit)
+  data_statistic <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "statistic")
   colnames(data_statistic)[-1] <- paste0("statistic_", colnames(data_statistic)[-1])
   
   
-  topTable <- data_logHR %>% 
+  topTable <- data_HR %>% 
+    left_join(data_logHR, by = id_cols) %>% 
     left_join(data_P.Value, by = id_cols) %>% 
     left_join(data_adj.P.Val, by = id_cols) %>% 
     left_join(data_statistic, by = id_cols) %>% 
