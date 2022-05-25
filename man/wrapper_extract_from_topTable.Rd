@@ -4,7 +4,12 @@
 \alias{wrapper_extract_from_topTable}
 \title{Extract given statistics for all contrasts available in merged topTable}
 \usage{
-wrapper_extract_from_topTable(x, extract_prefix = "logFC", sep = "_")
+wrapper_extract_from_topTable(
+  x,
+  contrasts = NULL,
+  extract_prefix = "logFC",
+  sep = "_"
+)
 }
 \arguments{
 \item{x}{Data frame of merged topTables}

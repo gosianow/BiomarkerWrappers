@@ -53,14 +53,105 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
 
 
 
+
+
+#' Create a summary variable indicating significant genes
+#' 
+#' @param x Data frame of merged topTables
+#' @export
+wrapper_deside_tests <- function(x, topn = Inf, pval = 0.05, lfc = 0, 
+  gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), 
+  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", summary_prefix = NULL, 
+  sep = "_",
+  order_both_direction = FALSE){
+  
+  
+  stopifnot(length(gene_vars) >= 1)
+  stopifnot(all(gene_vars %in% colnames(x)))
+  
+  ## We add '^' because we want to match expression at the beginning of the string
+  contrasts <- gsub(paste0("^", pval_prefix, sep), "", grep(paste0("^", pval_prefix, sep), colnames(x), value = TRUE))
+  
+  
+  summary_out <- x[, gene_vars, drop = FALSE]
+  
+  
+  for(i in 1:length(contrasts)){
+    # i = 1
+    
+    contrast <- contrasts[i]
+    
+    pval_var <- paste0(pval_prefix, "_", contrast)
+    adjp_var <- paste0(adjp_prefix, "_", contrast)
+    lfc_var <- paste0(lfc_prefix, "_", contrast)
+    
+    
+    summary_order <- rep(NA, nrow(x))
+    
+    
+    if(order_both_direction){
+      summary_order[!is.na(x[, lfc_var])] <- order(x[!is.na(x[, lfc_var]), pval_var], decreasing = FALSE)
+    }else{
+      summary_order[x[, lfc_var] >= lfc & !is.na(x[, lfc_var])] <- order(x[x[, lfc_var] >= lfc & !is.na(x[, lfc_var]), pval_var], decreasing = FALSE)
+      
+      summary_order[x[, lfc_var] <= lfc & !is.na(x[, lfc_var])] <- order(x[x[, lfc_var] <= lfc & !is.na(x[, lfc_var]), pval_var], decreasing = FALSE)
+    }
+    
+    
+    
+    for(p in 1:length(pval)){
+      
+      for(l in 1:length(lfc)){
+        # p = 1; l = 1
+        
+        
+        if(is.null(summary_prefix)){
+          name_out <- paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l], "_topn", topn, "_", contrast)
+        }else{
+          name_out <- paste0(summary_prefix, "_", contrast)
+        }
+        
+        
+        out <- as.numeric(x[, adjp_var] <= pval[p] & abs(x[, lfc_var]) >= lfc[l] & summary_order <= topn) * sign(x[, lfc_var])
+        
+        # table(out, useNA = "always")
+        
+        summary_out[, name_out] <- out
+        
+        
+      }
+      
+    }
+    
+  }
+  
+  
+  
+  return(summary_out)
+  
+  
+}
+
+
+
+
+
+
+
 #' Extract given statistics for all contrasts available in merged topTable
 #' 
 #' @param x Data frame of merged topTables
 #' @export
-wrapper_extract_from_topTable <- function(x, extract_prefix = "logFC", sep = "_"){
+wrapper_extract_from_topTable <- function(x, contrasts = NULL, extract_prefix = "logFC", sep = "_"){
   
   ## We add '^' because we want to match expression at the beginning of the string
-  contrasts <- gsub(paste0("^", extract_prefix, sep), "", grep(paste0("^", extract_prefix, sep), colnames(x), value = TRUE))
+  contrasts_identified <- gsub(paste0("^", extract_prefix, sep), "", grep(paste0("^", extract_prefix, sep), colnames(x), value = TRUE))
+  
+  if(!is.null(contrasts)){
+    stopifnot(all(contrasts %in% contrasts_identified))
+  }else{
+    contrasts <- contrasts_identified
+  }
   
   cols <- paste0(extract_prefix, sep, contrasts)
   out <- x[, cols, drop = FALSE]
@@ -116,15 +207,15 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   
   ### Extract statistics 
   
-  data_HR <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "HR")
+  data_HR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "HR")
   colnames(data_HR)[-1] <- paste0("HR_", colnames(data_HR)[-1])
   
   
-  data_logHR <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "logHR")
+  data_logHR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "logHR")
   colnames(data_logHR)[-1] <- paste0("logHR_", colnames(data_logHR)[-1])
   
   
-  data_P.Value <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "pvalue")
+  data_P.Value <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "pvalue")
   colnames(data_P.Value)[-1] <- paste0("P.Value_", colnames(data_P.Value)[-1])
   
   
@@ -138,7 +229,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
     
   }else{
     
-    data_adj.P.Val <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "adj_pvalue")
+    data_adj.P.Val <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "adj_pvalue")
     colnames(data_adj.P.Val)[-1] <- paste0("adj.P.Val_", colnames(data_adj.P.Val)[-1])
     
   }
@@ -213,8 +304,10 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
     direction_print <- paste0(direction, "-")  
   }
   
+  
+  
   ## We add '^' because we want to match expression at the beginning of the string
-  contrasts <- gsub(paste0("^", lfc_prefix, sep), "", grep(paste0("^", lfc_prefix, sep), colnames(x), value = TRUE))
+  contrasts <- gsub(paste0("^", pval_prefix, sep), "", grep(paste0("^", pval_prefix, sep), colnames(x), value = TRUE))
   
   stopifnot(contrast %in% contrasts)
   
@@ -222,7 +315,6 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   # -------------------------------------------------------------------------
   # Processing
   # -------------------------------------------------------------------------
-  
   
   ## Find columns corresponding to the contrast and subset the data
   ## We add '$' because we want to match expression at the end of the string
@@ -298,7 +390,8 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL

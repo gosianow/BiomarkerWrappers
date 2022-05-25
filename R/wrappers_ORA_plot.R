@@ -9,7 +9,7 @@
 
 #' Dot plot with ORA results for a single contrast 
 #' 
-#' @param x TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant'.
+#' @param x TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant' and 'bresults'.
 #' @export
 wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_var = "Observed", 
   adjp_var = "adj.P.Val", color_point_var = NULL,
@@ -109,7 +109,7 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
   }
   
   
-  xintercept <- -log10(c(0.05, 0.1))
+  xintercept <- -log10(c(0.05))
   xlab <- paste0("-log10(", adjp_var, ")")
   xlim <- c(0, max(c(x[, "log_adjp"], -log10(0.05)), na.rm = TRUE))
   
@@ -216,14 +216,14 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
     as.data.frame()
   
   
-  ### Retrive contrasts
+  ### Retrieve contrasts
   data$contrasts <- gsub(paste0(sep, "up$"), "", data$contrasts_and_directions)
   data$contrasts <- gsub(paste0(sep, "down$"), "", data$contrasts)
   data$contrasts <- gsub(paste0(sep, "both$"), "", data$contrasts)
   
   data$contrasts <- factor(data$contrasts, levels = contrasts)
   
-  ### Retrive directions
+  ### Retrieve directions
   
   data$directions <- sapply(seq_len(nrow(data)), function(i){
     gsub(paste0("^", data$contrasts[i], sep), "", data$contrasts_and_directions[i])

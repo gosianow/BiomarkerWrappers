@@ -24,7 +24,7 @@ wrapper_ora_dotplot_single(
 )
 }
 \arguments{
-\item{x}{TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant'.}
+\item{x}{TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant' and 'bresults'.}
 }
 \description{
 Dot plot with ORA results for a single contrast

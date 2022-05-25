@@ -935,8 +935,8 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' Cox regression with additive model with interaction
 #' 
 #' @inheritParams wrapper_cox_regression_core_simple
-#' @param interaction1_vars Names of the first interaction variables.
-#' @param interaction2_var Name of the second interaction variable.
+#' @param interaction1_vars Names of the first interaction variables. They would correspond to biomarkers.
+#' @param interaction2_var Name of the second interaction variable. It would correspond to the treatment arm. 
 #' 
 #' @examples 
 #' 
@@ -945,11 +945,12 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
 #' data <- bdata
 #' 
 #' data$GeneA_cat2 <- wrapper_cut_2groups(data$GeneA)
+#' data$GeneB_cat2 <- wrapper_cut_2groups(data$GeneB)
 #' 
 #' tte_var <- "PFS"
 #' censor_var <- "PFS_Event"
 #' 
-#' interaction1_vars <- "GeneA_cat2"
+#' interaction1_vars <- c("GeneA_cat2", "GeneB_cat2")
 #' interaction2_var <- "Treatment_Arm"
 #' covariate_vars <- c("IPI", "Cell_Of_Origin")
 #' 

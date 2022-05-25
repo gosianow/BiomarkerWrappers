@@ -151,7 +151,7 @@ wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NU
   
   ### Sort by p-value
   
-  out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
+  # out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
   
   out
   
@@ -181,7 +181,7 @@ wrapper_ora_core <- function(genes, genesets, universe, genesets_extra_info = NU
 #' 
 #' @param x TopTable with DGE results.
 #' @export
-wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL, gene_mapping = NULL, 
+wrapper_ora <- function(x, genesets, contrasts = NULL, universe = NULL, genesets_extra_info = NULL, gene_mapping = NULL, 
   method = "hypergeometric", min_GS_size = 10, max_GS_size = 500,
   directions = c("up", "down", "both"), min_DE_size = 5, topn = Inf, pval = 0.05, lfc = 0,
   gene_var = "EntrezIDs", lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", sep = "_", 
@@ -209,7 +209,14 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
   
   
   ## We add '^' because we want to match expression at the beginning of the string
-  contrasts <- gsub(paste0("^", lfc_prefix, sep), "", grep(paste0("^", lfc_prefix, sep), colnames(x), value = TRUE))
+  contrasts_identified <- gsub(paste0("^", pval_prefix, sep), "", grep(paste0("^", pval_prefix, sep), colnames(x), value = TRUE))
+  
+  
+  if(!is.null(contrasts)){
+    stopifnot(all(contrasts %in% contrasts_identified))
+  }else{
+    contrasts <- contrasts_identified
+  }
   
   
   # -------------------------------------------------------------------------
@@ -279,6 +286,8 @@ wrapper_ora <- function(x, genesets, universe = NULL, genesets_extra_info = NULL
   
   
   res_ora <- Reduce(function(...) merge(..., by = geneset_vars, all = TRUE, sort = FALSE), res_ora)
+  
+  return(res_ora)
   
   
 }

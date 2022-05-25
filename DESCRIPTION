@@ -45,6 +45,7 @@ Collate:
     'wrappers_line_plot.R'
     'wrappers_log_rank_test.R'
     'wrappers_logistic_regression.R'
+    'wrappers_ncc_cox_regression.R'
     'wrappers_pearsons_test.R'
     'wrappers_point_plot.R'
     'wrappers_signature_plot.R'

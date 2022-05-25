@@ -7,6 +7,7 @@
 wrapper_ora(
   x,
   genesets,
+  contrasts = NULL,
   universe = NULL,
   genesets_extra_info = NULL,
   gene_mapping = NULL,

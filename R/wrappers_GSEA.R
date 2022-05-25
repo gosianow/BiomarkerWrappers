@@ -197,7 +197,7 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   
   ### Sort by p-value
   
-  out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
+  # out <- out[order(out[, paste0("P.Value", sep, name)], decreasing = FALSE), , drop = FALSE]
   
   out
   

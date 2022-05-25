@@ -43,9 +43,9 @@ wrapper_cox_regression_core_interaction_strat(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{interaction1_vars}{Names of the first interaction variables.}
+\item{interaction1_vars}{Names of the first interaction variables. They would correspond to biomarkers.}
 
-\item{interaction2_var}{Name of the second interaction variable.}
+\item{interaction2_var}{Name of the second interaction variable. It would correspond to the treatment arm.}
 
 \item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model.}
 
@@ -73,11 +73,12 @@ data(bdata)
 data <- bdata
 
 data$GeneA_cat2 <- wrapper_cut_2groups(data$GeneA)
+data$GeneB_cat2 <- wrapper_cut_2groups(data$GeneB)
 
 tte_var <- "PFS"
 censor_var <- "PFS_Event"
 
-interaction1_vars <- "GeneA_cat2"
+interaction1_vars <- c("GeneA_cat2", "GeneB_cat2")
 interaction2_var <- "Treatment_Arm"
 covariate_vars <- c("IPI", "Cell_Of_Origin")
 

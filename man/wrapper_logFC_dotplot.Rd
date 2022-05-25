@@ -12,7 +12,6 @@ wrapper_logFC_dotplot(
   adjp_prefix = "adj.P.Val",
   sep = "_",
   pval = 0.05,
-  pval_cut = NULL,
   title = "",
   color_low = "#42399B",
   color_mid = "white",
