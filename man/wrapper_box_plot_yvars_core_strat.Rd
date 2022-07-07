@@ -39,6 +39,7 @@ wrapper_box_plot_yvars_core_strat(
   facet_nrow = NULL,
   facet_ncol = NULL,
   ylim = NULL,
+  scale_y_continuous_custome = scale_y_continuous(),
   axis_text_x_angle = 0,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,

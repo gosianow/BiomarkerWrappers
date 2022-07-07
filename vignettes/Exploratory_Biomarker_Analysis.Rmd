@@ -51,6 +51,8 @@ knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warnin
 ```{r library, results="hide", cache = FALSE}
 
 
+library(ggplot2)
+
 ggplot2::theme_set(cowplot::theme_cowplot())
 
 
@@ -302,6 +304,7 @@ bforest(x)
 
 # KM plot
 
+## Core
 
 ```{r KM_plot}
 
@@ -318,6 +321,8 @@ wrapper_KM_plot_core(data = data, tte_var = tte_var, censor_var = censor_var, co
 
 ```
 
+
+## Core stratified 
 
 
 
@@ -339,6 +344,75 @@ wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_v
 
 ```
 
+
+## Display tables with Cox regression results 
+
+
+```{r}
+
+### Display results from Cox regression as table on the KM plot
+
+data <- bdata
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+biomarker_var <- "GeneA_cat2"
+
+
+x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_var, print_total = FALSE, print_adjpvalues = FALSE)
+
+
+tb <- boutput(x)[, -c(1)]
+
+tb <- tibble::tibble(x = 1, y = 1, label = list(tb))
+
+
+ggp <- wrapper_KM_plot_core(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = biomarker_var) 
+
+ggp +
+  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, table.theme = ggpp::ttheme_gtminimal)
+
+
+
+
+```
+
+
+
+```{r, fig.width=14, fig.height=6}
+
+
+### Display results from Cox regression as table on the KM plot using stratification
+
+data <- bdata
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+biomarker_var <- "GeneA_cat2"
+treatment_var = "Treatment_Arm"
+
+
+x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_var, treatment_var = treatment_var, print_total = FALSE, print_adjpvalues = FALSE)
+
+
+tb <- boutput(x)[, -c(1, 2)]
+
+tb <- split(tb, bresults(x)[[treatment_var]])
+
+tb <- tibble::tibble(x = c(0.5, 1), y = 1, label = tb)
+
+
+ggp <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = biomarker_var, strat1_var = treatment_var) 
+
+ggp +
+  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, table.theme = ggpp::ttheme_gtminimal)
+
+
+
+```
+
+
+## Curves per treatment arm and biomarker subgroups in one plot
 
 
 ```{r KM_plot_interaction}
@@ -362,6 +436,8 @@ wrapper_KM_plot_interaction(data, tte_var = tte_var, censor_var = censor_var, bi
 ```
 
 
+## Biomarker effect per treatment arm
+
 
 ```{r KM_plot_biomarker, fig.width=10}
 
@@ -380,7 +456,7 @@ wrapper_KM_plot_biomarker(data, tte_var = tte_var, censor_var = censor_var, biom
 ```
 
 
-
+## Treatment effect per biomarker subgroup
 
 
 ```{r KM_plot_treatment, fig.width=10}

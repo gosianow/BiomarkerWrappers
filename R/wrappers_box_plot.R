@@ -37,6 +37,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE,
+  scale_y_continuous_custome = scale_y_continuous(), 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
   background_grid_major = "none"){
   
@@ -300,7 +301,8 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
       legend.position = legend_position) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
     scale_x_discrete(drop = ifelse(facet_scales %in% c("free", "free_x"), TRUE, FALSE)) +
-    coord_cartesian(ylim = ylim)
+    coord_cartesian(ylim = ylim) +
+    scale_y_continuous_custome
   
   
   
@@ -396,6 +398,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE, 
+  scale_y_continuous_custome = scale_y_continuous(),
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, 
@@ -518,6 +521,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
         show_total_counts = show_total_counts, show_median = show_median, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, drop = drop,
+        scale_y_continuous_custome = scale_y_continuous_custome, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
         label_size = label_size, label_nudge = label_nudge, 
         background_grid_major = background_grid_major)
@@ -577,6 +581,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
   point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
+  scale_y_continuous_custome = scale_y_continuous(),
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE,
@@ -625,6 +630,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
     show_total_counts = show_total_counts, show_median = show_median, 
     point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
+    scale_y_continuous_custome = scale_y_continuous_custome,
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
     label_size = label_size, label_nudge = label_nudge, 
     background_grid_major = background_grid_major, 

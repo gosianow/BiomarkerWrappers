@@ -364,7 +364,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     `Total Events` = as.character(res$nevent_total),
     `N` = format_difference(res$n, digits = 0),
     `Events` = format_counts_and_props(counts = res$nevent, props = res$propevent, digits = 1),
-    `MST` = format_or(res$MST, digits = 1, non_empty = res$covariate_class == "factor"),
+    `MST` = format_difference(res$MST, digits = 1, non_empty = res$covariate_class == "factor"),
     `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = res$covariate_class == "factor"),
     check.names = FALSE, stringsAsFactors = FALSE)
   

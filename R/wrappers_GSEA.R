@@ -194,6 +194,8 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   
   out[, paste0("adj.P.Val", sep, name)] <- fgsea_out$padj
   
+  out[, paste0("statistic", sep, name)] <- -log10(fgsea_out$pval) * sign(fgsea_out$NES)
+  
   
   ### Sort by p-value
   

@@ -9,6 +9,8 @@
 #' Scatter plot
 #' 
 #' @param data Data frame.
+#' @param smooth Possible values: "none", "pooled", "strat".
+#' @param smooth_method Method used in geom_smooth(), for example, "auto", "loess", "lm". 
 #' @examples 
 #' 
 #' data(bdata)

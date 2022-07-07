@@ -232,14 +232,14 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   
   
   if(lfc_prefix %in% c("logFC", "NES")){
-    pval_cut <- c(-1, 0.00001, 0.0001, 0.001, 0.01, 0.05, 0.1, 1)
+    pval_cut <- c(-1, 1e-10, 1e-08, 1e-06, 1e-04, 0.01, 1)
+    pval_cut_labels <- formatC(pval_cut, format = "g", digits = 1)
   }else{
     ### Trick to make larger contrast in circle size between significant and not significant
-    pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.0500009, 0.050009, 0.1, 0.2, 1)  
+    pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.0500009, 0.1, 1) 
+    pval_cut_labels <- formatC(pval_cut, format = "f", drop0trailing = TRUE, digits = 10)
   }
   
-  
-  pval_cut_labels <- formatC(pval_cut, format = "f", drop0trailing = TRUE, digits = 10)
   
   data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut_labels[-1]))
   
@@ -249,9 +249,11 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
     radius_limits = c(1, length(pval_cut) - 1)
     radius_labels = pval_cut_labels[-1]
   }else{
-    radius_breaks = c(1, 2, 3, 6, 7, 8)
-    radius_limits = c(1, 8)
-    radius_labels = pval_cut_labels[-c(1, 5, 6)]
+    radius_breaks = c(1, 2, 3, 5, 6)
+    radius_limits = c(1, 6)
+    radius_labels = pval_cut_labels[-c(1, 5)]
+
+    
   }
   
   

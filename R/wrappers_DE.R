@@ -21,7 +21,11 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
     
     topTable_out <- topTable_out[, c(gene_vars, res_vars), drop = FALSE]
     
+    topTable_out$statistic <- -log10(topTable_out$P.Value) * sign(topTable_out$logFC)
     
+    # plot(topTable_out$t, topTable_out$statistic)
+    
+      
     for(p in 1:length(pval)){
       
       for(l in 1:length(lfc)){
@@ -201,6 +205,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   
   res$contrast <- interaction(res[, contrast_vars, drop = FALSE], sep = "_", lex.order = TRUE)
   
+  res <- res[order(res$contrast), ]
   
   table(res$contrast)
   

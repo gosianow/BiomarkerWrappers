@@ -95,6 +95,10 @@ wrapper_point_plot_core_strat(
 \arguments{
 \item{data}{Data frame.}
 
+\item{smooth}{Possible values: "none", "pooled", "strat".}
+
+\item{smooth_method}{Method used in geom_smooth(), for example, "auto", "loess", "lm".}
+
 \item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}

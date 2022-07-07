@@ -11,6 +11,8 @@
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom cowplot plot_grid background_grid get_legend panel_border
 #' @importFrom grid gpar
+#' @importFrom tibble tibble
+#' @importFrom ggpp geom_table_npc ttheme_gtminimal
 NULL
 
 

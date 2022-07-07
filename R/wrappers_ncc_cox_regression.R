@@ -367,7 +367,7 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   covariate_class <- sapply(data[, c(interaction1_var, interaction2_var)], class)
   stopifnot(all(covariate_class %in% c("factor")))
   
-  stopifnot(all(sapply(data[, c(interaction1_var, interaction2_var)], nlevels) == 2))
+  stopifnot(nlevels(data[, interaction2_var]) == 2)
   
   ### Keep non-missing data
   
@@ -450,8 +450,8 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
       match.int = match.int), silent = TRUE)
     
     
-    # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-    # h(mm)
+    mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
+    h(mm)
     
     
   }else{
@@ -475,6 +475,8 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   }else{
     
     ### Code from Joe to compute the HR and CIs of the treatment effect in the biomarker subgroups 
+    ### More general, the treatment has two levels and biomarker can have any number of levels
+    
     
     class(ipw_fit) <- "coxph"
     ipw_fit$score <- Inf
@@ -484,25 +486,22 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
     CI <- 0.95
     z <- qnorm((1 + CI)/2, 0, 1)
     
-    coef_indx <- length(ipw_fit$coefficients)
+    coef_indx <- grep(":", names(ipw_fit$coefficients))
+    coef_indx
     
     vc <- vcov(ipw_fit)[1, coef_indx]
-    old <- diag((vcov(ipw_fit)))[c(1, coef_indx)]
-    old_var <- sum((old))
+    old_var <- diag((vcov(ipw_fit)))[1] + diag((vcov(ipw_fit)))[coef_indx]
     se_new <- sqrt(old_var + 2*vc)
     
-    est <- exp(coefficients(ipw_fit))
-    low <- exp(coefficients(ipw_fit) - z*sqrt(diag(vcov(ipw_fit))))
-    high <- exp(coefficients(ipw_fit) + z*sqrt(diag(vcov(ipw_fit))))
-    
-    cf <- coefficients(ipw_fit)[c(1, coef_indx)] %>% sum
+    cf <- coefficients(ipw_fit)[1] + coefficients(ipw_fit)[coef_indx]
     bm_hr <- exp(cf)
     bm_hr_low <- exp(cf - z*se_new)
     bm_hr_high <- exp(cf + z*se_new)
     
-    # vals = rbind('WT'=c(est[c(1)],low[c(1)],high[c(1)]),'BM+'=c(bm_hr,bm_hr_low,bm_hr_high))
-    # colnames(vals) = c("HR","Lower","Upper")
-    # vals
+    
+    est <- exp(coefficients(ipw_fit))
+    low <- exp(coefficients(ipw_fit) - z*sqrt(diag(vcov(ipw_fit))))
+    high <- exp(coefficients(ipw_fit) + z*sqrt(diag(vcov(ipw_fit))))
     
     
     conf_int <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])), 
@@ -514,8 +513,48 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
     colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
     
     
+    
+    ### Code from Joe to compute the HR and CIs of the treatment effect in the biomarker subgroups 
+    ### The treatment and biomarker have two levels
+    
+    # class(ipw_fit) <- "coxph"
+    # ipw_fit$score <- Inf
+    # 
+    # ipw_summ <- summary(ipw_fit)
+    # 
+    # CI <- 0.95
+    # z <- qnorm((1 + CI)/2, 0, 1)
+    # 
+    # coef_indx <- length(ipw_fit$coefficients)
+    # coef_indx
+    # 
+    # vc <- vcov(ipw_fit)[1, coef_indx]
+    # old <- diag((vcov(ipw_fit)))[c(1, coef_indx)]
+    # old_var <- sum((old))
+    # se_new <- sqrt(old_var + 2*vc)
+    # 
+    # cf <- sum(coefficients(ipw_fit)[c(1, coef_indx)])
+    # bm_hr <- exp(cf)
+    # bm_hr_low <- exp(cf - z*se_new)
+    # bm_hr_high <- exp(cf + z*se_new)
+    # 
+    # est <- exp(coefficients(ipw_fit))
+    # low <- exp(coefficients(ipw_fit) - z*sqrt(diag(vcov(ipw_fit))))
+    # high <- exp(coefficients(ipw_fit) + z*sqrt(diag(vcov(ipw_fit))))
+    # 
+    # 
+    # conf_int <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])), 
+    #   "exp(coef)" = c(est[1], bm_hr),
+    #   "lower .95" = c(low[1], bm_hr_low),
+    #   "upper .95" = c(high[1], bm_hr_high),
+    #   stringsAsFactors = FALSE, row.names = NULL)
+    # 
+    # colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
+    
+
+    
     coefficients <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])),
-      "Pr(>|z|)" = c(ipw_summ$coefficients[coef_indx, "Pr(>|z|)"], NA), 
+      "Pr(>|z|)" = c(NA, ipw_summ$coefficients[coef_indx, "Pr(>|z|)"]), 
       stringsAsFactors = FALSE, row.names = NULL)
     
     colnames(coefficients) <- c("coefficient", "pvalue")
@@ -557,7 +596,7 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   out3 <- data.frame(
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
     `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
-    `P-value` = format_pvalues(res$pvalue, non_empty = 1),
+    `P-value` = format_pvalues(res$pvalue, non_empty = -1),
     check.names = FALSE, stringsAsFactors = FALSE)
   
   
