@@ -231,7 +231,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   
   
   
-  if(lfc_prefix %in% c("logFC", "NES")){
+  if(lfc_prefix %in% c("logFC", "NES", "statistic")){
     pval_cut <- c(-1, 1e-10, 1e-08, 1e-06, 1e-04, 0.01, 1)
     pval_cut_labels <- formatC(pval_cut, format = "g", digits = 1)
   }else{
@@ -244,7 +244,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut_labels[-1]))
   
   
-  if(lfc_prefix %in% c("logFC", "NES")){
+  if(lfc_prefix %in% c("logFC", "NES", "statistic")){
     radius_breaks = 1:(length(pval_cut) - 1)
     radius_limits = c(1, length(pval_cut) - 1)
     radius_labels = pval_cut_labels[-1]

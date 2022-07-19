@@ -28,7 +28,6 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
-  covariate_vars <- c(covariate_vars, ncc_vars)
   
   stopifnot(isValidAndUnreservedName(c(tte_var, censor_var, covariate_vars, samplestat_var, return_vars)))
   
@@ -49,6 +48,18 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
   stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
   
   
+  # All elements going into the formula should have length equal to the number of subjects in the cohort. Generally some of the covariates are not known for all subjects in the cohort (due to the NCC-sampling). The covariate values for those subjects should just be given some value e.g. 0 (not NA). Which value is not important as the values are never used.
+  
+  for(i in seq_along(ncc_vars)){
+    # i = 1
+    
+    ncc_var <- ncc_vars[i]
+    
+    data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    
+  }
+  
+
   ### Keep non-missing data
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars)]), , drop = FALSE]
@@ -140,6 +151,8 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
     
     f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
     
+    # head(model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data))
+    
     
     ## Fit the Cox model with WPL
  
@@ -161,10 +174,6 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
       ipw_fit$score <- Inf
       ipw_summ <- summary(ipw_fit)
     }
-    
-    
-    # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-    # h(mm)
     
     
   }else{
@@ -320,7 +329,7 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
 #' @param data Data frame preprocessed for the NCC analysis with 'multipleNCC::wpl()'.
 #' @param tte_var Name of the time-to-event variable. This variable must be numeric.
 #' @param censor_var Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.
-#' @param interaction1_var Names of the first interaction variable. It would correspond to the biomarker. This variable must be a factor with two levels.
+#' @param interaction1_var Names of the first interaction variable. It would correspond to the biomarker. This variable must be a factor.
 #' @param interaction2_var Name of the second interaction variable. It would correspond to the treatment arm. This variable must be a factor with two levels.
 #' @param covariate_vars Vector with names of covariates that are included in the formula of the additive model.
 #' @param ncc_vars Vector of names of covariates that were measured in the NCC.
@@ -334,14 +343,13 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero count, results are set to NAs because this levels is not used as a reference which means that it is not possible to fit the model that we want.
 #' @export
-wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, ncc_vars = NULL, samplestat_var, m, match.var, match.int, variable_names = NULL, caption = NULL, print_pvalues = TRUE){
+wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars = NULL, ncc_vars, samplestat_var, m, match.var, match.int, variable_names = NULL, caption = NULL, print_pvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
-  covariate_vars <- c(covariate_vars, ncc_vars)
   
   stopifnot(isValidAndUnreservedName(c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars, samplestat_var)))
   
@@ -369,6 +377,20 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   
   stopifnot(nlevels(data[, interaction2_var]) == 2)
   
+  
+  # All elements going into the formula should have length equal to the number of subjects in the cohort. Generally some of the covariates are not known for all subjects in the cohort (due to the NCC-sampling). The covariate values for those subjects should just be given some value e.g. 0 (not NA). Which value is not important as the values are never used.
+  
+  for(i in seq_along(ncc_vars)){
+    # i = 1
+    
+    ncc_var <- ncc_vars[i]
+    
+    data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    
+  }
+  
+  
+  
   ### Keep non-missing data
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_vars)]), , drop = FALSE]
@@ -392,8 +414,13 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   
   ## Check if the first level has non zero counts so it can be used as a reference group in the regression
   ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+
   
-  tbl <- table(data[as.logical(data[, samplestat_var]), interaction1_var])
+  if(interaction1_var %in% ncc_vars){
+    tbl <- table(data[as.logical(data[, samplestat_var]), interaction1_var])
+  }else{
+    tbl <- table(data[, interaction1_var])
+  }
   
   
   if(tbl[1] > 0){
@@ -415,7 +442,9 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   coef_info <- out
   
   
-  coef_info$n_total <- nrow(data[as.logical(data[, samplestat_var]), ])
+  coef_info$n_total <- nrow(data)
+  
+  coef_info$n_total[coef_info$covariate %in% ncc_vars] <- nrow(data[as.logical(data[, samplestat_var]), ])
   
   coef_info$coefficient <- paste0(coef_info$covariate, coef_info$subgroup)
   
@@ -486,7 +515,7 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
     CI <- 0.95
     z <- qnorm((1 + CI)/2, 0, 1)
     
-    coef_indx <- grep(":", names(ipw_fit$coefficients))
+    coef_indx <- grep(paste0(":", interaction1_var), names(ipw_fit$coefficients))
     coef_indx
     
     vc <- vcov(ipw_fit)[1, coef_indx]
@@ -645,6 +674,381 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
 }
 
 
+
+
+#' Cox regression with additive model with interactions for Nested Case-Control NCC study
+#' 
+#' Returns HRs with treatment effects in the biomarker subgroups and p-value of the interaction term
+#' 
+#' @param data Data frame preprocessed for the NCC analysis with 'multipleNCC::wpl()'.
+#' @param tte_var Name of the time-to-event variable. This variable must be numeric.
+#' @param censor_var Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.
+#' @param interaction1_var Names of the first interaction variable. It would correspond to the biomarker. This variable must be a factor.
+#' @param interaction2_var Name of the second interaction variable. It would correspond to the treatment arm. This variable must be a factor with two levels.
+#' @param covariate_prog_vars Vector with names of prognostic covariates that are included in the formula of the additive model.
+#' @param covariate_pred_vars Vector with names of predictive covariates that are included in the formula of the additive model.
+#' @param ncc_vars Vector of names of covariates that were measured in the NCC.
+#' @param samplestat_var Name of variable indicating samplestat values. See 'multipleNCC::wpl()'.
+#' @param m See 'multipleNCC::wpl()'.
+#' @param match.var See 'multipleNCC::wpl()'. It has to be a matrix of continuous values. 
+#' @param match.int See 'multipleNCC::wpl()'.
+#' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
+#' @param caption Caption for the table with results.
+#' @param print_pvalues Logical. Whether to print p-values.
+#' @details 
+#' If for a factor covariate that should be returned the reference level has zero count, results are set to NAs because this levels is not used as a reference which means that it is not possible to fit the model that we want.
+#' @export
+wrapper_ncc_cox_regression_core_predictive2 <- function(data, tte_var, censor_var, interaction1_var, interaction2_var, covariate_prog_vars = NULL, covariate_pred_vars = NULL, ncc_vars, samplestat_var, m, match.var, match.int, variable_names = NULL, caption = NULL, print_pvalues = TRUE){
+  
+  
+  # --------------------------------------------------------------------------
+  # Check about input data and some preprocessing
+  # --------------------------------------------------------------------------
+  
+  
+  stopifnot(isValidAndUnreservedName(c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_prog_vars, covariate_pred_vars, samplestat_var)))
+  
+  stopifnot(is.data.frame(data))
+  
+  stopifnot(type(match.var) == "double")
+  
+  ## Time to event variable must be numeric
+  stopifnot(length(tte_var) == 1)
+  stopifnot(is.numeric(data[, tte_var]))
+  
+  ## Censor variable must be numeric and encode 1 for event and 0 for censor
+  stopifnot(length(censor_var) == 1)
+  stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1, NA)))
+  
+  
+  covariate_class <- sapply(data[, c(covariate_prog_vars, covariate_pred_vars)], class)
+  stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
+  
+  
+  ### ARM must have two levels
+  
+  covariate_class <- sapply(data[, c(interaction1_var, interaction2_var)], class)
+  stopifnot(all(covariate_class %in% c("factor")))
+  
+  stopifnot(nlevels(data[, interaction2_var]) == 2)
+  
+  # All elements going into the formula should have length equal to the number of subjects in the cohort. Generally some of the covariates are not known for all subjects in the cohort (due to the NCC-sampling). The covariate values for those subjects should just be given some value e.g. 0 (not NA). Which value is not important as the values are never used.
+  
+  for(i in seq_along(ncc_vars)){
+    # i = 1
+    
+    ncc_var <- ncc_vars[i]
+    
+    data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    
+  }
+  
+  
+  ### Keep non-missing data
+  
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_var, interaction2_var, covariate_prog_vars, covariate_pred_vars)]), , drop = FALSE]
+  
+  # stopifnot(nrow(data) > 0)
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
+  
+  # --------------------------------------------------------------------------
+  # Generate data frame with coefficient names and levels and information about reference groups
+  # In the function we need that only for the BIOMARKER because we return treatment effects within biomarker subgroups
+  # --------------------------------------------------------------------------
+  
+  
+  # -----------------------------------
+  # Number of samples 
+  # -----------------------------------
+  
+  ## We use this way of calculating number of events because survfit does not return results for levels with zero counts.
+  
+  ## Check if the first level has non zero counts so it can be used as a reference group in the regression
+  ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+  
+  
+  if(interaction1_var %in% ncc_vars){
+    tbl <- table(data[as.logical(data[, samplestat_var]), interaction1_var])
+  }else{
+    tbl <- table(data[, interaction1_var])
+  }
+  
+  
+  if(tbl[1] > 0){
+    reference_indx <- 1
+    names(reference_indx) <- names(tbl[1])
+  }else{
+    reference_indx <- rev(which(tbl > 0))[1]
+  }
+  
+  
+  out <- data.frame(covariate = interaction1_var, covariate_class = "factor", subgroup = levels(data[, interaction1_var]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), 
+    stringsAsFactors = FALSE)
+  
+  out$HR_non_empty <- rep(TRUE, nrow(out))
+  
+  out$coefficient <- paste0(out$covariate, "=", out$subgroup)
+  
+  
+  coef_info <- out
+  
+  
+  coef_info$n_total <- nrow(data)
+  
+  coef_info$n_total[coef_info$covariate %in% ncc_vars] <- nrow(data[as.logical(data[, samplestat_var]), ])
+  
+  coef_info$coefficient <- paste0(coef_info$covariate, coef_info$subgroup)
+  
+  rownames(coef_info) <- coef_info$coefficient
+  
+  
+  # --------------------------------------------------------------------------
+  # Cox regression with Weighted partial likelihood for nested case-control data
+  # --------------------------------------------------------------------------
+  
+  if(nrow(data) > 0){
+    
+    ## Create the formula following the code from Joe 
+    
+    # formula_covariates <- paste0(paste0(c(interaction2_var, covariate_prog_vars, covariate_pred_vars), collapse = " + "), " + ", interaction2_var, "*", interaction1_var)
+    
+    formula_covariates <- paste0(paste0(c(interaction2_var, covariate_prog_vars, covariate_pred_vars), collapse = " + "), " + ", paste0(paste0(interaction2_var, "*", c(covariate_pred_vars, interaction1_var)), collapse = " + "))
+    
+    formula_model <- formula_covariates
+    
+    f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
+    
+    # head(model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data))
+    
+    
+    ## Fit the Cox model with WPL
+    
+    ipw_fit <- NULL
+    
+    try(ipw_fit <- multipleNCC::wpl(f,
+      data = data, 
+      samplestat = data[, samplestat_var], 
+      m = m, 
+      weight.method = "KM",
+      match.var = match.var,
+      match.int = match.int), silent = TRUE)
+    
+    
+  }else{
+    
+    ipw_fit <- NULL
+    
+  }
+  
+  
+  
+  # --------------------------------------------------------------------------
+  # Parse the regression summary
+  # --------------------------------------------------------------------------
+  
+  
+  if(is.null(ipw_fit)){
+    
+    conf_int <- data.frame(coefficient = coef_info$coefficient, HR = NA, HR_CI95_lower = NA, HR_CI95_upper = NA, stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = coef_info$coefficient, pvalue = NA, stringsAsFactors = FALSE)
+    
+  }else{
+    
+    class(ipw_fit) <- "coxph"
+    ipw_fit$score <- Inf
+    
+    ipw_summ <- summary(ipw_fit)
+    
+    # exp(confint(ipw_fit))
+    
+    ### Code from Joe to compute the HR and CIs of the treatment effect in the biomarker subgroups 
+    ### More general, the treatment has two levels and biomarker can have any number of levels
+    
+    
+    CI <- 0.95
+    z <- qnorm((1 + CI)/2, 0, 1)
+    
+    coef_indx <- grep(paste0(":", interaction1_var), names(ipw_fit$coefficients))
+    coef_indx
+    
+    ### Coeffs and CIs for the treatment effects 
+    
+    vc <- vcov(ipw_fit)[1, coef_indx]
+    old_var <- diag((vcov(ipw_fit)))[1] + diag((vcov(ipw_fit)))[coef_indx]
+    se_new <- sqrt(old_var + 2*vc)
+    
+    cf <- coefficients(ipw_fit)[1] + coefficients(ipw_fit)[coef_indx]
+    bm_hr <- exp(cf)
+    bm_hr_low <- exp(cf - z*se_new)
+    bm_hr_high <- exp(cf + z*se_new)
+    
+    
+    ### Coeffs and CIs for the original model coefficients 
+    
+    est <- exp(coefficients(ipw_fit))
+    low <- exp(coefficients(ipw_fit) - z*sqrt(diag(vcov(ipw_fit))))
+    high <- exp(coefficients(ipw_fit) + z*sqrt(diag(vcov(ipw_fit))))
+    
+    
+    conf_int <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])), 
+      "exp(coef)" = c(est[1], bm_hr),
+      "lower .95" = c(low[1], bm_hr_low),
+      "upper .95" = c(high[1], bm_hr_high),
+      stringsAsFactors = FALSE, row.names = NULL)
+    
+    colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
+    
+
+    
+    ### Use multcomp::glht for contrasts 
+    
+    # K <- rep(0, length(coefficients(ipw_fit)))
+    # K[c(1, coef_indx[1])] <- 1
+    # 
+    # K <- matrix(K, nrow = 1, ncol = length(K))
+    # 
+    # glht_tmp <- multcomp::glht(ipw_fit, linfct = K)
+    # 
+    # summary_tmp <- summary(glht_tmp)
+    # 
+    # glht_conf_int <- confint(glht_tmp)
+    # 
+    # exp(glht_conf_int$confint)
+    
+    
+    
+    
+    ### Code from Joe to compute the HR and CIs of the treatment effect in the biomarker subgroups 
+    ### The treatment and biomarker have two levels
+    
+    # class(ipw_fit) <- "coxph"
+    # ipw_fit$score <- Inf
+    # 
+    # ipw_summ <- summary(ipw_fit)
+    # 
+    # CI <- 0.95
+    # z <- qnorm((1 + CI)/2, 0, 1)
+    # 
+    # coef_indx <- length(ipw_fit$coefficients)
+    # coef_indx
+    # 
+    # vc <- vcov(ipw_fit)[1, coef_indx]
+    # old <- diag((vcov(ipw_fit)))[c(1, coef_indx)]
+    # old_var <- sum((old))
+    # se_new <- sqrt(old_var + 2*vc)
+    # 
+    # cf <- sum(coefficients(ipw_fit)[c(1, coef_indx)])
+    # bm_hr <- exp(cf)
+    # bm_hr_low <- exp(cf - z*se_new)
+    # bm_hr_high <- exp(cf + z*se_new)
+    # 
+    # est <- exp(coefficients(ipw_fit))
+    # low <- exp(coefficients(ipw_fit) - z*sqrt(diag(vcov(ipw_fit))))
+    # high <- exp(coefficients(ipw_fit) + z*sqrt(diag(vcov(ipw_fit))))
+    # 
+    # 
+    # conf_int <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])), 
+    #   "exp(coef)" = c(est[1], bm_hr),
+    #   "lower .95" = c(low[1], bm_hr_low),
+    #   "upper .95" = c(high[1], bm_hr_high),
+    #   stringsAsFactors = FALSE, row.names = NULL)
+    # 
+    # colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
+    
+    
+    
+    coefficients <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])),
+      "Pr(>|z|)" = c(NA, ipw_summ$coefficients[coef_indx, "Pr(>|z|)"]), 
+      stringsAsFactors = FALSE, row.names = NULL)
+    
+    colnames(coefficients) <- c("coefficient", "pvalue")
+    
+    
+  }
+  
+  
+  # --------------------------------------------------------------------------
+  # Append results from regression
+  # --------------------------------------------------------------------------
+  
+  
+  coef_info <- coef_info %>% 
+    dplyr::left_join(conf_int, by = "coefficient") %>% 
+    dplyr::left_join(coefficients, by = "coefficient")
+  
+  
+  
+  # --------------------------------------------------------------------------
+  # Return results for all the covariates
+  # --------------------------------------------------------------------------
+  
+  res <- coef_info
+  
+  # --------------------------------------------------------------------------
+  # Prepare the output data frame that will be displayed. All columns in `out` are characters.
+  # --------------------------------------------------------------------------
+  
+  
+  out1 <- data.frame(
+    Covariate = variable_names[res$covariate], 
+    Subgroup = as.character(res$subgroup),
+    `Total N` = as.character(res$n_total),
+    `N` = format_difference(res$n, digits = 0),
+    check.names = FALSE, stringsAsFactors = FALSE)
+  
+  
+  out3 <- data.frame(
+    `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
+    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
+    `P-value` = format_pvalues(res$pvalue, non_empty = -1),
+    check.names = FALSE, stringsAsFactors = FALSE)
+  
+  
+  out <- cbind(out1, out3) 
+  
+  
+  stopifnot(all(sapply(out, class) == "character"))
+  
+  
+  if(!print_pvalues){
+    out$`P-value` <- NULL
+    out$`Adj. P-value` <- NULL
+  }
+  
+  
+  
+  ### Set repeating Covariate names to empty
+  out$Covariate[indicate_blocks(out, block_vars = "Covariate", return = "empty")] <- ""
+  
+  
+  # --------------------------------------------------------------------------
+  ### Generate caption
+  # --------------------------------------------------------------------------
+  
+  
+  if(is.null(caption)){
+    
+    caption <- paste0("Treatment effect on ", variable_names[tte_var], " within ", variable_names[interaction1_var], " subgroups. ", 
+      "NCC Cox regression model includes: ", paste0(variable_names[c(covariate_prog_vars, covariate_pred_vars, interaction1_var, interaction2_var)], collapse = ", "), " and interaction term between ", variable_names[interaction2_var], " and ", paste0(variable_names[c(covariate_pred_vars, interaction1_var)], collapse = ", "), ".")
+    
+  }
+  
+  
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
+  caption <- gsub("_", " ", caption)
+  
+  
+  rownames(res) <- NULL
+  rownames(out) <- NULL
+  
+  bout <- BclassTesting(results = res, output = out, caption = caption)
+  
+  
+  return(bout)
+  
+}
 
 
 
