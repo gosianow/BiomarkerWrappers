@@ -10,7 +10,7 @@
 #' @param data Data frame.
 #' @param tte_var Name of the time-to-event variable. This variable must be numeric.
 #' @param censor_var Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.
-#' @param covariate_vars Vector with names of covariates that are included in the formula of the simple additive model.
+#' @param covariate_vars Vector with names of covariates that are included in the formula of the simple additive model: ~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....
 #' @param strata_vars Vector with names of covariates that are used as strata.
 #' @param return_vars Vector with names of covariates for which the statistics should be returned. If NULL, statistics are returned for all covariates.
 #' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
@@ -493,8 +493,8 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
 
 #' @rdname wrapper_cox_regression_core_simple 
 #' 
-#' @param strat1_var Name of the first stratification variable.
-#' @param strat2_var Name of the second stratification variable.
+#' @param strat1_var Name of the first stratification variable used for splitting the data.
+#' @param strat2_var Name of the second stratification variable used for splitting the data.
 #' 
 #' @examples 
 #' 
@@ -658,7 +658,9 @@ wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, 
 #' 
 #' @inheritParams wrapper_cox_regression_core_simple_strat
 #' @param biomarker_vars Vector of biomarker names.
-#' @param adjustment_vars Vector of covariate names used for adjustment.
+#' @param treatment_var Name of the variable with treatment arms. If provided the biomarker effect is tested per arm.
+#' @param adjustment_vars Vector of covariate names used for adjustment in the model.
+#' @param strata_vars Vector of covariates used as stratification factors in the model.
 #' @export
 wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE){
   
@@ -775,10 +777,13 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 
 #' Cox regression estimating treatment effect within biomarker subgroups
 #' 
+#' For this analysis biomarkers must be categorical.
+#' 
 #' @inheritParams wrapper_cox_regression_core_simple_strat
-#' @param treatment_var Name of column with treatment information.
+#' @param treatment_var Name of the variable with treatment arms.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
-#' @param adjustment_vars Vector of covariate names used for adjustment.
+#' @param adjustment_vars Vector of covariate names used for adjustment in the model.
+#' @param strata_vars Vector of covariates used as stratification factors in the model.
 #' @export
 wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE){
   

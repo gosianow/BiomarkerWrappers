@@ -37,7 +37,7 @@ wrapper_cox_regression_interaction(
 
 \item{strat1_var}{Name of the second stratification variable.}
 
-\item{strat2_var}{Name of the second stratification variable.}
+\item{strat2_var}{Name of the second stratification variable used for splitting the data.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 

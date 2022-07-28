@@ -31,15 +31,15 @@ wrapper_cox_regression_treatment(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{treatment_var}{Name of column with treatment information.}
+\item{treatment_var}{Name of the variable with treatment arms.}
 
 \item{biomarker_vars}{Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.}
 
-\item{adjustment_vars}{Vector of covariate names used for adjustment.}
+\item{adjustment_vars}{Vector of covariate names used for adjustment in the model.}
 
-\item{strata_vars}{Vector with names of covariates that are used as strata.}
+\item{strata_vars}{Vector of covariates used as stratification factors in the model.}
 
-\item{strat2_var}{Name of the second stratification variable.}
+\item{strat2_var}{Name of the second stratification variable used for splitting the data.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
@@ -58,5 +58,5 @@ wrapper_cox_regression_treatment(
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 }
 \description{
-Cox regression estimating treatment effect within biomarker subgroups
+For this analysis biomarkers must be categorical.
 }

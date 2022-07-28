@@ -33,11 +33,13 @@ wrapper_cox_regression_biomarker(
 
 \item{biomarker_vars}{Vector of biomarker names.}
 
-\item{adjustment_vars}{Vector of covariate names used for adjustment.}
+\item{treatment_var}{Name of the variable with treatment arms. If provided the biomarker effect is tested per arm.}
 
-\item{strata_vars}{Vector with names of covariates that are used as strata.}
+\item{adjustment_vars}{Vector of covariate names used for adjustment in the model.}
 
-\item{strat2_var}{Name of the second stratification variable.}
+\item{strata_vars}{Vector of covariates used as stratification factors in the model.}
+
+\item{strat2_var}{Name of the second stratification variable used for splitting the data.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
