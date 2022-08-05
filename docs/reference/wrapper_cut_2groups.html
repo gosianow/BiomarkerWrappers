@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.37</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
       </span>
     </div>
 
@@ -57,14 +57,21 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wrapper_cut_2groups</span><span class="op">(</span><span class="va">x</span>, probs <span class="op">=</span> <span class="fl">0.5</span>, cutoff <span class="op">=</span> <span class="cn">NULL</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span><span class="op">)</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wrapper_cut_2groups</span><span class="op">(</span>
+  <span class="va">x</span>,
+  probs <span class="op">=</span> <span class="fl">0.5</span>,
+  cutoff <span class="op">=</span> <span class="cn">NULL</span>,
+  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span>,
+  right <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span>
 
 <span class="fu">wrapper_cut_2groups_strat</span><span class="op">(</span>
   <span class="va">x</span>,
   <span class="va">strata</span>,
   probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fu"><a href="https://rdrr.io/r/base/nlevels.html" class="external-link">nlevels</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span><span class="op">)</span>,
   cutoff <span class="op">=</span> <span class="cn">NULL</span>,
-  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span>
+  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"low"</span>, <span class="st">"high"</span><span class="op">)</span>,
+  right <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -72,6 +79,7 @@
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Vector of continuous values to cut.</p></dd>
+
 </dl></div>
 
   </div>
@@ -86,7 +94,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

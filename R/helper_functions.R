@@ -247,10 +247,7 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
 #' My version of cut
 #' 
 #' @export
-cut2 <- function(x, breaks, labels = NULL, right = TRUE, dig.lab = 6, digits = 2){
-  
-  
-  breaks <- round(breaks, digits = digits)
+cut2 <- function(x, breaks, labels = NULL, right = TRUE, dig.lab = 3){
   
   breaks_orig <- breaks
   
@@ -420,6 +417,29 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = NULL, ncol = 2, nrow = NU
 
 
 
+#' Stratify data into quintiles
+#' 
+#' @param x Vector of continuous values to cut.
+#' 
+#' @export
+wrapper_cut_quintiles <- function(x, labels = c("[0%, 20%]", "(20%, 40%]", "(40%, 60%]", "(60%, 80%]", "(80%, 100%]")){
+  
+  stopifnot(length(labels) == 5)
+  
+  out <- NULL
+  
+  try(out <- ggplot2::cut_number(x, n = 5), silent = TRUE)
+  
+  if(!is.null(out)){
+    out <- factor(out, labels = labels)
+  }else{
+    out <- rep(NA, length(x))
+  }
+  
+  return(out)
+  
+}
+
 
 
 #' Stratify data into quartiles
@@ -503,7 +523,7 @@ wrapper_cut_median <- function(x, labels = c("<=MED", ">MED")){
 #' @param x Vector of continuous values to cut.
 #' 
 #' @export
-wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high")){
+wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high"), right = TRUE){
   
   stopifnot(length(probs) == 1)
   stopifnot(length(labels) == 2)
@@ -514,7 +534,36 @@ wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low",
   
   stopifnot(length(cutoff) == 1)
   
-  out <- factor(ifelse(x <= cutoff, labels[1], labels[2]), levels = labels)
+  if(right){
+    out <- factor(ifelse(x <= cutoff, labels[1], labels[2]), levels = labels)
+  }else{
+    out <- factor(ifelse(x < cutoff, labels[1], labels[2]), levels = labels)
+  }
+  
+  
+  return(out)
+  
+}
+
+
+#' @rdname wrapper_cut_quintiles
+#' @export
+wrapper_cut_quintiles_strat <- function(x, strata, labels = c("[0%, 20%]", "(20%, 40%]", "(40%, 60%]", "(60%, 80%]", "(80%, 100%]")){
+  
+  stopifnot(is.factor(strata))
+  
+  strata_levels <- levels(strata)
+  
+  out <- factor(rep(NA, length(x)), levels = labels)
+  
+  for(i in 1:length(strata_levels)){
+    # i = 1
+    
+    indx_sub <- which(strata %in% strata_levels[i])
+    
+    out[indx_sub] <- wrapper_cut_quintiles(x[indx_sub], labels = labels)
+    
+  }
   
   return(out)
   
@@ -598,7 +647,7 @@ wrapper_cut_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
 
 #' @rdname wrapper_cut_2groups
 #' @export
-wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high")){
+wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high"), right = TRUE){
   
   stopifnot(is.factor(strata))
   
@@ -617,7 +666,7 @@ wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- wrapper_cut_2groups(x[indx_sub], probs = probs[i], cutoff = cutoff[i], labels = labels) 
+    out[indx_sub] <- wrapper_cut_2groups(x[indx_sub], probs = probs[i], cutoff = cutoff[i], labels = labels, right = right) 
     
   }
   

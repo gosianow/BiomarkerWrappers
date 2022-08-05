@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.37</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
       </span>
     </div>
 
@@ -80,17 +80,25 @@
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Vector of categorical values for which we want to specify colors.</p></dd>
+
+
 <dt>colors</dt>
 <dd><p>Vector of colors longer or equal the number of unique levels of x. Can be named or non-named. If NULL, colors are generated.</p></dd>
+
+
 <dt>palette</dt>
-<dd><p>List with palettes for the different strata.</p></dd>
+<dd><p>Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Blues", "Spectral", "RdYlBu". Other possible values: "random", "d3_40_light_first", "d3_20", "d3_10", "paired", "ggplot", "Oranges2", "Blues2".</p></dd>
+
+
 <dt>strata</dt>
 <dd><p>Vector of categorical values of stratification groups.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Named vector of unique colors for all unique values of x.
-Named vector of unique colors for all unique values of x.</p>
+    
+
+<p>Named vector of unique colors for all unique values of x.</p>
     </div>
 
     <div id="ref-examples">
@@ -135,7 +143,7 @@ Named vector of unique colors for all unique values of x.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

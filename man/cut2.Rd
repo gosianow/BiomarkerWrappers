@@ -4,7 +4,7 @@
 \alias{cut2}
 \title{My version of cut}
 \usage{
-cut2(x, breaks, labels = NULL, right = TRUE, dig.lab = 6, digits = 2)
+cut2(x, breaks, labels = NULL, right = TRUE, dig.lab = 3)
 }
 \description{
 My version of cut

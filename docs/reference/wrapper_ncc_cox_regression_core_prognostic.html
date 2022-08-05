@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.37</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
       </span>
     </div>
 
@@ -79,30 +79,55 @@
     <h2>Arguments</h2>
     <dl><dt>data</dt>
 <dd><p>Data frame preprocessed for the NCC analysis with 'multipleNCC::wpl()'.</p></dd>
+
+
 <dt>tte_var</dt>
 <dd><p>Name of the time-to-event variable. This variable must be numeric.</p></dd>
+
+
 <dt>censor_var</dt>
 <dd><p>Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.</p></dd>
+
+
 <dt>covariate_vars</dt>
 <dd><p>Vector with names of covariates that are included in the formula of the simple additive model.</p></dd>
+
+
 <dt>ncc_vars</dt>
 <dd><p>Vector of names of covariates that were measured in the NCC.</p></dd>
+
+
 <dt>samplestat_var</dt>
 <dd><p>Name of variable indicating samplestat values. See 'multipleNCC::wpl()'.</p></dd>
+
+
 <dt>m</dt>
 <dd><p>See 'multipleNCC::wpl()'.</p></dd>
+
+
 <dt>match.var</dt>
 <dd><p>See 'multipleNCC::wpl()'. It has to be a matrix of continuous values.</p></dd>
+
+
 <dt>match.int</dt>
 <dd><p>See 'multipleNCC::wpl()'.</p></dd>
+
+
 <dt>return_vars</dt>
 <dd><p>Vector with names of covariates for which the statistics should be returned. If NULL, statistics are returned for all covariates.</p></dd>
+
+
 <dt>variable_names</dt>
 <dd><p>Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.</p></dd>
+
+
 <dt>caption</dt>
 <dd><p>Caption for the table with results.</p></dd>
+
+
 <dt>print_pvalues</dt>
 <dd><p>Logical. Whether to print p-values.</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -121,7 +146,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

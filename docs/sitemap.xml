@@ -310,6 +310,9 @@
     <loc>/reference/wrapper_cut_quartiles.html</loc>
   </url>
   <url>
+    <loc>/reference/wrapper_cut_quintiles.html</loc>
+  </url>
+  <url>
     <loc>/reference/wrapper_cut_tertiles.html</loc>
   </url>
   <url>
@@ -413,6 +416,9 @@
   </url>
   <url>
     <loc>/reference/wrapper_ncc_cox_regression_core_predictive.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wrapper_ncc_cox_regression_core_predictive2.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_ncc_cox_regression_core_prognostic.html</loc>

@@ -5,14 +5,21 @@
 \alias{wrapper_cut_2groups_strat}
 \title{Stratify data into two groups}
 \usage{
-wrapper_cut_2groups(x, probs = 0.5, cutoff = NULL, labels = c("low", "high"))
+wrapper_cut_2groups(
+  x,
+  probs = 0.5,
+  cutoff = NULL,
+  labels = c("low", "high"),
+  right = TRUE
+)
 
 wrapper_cut_2groups_strat(
   x,
   strata,
   probs = rep(0.5, nlevels(strata)),
   cutoff = NULL,
-  labels = c("low", "high")
+  labels = c("low", "high"),
+  right = TRUE
 )
 }
 \arguments{

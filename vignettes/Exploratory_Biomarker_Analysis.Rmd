@@ -67,7 +67,7 @@ library(BiomarkerWrappers)
 ```{r library2, echo = FALSE}
 
 
-# devtools::load_all()
+devtools::load_all()
 
 
 ```
@@ -175,6 +175,26 @@ wrapper_tile_plot2_core(bdata, y_vars = c("BCL2_by_IHC", "BCL2_by_FISH"))
 
 
 # Cox regression
+
+
+
+In `wrapper_cox_regression_core_simple()`, covariate_vars Vector with names of covariates that are included in the formula of the simple additive model: `~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ...`.
+
+This function is the core function and should not be used for the analysis, it is a function called by the other functions such as `wrapper_cox_regression_biomarker` and `wrapper_cox_regression_treatment`.
+
+In `wrapper_cox_regression_biomarker` and `wrapper_cox_regression_treatment`, `biomarker_vars` is a vector with biomarker names. For each biomarker a separate Cox regression model is fitted. The results are combined in a single table. 
+
+In `wrapper_cox_regression_biomarker` and `wrapper_cox_regression_treatment`, `adjustment_vars` are added additionally to `biomarker_vars` and `treatment_var` to the model, for example, `~ biomarker_vars[i] + treatment_var + adjustment_vars[1] + adjustment_vars[2] + ...`
+
+`adjustment_vars` would be the official stratification factors from the study plus any other variables you want to use for adjustment, for example, any other known prognostic factors.
+
+`strata_vars`, would be the same as `adjustment_vars`. The difference is that when you define `strata_vars` they are used in Cox regression as "true stratification factors" with the formula `~ biomarker_vars[i] + treatment_var + strata(strata_vars[1] + strata_vars[2] + ...)`
+
+See https://stats.stackexchange.com/questions/256148/stratification-in-cox-model
+
+`strat1_var`, `strat2_var` are used to split the data (I should call them `split1_var`, `split2_var`). Then the analysis is done within the subgroups of each of the variables. For example, if `strat2_var = "PDL1"`, the Cox regression is run separately within the PDL1 low and PDL1 high.
+
+
 
 
 ```{r cox_regression, results='asis', fig.width=20, fig.height=4}
@@ -370,7 +390,7 @@ tb <- tibble::tibble(x = 1, y = 1, label = list(tb))
 ggp <- wrapper_KM_plot_core(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = biomarker_var) 
 
 ggp +
-  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, table.theme = ggpp::ttheme_gtminimal)
+  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, vjust = 1, table.theme = ggpp::ttheme_gtminimal)
 
 
 
@@ -382,7 +402,7 @@ ggp +
 ```{r, fig.width=14, fig.height=6}
 
 
-### Display results from Cox regression as table on the KM plot using stratification
+### Display results from Cox regression as table on the KM plot using one-level stratification
 
 data <- bdata
 
@@ -394,22 +414,79 @@ treatment_var = "Treatment_Arm"
 
 x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_var, treatment_var = treatment_var, print_total = FALSE, print_adjpvalues = FALSE)
 
+### To have the same level order 
+
+bresults(x)[[treatment_var]] <- factor(bresults(x)[[treatment_var]], levels = levels(data[, treatment_var]))
+
 
 tb <- boutput(x)[, -c(1, 2)]
 
 tb <- split(tb, bresults(x)[[treatment_var]])
 
-tb <- tibble::tibble(x = c(0.5, 1), y = 1, label = tb)
+tb <- tibble::tibble(
+  x = seq_len(nlevels(data[, treatment_var])) / nlevels(data[, treatment_var]), 
+  y = 1, 
+  label = tb)
 
 
 ggp <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = biomarker_var, strat1_var = treatment_var) 
 
 ggp +
-  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, table.theme = ggpp::ttheme_gtminimal)
+  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, vjust = 1, table.theme = ggpp::ttheme_gtminimal)
 
 
 
 ```
+
+
+
+
+
+```{r, fig.width=14, fig.height=6*3}
+
+
+### Display results from Cox regression as table on the KM plot using two-level stratification
+
+data <- bdata
+
+tte_var <- "PFS"
+censor_var <- "PFS_Event"
+biomarker_var <- "GeneA_cat2"
+treatment_var = "Treatment_Arm"
+
+strat2_var <- "Cell_Of_Origin"
+
+
+x <- wrapper_cox_regression_biomarker(data, tte_var = tte_var, censor_var = censor_var, biomarker_vars = biomarker_var, treatment_var = treatment_var, strat2_var = strat2_var, print_total = FALSE, print_adjpvalues = FALSE)
+
+### To have the same level order 
+
+bresults(x)[[treatment_var]] <- factor(bresults(x)[[treatment_var]], levels = levels(data[, treatment_var]))
+bresults(x)[[strat2_var]] <- factor(bresults(x)[[strat2_var]], levels = levels(data[, strat2_var]))
+
+
+tb <- boutput(x)[, -c(1, 2, 3)]
+
+tb <- split(tb, list(bresults(x)[[treatment_var]], bresults(x)[[strat2_var]]))
+
+tb <- tibble::tibble(
+  x = rep(seq_len(nlevels(data[, treatment_var])) / nlevels(data[, treatment_var]), times = nlevels(data[, strat2_var])), 
+  y = rep(rev(seq_len(nlevels(data[, strat2_var])) / nlevels(data[, strat2_var])), each = nlevels(data[, treatment_var])), 
+  label = tb)
+
+
+ggp <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = biomarker_var, strat1_var = treatment_var, strat2_var = strat2_var, strat1_label_both = FALSE, strat2_label_both = FALSE) 
+
+ggp +
+  ggpp::geom_table_npc(data = tb, aes(npcx = x, npcy = y, label = label), size = 3, hjust = 1, vjust = 1, table.theme = ggpp::ttheme_gtminimal)
+
+
+
+
+
+```
+
+
 
 
 ## Curves per treatment arm and biomarker subgroups in one plot
