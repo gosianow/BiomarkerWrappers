@@ -118,7 +118,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   
   if(method == "z-score"){
     
-    zscore <- apply(x[, -1], 2, scale, center = TRUE, scale = scale)
+    zscore <- apply(x[, -1, drop = FALSE], 2, scale, center = TRUE, scale = scale)
     colnames(zscore) <- colnames(x)[-1]
     
     x <- data.frame(group = group, zscore, check.names = FALSE)

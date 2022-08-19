@@ -309,7 +309,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   scale_y_continuous_custome = scale_y_continuous(), 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5,
   background_grid_major = "none", 
-  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
+  strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE, return_list = FALSE){
   
   
   if(!is.null(strat1_var)){
@@ -451,17 +451,22 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
       
     }
     
-    ggpl <- plot_grid(plotlist = ggpl, nrow = strat1_nrow, ncol = strat1_ncol)
+    
+    if(!return_list){
+      ggpl <- plot_grid(plotlist = ggpl, nrow = strat1_nrow, ncol = strat1_ncol)
+    }
     
     return(ggpl)
     
   })
   
   
-  ggpl <- plot_grid(plotlist = ggpl, nrow = strat2_nrow, ncol = strat2_ncol)
+  if(!return_list){
+    ggpl <- plot_grid(plotlist = ggpl, nrow = strat2_nrow, ncol = strat2_ncol)
+  }
   
+  return(ggpl)
   
-  ggpl
   
   
 }
