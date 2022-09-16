@@ -5,20 +5,24 @@
 \alias{wrapper_cut_quartiles_strat}
 \title{Stratify data into quartiles}
 \usage{
-wrapper_cut_quartiles(
-  x,
-  labels = c("[0\%, 25\%]", "(25\%, 50\%]", "(50\%, 75\%]", "(75\%, 100\%]")
-)
+wrapper_cut_quartiles(x, labels = NULL, right = TRUE)
 
-wrapper_cut_quartiles_strat(
-  x,
-  strata,
-  labels = c("[0\%, 25\%]", "(25\%, 50\%]", "(50\%, 75\%]", "(75\%, 100\%]")
-)
+wrapper_cut_quartiles_strat(x, strata, labels = NULL, right = TRUE)
 }
 \arguments{
 \item{x}{Vector of continuous values to cut.}
 }
 \description{
 Stratify data into quartiles
+}
+\examples{
+
+set.seed(123)
+x <- sample.int(n = 100, replace = TRUE)
+x
+strata <- factor(rep(c("A", "B"), each = 50))
+strata 
+
+wrapper_cut_quartiles_strat(x = x, strata = strata)
+
 }

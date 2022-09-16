@@ -16,7 +16,7 @@
 #' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
 #' @param caption Caption for the table with results.
 #' @param force_empty_cols Logical. Whether to display output columns which are all empty.
-#' @param sr_times Vector of times used to compute survival rates.
+#' @param sr_times Vector of times used to compute survival rates, for example, 3-year IDSF %.
 #' @param print_nevent Logical. Whether to print numbers of events.
 #' @param print_mst Logical. Whether to print median survival time (MST).
 #' @param print_total Logical. Whether to print total number of samples and total number of events.
@@ -377,7 +377,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     check.names = FALSE, stringsAsFactors = FALSE)
   
   
-  if(!is.null(sr_times)){
+  if(any(colnames(res) %in% paste0("SR", sr_times))){
     
     out2 <- lapply(seq_along(sr_times), function(j){
       # j = 1

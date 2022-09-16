@@ -5,18 +5,9 @@
 \alias{wrapper_cut_quintiles_strat}
 \title{Stratify data into quintiles}
 \usage{
-wrapper_cut_quintiles(
-  x,
-  labels = c("[0\%, 20\%]", "(20\%, 40\%]", "(40\%, 60\%]", "(60\%, 80\%]",
-    "(80\%, 100\%]")
-)
+wrapper_cut_quintiles(x, labels = NULL, right = TRUE)
 
-wrapper_cut_quintiles_strat(
-  x,
-  strata,
-  labels = c("[0\%, 20\%]", "(20\%, 40\%]", "(40\%, 60\%]", "(60\%, 80\%]",
-    "(80\%, 100\%]")
-)
+wrapper_cut_quintiles_strat(x, strata, labels = NULL, right = TRUE)
 }
 \arguments{
 \item{x}{Vector of continuous values to cut.}

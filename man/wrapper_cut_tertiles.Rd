@@ -5,9 +5,9 @@
 \alias{wrapper_cut_tertiles_strat}
 \title{Stratify data into tertiles}
 \usage{
-wrapper_cut_tertiles(x, labels = c("low", "mid", "high"))
+wrapper_cut_tertiles(x, labels = NULL, right = TRUE)
 
-wrapper_cut_tertiles_strat(x, strata, labels = c("low", "mid", "high"))
+wrapper_cut_tertiles_strat(x, strata, labels = NULL, right = TRUE)
 }
 \arguments{
 \item{x}{Vector of continuous values to cut.}

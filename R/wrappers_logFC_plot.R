@@ -50,7 +50,7 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
     
     x[is.na(x)] <- 1
     
-    pval_asterisk <- ifelse(x < 0.0001, "****", ifelse(x < 0.001, "***", ifelse(x < 0.01, "**", ifelse(x < 0.05, "*", ifelse(x < 0.1, ".", "")))))
+    pval_asterisk <- ifelse(x <= 0.0001, "****", ifelse(x <= 0.001, "***", ifelse(x <= 0.01, "**", ifelse(x <= 0.05, "*", ifelse(x <= 0.1, ".", "")))))
     
     pval_asterisk
     
@@ -164,11 +164,6 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
 
 
 
-
-
-
-
-
 #' Dot plot with logFC and p-values for multiple contrasts
 #' 
 #' @param x TopTable
@@ -198,28 +193,29 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   
   
   data_lfc <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_lfc, stringsAsFactors = FALSE, check.names = FALSE), 
-    cols = contrasts, names_to = "contrast", values_to = lfc_prefix)
+    cols = all_of(contrasts), names_to = "contrast", values_to = lfc_prefix)
   
   data_pval <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_pval, stringsAsFactors = FALSE, check.names = FALSE), 
-    cols = contrasts, names_to = "contrast", values_to = pval_prefix)
+    cols = all_of(contrasts), names_to = "contrast", values_to = pval_prefix)
   
   data_adjp <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE, check.names = FALSE), 
-    cols = contrasts, names_to = "contrast", values_to = adjp_prefix)
+    cols = all_of(contrasts), names_to = "contrast", values_to = adjp_prefix)
   
   
   if(pval_prefix == adjp_prefix){
     data <- data_lfc %>% 
       dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
-      as.data.frame()
+      data.frame()
   }else{
     data <- data_lfc %>% 
       dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
       dplyr::left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
-      as.data.frame()
+      data.frame()
   }
   
   
-  data$significance <- factor(ifelse(data[, adjp_prefix] < pval, paste0("<", pval), paste0(">=", pval)), levels = paste0(c("<", ">="), pval))
+  data$significance <- factor(ifelse(data[, adjp_prefix] <= pval, paste0("<=", pval), paste0(">", pval)), levels = paste0(c("<=", ">"), pval))
+  
   values_shape <- c(4, 32)
   names(values_shape) <- levels(data$significance)
   
@@ -232,7 +228,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   
   
   if(lfc_prefix %in% c("logFC", "NES", "statistic")){
-    pval_cut <- c(-1, 1e-10, 1e-08, 1e-06, 1e-04, 0.01, 1)
+    pval_cut <- c(-1, 1e-10, 1e-08, 1e-06, 1e-04, 0.01, 0.05, 1)
     pval_cut_labels <- formatC(pval_cut, format = "g", digits = 1)
   }else{
     ### Trick to make larger contrast in circle size between significant and not significant
@@ -241,7 +237,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   }
   
   
-  data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut_labels[-1]))
+  data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut_labels[-1], right = TRUE))
   
   
   if(lfc_prefix %in% c("logFC", "NES", "statistic")){
@@ -285,9 +281,10 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
       legend.position = legend_position) +
     panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
-    scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) +
-    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) + 
-    scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE)
+    scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
+    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
+    scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) 
+  
   
   
   # This is great. squish in this context converts clamps all values to be within the min and max of the limits argument. i.e., if value < min(limits) then value = min(limits) else if value > max(limits) then value = max(limits).

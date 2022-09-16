@@ -95,7 +95,8 @@ wrapper_line_plot_core_strat(
   strat1_ncol = NULL,
   strat2_nrow = NULL,
   strat2_ncol = 1,
-  less_legends = FALSE
+  less_legends = FALSE,
+  return_list = FALSE
 )
 }
 \arguments{

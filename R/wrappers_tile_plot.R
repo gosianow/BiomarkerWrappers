@@ -240,6 +240,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
       tbl_y_var <- table(data_noNA[, y_vars[i]])
       prop_y_var <- tbl_y_var / nrow(data_noNA) * 100
       
+      tbl_y_var <- c("NA" = NA, tbl_y_var)
       prop_y_var <- c("NA" = NA, prop_y_var)
       
     }else{
@@ -253,7 +254,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
       value_interaction = factor(names(tbl), levels = levels(value_interaction)), 
       levels_y_var = factor(levels_y_var, levels = levels(data[, y_vars[i]])), 
       levels_with_prop_y_var = factor(levels_y_var, levels = levels(data[, y_vars[i]]), 
-        labels = paste0(levels(data[, y_vars[i]]), " ", format_props(prop_y_var, digits = 0))), 
+        labels = paste0(levels(data[, y_vars[i]]), ", ", format_counts_and_props(tbl_y_var, prop_y_var, digits = 0))), 
       prop = as.numeric(prop), 
       stringsAsFactors = FALSE, row.names = NULL)
     

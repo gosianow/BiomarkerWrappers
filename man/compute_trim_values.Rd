@@ -2,22 +2,49 @@
 % Please edit documentation in R/helper_functions.R
 \name{compute_trim_values}
 \alias{compute_trim_values}
-\title{Compute trimming values}
+\alias{apply_trim_values}
+\title{Compute trimming values and trim data to a specified range}
 \usage{
 compute_trim_values(
   x,
-  centered = TRUE,
+  centered = FALSE,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE
+)
+
+apply_trim_values(
+  x,
+  centered = FALSE,
+  trim_values = NULL,
   trim_prop = NULL,
   trim_range = NULL,
   ceiling = FALSE
 )
 }
 \arguments{
-\item{x}{Vector with data}
+\item{x}{Vector or matrix of continuous values that should be trimmed.}
+
+\item{centered}{Logical. If the data is z-score scaled, the trimming ranges are made symmetric. Default value FALSE.}
+
+\item{trim_values}{Vector of length two defining the upper and lower limits, respectively. If NULL, trim_prop or trim_range must be specified to derive the trim_values using compute_trim_values.}
 }
 \value{
 Vector of length two with data range that should be used for trimming.
+
+Vector or matrix where the values outside the specified range are squished.
 }
 \description{
-Compute trimming values
+Compute trimming values and trim data to a specified range
+}
+\examples{
+
+set.seed(123)
+
+x <- rnorm(10)
+
+x
+
+apply_trim_values(x, trim_values = 1)
+
 }

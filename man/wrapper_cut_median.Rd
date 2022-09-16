@@ -5,9 +5,9 @@
 \alias{wrapper_cut_median_strat}
 \title{Dichotomize data by median}
 \usage{
-wrapper_cut_median(x, labels = c("<=MED", ">MED"))
+wrapper_cut_median(x, labels = NULL, right = TRUE)
 
-wrapper_cut_median_strat(x, strata, labels = c("<=MED", ">MED"))
+wrapper_cut_median_strat(x, strata, labels = NULL, right = TRUE)
 }
 \arguments{
 \item{x}{Vector of continuous values to cut.}

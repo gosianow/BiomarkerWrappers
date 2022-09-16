@@ -422,13 +422,21 @@ wrapper_print_plot_grid <- function(plotlist, nsplit = NULL, ncol = 2, nrow = NU
 #' @param x Vector of continuous values to cut.
 #' 
 #' @export
-wrapper_cut_quintiles <- function(x, labels = c("[0%, 20%]", "(20%, 40%]", "(40%, 60%]", "(60%, 80%]", "(80%, 100%]")){
+wrapper_cut_quintiles <- function(x, labels = NULL, right = TRUE){
+  
+  if(is.null(labels)){
+    if(right){
+      labels <- c("[0%, 20%]", "(20%, 40%]", "(40%, 60%]", "(60%, 80%]", "(80%, 100%]")
+    }else{
+      labels <- c("[0%, 20%)", "[20%, 40%)", "[40%, 60%)", "[60%, 80%)", "[80%, 100%]")
+    }
+  }
   
   stopifnot(length(labels) == 5)
   
   out <- NULL
   
-  try(out <- ggplot2::cut_number(x, n = 5), silent = TRUE)
+  try(out <- ggplot2::cut_number(x, n = 5, right = right), silent = TRUE)
   
   if(!is.null(out)){
     out <- factor(out, labels = labels)
@@ -447,13 +455,21 @@ wrapper_cut_quintiles <- function(x, labels = c("[0%, 20%]", "(20%, 40%]", "(40%
 #' @param x Vector of continuous values to cut.
 #' 
 #' @export
-wrapper_cut_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+wrapper_cut_quartiles <- function(x, labels = NULL, right = TRUE){
+  
+  if(is.null(labels)){
+    if(right){
+      labels <- c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")
+    }else{
+      labels <- c("[0%, 25%)", "[25%, 50%)", "[50%, 75%)", "[75%, 100%]")
+    }
+  }
   
   stopifnot(length(labels) == 4)
   
   out <- NULL
   
-  try(out <- ggplot2::cut_number(x, n = 4), silent = TRUE)
+  try(out <- ggplot2::cut_number(x, n = 4, right = right), silent = TRUE)
   
   if(!is.null(out)){
     out <- factor(out, labels = labels)
@@ -471,13 +487,17 @@ wrapper_cut_quartiles <- function(x, labels = c("[0%, 25%]", "(25%, 50%]", "(50%
 #' @param x Vector of continuous values to cut.
 #' 
 #' @export
-wrapper_cut_tertiles <- function(x, labels = c("low", "mid", "high")){
+wrapper_cut_tertiles <- function(x, labels = NULL, right = TRUE){
+  
+  if(is.null(labels)){
+    labels <- c("low", "mid", "high")
+  }
   
   stopifnot(length(labels) == 3)
   
   out <- NULL
   
-  try(out <- ggplot2::cut_number(x, n = 3), silent = TRUE)
+  try(out <- ggplot2::cut_number(x, n = 3, right = right), silent = TRUE)
   
   if(!is.null(out)){
     out <- factor(out, labels = labels)
@@ -496,13 +516,21 @@ wrapper_cut_tertiles <- function(x, labels = c("low", "mid", "high")){
 #' @param x Vector of continuous values to cut.
 #' 
 #' @export
-wrapper_cut_median <- function(x, labels = c("<=MED", ">MED")){
+wrapper_cut_median <- function(x, labels = NULL, right = TRUE){
+  
+  if(is.null(labels)){
+    if(right){
+      labels <- c("<=MED", ">MED")
+    }else{
+      labels <- c("<MED", ">=MED")
+    }
+  }
   
   stopifnot(length(labels) == 2)
   
   out <- NULL
   
-  try(out <- ggplot2::cut_number(x, n = 2), silent = TRUE)
+  try(out <- ggplot2::cut_number(x, n = 2, right = right), silent = TRUE)
   
   if(!is.null(out)){
     out <- factor(out, labels = labels)
@@ -523,7 +551,11 @@ wrapper_cut_median <- function(x, labels = c("<=MED", ">MED")){
 #' @param x Vector of continuous values to cut.
 #' 
 #' @export
-wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low", "high"), right = TRUE){
+wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = NULL, right = TRUE){
+  
+  if(is.null(labels)){
+    labels <- c("low", "high")
+  }
   
   stopifnot(length(probs) == 1)
   stopifnot(length(labels) == 2)
@@ -548,20 +580,24 @@ wrapper_cut_2groups <- function(x, probs = 0.5, cutoff = NULL, labels = c("low",
 
 #' @rdname wrapper_cut_quintiles
 #' @export
-wrapper_cut_quintiles_strat <- function(x, strata, labels = c("[0%, 20%]", "(20%, 40%]", "(40%, 60%]", "(60%, 80%]", "(80%, 100%]")){
+wrapper_cut_quintiles_strat <- function(x, strata, labels = NULL, right = TRUE){
   
   stopifnot(is.factor(strata))
   
   strata_levels <- levels(strata)
   
-  out <- factor(rep(NA, length(x)), levels = labels)
+  out <- wrapper_cut_quintiles(x, labels = labels, right = right)
+  
+  all_levels <- levels(out)
+  
+  out <- factor(rep(NA, length(x)), levels = all_levels)
   
   for(i in 1:length(strata_levels)){
     # i = 1
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- wrapper_cut_quintiles(x[indx_sub], labels = labels)
+    out[indx_sub] <- wrapper_cut_quintiles(x[indx_sub], labels = labels, right = right)
     
   }
   
@@ -571,21 +607,35 @@ wrapper_cut_quintiles_strat <- function(x, strata, labels = c("[0%, 20%]", "(20%
 
 
 #' @rdname wrapper_cut_quartiles
+#' @examples 
+#' 
+#' set.seed(123)
+#' x <- sample.int(n = 100, replace = TRUE)
+#' x
+#' strata <- factor(rep(c("A", "B"), each = 50))
+#' strata 
+#' 
+#' wrapper_cut_quartiles_strat(x = x, strata = strata)
+#' 
 #' @export
-wrapper_cut_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%, 50%]", "(50%, 75%]", "(75%, 100%]")){
+wrapper_cut_quartiles_strat <- function(x, strata, labels = NULL, right = TRUE){
   
   stopifnot(is.factor(strata))
   
   strata_levels <- levels(strata)
   
-  out <- factor(rep(NA, length(x)), levels = labels)
+  out <- wrapper_cut_quartiles(x, labels = labels, right = right)
+  
+  all_levels <- levels(out)
+  
+  out <- factor(rep(NA, length(x)), levels = all_levels)
   
   for(i in 1:length(strata_levels)){
     # i = 1
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- wrapper_cut_quartiles(x[indx_sub], labels = labels)
+    out[indx_sub] <- wrapper_cut_quartiles(x[indx_sub], labels = labels, right = right)
     
   }
   
@@ -597,20 +647,24 @@ wrapper_cut_quartiles_strat <- function(x, strata, labels = c("[0%, 25%]", "(25%
 
 #' @rdname wrapper_cut_tertiles
 #' @export
-wrapper_cut_tertiles_strat <- function(x, strata, labels = c("low", "mid", "high")){
+wrapper_cut_tertiles_strat <- function(x, strata, labels = NULL, right = TRUE){
   
   stopifnot(is.factor(strata))
   
   strata_levels <- levels(strata)
   
-  out <- factor(rep(NA, length(x)), levels = labels)
+  out <- wrapper_cut_tertiles(x, labels = labels, right = right)
+  
+  all_levels <- levels(out)
+  
+  out <- factor(rep(NA, length(x)), levels = all_levels)
   
   for(i in 1:length(strata_levels)){
     # i = 1
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- wrapper_cut_tertiles(x[indx_sub], labels = labels)
+    out[indx_sub] <- wrapper_cut_tertiles(x[indx_sub], labels = labels, right = right)
     
   }
   
@@ -622,20 +676,24 @@ wrapper_cut_tertiles_strat <- function(x, strata, labels = c("low", "mid", "high
 
 #' @rdname wrapper_cut_median
 #' @export
-wrapper_cut_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
+wrapper_cut_median_strat <- function(x, strata, labels = NULL, right = TRUE){
   
   stopifnot(is.factor(strata))
   
   strata_levels <- levels(strata)
   
-  out <- factor(rep(NA, length(x)), levels = labels)
+  out <- wrapper_cut_median(x, labels = labels, right = right)
+  
+  all_levels <- levels(out)
+  
+  out <- factor(rep(NA, length(x)), levels = all_levels)
   
   for(i in 1:length(strata_levels)){
     # i = 1
     
     indx_sub <- which(strata %in% strata_levels[i])
     
-    out[indx_sub] <- wrapper_cut_median(x[indx_sub], labels = labels)
+    out[indx_sub] <- wrapper_cut_median(x[indx_sub], labels = labels, right = right)
     
   }
   
@@ -647,7 +705,7 @@ wrapper_cut_median_strat <- function(x, strata, labels = c("<=MED", ">MED")){
 
 #' @rdname wrapper_cut_2groups
 #' @export
-wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = c("low", "high"), right = TRUE){
+wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata)), cutoff = NULL, labels = NULL, right = TRUE){
   
   stopifnot(is.factor(strata))
   
@@ -659,7 +717,11 @@ wrapper_cut_2groups_strat <- function(x, strata, probs = rep(0.5, nlevels(strata
   
   strata_levels <- levels(strata)
   
-  out <- factor(rep(NA, length(x)), levels = labels)
+  out <- wrapper_cut_2groups(x, probs = probs[1], cutoff = cutoff[1], labels = labels, right = right) 
+  
+  all_levels <- levels(out)
+  
+  out <- factor(rep(NA, length(x)), levels = all_levels)
   
   for(i in seq_along(strata_levels)){
     # i = 1
@@ -1731,7 +1793,14 @@ format_colors_cat_strata <- function(x, strata = NULL, palette = NULL, rev = FAL
 
 
 
-
+#' Compute upper whisker 
+#' 
+#' @param x Vector with data
+#' 
+#' @return Upper whisker
+#' @details For the info about whiskers see https://www.r-bloggers.com/2012/06/whisker-of-boxplot/
+#' 
+#' @export
 compute_upper_whisker <- function(x, range = 1.5){
   
   
@@ -1746,7 +1815,14 @@ compute_upper_whisker <- function(x, range = 1.5){
 }
 
 
-
+#' Compute lower whisker 
+#' 
+#' @param x Vector with data
+#' 
+#' @return Lower whisker
+#' @details For the info about whiskers see https://www.r-bloggers.com/2012/06/whisker-of-boxplot/
+#' 
+#' @export
 compute_lower_whisker <- function(x, range = 1.5){
   
   
@@ -1762,14 +1838,15 @@ compute_lower_whisker <- function(x, range = 1.5){
 
 
 
-#' Compute trimming values 
+#' Compute trimming values and trim data to a specified range
 #' 
 #' @param x Vector with data
+#' @param centered Logical. If the data is z-score scaled, the trimming ranges are made symmetric. Default value FALSE.
 #' 
 #' @return Vector of length two with data range that should be used for trimming.
 #' 
 #' @export
-compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
+compute_trim_values <- function(x, centered = FALSE, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
   
   
   if(centered){
@@ -1783,8 +1860,12 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
     if(!is.null(trim_range)){
       ### Use whiskers
       
-      lower_whisker <- compute_lower_whisker(x, range = trim_range)
-      upper_whisker <- compute_upper_whisker(x, range = trim_range)
+      if(length(trim_range) == 1){
+        trim_range <- c(trim_range, trim_range)
+      }
+      
+      lower_whisker <- compute_lower_whisker(x, range = trim_range[1])
+      upper_whisker <- compute_upper_whisker(x, range = trim_range[2])
       
       max_abs_value <- max(abs(c(lower_whisker, upper_whisker)))
     }
@@ -1792,7 +1873,12 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
     
     if(!is.null(trim_prop)){
       ### Use quantiles 
-      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop[1], 1 - trim_prop[1]), na.rm = TRUE)))
+      
+      if(length(trim_prop) == 1){
+        trim_prop <- c(trim_prop, 1 - trim_prop)
+      }
+      
+      max_abs_value <- max(abs(quantile(x, probs = c(trim_prop[1], trim_prop[2]), na.rm = TRUE)))
     }
     
     
@@ -1816,8 +1902,12 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
     if(!is.null(trim_range)){
       ### Use whiskers
       
-      lower_whisker <- compute_lower_whisker(x, range = trim_range)
-      upper_whisker <- compute_upper_whisker(x, range = trim_range)
+      if(length(trim_range) == 1){
+        trim_range <- c(trim_range, trim_range)
+      }
+      
+      lower_whisker <- compute_lower_whisker(x, range = trim_range[1])
+      upper_whisker <- compute_upper_whisker(x, range = trim_range[2])
       
       range_value <- c(lower_whisker, upper_whisker)
     }
@@ -1825,6 +1915,11 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
     
     if(!is.null(trim_prop)){
       ### Use quantiles 
+      
+      if(length(trim_prop) == 1){
+        trim_prop <- c(trim_prop, 1 - trim_prop)
+      }
+      
       range_value <- quantile(x, probs = c(trim_prop[1], trim_prop[2]), na.rm = TRUE)
     }
     
@@ -1842,10 +1937,10 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
 
 
 
-#' Trim data to a specified range
-#' 
+
+#' @rdname compute_trim_values
 #' @param x Vector or matrix of continuous values that should be trimmed.
-#' @param centered Logical. Default value TRUE.
+#' @param trim_values Vector of length two defining the upper and lower limits, respectively. If NULL, trim_prop or trim_range must be specified to derive the trim_values using compute_trim_values. 
 #' 
 #' @return Vector or matrix where the values outside the specified range are squished.
 #' 
@@ -1860,7 +1955,7 @@ compute_trim_values <- function(x, centered = TRUE, trim_prop = NULL, trim_range
 #' apply_trim_values(x, trim_values = 1)
 #' 
 #' @export
-apply_trim_values <- function(x, centered = TRUE, trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
+apply_trim_values <- function(x, centered = FALSE, trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE){
   
   
   x_orig <- x
@@ -1868,7 +1963,7 @@ apply_trim_values <- function(x, centered = TRUE, trim_values = NULL, trim_prop 
   x <- c(x)
   x <- x[!is.na(x)]
   
-
+  
   # ---------------------------------------------------------------------
   # Define trim values
   # ---------------------------------------------------------------------
@@ -1895,7 +1990,10 @@ apply_trim_values <- function(x, centered = TRUE, trim_values = NULL, trim_prop 
     
   }
   
-
+  # ---------------------------------------------------------------------
+  # Do trimming
+  # ---------------------------------------------------------------------
+  
   x_out <- x_orig
   
   x_out[x_out < trim_values[1]] <- trim_values[1]
