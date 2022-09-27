@@ -28,13 +28,13 @@
 #' wrapper_box_plot_core(data = data, x_var = x_var, y_var = y_var)
 #' 
 #' @export
-wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
+wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
-  point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
+  point_plot = TRUE, point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE,
   scale_y_continuous_custome = scale_y_continuous(), 
@@ -126,7 +126,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   # Axis and legend labels
   # -------------------------------------------------------------------------
   
-
+  
   if(is.logical(title)){
     title <- NULL
   }
@@ -229,29 +229,38 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
   ### We use NA instead of TRUE, because if TRUE legend for x-axis is displayed.
   legend_show_colors_point <- ifelse(color_point_var == "color_point_dummy", FALSE, NA)
   
+  if(point_plot){
+    outlier.color <- NA
+  }else{
+    outlier.color = "black"
+  }
+  
   
   if(is.null(dodge_var)){
     
     ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]])) +
-      geom_boxplot(aes(fill = .data[[x_var]]), outlier.color = NA, show.legend = FALSE) +
+      geom_boxplot(aes(fill = .data[[x_var]]), outlier.color = outlier.color, outlier.size = point_size, show.legend = FALSE) +
       scale_fill_manual(name = legend_colors_box_title, values = colors_box, drop = FALSE)
     
-    
-    if(point_shape %in% 21:25){
+    if(point_plot){
       
-      ggpl <- ggpl +
-        ggnewscale::new_scale_fill() +
-        # geom_jitter(aes(fill = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
-      
-      
-    }else{
-      
-      ggpl <- ggpl +
-        # geom_jitter(aes(color = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+      if(point_shape %in% 21:25){
+        
+        ggpl <- ggpl +
+          ggnewscale::new_scale_fill() +
+          # geom_jitter(aes(fill = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+        
+        
+      }else{
+        
+        ggpl <- ggpl +
+          # geom_jitter(aes(color = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+        
+      }
       
     }
     
@@ -260,26 +269,30 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
     
     
     ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]], fill = .data[[dodge_var]])) +
-      geom_boxplot(outlier.color = NA, position = position_dodge2(preserve = "single", width = 0.75)) +
+      geom_boxplot(outlier.color = outlier.color, outlier.size = point_size, position = position_dodge2(preserve = "single", width = 0.75)) +
       scale_fill_manual(name = legend_colors_box_title, values = colors_box, drop = FALSE)
     
-    
-    if(point_shape %in% 21:25){
+    if(point_plot){
       
-      ggpl <- ggpl +
-        ggnewscale::new_scale_fill() +
-        # geom_jitter(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+      if(point_shape %in% 21:25){
+        
+        ggpl <- ggpl +
+          ggnewscale::new_scale_fill() +
+          # geom_jitter(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+        
+        
+      }else{
+        
+        ## The group determines dodging 
+        ggpl <- ggpl +
+          # geom_jitter(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
+          scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+        
+      }
       
-      
-    }else{
-      
-      ## The group determines dodging 
-      ggpl <- ggpl +
-        # geom_jitter(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-        scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
       
     }
     
@@ -388,14 +401,14 @@ wrapper_box_plot_core <- function(data, x_var, y_var, color_point_var = NULL, do
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, dodge_var = NULL, facet_var = NULL,
+wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
-  point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
+  point_plot = TRUE, point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE, 
   scale_y_continuous_custome = scale_y_continuous(),
@@ -513,13 +526,13 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
       }
       
       
-      ggpl <- wrapper_box_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, dodge_var = dodge_var, facet_var = facet_var, 
+      ggpl <- wrapper_box_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var, 
         colors_box = colors_box, colors_point = colors_point, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,  
         legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
         show_total_counts = show_total_counts, show_median = show_median, 
-        point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
+        point_plot = point_plot, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, drop = drop,
         scale_y_continuous_custome = scale_y_continuous_custome, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
@@ -571,14 +584,14 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, color_point_var = NU
 #' 
 #' @inheritParams wrapper_box_plot_core_strat
 #' @export
-wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_point_var = NULL, dodge_var = NULL, facet_var = NULL, 
+wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
   colors_box = NULL, colors_point = NULL, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
-  point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
+  point_plot = TRUE, point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   scale_y_continuous_custome = scale_y_continuous(),
@@ -621,14 +634,14 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, color_
   }
   
   
-  ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, color_point_var = color_point_var, dodge_var = dodge_var, facet_var = facet_var, 
+  ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var,
     colors_box = colors_box, colors_point = colors_point, 
     strat1_var = strat1_var, strat2_var = strat2_var, 
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both,
     legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
     show_total_counts = show_total_counts, show_median = show_median, 
-    point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
+    point_plot = point_plot, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
     scale_y_continuous_custome = scale_y_continuous_custome,
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 

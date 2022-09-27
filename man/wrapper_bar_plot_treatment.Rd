@@ -10,6 +10,7 @@ wrapper_bar_plot_treatment(
   treatment_var,
   biomarker_var = NULL,
   facet_var = NULL,
+  rev = FALSE,
   strat2_var = NULL,
   colors_bar = NULL,
   color_border = "black",

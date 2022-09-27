@@ -38,7 +38,7 @@
 #' wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var)
 #' 
 #' @export
-wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, 
+wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FALSE, 
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
@@ -249,6 +249,13 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
     
   }
   
+  # --------------------------------------------------------------------------
+  # Reverse levels
+  # --------------------------------------------------------------------------
+  
+  if(rev){
+    data[, y_var] <- factor(data[, y_var], levels = rev(levels(data[, y_var])))
+  }
   
   # --------------------------------------------------------------------------
   # Calculate counts and proportions
@@ -260,7 +267,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
   ggdata <- lapply(1:length(facet_levels), function(i){
     # i = 1
     
-    data_sub <- data[data[, facet_var] == facet_levels[i] & !is.na(data[, facet_var]), ]
+    data_sub <- data[data[, facet_var] %in% facet_levels[i], ]
     
     if(nrow(data_sub) == 0){
       return(NULL)
@@ -646,7 +653,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL,
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL, 
+wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL, rev = FALSE, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
@@ -754,7 +761,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL,
         subtitle <- NULL
       }
       
-      ggpl <- wrapper_bar_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+      ggpl <- wrapper_bar_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev,
         colors_bar = colors_bar, color_border = color_border,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
@@ -817,7 +824,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL,
 #' 
 #' @inheritParams wrapper_bar_plot_core_strat
 #' @export
-wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, 
+wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, rev = FALSE, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
@@ -870,7 +877,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars,
   facet_label_both <- FALSE
   
   
-  ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+  ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev, 
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, color_border = color_border,
     variable_names = variable_names, 
@@ -901,7 +908,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars,
 #' @param colors_bar Vector with colors for treatment X response interaction.
 #' @export
 wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatment_var = NULL,
-  facet_var = NULL, strat2_var = NULL,
+  facet_var = NULL, rev = FALSE, strat2_var = NULL, 
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
@@ -1002,7 +1009,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev,  
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, color_border = color_border,
     variable_names = variable_names, 
@@ -1036,7 +1043,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
 #' @param colors_bar Vector with colors for treatment X response interaction.
 #' @export
 wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomarker_var = NULL,
-  facet_var = NULL, strat2_var = NULL,
+  facet_var = NULL, rev = FALSE, strat2_var = NULL,
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
@@ -1114,7 +1121,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, 
+  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev,
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, color_border = color_border,
     variable_names = variable_names, 

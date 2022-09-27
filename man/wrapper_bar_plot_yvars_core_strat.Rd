@@ -8,6 +8,7 @@ wrapper_bar_plot_yvars_core_strat(
   data,
   x_var,
   y_vars,
+  rev = FALSE,
   strat1_var = NULL,
   strat2_var = NULL,
   colors_bar = NULL,

@@ -31,7 +31,7 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
-  legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
+  legend_colors_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
@@ -206,7 +206,8 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
       axis.line = element_blank(),
       axis.ticks = element_line(color = "black", size = 0.5),
       panel.border = element_rect(colour = "black", size = 0.8),
-      legend.position = legend_position) +
+      legend.position = legend_position,
+      aspect.ratio = aspect_ratio) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
     coord_cartesian(xlim = xlim, ylim = ylim)
   
@@ -279,7 +280,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
+  legend_colors_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 2, smooth_linetype = 1, 
@@ -396,7 +397,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
         colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
-        legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
+        legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, aspect_ratio = aspect_ratio, facet_label_both = facet_label_both, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         smooth = smooth, smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
         smooth_size = smooth_size, smooth_linetype = smooth_linetype,

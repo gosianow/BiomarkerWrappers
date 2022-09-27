@@ -1352,15 +1352,20 @@ format_summ_df <- function(summ, per = "row", digits = 2){
 #' 
 #' Make sure that variable names exists for all the variables in the data frame. Creates from scratch or adds missing variable names for variables in data.
 #' 
-#' @param data Data frame.
+#' @param data Data frame or vector.
 #' @param variable_names Named vector of variable names corresponding to variables in data. This vector does not have to contain names for all the variables in data. If names for some variables are missing, they will be created. If NULL, variable names are created by subtracting underscore from the column names of data.
 #' @return Named vector of (optionally unique) variable names for all variables from data.
 #' @export
 format_variable_names <- function(data, variable_names = NULL, unique = FALSE){
   
+  if(is.data.frame(data)){
+    x <- colnames(data)
+  }else{
+    x <- data
+  }
   
-  new_variable_names <- gsub("_", " ", colnames(data))
-  names(new_variable_names) <- colnames(data)
+  new_variable_names <- gsub("_", " ", x)
+  names(new_variable_names) <- x
   
   
   if(!is.null(variable_names)){

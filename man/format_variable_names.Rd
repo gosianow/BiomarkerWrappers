@@ -7,7 +7,7 @@
 format_variable_names(data, variable_names = NULL, unique = FALSE)
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{Data frame or vector.}
 
 \item{variable_names}{Named vector of variable names corresponding to variables in data. This vector does not have to contain names for all the variables in data. If names for some variables are missing, they will be created. If NULL, variable names are created by subtracting underscore from the column names of data.}
 }
