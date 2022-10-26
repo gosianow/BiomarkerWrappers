@@ -4,10 +4,10 @@
 \alias{format_props}
 \title{Format proportions}
 \usage{
-format_props(props, digits = 2)
+format_props(x, digits = 2, non_empty = NULL)
 }
 \arguments{
-\item{props}{Vector with proportions.}
+\item{x}{Vector with proportions.}
 
 \item{digits}{Number of decimal places when rounding proportions.}
 }

@@ -51,7 +51,7 @@
 #' 
 #' 
 #' @export
-wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE){
+wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -383,11 +383,18 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       # j = 1
       
       out2 <- data.frame(
-        SR = format_or(res[, paste0("SR", sr_times[j])], digits = 0, non_empty = res$covariate_class == "factor"),
-        SR_CI95 = format_CIs(res[, paste0("SR", sr_times[j], "_CI95_lower")], res[, paste0("SR", sr_times[j], "_CI95_upper")], digits = 0, non_empty = res$covariate_class == "factor"),
+        SR = format_props(res[, paste0("SR", sr_times[j])], digits = 1, non_empty = res$covariate_class == "factor"),
         check.names = FALSE, stringsAsFactors = FALSE)
       
-      colnames(out2) <- paste0(paste0("SR", sr_times[j]), c("", " 95% CI"))
+      colnames(out2) <- paste0("SR ", sr_times[j])
+      
+      if(print_sr_cis){
+        
+        out2$SR_CI95 <- format_CIs(res[, paste0("SR", sr_times[j], "_CI95_lower")], res[, paste0("SR", sr_times[j], "_CI95_upper")], digits = 1, non_empty = res$covariate_class == "factor", parentheses = TRUE)
+        
+        colnames(out2) <- paste0(paste0("SR ", sr_times[j]), c("", " 95% CI"))
+        
+      }
       
       return(out2)
       
@@ -514,7 +521,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
 #' boutput(x)
 #' 
 #' @export
-wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE){
+wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -559,7 +566,7 @@ wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, 
       keep_obs <- data[, strat2_var] %in% strata2_levels[j] & data[, strat1_var] %in% strata1_levels[i]
       
       
-      wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_hr = print_hr)
+      wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_hr = print_hr, print_sr_cis = print_sr_cis)
       
       
       
@@ -662,7 +669,7 @@ wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, 
 #' @param adjustment_vars Vector of covariate names used for adjustment in the model.
 #' @param strata_vars Vector of covariates used as stratification factors in the model.
 #' @export
-wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE){
+wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -690,7 +697,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_hr = print_hr)
+    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_hr = print_hr, print_sr_cis = print_sr_cis)
     
     
     return(wrapper_res)
@@ -785,7 +792,7 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
 #' @param adjustment_vars Vector of covariate names used for adjustment in the model.
 #' @param strata_vars Vector of covariates used as stratification factors in the model.
 #' @export
-wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE){
+wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -824,7 +831,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_hr = print_hr)
+    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_vars, strata_vars = strata_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_hr = print_hr, print_sr_cis = print_sr_cis)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)

@@ -23,6 +23,10 @@ wrapper_dispaly_significant_genes(
 }
 \arguments{
 \item{x}{Data frame of merged topTables}
+
+\item{direction}{Possible values: "up", "down", "both".}
+
+\item{sort_by}{Possible values: "none", "pval", "lfc".}
 }
 \description{
 Display significantly DE genes

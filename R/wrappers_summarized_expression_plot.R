@@ -76,12 +76,16 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
     colnames(adjp) <- levels_group
     
     ## Shorten the row names so they can be nicely displayed in the plots
-    rownames(adjp) <- stringr::str_wrap(rownames(adjp), width = row_names_width)
+    rownames_wrap <- stringr::str_wrap(rownames(adjp), width = row_names_width)
+    rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+    rownames(adjp) <- rownames_wrap
     
   }
   
   ## Shorten the row names so they can be nicely displayed in the plots
-  rownames(x) <- stringr::str_wrap(rownames(x), width = row_names_width)
+  rownames_wrap <- stringr::str_wrap(rownames(x), width = row_names_width)
+  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+  rownames(x) <- rownames_wrap
   
   
   x <- as.matrix(x)
@@ -201,7 +205,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
       
       x[is.na(x)] <- 1
       
-      pval_asterisk <- ifelse(x < 0.001, "***", ifelse(x < 0.01, "**", ifelse(x < 0.05, "*", ifelse(x < 0.1, ".", ""))))
+      pval_asterisk <- ifelse(x <= 0.0001, "****", ifelse(x <= 0.001, "***", ifelse(x <= 0.01, "**", ifelse(x <= 0.05, "*", ifelse(x <= 0.1, ".", "")))))
       
       pval_asterisk
       

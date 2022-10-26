@@ -25,8 +25,11 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   name <- lfc_prefix 
   
   ## Shorten the gene set names so they can be nicely displayed in the plots
-  rownames(x) <- stringr::str_wrap(x[, gene_var], width = row_names_width)
+  rownames_wrap <- stringr::str_wrap(x[, gene_var], width = row_names_width)
   
+  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+  
+  rownames(x) <- rownames_wrap
   
   # ---------------------------------------------------------------------------
   # Prepare matrix
@@ -162,16 +165,14 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   
 }
 
-
+gene_var = "Hgnc_Symbol"; 
 lfc_prefix = "logFC"; pval_prefix = "P.Value"; adjp_prefix = "adj.P.Val";  
 sep = "_"; pval = 0.05; title = ""; 
 color_low = '#42399B'; color_mid = "white"; color_high = '#D70131'; 
 trim_values = 3; trim_prop = NULL; trim_range = NULL; ceiling = FALSE; 
 radius_range = c(10, 3); legend_position = "right"; 
-axis_text_x_angle = 60; axis_text_x_vjust = 1; axis_text_x_hjust = 1; 
+axis_text_x_angle = 90; axis_text_x_vjust = 1; axis_text_x_hjust = 1; 
 axis_text_y_size = NULL; axis_text_y_width = 80; title_size = NULL
-
-
 
 
 #' Dot plot with logFC and p-values for multiple contrasts
@@ -184,7 +185,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
   radius_range = c(10, 3), legend_position = "right", 
-  axis_text_x_angle = 60, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
+  axis_text_x_angle = 90, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
   axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
   
   
@@ -234,7 +235,11 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   data$contrast <- factor(data$contrast, levels = contrasts)
   
   ## Shorten the gene set names so they can be nicely displayed in the plots
-  data[, gene_var] <- factor(stringr::str_wrap(data[, gene_var], width = axis_text_y_width), levels = stringr::str_wrap(rev(x[, gene_var]), width = axis_text_y_width))
+  rownames_wrap <- stringr::str_wrap(data[, gene_var], width = axis_text_y_width)
+  
+  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+  
+  data[, gene_var] <- factor(rownames_wrap, levels = rev(unique(rownames_wrap)))
   
   
   

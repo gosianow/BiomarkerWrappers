@@ -14,7 +14,7 @@ wrapper_gsea_plot_core <- function(statistic, genesets, adjp = NULL, enrichment_
   statistic_name = "t", geneset_name = "GenesetID", adjp_name = "adj.P.Val", enrichment_score_name = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
-  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 80){
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 9, axis_text_y_width = 80){
   
   
   stopifnot(!is.null(names(statistic)))
@@ -106,7 +106,10 @@ wrapper_gsea_plot_core <- function(statistic, genesets, adjp = NULL, enrichment_
   
   
   ## Wrap the gene set names so they can be nicely displayed in the plots
-  ggdata$GenesetID <- factor(ggdata$GenesetID, levels = rev(names(genesets)), labels = stringr::str_wrap(rev(names(genesets)), width = axis_text_y_width))
+  rownames_wrap <- stringr::str_wrap(rev(names(genesets)), width = axis_text_y_width)
+  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+  
+  ggdata$GenesetID <- factor(ggdata$GenesetID, levels = rev(names(genesets)), labels = rownames_wrap)
   
   ggdata$GenesetID_num <- as.numeric(ggdata$GenesetID)
   
@@ -249,7 +252,7 @@ wrapper_gsea_plot <- function(x, contrast, genesets, gene_var = "EntrezIDs", sta
   gsea_results = NULL, geneset_var = "GenesetID", adjp_var = "adj.P.Val", enrichment_score_var = "NES",
   trim_limits = 0.01,
   color_low = '#42399B', color_mid = "darkgrey", color_high = '#D70131',
-  title = "", title_size = 10, title_width = 100, axis_text_y_size = 8, axis_text_y_width = 80){
+  title = "", title_size = 10, title_width = 100, axis_text_y_size = 9, axis_text_y_width = 80){
   
   
   if(contrast == ""){

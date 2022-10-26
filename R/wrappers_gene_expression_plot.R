@@ -30,7 +30,9 @@ wrapper_gene_expression_heatmap <- function(x,
   
   
   ## Shorten the row names so they can be nicely displayed in the plots
-  rownames(x) <- stringr::str_wrap(rownames(x), width = row_names_width)
+  rownames_wrap <- stringr::str_wrap(rownames(x), width = row_names_width)
+  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+  rownames(x) <- rownames_wrap
   
   
   # ---------------------------------------------------------------------------

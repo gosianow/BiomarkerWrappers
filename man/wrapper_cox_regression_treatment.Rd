@@ -21,7 +21,8 @@ wrapper_cox_regression_treatment(
   print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE,
-  print_hr = TRUE
+  print_hr = TRUE,
+  print_sr_cis = FALSE
 )
 }
 \arguments{

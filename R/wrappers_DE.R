@@ -282,6 +282,8 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
 #' Display significantly DE genes
 #' 
 #' @param x Data frame of merged topTables
+#' @param sort_by Possible values: "none", "pval", "lfc".
+#' @param direction Possible values: "up", "down", "both".
 #' @export
 wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, lfc = 0, 

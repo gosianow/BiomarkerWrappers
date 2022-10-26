@@ -20,7 +20,7 @@ wrapper_gsea_plot_core(
   title = "",
   title_size = 10,
   title_width = 100,
-  axis_text_y_size = 8,
+  axis_text_y_size = 9,
   axis_text_y_width = 80
 )
 }

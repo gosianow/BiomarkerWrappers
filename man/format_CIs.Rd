@@ -4,7 +4,13 @@
 \alias{format_CIs}
 \title{Format CIs (confidence intervals)}
 \usage{
-format_CIs(CI_lower, CI_upper, digits = 2, non_empty = NULL)
+format_CIs(
+  CI_lower,
+  CI_upper,
+  digits = 2,
+  non_empty = NULL,
+  parentheses = FALSE
+)
 }
 \arguments{
 \item{CI_lower}{Vector with lower CIs.}

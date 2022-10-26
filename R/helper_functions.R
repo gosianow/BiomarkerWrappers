@@ -1,4 +1,36 @@
 
+#' Maximum height of text
+#' 
+#' @export
+wrapper_max_text_height <- function(text, fontsize = 12, rot = 0, wrap_width = NULL, unit = "inches"){
+  
+  if(!is.null(wrap_width)){
+    text <- stringr::str_wrap(text, width = wrap_width)
+  }
+  
+  out <- grid::convertUnit(ComplexHeatmap::max_text_height(text, gp = grid::gpar(fontsize = fontsize), rot = rot), unit)
+  
+  as.numeric(out)
+  
+}
+
+
+#' Maximum width of text
+#' 
+#' @export
+wrapper_max_text_width <- function(text, fontsize = 12, rot = 0, wrap_width = NULL, unit = "inches"){
+  
+  if(!is.null(wrap_width)){
+    text <- stringr::str_wrap(text, width = wrap_width)
+  }
+  
+  out <- grid::convertUnit(ComplexHeatmap::max_text_width(text, gp = grid::gpar(fontsize = fontsize), rot = rot), unit)
+  
+  as.numeric(out)
+  
+}
+
+
 
 #' Check if a vector consists of valid names
 #' 
@@ -959,11 +991,9 @@ format_pvalues <- function(x, digits = 4, asterisk = TRUE, non_empty = NULL){
 #' @keywords internal 
 format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
   
-  
-  
   # digits = 4
   # asterisk <- TRUE
-  # x <- c(0.2, 0.05, 0.034534, 1.366332e-05, 1.366332e-04, NA, 7.174163e-16, 1.501826e-06, 6.642127e-10)
+  # x <- c(0.2, 0.05, 0.034534, 0.007, 1.366332e-05, 1.366332e-04, NA, 7.174163e-16, 1.501826e-06, 6.642127e-10)
   
   
   if(sum(is.na(x)) == length(x)){
@@ -975,7 +1005,9 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
   
   output_format_non_scientific <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   
-  output_format_scientific <- paste0("<", formatC(10 ^ -round(-log10(x)), format = "e", digits = 0))
+  output_format_scientific <- paste0("<", formatC(10 ^ -floor(-log10(x)), format = "e", digits = 0))
+  
+  output_format_scientific
   
   
   output <- ifelse(x < min_pval, output_format_scientific, output_format_non_scientific)
@@ -1109,7 +1141,7 @@ format_difference <- function(x, digits = 2, non_empty = NULL){
 #' @param digits Number of decimal places.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
+format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL, parentheses = FALSE){
   
   stopifnot(length(CI_lower) == length(CI_upper))
   
@@ -1133,7 +1165,13 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
     return(output)
   }
   
-  output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
+  
+  if(parentheses){
+    output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), "% - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), "%)")
+  }else{
+    output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
+  }
+  
   
   output[is.na(CI_lower) & is.na(CI_upper)] <- "NA"
   
@@ -1155,9 +1193,9 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL){
 #' @param colnames New colnames.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL){
+format_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL, parentheses = FALSE){
   
-  output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty), stringsAsFactors = FALSE)
+  output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty, parentheses = parentheses), stringsAsFactors = FALSE)
   colnames(output) <- colnames
   
   return(output)
@@ -1189,15 +1227,51 @@ format_vs <- function(level, reference){
 
 #' Format proportions
 #' 
-#' @param props Vector with proportions.
+#' @param x Vector with proportions.
 #' @param digits Number of decimal places when rounding proportions.
 #' @keywords internal
-format_props <- function(props, digits = 2){
+format_props <- function(x, digits = 2, non_empty = NULL){
   
   
-  out <- ifelse(is.na(props), "", paste0(" (", formatC(as.numeric(props), format = "f", digits = digits, drop0trailing = FALSE), "%)"))
+  if(!is.null(non_empty)){
+    if(is.logical(non_empty)){
+      stopifnot(length(non_empty) == length(x))
+    }else{
+      non_empty_logical <- rep(FALSE, length(x))
+      non_empty_logical[non_empty] <- TRUE
+      non_empty <- non_empty_logical
+      stopifnot(length(non_empty) == length(x))
+    }
+  }
   
-  out
+  
+  if(sum(is.na(x)) == length(x) && is.null(non_empty)){
+    output <- rep("", length(x))
+    return(output)
+  }else if(sum(is.na(x)) == length(x) && !is.null(non_empty)){
+    output <- rep("", length(x))
+    output[non_empty] <- "NA"
+    return(output)
+  }
+  
+  ### With parentheses 
+  
+  # output <- paste0(" (", formatC(as.numeric(x), format = "f", digits = digits, drop0trailing = FALSE), "%)")
+  
+  ### Without parentheses 
+  
+  output <- paste0(formatC(as.numeric(x), format = "f", digits = digits, drop0trailing = FALSE), "%")
+  output[is.na(x)] <- "NA"
+  
+  
+  if(is.null(non_empty)){
+    output[output == "NA"] <- ""
+  }else{
+    output[output == "NA" & !non_empty] <- ""
+  }
+  
+  
+  return(output)
   
   
 }

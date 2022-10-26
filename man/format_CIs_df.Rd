@@ -4,7 +4,13 @@
 \alias{format_CIs_df}
 \title{Format CIs (confidence intervals)}
 \usage{
-format_CIs_df(x, digits = 2, colnames = NULL, non_empty = NULL)
+format_CIs_df(
+  x,
+  digits = 2,
+  colnames = NULL,
+  non_empty = NULL,
+  parentheses = FALSE
+)
 }
 \arguments{
 \item{x}{Data frame.}

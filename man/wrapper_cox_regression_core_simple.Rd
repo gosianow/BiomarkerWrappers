@@ -22,7 +22,8 @@ wrapper_cox_regression_core_simple(
   print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE,
-  print_hr = TRUE
+  print_hr = TRUE,
+  print_sr_cis = FALSE
 )
 
 wrapper_cox_regression_core_simple_strat(
@@ -43,7 +44,8 @@ wrapper_cox_regression_core_simple_strat(
   print_total = TRUE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE,
-  print_hr = TRUE
+  print_hr = TRUE,
+  print_sr_cis = FALSE
 )
 }
 \arguments{
