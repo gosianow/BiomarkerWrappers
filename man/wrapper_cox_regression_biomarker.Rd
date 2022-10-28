@@ -46,7 +46,7 @@ wrapper_cox_regression_biomarker(
 
 \item{caption}{Caption for the table with results.}
 
-\item{sr_times}{Vector of times used to compute survival rates, for example, 3-year IDSF `%`.}
+\item{sr_times}{Vector of times used to compute survival rates, for example, percent of 3-year IDSF.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 

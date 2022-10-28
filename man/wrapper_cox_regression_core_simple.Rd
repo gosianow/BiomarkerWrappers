@@ -67,7 +67,7 @@ wrapper_cox_regression_core_simple_strat(
 
 \item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
 
-\item{sr_times}{Vector of times used to compute survival rates, for example, 3-year IDSF `%`.}
+\item{sr_times}{Vector of times used to compute survival rates, for example, percent of 3-year IDSF.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 

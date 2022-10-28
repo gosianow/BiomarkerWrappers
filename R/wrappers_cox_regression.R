@@ -16,7 +16,7 @@
 #' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
 #' @param caption Caption for the table with results.
 #' @param force_empty_cols Logical. Whether to display output columns which are all empty.
-#' @param sr_times Vector of times used to compute survival rates, for example, 3-year IDSF `%`.
+#' @param sr_times Vector of times used to compute survival rates, for example, percent of 3-year IDSF.
 #' @param print_nevent Logical. Whether to print numbers of events.
 #' @param print_mst Logical. Whether to print median survival time (MST).
 #' @param print_total Logical. Whether to print total number of samples and total number of events.
