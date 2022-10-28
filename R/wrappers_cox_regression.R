@@ -10,19 +10,19 @@
 #' @param data Data frame.
 #' @param tte_var Name of the time-to-event variable. This variable must be numeric.
 #' @param censor_var Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.
-#' @param covariate_vars Vector with names of covariates that are included in the formula of the simple additive model: ~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....
+#' @param covariate_vars Vector with names of covariates that are included in the formula of the simple additive model: `~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....`
 #' @param strata_vars Vector with names of covariates that are used as strata.
 #' @param return_vars Vector with names of covariates for which the statistics should be returned. If NULL, statistics are returned for all covariates.
 #' @param variable_names Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.
 #' @param caption Caption for the table with results.
 #' @param force_empty_cols Logical. Whether to display output columns which are all empty.
-#' @param sr_times Vector of times used to compute survival rates, for example, 3-year IDSF %.
+#' @param sr_times Vector of times used to compute survival rates, for example, 3-year IDSF `%`.
 #' @param print_nevent Logical. Whether to print numbers of events.
 #' @param print_mst Logical. Whether to print median survival time (MST).
 #' @param print_total Logical. Whether to print total number of samples and total number of events.
 #' @param print_pvalues Logical. Whether to print p-values.
 #' @param print_adjpvalues Logical. Whether to print adjusted p-values.
-#' @details 
+#' @details  
 #' If for a factor covariate that should be returned the reference level has zero count, results are set to NAs because this levels is not used as a reference which means that it is not possible to fit the model that we want.
 #' @examples
 #' 

@@ -47,7 +47,7 @@ wrapper_cox_regression_core_interaction_strat(
 
 \item{interaction2_var}{Name of the second interaction variable. It would correspond to the treatment arm.}
 
-\item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model: ~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....}
+\item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model: `~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....`}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 

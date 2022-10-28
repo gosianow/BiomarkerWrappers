@@ -11,6 +11,7 @@
 #' @param data Data frame.
 #' @param smooth Possible values: "none", "pooled", "strat".
 #' @param smooth_method Method used in geom_smooth(), for example, "auto", "loess", "lm". 
+#' @param scale_gradient Possible values: "gradientn", "gradient2", "gradient".
 #' @examples 
 #' 
 #' data(bdata)
@@ -29,6 +30,7 @@
 #' @export
 wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
@@ -100,10 +102,19 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     if(is.factor(data[, color_point_var])){
       colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point)
     }else{
-      colors_point <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
+      if(is.null(colors_point)){
+        colors_point <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
+      }
+      
+      if(is.null(trim_values)){
+        trim_values <- compute_trim_values(x = data[, color_point_var], centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+      }
+      limits <- trim_values
+      
     }
     
   }
+  
   
   if(is.factor(data[, color_point_var])){
     scale <- "manual"
@@ -171,11 +182,11 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     if(scale == "manual"){
       ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
     }else if(scale == "gradientn") {
-      ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point)
+      ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
     }else if(scale == "gradient2"){
-      ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint)
+      ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
     }else if(scale == "gradient"){
-      ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point)
+      ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
     }
     
   }else{
@@ -187,11 +198,11 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     if(scale == "manual"){
       ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
     }else if(scale == "gradientn") {
-      ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point)
+      ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
     }else if(scale == "gradient2"){
-      ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint)
+      ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
     }else if(scale == "gradient"){
-      ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point)
+      ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
     }
     
   }
@@ -278,6 +289,7 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
 wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
@@ -395,6 +407,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
       
       ggpl <- wrapper_point_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, facet_var = facet_var, 
         colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+        trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
         legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, aspect_ratio = aspect_ratio, facet_label_both = facet_label_both, 

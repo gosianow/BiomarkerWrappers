@@ -17,6 +17,11 @@ wrapper_point_plot_core(
   color_mid_point = "white",
   color_high_point = "#D70131",
   midpoint = 0,
+  trim_values = NULL,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE,
+  centered = FALSE,
   variable_names = NULL,
   title = TRUE,
   subtitle = TRUE,
@@ -59,6 +64,11 @@ wrapper_point_plot_core_strat(
   color_mid_point = "white",
   color_high_point = "#D70131",
   midpoint = 0,
+  trim_values = NULL,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE,
+  centered = FALSE,
   variable_names = NULL,
   title = TRUE,
   xlab = TRUE,
@@ -96,6 +106,8 @@ wrapper_point_plot_core_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{scale_gradient}{Possible values: "gradientn", "gradient2", "gradient".}
 
 \item{smooth}{Possible values: "none", "pooled", "strat".}
 

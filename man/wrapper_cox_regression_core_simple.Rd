@@ -55,7 +55,7 @@ wrapper_cox_regression_core_simple_strat(
 
 \item{censor_var}{Name of the censor variable. It has to be numeric and encode 1 for event and 0 for censor.}
 
-\item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model: ~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....}
+\item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model: `~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....`}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 
@@ -67,7 +67,7 @@ wrapper_cox_regression_core_simple_strat(
 
 \item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
 
-\item{sr_times}{Vector of times used to compute survival rates, for example, 3-year IDSF %.}
+\item{sr_times}{Vector of times used to compute survival rates, for example, 3-year IDSF `%`.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 
