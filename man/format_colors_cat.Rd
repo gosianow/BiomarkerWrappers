@@ -29,7 +29,7 @@ format_colors_cat_strata(x, strata = NULL, palette = NULL, rev = FALSE)
 
 \item{colors}{Vector of colors longer or equal the number of unique levels of x. Can be named or non-named. If NULL, colors are generated.}
 
-\item{palette}{Vector of at least two colors used to create a color palette with 'colorRampPalette' or name of a RColorBrewer palette e.g. "Oranges", "Blues", "Spectral", "RdYlBu". Other possible values: "random", "d3_40_light_first", "d3_20", "d3_10", "paired", "ggplot", "Oranges2", "Blues2".}
+\item{palette}{List of length corresponding the number of levels in strata with colors or names of RColorBrewer palettes. E.g. `list("Blues", "Oranges", "Greens", "Purples", "Reds", "Greys")`}
 
 \item{strata}{Vector of categorical values of stratification groups.}
 }

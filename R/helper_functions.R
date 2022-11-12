@@ -1660,6 +1660,29 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
         names(out) <- levels_x
         
         
+      }else if(palette %in% "ggplot"){
+        
+        gg_color_hue <- function(n) {
+          hues = seq(15, 375, length = n+1)
+          hcl(h = hues, l = 65, c = 100)[1:n]
+        }
+        
+        out <- gg_color_hue(length(levels_x))
+        
+        
+      }else if(palette %in% "random"){
+        
+        stopifnot(length(levels_x) <= 502)
+        
+        colors_default <- colors(distinct = TRUE)
+        
+        # barplot(rep(1, length(colors_default)), col = colors_default)
+        
+        out <- colors_default[sample.int(502, length(levels_x))]
+        
+        names(out) <- levels_x
+        
+        
       }else if(palette == "paired"){
         
         ### paired
@@ -1675,17 +1698,18 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
         names(out) <- levels_x
         
         
-      }else if(palette %in% "ggplot"){
+      }else if(palette %in% c("BrBG", "PiYG", "PRGn", "PuOr", "RdBu", "RdGy", "RdYlBu", "RdYlGn", "Spectral")){
+        ### diverging palettes
+        n <- 11  
         
-        gg_color_hue <- function(n) {
-          hues = seq(15, 375, length = n+1)
-          hcl(h = hues, l = 65, c = 100)[1:n]
-        }
+        ### Skip the center light colors and extremes
         
-        out <- gg_color_hue(length(levels_x))
+        out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, 5, 6, 7, n)])(length(levels_x))
         
         
       }else if(palette %in% c("Blues", "BuGn", "BuPu", "GnBu", "Greens", "Greys", "Oranges", "OrRd", "PuBu", "PuBuGn", "PuRd", "Purples", "RdPu", "Reds", "YlGn", "YlGnBu", "YlOrBr", "YlOrRd")){
+        
+        ### sequential palettes
         
         n <- 9
         
@@ -1703,6 +1727,7 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
         
         out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, skip_colors, n)])(length(levels_x))
         
+        
       }else if(palette %in% c("Oranges2", "Blues2")){
         
         palette_colors <- list(
@@ -1714,26 +1739,16 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
         
         # barplot(rep(1, length(out)), col = out)
         
-      }else if(palette %in% "random"){
-        
-        stopifnot(length(levels_x) <= 502)
-        
-        colors_default <- colors(distinct = TRUE)
-        
-        # barplot(rep(1, length(colors_default)), col = colors_default)
-        
-        out <- colors_default[sample.int(502, length(levels_x))]
-        
-        names(out) <- levels_x
         
         
       }else{
         
-        n <- 11  
+        colors_default <- grDevices::colorRampPalette(c("white", palette))(9)[-c(1:3)]
         
-        ### Skip the center light colors
+        out <- grDevices::colorRampPalette(colors_default)(length(levels_x))
         
-        out <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(n, palette)[-c(1, 5, 6, 7, n)])(length(levels_x))
+        # barplot(rep(1, length(out)), col = out)
+        
         
       }
       
@@ -1805,6 +1820,7 @@ format_colors <- function(x, colors = NULL, palette = "d3_40_light_first", rev =
 
 #' @rdname format_colors_cat
 #' @param strata Vector of categorical values of stratification groups.
+#' @param palette List of length corresponding the number of levels in strata with colors or names of RColorBrewer palettes. E.g. `list("Blues", "Oranges", "Greens", "Purples", "Reds", "Greys")`
 #' @export
 format_colors_cat_strata <- function(x, strata = NULL, palette = NULL, rev = FALSE){
   
@@ -1834,9 +1850,7 @@ format_colors_cat_strata <- function(x, strata = NULL, palette = NULL, rev = FAL
   
   if(is.null(palette)){
     
-    palette <- lapply(seq_along(levels_strata), function(i){
-      c("Blues", "Oranges", "Greens", "Purples", "Reds", "Greys")[i]
-    })
+    palette <- list("Blues", "Oranges", "Greens", "Purples", "Reds", "Greys")[seq_along(levels_strata)]
     
   }else{
     

@@ -177,7 +177,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
   radius_range = c(10, 3), legend_position = "right", 
-  axis_text_x_angle = 90, axis_text_x_vjust = 1, axis_text_x_hjust = 1, 
+  axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 1, 
   axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
   
   

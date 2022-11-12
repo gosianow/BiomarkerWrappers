@@ -23,7 +23,7 @@ wrapper_logFC_dotplot(
   radius_range = c(10, 3),
   legend_position = "right",
   axis_text_x_angle = 90,
-  axis_text_x_vjust = 1,
+  axis_text_x_vjust = 0.5,
   axis_text_x_hjust = 1,
   axis_text_y_size = NULL,
   axis_text_y_width = 80,

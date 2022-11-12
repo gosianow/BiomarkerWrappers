@@ -905,7 +905,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, rev = FALSE,
 #' Bar plot with biomarker effect on response per treatment arm
 #' 
 #' @inheritParams wrapper_bar_plot_core_strat
-#' @param colors_bar Vector with colors for treatment X response interaction.
+#' @param colors_bar Vector with colors for treatment X response interaction. Alternatively, 
 #' @export
 wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatment_var = NULL,
   facet_var = NULL, rev = FALSE, strat2_var = NULL, 
@@ -984,7 +984,11 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
       
     }else{
       
-      colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE)
+      if(length(colors_bar) == nlevels(data[, response_var])){
+        colors_bar <- as.character(rep(colors_bar, times = nlevels(data[, treatment_var])))
+      }
+      
+      colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = TRUE)
       
     }
     

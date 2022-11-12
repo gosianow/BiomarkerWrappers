@@ -8,6 +8,7 @@ wrapper_bresults_to_topTable(
   x,
   contrast_vars,
   id_cols = "biomarker",
+  statistic = "HR",
   readjust_pvalues = TRUE
 )
 }

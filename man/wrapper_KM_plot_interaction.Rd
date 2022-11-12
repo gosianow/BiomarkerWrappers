@@ -52,7 +52,7 @@ wrapper_KM_plot_interaction(
 
 \item{strat2_var}{Name of the second stratification variable.}
 
-\item{colors}{Vector with colors for treatment X biomarker levels.}
+\item{colors}{Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`.}
 
 \item{risk_table_labels}{Possible values: "levels", "shape"}
 }

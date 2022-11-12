@@ -473,7 +473,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
 #' KM plot with curves per biomarker and treatment in a single panel
 #' 
 #' @inheritParams wrapper_KM_plot_core_strat
-#' @param colors Vector with colors for treatment X biomarker levels.
+#' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`.
 #' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
   strat1_var = NULL, strat2_var = NULL,
@@ -566,7 +566,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 #' KM plots with biomarker effect per treatment arm
 #' 
 #' @inheritParams wrapper_KM_plot_interaction
-#' @param colors Vector with colors for treatment X biomarker levels.
+#' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for biomarker levels. 
 #' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
   strat2_var = NULL,
@@ -636,6 +636,10 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
       
     }else{
       
+      if(length(colors) == nlevels(data[, biomarker_var])){
+        colors <- as.character(rep(colors, times = nlevels(data[, treatment_var])))
+      }
+      
       colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
       
     }
@@ -694,7 +698,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 #' KM plot with treatment effect per biomarker subgroup
 #' 
 #' @inheritParams wrapper_KM_plot_interaction
-#' @param colors Vector with colors for treatment X biomarker levels.
+#' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for treatment levels.
 #' @export
 wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_var = NULL,
   strat2_var = NULL,
@@ -766,6 +770,10 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
       # barplot(rep(1, length(colors)), col = colors)
       
     }else{
+      
+      if(length(colors) == nlevels(data[, treatment_var])){
+        colors <- as.character(rep(colors, each = nlevels(data[, biomarker_var])))
+      }
       
       colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
       
