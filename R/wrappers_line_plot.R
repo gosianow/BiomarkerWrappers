@@ -45,7 +45,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   stopifnot(length(x_var) == 1)
   
   stopifnot(length(y_var) == 1)
-  stopifnot(is.numeric(data[, y_var]))
+  stopifnot(is.numeric(data[, y_var]) || is.double(data[, y_var]))
   
   stopifnot(length(group_var) == 1)
   # stopifnot(is.factor(data[, group_var]) || is.character(data[, group_var]))
