@@ -316,7 +316,6 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     ### Set label to NA for zero counts so it is not displayed
     ggdata$Label[ggdata$Count == 0] <- ""
     
-    
     ggdata$Subgroup <- factor(ggdata$Subgroup, levels = levels(data_sub[, x_var]))
     
     ggdata$Observation <- factor(ggdata$Observation, levels = levels(data_sub[, y_var]))
@@ -398,8 +397,9 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
   }
   
   ### Set label to NA for zero counts so it is not displayed
-  ggdata_total$Label[ggdata_total$Count == 0] <- ""
-  
+  if(!method %in% c("dodge", "dodge_facet2")){
+    ggdata_total$Label[ggdata_total$Count == 0] <- ""
+  }
   
   ggdata_total$Label_Total <- paste0("(", ggdata_total$Count_Total, ")")
   
