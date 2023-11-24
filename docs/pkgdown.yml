@@ -1,8 +1,8 @@
 pandoc: 2.16.1
-pkgdown: 2.0.5
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   Differential_Gene_Expression: Differential_Gene_Expression.html
   Exploratory_Biomarker_Analysis: Exploratory_Biomarker_Analysis.html
-last_built: 2022-08-05T12:27Z
+last_built: 2023-11-24T11:34Z
 

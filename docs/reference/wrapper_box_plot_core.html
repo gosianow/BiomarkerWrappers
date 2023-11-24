@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.45</span>
       </span>
     </div>
 
@@ -57,98 +57,100 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wrapper_box_plot_core</span><span class="op">(</span>
-  <span class="va">data</span>,
-  <span class="va">x_var</span>,
-  <span class="va">y_var</span>,
-  color_point_var <span class="op">=</span> <span class="cn">NULL</span>,
-  dodge_var <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_var <span class="op">=</span> <span class="cn">NULL</span>,
-  colors_box <span class="op">=</span> <span class="cn">NULL</span>,
-  colors_point <span class="op">=</span> <span class="cn">NULL</span>,
-  variable_names <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">TRUE</span>,
-  subtitle <span class="op">=</span> <span class="cn">TRUE</span>,
-  xlab <span class="op">=</span> <span class="cn">TRUE</span>,
-  ylab <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_colors_box_title <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_colors_point_title <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_position <span class="op">=</span> <span class="st">"right"</span>,
-  facet_label_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  show_total_counts <span class="op">=</span> <span class="cn">FALSE</span>,
-  show_median <span class="op">=</span> <span class="cn">FALSE</span>,
-  point_size <span class="op">=</span> <span class="fl">1</span>,
-  point_shape <span class="op">=</span> <span class="fl">20</span>,
-  point_alpha <span class="op">=</span> <span class="fl">1</span>,
-  point_stroke <span class="op">=</span> <span class="fl">0.8</span>,
-  label_size <span class="op">=</span> <span class="fl">3.5</span>,
-  label_nudge <span class="op">=</span> <span class="fl">0.025</span>,
-  title_size <span class="op">=</span> <span class="cn">NULL</span>,
-  strip_text_size <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_scales <span class="op">=</span> <span class="st">"fixed"</span>,
-  facet_nrow <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_ncol <span class="op">=</span> <span class="cn">NULL</span>,
-  ylim <span class="op">=</span> <span class="cn">NULL</span>,
-  drop <span class="op">=</span> <span class="cn">FALSE</span>,
-  scale_y_continuous_custome <span class="op">=</span> <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span>,
-  axis_text_x_angle <span class="op">=</span> <span class="fl">0</span>,
-  axis_text_x_vjust <span class="op">=</span> <span class="fl">1</span>,
-  axis_text_x_hjust <span class="op">=</span> <span class="fl">0.5</span>,
-  background_grid_major <span class="op">=</span> <span class="st">"none"</span>
-<span class="op">)</span>
-
-<span class="fu">wrapper_box_plot_core_strat</span><span class="op">(</span>
-  <span class="va">data</span>,
-  <span class="va">x_var</span>,
-  <span class="va">y_var</span>,
-  color_point_var <span class="op">=</span> <span class="cn">NULL</span>,
-  dodge_var <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_var <span class="op">=</span> <span class="cn">NULL</span>,
-  strat1_var <span class="op">=</span> <span class="cn">NULL</span>,
-  strat2_var <span class="op">=</span> <span class="cn">NULL</span>,
-  colors_box <span class="op">=</span> <span class="cn">NULL</span>,
-  colors_point <span class="op">=</span> <span class="cn">NULL</span>,
-  variable_names <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">TRUE</span>,
-  xlab <span class="op">=</span> <span class="cn">TRUE</span>,
-  ylab <span class="op">=</span> <span class="cn">TRUE</span>,
-  strat1_label_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  strat2_label_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_colors_box_title <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_colors_point_title <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_position <span class="op">=</span> <span class="st">"right"</span>,
-  facet_label_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  show_total_counts <span class="op">=</span> <span class="cn">FALSE</span>,
-  show_median <span class="op">=</span> <span class="cn">FALSE</span>,
-  point_size <span class="op">=</span> <span class="fl">1</span>,
-  point_shape <span class="op">=</span> <span class="fl">20</span>,
-  point_alpha <span class="op">=</span> <span class="fl">1</span>,
-  point_stroke <span class="op">=</span> <span class="fl">0.8</span>,
-  label_size <span class="op">=</span> <span class="fl">3.5</span>,
-  label_nudge <span class="op">=</span> <span class="fl">0.025</span>,
-  title_size <span class="op">=</span> <span class="cn">NULL</span>,
-  strip_text_size <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_scales <span class="op">=</span> <span class="st">"fixed"</span>,
-  facet_nrow <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_ncol <span class="op">=</span> <span class="cn">NULL</span>,
-  ylim <span class="op">=</span> <span class="cn">NULL</span>,
-  drop <span class="op">=</span> <span class="cn">FALSE</span>,
-  scale_y_continuous_custome <span class="op">=</span> <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span>,
-  axis_text_x_angle <span class="op">=</span> <span class="fl">0</span>,
-  axis_text_x_vjust <span class="op">=</span> <span class="fl">1</span>,
-  axis_text_x_hjust <span class="op">=</span> <span class="fl">0.5</span>,
-  background_grid_major <span class="op">=</span> <span class="st">"none"</span>,
-  strat_scales <span class="op">=</span> <span class="st">"fixed"</span>,
-  strat1_nrow <span class="op">=</span> <span class="fl">1</span>,
-  strat1_ncol <span class="op">=</span> <span class="cn">NULL</span>,
-  strat2_nrow <span class="op">=</span> <span class="cn">NULL</span>,
-  strat2_ncol <span class="op">=</span> <span class="fl">1</span>,
-  strat1_rel_widths <span class="op">=</span> <span class="fl">1</span>,
-  strat1_rel_heights <span class="op">=</span> <span class="fl">1</span>,
-  strat2_rel_widths <span class="op">=</span> <span class="fl">1</span>,
-  strat2_rel_heights <span class="op">=</span> <span class="fl">1</span>,
-  less_legends <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wrapper_box_plot_core</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">x_var</span>,</span>
+<span>  <span class="va">y_var</span>,</span>
+<span>  dodge_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color_point_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colors_box <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colors_point <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variable_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  subtitle <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_colors_box_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_colors_point_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_position <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  facet_label_both <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_total_counts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_median <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  point_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  point_shape <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  point_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  point_stroke <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>  label_nudge <span class="op">=</span> <span class="fl">0.025</span>,</span>
+<span>  title_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strip_text_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
+<span>  facet_nrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_ncol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  drop <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  scale_y_continuous_custome <span class="op">=</span> <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  axis_text_x_angle <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  axis_text_x_vjust <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  axis_text_x_hjust <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  background_grid_major <span class="op">=</span> <span class="st">"none"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wrapper_box_plot_core_strat</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">x_var</span>,</span>
+<span>  <span class="va">y_var</span>,</span>
+<span>  dodge_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  color_point_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat1_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat2_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colors_box <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colors_point <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variable_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  strat1_label_both <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  strat2_label_both <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_colors_box_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_colors_point_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_position <span class="op">=</span> <span class="st">"right"</span>,</span>
+<span>  facet_label_both <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  show_total_counts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show_median <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  point_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  point_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  point_shape <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  point_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  point_stroke <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>  label_nudge <span class="op">=</span> <span class="fl">0.025</span>,</span>
+<span>  title_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strip_text_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
+<span>  facet_nrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_ncol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  drop <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  scale_y_continuous_custome <span class="op">=</span> <span class="fu">scale_y_continuous</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  axis_text_x_angle <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  axis_text_x_vjust <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  axis_text_x_hjust <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  background_grid_major <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  strat_scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
+<span>  strat1_nrow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strat1_ncol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat2_nrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat2_ncol <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strat1_rel_widths <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strat1_rel_heights <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strat2_rel_widths <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strat2_rel_heights <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  less_legends <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -168,16 +170,16 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bdata</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
-<span class="r-in"><span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">wrapper_box_plot_core</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">bdata</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span></span>
+<span class="r-in"><span><span class="va">y_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">wrapper_box_plot_core</span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="wrapper_box_plot_core-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -192,7 +194,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

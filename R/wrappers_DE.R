@@ -172,28 +172,28 @@ wrapper_extract_from_topTable <- function(x, contrasts = NULL, extract_prefix = 
 #' 
 #' @param x "BclassTesting" object, for example, output of the wrapper_cox_regression_biomarker function. It does not work with log-rank test results.
 #' @export
-wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker", statistic = "HR", readjust_pvalues = TRUE){
+wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker", statistic_change = "HR", readjust_pvalues = TRUE){
   
   res <- bresults(x)
   
-  stopifnot(all(c(statistic, "pvalue") %in% colnames(res)))
+  stopifnot(all(c(statistic_change, "pvalue") %in% colnames(res)))
   
   if(readjust_pvalues){
     stopifnot(all(c("adj_pvalue") %in% colnames(res)))
   }
   
   
-  if(paste0(statistic, "_non_empty") %in% colnames(res)){
-    res <- res[res[, paste0(statistic, "_non_empty")], ]
+  if(paste0(statistic_change, "_non_empty") %in% colnames(res)){
+    res <- res[res[, paste0(statistic_change, "_non_empty")], ]
   }
   
-  log_statistic <- paste0("log", statistic)
+  log_statistic_change <- paste0("log", statistic_change)
   
-  res[, log_statistic] <- log2(res[, statistic])
+  res[, log_statistic_change] <- log2(res[, statistic_change])
   
   
   ### Add statistic for GSEA
-  res$statistic <- -log10(res$pvalue) * sign(res[, log_statistic])
+  res$statistic <- -log10(res$pvalue) * sign(res[, log_statistic_change])
   
   
   if(is.null(contrast_vars)){
@@ -220,12 +220,12 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   
   ### Extract statistics 
   
-  data_HR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = statistic)
-  colnames(data_HR)[-1] <- paste0(statistic, "_", colnames(data_HR)[-1])
+  data_HR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = statistic_change)
+  colnames(data_HR)[-1] <- paste0(statistic_change, "_", colnames(data_HR)[-1])
   
   
-  data_logHR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = log_statistic)
-  colnames(data_logHR)[-1] <- paste0(log_statistic, "_", colnames(data_logHR)[-1])
+  data_logHR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = log_statistic_change)
+  colnames(data_logHR)[-1] <- paste0(log_statistic_change, "_", colnames(data_logHR)[-1])
   
   
   data_P.Value <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "pvalue")

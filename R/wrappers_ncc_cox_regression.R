@@ -55,11 +55,16 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
     
     ncc_var <- ncc_vars[i]
     
-    data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    if(is.factor(data[, ncc_var])){
+      data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    }else{
+      data[is.na(data[, ncc_var]), ncc_var] <- 0
+    }
+    
     
   }
   
-
+  
   ### Keep non-missing data
   
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars)]), , drop = FALSE]
@@ -155,7 +160,7 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
     
     
     ## Fit the Cox model with WPL
- 
+    
     ipw_fit <- NULL
     
     try(ipw_fit <- multipleNCC::wpl(f,
@@ -275,7 +280,7 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
   
   stopifnot(all(sapply(out, class) == "character"))
   
-
+  
   if(!print_pvalues){
     out$`P-value` <- NULL
     out$`Adj. P-value` <- NULL
@@ -385,7 +390,11 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
     
     ncc_var <- ncc_vars[i]
     
-    data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    if(is.factor(data[, ncc_var])){
+      data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    }else{
+      data[is.na(data[, ncc_var]), ncc_var] <- 0
+    }
     
   }
   
@@ -414,7 +423,7 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   
   ## Check if the first level has non zero counts so it can be used as a reference group in the regression
   ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
-
+  
   
   if(interaction1_var %in% ncc_vars){
     tbl <- table(data[as.logical(data[, samplestat_var]), interaction1_var])
@@ -580,14 +589,14 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
     # 
     # colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
     
-
+    
     
     coefficients <- data.frame(coefficient = paste0(interaction1_var, levels(data[, interaction1_var])),
       "Pr(>|z|)" = c(NA, ipw_summ$coefficients[coef_indx, "Pr(>|z|)"]), 
       stringsAsFactors = FALSE, row.names = NULL)
     
     colnames(coefficients) <- c("coefficient", "pvalue")
-
+    
     
   }
   
@@ -739,7 +748,11 @@ wrapper_ncc_cox_regression_core_predictive2 <- function(data, tte_var, censor_va
     
     ncc_var <- ncc_vars[i]
     
-    data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    if(is.factor(data[, ncc_var])){
+      data[is.na(data[, ncc_var]), ncc_var] <- levels(data[, ncc_var])[1]
+    }else{
+      data[is.na(data[, ncc_var]), ncc_var] <- 0
+    }
     
   }
   
@@ -900,7 +913,7 @@ wrapper_ncc_cox_regression_core_predictive2 <- function(data, tte_var, censor_va
     
     colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
     
-
+    
     
     ### Use multcomp::glht for contrasts 
     

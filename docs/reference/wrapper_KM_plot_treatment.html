@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.45</span>
       </span>
     </div>
 
@@ -57,41 +57,41 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wrapper_KM_plot_treatment</span><span class="op">(</span>
-  <span class="va">data</span>,
-  <span class="va">tte_var</span>,
-  <span class="va">censor_var</span>,
-  <span class="va">treatment_var</span>,
-  biomarker_var <span class="op">=</span> <span class="cn">NULL</span>,
-  strat2_var <span class="op">=</span> <span class="cn">NULL</span>,
-  colors <span class="op">=</span> <span class="cn">NULL</span>,
-  linetypes <span class="op">=</span> <span class="fl">1</span>,
-  variable_names <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">TRUE</span>,
-  xlab <span class="op">=</span> <span class="cn">TRUE</span>,
-  strat1_label_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  strat2_label_both <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_colors_title <span class="op">=</span> <span class="cn">TRUE</span>,
-  legend_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.03</span>, <span class="fl">0.03</span><span class="op">)</span>,
-  legend_justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,
-  break_time_by <span class="op">=</span> <span class="cn">NULL</span>,
-  max_tte <span class="op">=</span> <span class="cn">NULL</span>,
-  risk_table <span class="op">=</span> <span class="cn">TRUE</span>,
-  conf_int <span class="op">=</span> <span class="cn">FALSE</span>,
-  surv_median_line <span class="op">=</span> <span class="st">"none"</span>,
-  ggtheme <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_get</a></span><span class="op">(</span><span class="op">)</span>,
-  line_size <span class="op">=</span> <span class="fl">1</span>,
-  title_size <span class="op">=</span> <span class="cn">NULL</span>,
-  label_size <span class="op">=</span> <span class="cn">NULL</span>,
-  rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">)</span>,
-  background_grid_major <span class="op">=</span> <span class="st">"none"</span>,
-  risk_table_labels <span class="op">=</span> <span class="cn">TRUE</span>,
-  strat_scales <span class="op">=</span> <span class="st">"fixed"</span>,
-  strat1_nrow <span class="op">=</span> <span class="fl">1</span>,
-  strat1_ncol <span class="op">=</span> <span class="cn">NULL</span>,
-  strat2_nrow <span class="op">=</span> <span class="cn">NULL</span>,
-  strat2_ncol <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wrapper_KM_plot_treatment</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">tte_var</span>,</span>
+<span>  <span class="va">censor_var</span>,</span>
+<span>  <span class="va">treatment_var</span>,</span>
+<span>  biomarker_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat2_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colors <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  linetypes <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  variable_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  strat1_label_both <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  strat2_label_both <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_colors_title <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  legend_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.03</span>, <span class="fl">0.03</span><span class="op">)</span>,</span>
+<span>  legend_justification <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  break_time_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_tte <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  risk_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  conf_int <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  surv_median_line <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  ggtheme <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_get</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  line_size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  title_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rel_heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  background_grid_major <span class="op">=</span> <span class="st">"none"</span>,</span>
+<span>  risk_table_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  strat_scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
+<span>  strat1_nrow <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  strat1_ncol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat2_nrow <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  strat2_ncol <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -113,7 +113,7 @@
 
 
 <dt>colors</dt>
-<dd><p>Vector with colors for treatment X biomarker levels.</p></dd>
+<dd><p>Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for treatment levels.</p></dd>
 
 
 <dt>risk_table_labels</dt>
@@ -133,7 +133,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

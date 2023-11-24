@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.45</span>
       </span>
     </div>
 
@@ -57,16 +57,9 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">wrapper_cut_quartiles</span><span class="op">(</span>
-  <span class="va">x</span>,
-  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"[0%, 25%]"</span>, <span class="st">"(25%, 50%]"</span>, <span class="st">"(50%, 75%]"</span>, <span class="st">"(75%, 100%]"</span><span class="op">)</span>
-<span class="op">)</span>
-
-<span class="fu">wrapper_cut_quartiles_strat</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">strata</span>,
-  labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"[0%, 25%]"</span>, <span class="st">"(25%, 50%]"</span>, <span class="st">"(50%, 75%]"</span>, <span class="st">"(75%, 100%]"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">wrapper_cut_quartiles</span><span class="op">(</span><span class="va">x</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, right <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">wrapper_cut_quartiles_strat</span><span class="op">(</span><span class="va">x</span>, <span class="va">strata</span>, labels <span class="op">=</span> <span class="cn">NULL</span>, right <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -76,6 +69,45 @@
 
 </dl></div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 31 79 51 14 67 42 50 43 14 25 90 91 69 91 57 92  9 93 99 72 26  7 42  9 83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [26] 36 78 81 43 76 15 32  7  9 41 74 23 27 60 53  7 53 27 96 38 89 34 93 69 72</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [51] 76 63 13 82 97 91 25 38 21 79 41 47 90 60 95 16 94  6 72 86 86 39 31 81 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [76] 34  4 13 69 25 52 22 89 32 25 87 35 40 30 12 31 30 64 99 14 93 96 71 67 23</span>
+<span class="r-in"><span><span class="va">strata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="st">"B"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">strata</span> </span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [38] A A A A A A A A A A A A A B B B B B B B B B B B B B B B B B B B B B B B B</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [75] B B B B B B B B B B B B B B B B B B B B B B B B B B</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: A B</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">wrapper_cut_quartiles_strat</span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, strata <span class="op">=</span> <span class="va">strata</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] (25%, 50%]  (75%, 100%] (50%, 75%]  [0%, 25%]   (50%, 75%]  (25%, 50%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   [7] (25%, 50%]  (25%, 50%]  [0%, 25%]   [0%, 25%]   (75%, 100%] (75%, 100%]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [13] (50%, 75%]  (75%, 100%] (50%, 75%]  (75%, 100%] [0%, 25%]   (75%, 100%]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [19] (75%, 100%] (50%, 75%]  [0%, 25%]   [0%, 25%]   (25%, 50%]  [0%, 25%]  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [25] (75%, 100%] (25%, 50%]  (75%, 100%] (75%, 100%] (25%, 50%]  (50%, 75%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [31] [0%, 25%]   (25%, 50%]  [0%, 25%]   [0%, 25%]   (25%, 50%]  (50%, 75%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [37] [0%, 25%]   [0%, 25%]   (50%, 75%]  (50%, 75%]  [0%, 25%]   (50%, 75%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] [0%, 25%]   (75%, 100%] (25%, 50%]  (75%, 100%] (25%, 50%]  (75%, 100%]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [49] (50%, 75%]  (50%, 75%]  (50%, 75%]  (50%, 75%]  [0%, 25%]   (75%, 100%]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [55] (75%, 100%] (75%, 100%] [0%, 25%]   (25%, 50%]  [0%, 25%]   (50%, 75%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [61] (25%, 50%]  (25%, 50%]  (75%, 100%] (50%, 75%]  (75%, 100%] [0%, 25%]  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [67] (75%, 100%] [0%, 25%]   (50%, 75%]  (75%, 100%] (75%, 100%] (25%, 50%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [73] (25%, 50%]  (50%, 75%]  (50%, 75%]  (25%, 50%]  [0%, 25%]   [0%, 25%]  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [79] (50%, 75%]  [0%, 25%]   (50%, 75%]  [0%, 25%]   (75%, 100%] (25%, 50%] </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] [0%, 25%]   (75%, 100%] (25%, 50%]  (25%, 50%]  (25%, 50%]  [0%, 25%]  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [91] (25%, 50%]  (25%, 50%]  (50%, 75%]  (75%, 100%] [0%, 25%]   (75%, 100%]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [97] (75%, 100%] (50%, 75%]  (50%, 75%]  [0%, 25%]  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Levels: [0%, 25%] (25%, 50%] (50%, 75%] (75%, 100%]</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -88,7 +120,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

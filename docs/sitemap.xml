@@ -28,7 +28,13 @@
     <loc>/reference/calculate_break_time.html</loc>
   </url>
   <url>
+    <loc>/reference/compute_lower_whisker.html</loc>
+  </url>
+  <url>
     <loc>/reference/compute_trim_values.html</loc>
+  </url>
+  <url>
+    <loc>/reference/compute_upper_whisker.html</loc>
   </url>
   <url>
     <loc>/reference/csv2eSet.html</loc>
@@ -155,6 +161,12 @@
   </url>
   <url>
     <loc>/reference/wrapper_KM_plot_treatment.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wrapper_NES_barplot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wrapper_NES_barplot2.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_bar_plot_biomarker.html</loc>
@@ -410,6 +422,12 @@
   </url>
   <url>
     <loc>/reference/wrapper_logistic_regression_treatment.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wrapper_max_text_height.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wrapper_max_text_width.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_merge_topTables.html</loc>

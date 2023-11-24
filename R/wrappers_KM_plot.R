@@ -197,6 +197,11 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   # -------------------------------------------------------------------------
   
   
+  ### TO DO: Use this arguments
+  # risk.table.y.text.col = T # colour risk table text annotations.
+  # risk.table.y.text = FALSE # show bars instead of names in text annotations in legend of risk table.
+  
+  
   ## palette must be a non-named vector. Otherwise, it does not work. For each subplot has to have unique values. If a level has zero counts, it is not plotted. Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts.
   
   ### Use that trick until the issue https://github.com/kassambara/survminer/issues/519 is resolved 

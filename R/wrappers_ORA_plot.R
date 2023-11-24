@@ -10,9 +10,10 @@
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant' and 'bresults'.
+#' @param plot_x_var What to plot on the x-axis. Possible values "log_adjp" which corresponds to -log10(adjp_var) or "statistic" which corresponds to -log10(adjp_var) * sign(color_point_var).
 #' @export
 wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_var = "Observed", 
-  adjp_var = "adj.P.Val", color_point_var = NULL,
+  adjp_var = "adj.P.Val", color_point_var = NULL, plot_x_var = "log_adjp",
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   size_range = c(2, 10),
@@ -20,6 +21,8 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
   
   
   stopifnot(length(geneset_var) == 1)
+  
+  stopifnot(plot_x_var %in% c("log_adjp", "statistic"))
   
   ## Wrap the title so it can be nicely displayed in the plots
   if(title_width > 0){
@@ -42,6 +45,7 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
   
   
   x$log_adjp <- -log10(x[, adjp_var])
+  x$statistic <- x$log_adjp * sign(x[, color_point_var])
   
   ## Derive the number of DE genes that overlap with the gene set
   
@@ -78,14 +82,14 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
     
     if(!is.null(color_point_var)){
       
-      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], size = .data[["DE_in_set"]], color = .data[[color_point_var]])) +
+      ggp <- ggplot(x, aes(x = .data[[plot_x_var]], y = .data[[geneset_var]], size = .data[["DE_in_set"]], color = .data[[color_point_var]])) +
         geom_point() +
         scale_size_area(name = "No. DE in set", max_size = size_range[2]) +
         scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
       
     }else{
       
-      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], size = .data[["DE_in_set"]])) +
+      ggp <- ggplot(x, aes(x = .data[[plot_x_var]], y = .data[[geneset_var]], size = .data[["DE_in_set"]])) +
         geom_point(color = color_point) +
         scale_size_area(name = "No. DE in set", max_size = size_range[2]) 
       
@@ -95,23 +99,29 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
     
     if(!is.null(color_point_var)){
       
-      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], color = .data[[color_point_var]])) +
+      ggp <- ggplot(x, aes(x = .data[[plot_x_var]], y = .data[[geneset_var]], color = .data[[color_point_var]])) +
         geom_point(size = size_range[2]) +
         scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
       
     }else{
       
-      ggp <- ggplot(x, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]])) +
+      ggp <- ggplot(x, aes(x = .data[[plot_x_var]], y = .data[[geneset_var]])) +
         geom_point(color = color_point, size = size_range[2])
       
     }
     
   }
   
+  if(plot_x_var == "log_adjp"){
+    xintercept <- -log10(c(0.05))
+    xlab <- paste0("-log10(", adjp_var, ")")
+    xlim <- c(0, max(c(x[, "log_adjp"], -log10(0.05)), na.rm = TRUE))
+  }else{
+    xintercept <- c(-log10(c(0.05)), log10(c(0.05)))
+    xlab <- paste0("-log10(", adjp_var, ") * sign(", color_point_var, ")")
+    xlim <- c(min(c(x[, plot_x_var], log10(0.05)), na.rm = TRUE), max(c(x[, plot_x_var], -log10(0.05)), na.rm = TRUE))
+  }
   
-  xintercept <- -log10(c(0.05))
-  xlab <- paste0("-log10(", adjp_var, ")")
-  xlim <- c(0, max(c(x[, "log_adjp"], -log10(0.05)), na.rm = TRUE))
   
   
   ggp <- ggp +

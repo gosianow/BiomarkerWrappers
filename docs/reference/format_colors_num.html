@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.40</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.45</span>
       </span>
     </div>
 
@@ -57,16 +57,16 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">format_colors_num</span><span class="op">(</span>
-  <span class="va">x</span>,
-  centered <span class="op">=</span> <span class="cn">TRUE</span>,
-  palette <span class="op">=</span> <span class="cn">NULL</span>,
-  rev <span class="op">=</span> <span class="cn">FALSE</span>,
-  trim_values <span class="op">=</span> <span class="cn">NULL</span>,
-  trim_prop <span class="op">=</span> <span class="cn">NULL</span>,
-  trim_range <span class="op">=</span> <span class="cn">NULL</span>,
-  ceiling <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">format_colors_num</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  centered <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  rev <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  trim_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trim_prop <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trim_range <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ceiling <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,12 +92,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">palette</span> <span class="op">&lt;-</span> <span class="st">"Spectral"</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">format_colors_num</span><span class="op">(</span><span class="va">x</span>, trim_values <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">palette</span> <span class="op">&lt;-</span> <span class="st">"Spectral"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">format_colors_num</span><span class="op">(</span><span class="va">x</span>, trim_values <span class="op">=</span> <span class="fl">2.5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> function (x = NULL, return_rgb = FALSE, max_value = 1) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     if (is.null(x)) {</span>
@@ -133,37 +133,21 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>         return(res_col2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fe1025261f8&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fe102529900&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x7fc524976158&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x7fc524972c48&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"breaks")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] -2.5000000 -2.2058824 -1.9117647 -1.6176471 -1.3235294 -1.0294118</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] -0.7352941 -0.4411765 -0.1470588  0.1470588  0.4411765  0.7352941</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [13]  1.0294118  1.3235294  1.6176471  1.9117647  2.2058824  2.5000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"colors")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              red     green        blue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 0.03137255 0.1882353 0.419607843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 0.03137255 0.3176471 0.611764706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] 0.12941176 0.4431373 0.709803922</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] 0.25882353 0.5725490 0.776470588</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] 0.41960784 0.6823529 0.839215686</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] 0.61960784 0.7921569 0.882352941</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] 0.77647059 0.8588235 0.937254902</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 0.87058824 0.9215686 0.968627451</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 0.96862745 0.9843137 1.000000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 1.00000000 0.9607843 0.921568627</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 0.99607843 0.9019608 0.807843137</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [12,] 0.99215686 0.8156863 0.635294118</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13,] 0.99215686 0.6823529 0.419607843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [14,] 0.99215686 0.5529412 0.235294118</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15,] 0.94509804 0.4117647 0.074509804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16,] 0.85098039 0.2823529 0.003921569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17,] 0.65098039 0.2117647 0.011764706</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [18,] 0.49803922 0.1529412 0.015686275</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "#08306BFF" "#08519CFF" "#2171B5FF" "#4292C6FF" "#6BAED6FF" "#9ECAE1FF"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "#C6DBEFFF" "#DEEBF7FF" "#F7FBFFFF" "#FFF5EBFF" "#FEE6CEFF" "#FDD0A2FF"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "#FDAE6BFF" "#FD8D3CFF" "#F16913FF" "#D94801FF" "#A63603FF" "#7F2704FF"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"transparency")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"space")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LAB"</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -178,7 +162,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
