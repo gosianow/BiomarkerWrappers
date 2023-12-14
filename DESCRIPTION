@@ -1,7 +1,7 @@
 Package: BiomarkerWrappers
 Type: Package
 Title: Suite of functions for exploratory biomarker analysis
-Version: 0.0.0.45
+Version: 0.0.0.46
 Authors@R: 
     person(given = "Malgorzata",
            family = "Nowicka",
@@ -29,6 +29,7 @@ Collate:
     'wrappers_DE.R'
     'wrappers_GSEA.R'
     'wrappers_GSEA_plot.R'
+    'wrappers_cox_regression.R'
     'wrappers_KM_plot.R'
     'wrappers_NES_plot.R'
     'wrappers_ORA.R'
@@ -38,7 +39,6 @@ Collate:
     'wrappers_characteristics.R'
     'wrappers_logFC_plot.R'
     'wrappers_cooccurrence.R'
-    'wrappers_cox_regression.R'
     'wrappers_error_line_plot.R'
     'wrappers_fishers_test.R'
     'wrappers_gene_expression_plot.R'

@@ -31,7 +31,10 @@ wrapper_KM_plot_core(
   rel_heights = c(5, 1),
   background_grid_major = "none",
   level_mapping = NULL,
-  risk_table_labels = TRUE
+  risk_table_labels = TRUE,
+  print_hr = FALSE,
+  print_mst = FALSE,
+  print_pvalues = FALSE
 )
 
 wrapper_KM_plot_core_strat(

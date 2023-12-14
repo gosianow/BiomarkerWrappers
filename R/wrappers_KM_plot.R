@@ -1,5 +1,16 @@
+#' @include wrappers_cox_regression.R
+NULL
 
 
+# colors = NULL; linetypes = 1; 
+# variable_names = NULL; 
+# title = TRUE; subtitle = TRUE; xlab = TRUE;
+# legend_colors_title = TRUE; legend_position = c(0.03, 0.03); legend_justification = c(0, 0);
+# break_time_by = NULL; max_tte = NULL; risk_table = TRUE; conf_int = FALSE; surv_median_line = "none";
+# ggtheme = ggplot2::theme_get(); 
+# line_size = 1; title_size = NULL; label_size = NULL; rel_heights = c(5, 1); 
+# background_grid_major = "none"; level_mapping = NULL; risk_table_labels = TRUE
+# print_hr = TRUE; print_mst = TRUE; print_pvalues = TRUE
 
 
 
@@ -34,7 +45,8 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   break_time_by = NULL, max_tte = NULL, risk_table = TRUE, conf_int = FALSE, surv_median_line = "none",
   ggtheme = ggplot2::theme_get(), 
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
-  background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE){
+  background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE,
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE){
   
   
   # -------------------------------------------------------------------------
@@ -193,6 +205,29 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   
   
   # -------------------------------------------------------------------------
+  # To display results from Cox regression as table on the KM plot 
+  # -------------------------------------------------------------------------
+  
+  tb <- NULL
+  
+  if(any(c(print_hr, print_mst, print_pvalues))){
+    
+    wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_var, strata_vars = NULL, return_vars = covariate_var, keep_obs = TRUE, variable_names = variable_names, caption = NULL, force_empty_cols = TRUE, print_hr = print_hr, print_nevent = FALSE, print_mst = print_mst, print_total = FALSE, print_pvalues = print_pvalues, print_adjpvalues = FALSE)
+    
+    
+    res <- bresults(wrapper_res)
+    out <- boutput(wrapper_res)
+    
+    
+    tb <- out[, -c(1)]
+    
+    tb <- tibble::tibble(x = 1, y = 1, label = list(tb))
+    
+  }
+  
+  
+  
+  # -------------------------------------------------------------------------
   # Generate Kaplan-Meier plot
   # -------------------------------------------------------------------------
   
@@ -238,6 +273,17 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
       scale_linetype_manual(name = legend_colors_title, labels = levels(data[, covariate_var]), values = linetypes) +
       coord_cartesian(xlim = c(0, max_tte)) +
       background_grid(major = background_grid_major, minor = "none", size.major = 0.15))
+  
+  
+  if(!is.null(tb)){
+    
+    # Using native plot coordinates instead of data coordinates
+    
+    ggpl_plot <- ggpl_plot +
+      ggpp::geom_table_npc(data = tb, aes(npcx = 1, npcy = 0.05, label = label), size = 4, hjust = 1, vjust = 0, table.theme = ggpp::ttheme_gtminimal)
+    
+  }
+  
   
   
   if(risk_table %in% c(TRUE, "nrisk_cumcensor")){
