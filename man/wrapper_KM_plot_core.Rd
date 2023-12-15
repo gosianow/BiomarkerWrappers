@@ -34,7 +34,8 @@ wrapper_KM_plot_core(
   risk_table_labels = TRUE,
   print_hr = FALSE,
   print_mst = FALSE,
-  print_pvalues = FALSE
+  print_pvalues = FALSE,
+  print_options = NULL
 )
 
 wrapper_KM_plot_core_strat(
@@ -67,6 +68,10 @@ wrapper_KM_plot_core_strat(
   background_grid_major = "none",
   level_mapping = NULL,
   risk_table_labels = TRUE,
+  print_hr = FALSE,
+  print_mst = FALSE,
+  print_pvalues = FALSE,
+  print_options = NULL,
   strat_scales = "fixed",
   strat1_nrow = 1,
   strat1_ncol = NULL,
@@ -86,6 +91,8 @@ wrapper_KM_plot_core_strat(
 \item{level_mapping}{Named vector with level mapping. The names correspond to the original levels of covariate_var.}
 
 \item{risk_table_labels}{Possible values: "levels", "shape"}
+
+\item{print_options}{Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 0, vjust = 1, size = 4)}
 
 \item{strat1_var}{Name of the firts stratification variable.}
 

@@ -33,6 +33,10 @@ wrapper_KM_plot_treatment(
   rel_heights = c(5, 1),
   background_grid_major = "none",
   risk_table_labels = TRUE,
+  print_hr = FALSE,
+  print_mst = FALSE,
+  print_pvalues = FALSE,
+  print_options = NULL,
   strat_scales = "fixed",
   strat1_nrow = 1,
   strat1_ncol = NULL,
@@ -52,6 +56,8 @@ wrapper_KM_plot_treatment(
 \item{colors}{Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for treatment levels.}
 
 \item{risk_table_labels}{Possible values: "levels", "shape"}
+
+\item{print_options}{Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 0, vjust = 1, size = 4)}
 }
 \description{
 KM plot with treatment effect per biomarker subgroup

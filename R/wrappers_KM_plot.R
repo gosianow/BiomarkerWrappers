@@ -22,6 +22,7 @@ NULL
 #' @param covariate_var Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.
 #' @param level_mapping Named vector with level mapping. The names correspond to the original levels of covariate_var.
 #' @param risk_table_labels Possible values: "levels", "shape"
+#' @param print_options Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 0, vjust = 1, size = 4)
 #' 
 #' @examples 
 #' 
@@ -46,7 +47,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   ggtheme = ggplot2::theme_get(), 
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE,
-  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE){
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL){
   
   
   # -------------------------------------------------------------------------
@@ -279,8 +280,15 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
     
     # Using native plot coordinates instead of data coordinates
     
+    print_options_default <- c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4)
+    
+    if(!is.null(print_options)){
+      mm <- match(names(print_options), names(print_options_default))
+      print_options_default[mm] <- print_options
+    }
+    
     ggpl_plot <- ggpl_plot +
-      ggpp::geom_table_npc(data = tb, aes(npcx = 1, npcy = 0.05, label = label), size = 4, hjust = 1, vjust = 0, table.theme = ggpp::ttheme_gtminimal)
+      ggpp::geom_table_npc(data = tb, aes(npcx = print_options_default["npcx"], npcy = print_options_default["npcy"], label = label), size = print_options_default["size"], hjust = print_options_default["hjust"], vjust = print_options_default["vjust"], table.theme = ggpp::ttheme_gtminimal)
     
   }
   
@@ -373,6 +381,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   ggtheme = ggplot2::theme_get(),
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE, 
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -489,7 +498,8 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
         break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
         ggtheme = ggtheme,
         line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-        background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels)
+        background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
+        print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options)
       
       
       return(ggpl)
@@ -536,6 +546,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   ggtheme = ggplot2::theme_get(),
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1.5), 
   background_grid_major = "none", risk_table_labels = TRUE,
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -602,6 +613,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major, risk_table_labels = risk_table_labels,
+    print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -629,6 +641,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   ggtheme = ggplot2::theme_get(),
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", risk_table_labels = TRUE,
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -726,6 +739,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
+    print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -761,6 +775,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   ggtheme = ggplot2::theme_get(),
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", risk_table_labels = TRUE,
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -869,7 +884,8 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     break_time_by = break_time_by, max_tte = max_tte, risk_table = risk_table, conf_int = conf_int, surv_median_line = surv_median_line,
     ggtheme = ggtheme,
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
-    background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels, 
+    background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
+    print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options, 
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
