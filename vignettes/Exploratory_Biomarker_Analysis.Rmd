@@ -41,6 +41,8 @@ options(bkable_full_width = TRUE)
 knitr::opts_chunk$set(cache = cache, cache.comments = FALSE, echo = TRUE, warning = FALSE, message = FALSE, error = FALSE, fig.width = 6, fig.height = 5, fig.align = "center", tidy=TRUE, tidy.opts = list(width.cutoff = 80))
 
 
+### Necessary for knit_child
+knitr::opts_knit$set(output.dir = getwd())
 
 
 ```

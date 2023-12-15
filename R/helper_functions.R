@@ -162,7 +162,7 @@ fig.rename <- function(path, options){
     
     if(length(options$fig.prefix) != 0){
       
-      path_new <- paste0(dirname(path_new), options$fig.prefix, "-", basename(path_new))
+      path_new <- file.path(dirname(path_new), paste0(options$fig.prefix, "-", basename(path_new)))
     }
     
     file.rename(from = path, to = path_new)
@@ -211,7 +211,6 @@ fig.rename <- function(path, options){
 #' @export
 subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig.suffix = NULL, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
 
-  
 
   # -----------------------------------------------------------------------
   # Some checks
@@ -233,7 +232,7 @@ subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig
   # time <- paste0(gsub("[[:punct:] ]", "_", format(Sys.time())), "_", floor(runif(1) * 10000))
   time <- NULL
   
-  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", fig.process=fig.rename", ", fig.prefix=", fig.prefix, ", fig.suffix=", fig.suffix, ", echo=FALSE}\n",
+  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", fig.process=fig.rename", ifelse(is.null(fig.prefix), ", fig.prefix=NULL", paste0(", fig.prefix='", fig.prefix, "'")), ifelse(is.null(fig.suffix), ", fig.suffix=NULL", paste0(", fig.suffix='", fig.suffix, "'")), ", echo=FALSE}\n",
     g_deparsed,
     "\n```\n")
   
@@ -246,7 +245,6 @@ subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig
   cat(knitr::knit_child(text = sub_chunk, quiet = TRUE, envir = envir))
   
 }
-
 
 
 
