@@ -147,6 +147,7 @@ eSet2csv <- function(es, file, digits = 2){
 
 
 ### Based on this AWESOME post http://michaeljw.com/blog/post/subchunkify/
+### See https://stackoverflow.com/questions/15365829/dynamic-height-and-width-for-knitr-plots
 
 # subchunkify <- function(g, fig_height=7, fig_width=5) {
 #   g_deparsed <- paste0(deparse(
@@ -170,10 +171,45 @@ eSet2csv <- function(es, file, digits = 2){
 
 #' My version of subchunkify 
 #' 
+#' @description
+#' The original function is taken from the blog post that is referenced on stack overflow https://stackoverflow.com/questions/15365829/dynamic-height-and-width-for-knitr-plots.
+#' 
+#' Remember to set chunk options to `results = "asis"`.
+#' 
+#' Also necessary to set for knit_child: `knitr::opts_knit$set(output.dir = getwd())`
+#' 
+#' 
 #' @export
-subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
-  ### Necessary to set for knit_child
-  ## knitr::opts_knit$set(output.dir = getwd())
+subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig.suffix = NULL, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
+
+  
+  # -----------------------------------------------------------------------
+  # Function to rename the plot names  
+  # -----------------------------------------------------------------------
+  
+  
+  fig.rename <- function(path, options){
+    
+    path_new <- path
+    
+    if(length(options$fig.suffix) != 0 | length(options$fig.prefix) != 0){
+      
+      if(length(options$fig.suffix) != 0){
+        path_new <- paste0(tools::file_path_sans_ext(path_new), "-", options$fig.suffix, ".", tools::file_ext(path_new))
+      }
+      
+      if(length(options$fig.prefix) != 0){
+        
+        path_new <- paste0(dirname(path_new), options$fig.prefix, "-", basename(path_new))
+      }
+      
+      file.rename(from = path, to = path_new)
+      
+    }
+    
+    path_new
+    
+  }
   
   # -----------------------------------------------------------------------
   # Some checks
@@ -191,11 +227,11 @@ subchunkify <- function(g, fig.height = 5, fig.width = 6, chunk_name = NULL, env
   
   g_deparsed <- paste0(deparse(substitute(g)), collapse = "")
   
-  ### Make unique labels. In the end when using knit_child no need for unique labels. However, chunk_name must be unique.
+  ### Make unique labels. In the end when using knit_child no need for unique labels. However, then chunk_name must be unique.
   # time <- paste0(gsub("[[:punct:] ]", "_", format(Sys.time())), "_", floor(runif(1) * 10000))
   time <- NULL
   
-  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", echo=FALSE}\n",
+  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", fig.process=fig.rename", ", fig.prefix=", fig.prefix, ", fig.suffix=", fig.suffix, ", echo=FALSE}\n",
     g_deparsed,
     "\n```\n")
   

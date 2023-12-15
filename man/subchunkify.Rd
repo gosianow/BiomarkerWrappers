@@ -8,11 +8,17 @@ subchunkify(
   g,
   fig.height = 5,
   fig.width = 6,
+  fig.prefix = NULL,
+  fig.suffix = NULL,
   chunk_name = NULL,
   envir = parent.frame(),
   display_subchunk = FALSE
 )
 }
 \description{
-My version of subchunkify
+The original function is taken from the blog post that is referenced on stack overflow https://stackoverflow.com/questions/15365829/dynamic-height-and-width-for-knitr-plots.
+
+Remember to set chunk options to `results = "asis"`.
+
+Also necessary to set for knit_child: `knitr::opts_knit$set(output.dir = getwd())`
 }
