@@ -22,7 +22,7 @@ NULL
 #' @param covariate_var Name of variable that defines the subgroups where the survival is calculated. This variable must be a factor.
 #' @param level_mapping Named vector with level mapping. The names correspond to the original levels of covariate_var.
 #' @param risk_table_labels Possible values: "levels", "shape"
-#' @param print_options Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 0, vjust = 1, size = 4)
+#' @param print_options Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 1, vjust = 1, size = 4)
 #' 
 #' @examples 
 #' 

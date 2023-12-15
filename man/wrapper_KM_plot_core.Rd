@@ -92,7 +92,7 @@ wrapper_KM_plot_core_strat(
 
 \item{risk_table_labels}{Possible values: "levels", "shape"}
 
-\item{print_options}{Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 0, vjust = 1, size = 4)}
+\item{print_options}{Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 1, vjust = 1, size = 4)}
 
 \item{strat1_var}{Name of the firts stratification variable.}
 

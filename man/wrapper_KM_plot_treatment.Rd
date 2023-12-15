@@ -57,7 +57,7 @@ wrapper_KM_plot_treatment(
 
 \item{risk_table_labels}{Possible values: "levels", "shape"}
 
-\item{print_options}{Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 0, vjust = 1, size = 4)}
+\item{print_options}{Named vector. The default is c(npcx = 1, npcy = 0.05, hjust = 1, vjust = 0, size = 4) for text in the bottom right corner. For text in the top right corner use c(npcx = 1, npcy = 1, hjust = 1, vjust = 1, size = 4)}
 }
 \description{
 KM plot with treatment effect per biomarker subgroup
