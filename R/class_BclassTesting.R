@@ -129,7 +129,7 @@ setMethod("show", "BclassTesting", function(object){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, xlog = FALSE, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14, caption_width = 160){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, xlog = FALSE, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14, caption_width = 160, shapes_gp = forestplot::fpShapesGp()){
   
   # lineheight = unit(1, "cm")
   
@@ -323,7 +323,8 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     align = "l",
     xticks = xticks,
     xticks.digits = 2,
-    xlog = xlog) %>% 
+    xlog = xlog,
+    shapes_gp = shapes_gp) %>% 
     print()
   
   grid::grid.text(caption, 0.5, 0.99, just = c("center", "top"), gp = grid::gpar(fontsize = 15, fontface = "bold"))

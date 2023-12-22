@@ -1,6 +1,140 @@
 
 
 
+#' Dot plot with logFC and p-values for multiple contrasts
+#' 
+#' @param x TopTable
+#' @export
+wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", 
+  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
+  sep = "_", pval = 0.05, title = "", 
+  color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
+  trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
+  radius_range = c(3, 10), legend_position = "right", 
+  axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 1, 
+  axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
+  
+  
+  
+  stopifnot(length(gene_var) == 1)
+  
+  
+  data_lfc <- wrapper_extract_from_topTable(x, extract_prefix = lfc_prefix, sep = sep)
+  
+  data_pval <- wrapper_extract_from_topTable(x, extract_prefix = pval_prefix, sep = sep)
+  
+  data_adjp <- wrapper_extract_from_topTable(x, extract_prefix = adjp_prefix, sep = sep)
+  
+  
+  contrasts <- colnames(data_lfc)
+  contrasts
+  
+  
+  data_lfc <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_lfc, stringsAsFactors = FALSE, check.names = FALSE), 
+    cols = all_of(contrasts), names_to = "contrast", values_to = lfc_prefix)
+  
+  data_pval <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_pval, stringsAsFactors = FALSE, check.names = FALSE), 
+    cols = all_of(contrasts), names_to = "contrast", values_to = pval_prefix)
+  
+  data_adjp <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE, check.names = FALSE), 
+    cols = all_of(contrasts), names_to = "contrast", values_to = adjp_prefix)
+  
+  
+  if(pval_prefix == adjp_prefix){
+    data <- data_lfc %>% 
+      dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
+      data.frame()
+  }else{
+    data <- data_lfc %>% 
+      dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
+      dplyr::left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
+      data.frame()
+  }
+  
+  
+  data$significance <- factor(ifelse(data[, adjp_prefix] <= pval, paste0("<=", pval), paste0(">", pval)), levels = paste0(c("<=", ">"), pval))
+  
+  values_shape <- c(4, 32)
+  names(values_shape) <- levels(data$significance)
+  
+  
+  data$contrast <- factor(data$contrast, levels = contrasts)
+  
+  ## Shorten the gene set names so they can be nicely displayed in the plots
+  rownames_wrap <- stringr::str_wrap(data[, gene_var], width = axis_text_y_width)
+  
+  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
+  
+  data[, gene_var] <- factor(rownames_wrap, levels = rev(unique(rownames_wrap)))
+  
+  
+  ### Use -log10(p-value) to define the size of the bubbles 
+  
+  data$log.P.Val <- -log10(data[, pval_prefix])
+  
+  
+  if(lfc_prefix %in% c("logFC", "NES", "statistic", "sign.P.Val")){
+    radius_labels = rev(c(1, 0.1, 0.05, 0.01, 1e-04, 1e-06, 1e-08, 1e-10))
+    radius_breaks = -log10(radius_labels)
+    radius_limits = range(radius_breaks)
+    radius_labels <- formatC(radius_labels, format = "g", digits = 1)
+  }else{
+    radius_labels = rev(c(1, 0.1, 0.05, 0.01, 0.001))
+    radius_breaks = -log10(radius_labels)
+    radius_limits = range(radius_breaks)
+    radius_labels <- formatC(radius_labels, format = "f", drop0trailing = TRUE, digits = 10)
+  }
+  
+  ### Squish the limits because oob = scales::squish is not possible for scale_radius
+  data$log.P.Val[data$log.P.Val > max(radius_limits)] <- max(radius_limits)
+ 
+   
+  if(is.null(trim_values)){
+    trim_values <- compute_trim_values(x = data[, lfc_prefix], centered = TRUE, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+  }else{
+    max_abs_value <- max(abs(trim_values))
+    trim_values <- c(-max_abs_value, max_abs_value)
+  }
+  
+  
+  limits <- trim_values
+  
+  
+  # ---------------------------------------------------------------------------
+  # ggplot
+  # ---------------------------------------------------------------------------
+  # This is great. squish in this context converts clamps all values to be within the min and max of the limits argument. i.e., if value < min(limits) then value = min(limits) else if value > max(limits) then value = max(limits).
+  # scale_colour_gradient2(limits = c(-1.5, 1.5), oob = scales::squish)
+  
+  
+  ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], size = .data[["log.P.Val"]], color = .data[[lfc_prefix]])) +
+    geom_point() +
+    geom_point(aes(size = .data[["log.P.Val"]] - 0.5, shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
+    ggtitle(title) +
+    theme(plot.title = element_text(size = title_size),
+      axis.line = element_blank(), 
+      axis.title = element_blank(), 
+      axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
+      axis.text.y = element_text(size = axis_text_y_size),
+      legend.position = legend_position) +
+    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+    background_grid(major = "xy", minor = "none", size.major = 0.25) +
+    scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
+    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
+    scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) 
+  
+  
+  ggp
+  
+  
+  
+}
+
+
+
+
+
+
 #' Heatmap with logFC for multiple contrasts
 #' 
 #' @param x TopTable
@@ -164,149 +298,6 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
   
   
 }
-
-
-
-#' Dot plot with logFC and p-values for multiple contrasts
-#' 
-#' @param x TopTable
-#' @export
-wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", 
-  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
-  sep = "_", pval = 0.05, title = "", 
-  color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
-  trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
-  radius_range = c(10, 3), legend_position = "right", 
-  axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 1, 
-  axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
-  
-  
-  
-  stopifnot(length(gene_var) == 1)
-  
-  
-  data_lfc <- wrapper_extract_from_topTable(x, extract_prefix = lfc_prefix, sep = sep)
-  
-  data_pval <- wrapper_extract_from_topTable(x, extract_prefix = pval_prefix, sep = sep)
-  
-  data_adjp <- wrapper_extract_from_topTable(x, extract_prefix = adjp_prefix, sep = sep)
-  
-  
-  contrasts <- colnames(data_lfc)
-  contrasts
-  
-  
-  data_lfc <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_lfc, stringsAsFactors = FALSE, check.names = FALSE), 
-    cols = all_of(contrasts), names_to = "contrast", values_to = lfc_prefix)
-  
-  data_pval <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_pval, stringsAsFactors = FALSE, check.names = FALSE), 
-    cols = all_of(contrasts), names_to = "contrast", values_to = pval_prefix)
-  
-  data_adjp <- pivot_longer(data.frame(x[, gene_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE, check.names = FALSE), 
-    cols = all_of(contrasts), names_to = "contrast", values_to = adjp_prefix)
-  
-  
-  if(pval_prefix == adjp_prefix){
-    data <- data_lfc %>% 
-      dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
-      data.frame()
-  }else{
-    data <- data_lfc %>% 
-      dplyr::left_join(data_pval, by = c(gene_var, "contrast")) %>% 
-      dplyr::left_join(data_adjp, by = c(gene_var, "contrast")) %>% 
-      data.frame()
-  }
-  
-  
-  data$significance <- factor(ifelse(data[, adjp_prefix] <= pval, paste0("<=", pval), paste0(">", pval)), levels = paste0(c("<=", ">"), pval))
-  
-  values_shape <- c(4, 32)
-  names(values_shape) <- levels(data$significance)
-  
-  
-  data$contrast <- factor(data$contrast, levels = contrasts)
-  
-  ## Shorten the gene set names so they can be nicely displayed in the plots
-  rownames_wrap <- stringr::str_wrap(data[, gene_var], width = axis_text_y_width)
-  
-  rownames_wrap <- limma::strsplit2(rownames_wrap, split = "\\\n")[, 1]
-  
-  data[, gene_var] <- factor(rownames_wrap, levels = rev(unique(rownames_wrap)))
-  
-  
-  
-  if(lfc_prefix %in% c("logFC", "NES", "statistic")){
-    pval_cut <- c(-1, 1e-10, 1e-08, 1e-06, 1e-04, 0.01, 0.05, 1)
-    pval_cut_labels <- formatC(pval_cut, format = "g", digits = 1)
-  }else{
-    ### Trick to make larger contrast in circle size between significant and not significant
-    pval_cut <- c(-1, 0.001, 0.01, 0.05, 0.0500009, 0.1, 1) 
-    pval_cut_labels <- formatC(pval_cut, format = "f", drop0trailing = TRUE, digits = 10)
-  }
-  
-  
-  data$pval_cut <- as.numeric(cut(data[, pval_prefix], breaks = pval_cut, labels = pval_cut_labels[-1], right = TRUE))
-  
-  
-  if(lfc_prefix %in% c("logFC", "NES", "statistic")){
-    radius_breaks = 1:(length(pval_cut) - 1)
-    radius_limits = c(1, length(pval_cut) - 1)
-    radius_labels = pval_cut_labels[-1]
-  }else{
-    radius_breaks = c(1, 2, 3, 5, 6)
-    radius_limits = c(1, 6)
-    radius_labels = pval_cut_labels[-c(1, 5)]
-
-    
-  }
-  
-  
-  if(is.null(trim_values)){
-    trim_values <- compute_trim_values(x = data[, lfc_prefix], centered = TRUE, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
-  }else{
-    max_abs_value <- max(abs(trim_values))
-    trim_values <- c(-max_abs_value, max_abs_value)
-  }
-  
-  
-  limits <- trim_values
-  
-  
-  # ---------------------------------------------------------------------------
-  # ggplot
-  # ---------------------------------------------------------------------------
-  
-  
-  ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], size = .data[["pval_cut"]], color = .data[[lfc_prefix]])) +
-    geom_point() +
-    geom_point(aes(size = .data[["pval_cut"]] + 1, shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
-    ggtitle(title) +
-    theme(plot.title = element_text(size = title_size),
-      axis.line = element_blank(), 
-      axis.title = element_blank(), 
-      axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
-      axis.text.y = element_text(size = axis_text_y_size),
-      legend.position = legend_position) +
-    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
-    background_grid(major = "xy", minor = "none", size.major = 0.25) +
-    scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
-    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
-    scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) 
-  
-  
-  
-  # This is great. squish in this context converts clamps all values to be within the min and max of the limits argument. i.e., if value < min(limits) then value = min(limits) else if value > max(limits) then value = max(limits).
-  # scale_colour_gradient2(limits = c(-1.5, 1.5), oob = scales::squish)
-  
-  
-  return(ggp)
-  
-  
-  
-}
-
-
-
 
 
 

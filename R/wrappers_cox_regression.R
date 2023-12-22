@@ -353,6 +353,17 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   }
   
   
+  ### Add logHR and logHR_CI95
+  
+  res$logHR <- log2(res$HR)
+  res$logHR_CI95_lower <- log2(res$HR_CI95_lower)
+  res$logHR_CI95_upper <- log2(res$HR_CI95_upper)
+  
+  ### Add signed p-value: -log10(p-value) * sign(logHR)
+  
+  res$sign_pvalue <- -log10(res$pvalue) * sign(res$logHR)
+  
+  
   # --------------------------------------------------------------------------
   # Prepare the output data frame that will be displayed. All columns in `out` are characters.
   # --------------------------------------------------------------------------

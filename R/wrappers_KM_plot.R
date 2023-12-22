@@ -47,7 +47,8 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   ggtheme = ggplot2::theme_get(), 
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE,
-  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL){
+  print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
+  cox_covariate_var = NULL, cox_strat_var = NULL){
   
   
   # -------------------------------------------------------------------------
@@ -213,14 +214,18 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   
   if(any(c(print_hr, print_mst, print_pvalues))){
     
-    wrapper_res <- wrapper_cox_regression_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_vars = covariate_var, strata_vars = NULL, return_vars = covariate_var, keep_obs = TRUE, variable_names = variable_names, caption = NULL, force_empty_cols = TRUE, print_hr = print_hr, print_nevent = FALSE, print_mst = print_mst, print_total = FALSE, print_pvalues = print_pvalues, print_adjpvalues = FALSE)
+    if(is.null(cox_covariate_var)){
+      cox_covariate_var <- covariate_var
+    }
+    
+    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var,  covariate_vars = cox_covariate_var, strat1_var = cox_strat_var, strata_vars = NULL, return_vars = cox_covariate_var, variable_names = variable_names, caption = NULL, force_empty_cols = TRUE, print_hr = print_hr, print_nevent = FALSE, print_mst = print_mst, print_total = FALSE, print_pvalues = print_pvalues, print_adjpvalues = FALSE)
     
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
     
     
-    tb <- out[, -c(1)]
+    tb <- out[, -grep("Covariate", colnames(out))]
     
     tb <- tibble::tibble(x = 1, y = 1, label = list(tb))
     
@@ -382,6 +387,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", level_mapping = NULL, risk_table_labels = TRUE, 
   print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
+  cox_covariate_var = NULL, cox_strat_var = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -499,7 +505,8 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
         ggtheme = ggtheme,
         line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
         background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
-        print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options)
+        print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options,
+        cox_covariate_var = cox_covariate_var, cox_strat_var = cox_strat_var)
       
       
       return(ggpl)
@@ -538,7 +545,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
 #' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
   strat1_var = NULL, strat2_var = NULL,
-  colors = NULL, linetypes = 1, 
+  colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
@@ -547,6 +554,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1.5), 
   background_grid_major = "none", risk_table_labels = TRUE,
   print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
+  cox_covariate_var = NULL, cox_strat_var = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -587,13 +595,13 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   
   if(is.null(colors)){
     
-    colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
+    colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]), palette = palette)
     
     # barplot(rep(1, length(colors)), col = colors)
     
   }else{
     
-    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE, palette = palette)
     
   }
   
@@ -614,6 +622,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major, risk_table_labels = risk_table_labels,
     print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options,
+    cox_covariate_var = cox_covariate_var, cox_strat_var = cox_strat_var,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -633,7 +642,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 #' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
   strat2_var = NULL,
-  colors = NULL, linetypes = 1, 
+  colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
@@ -642,6 +651,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", risk_table_labels = TRUE,
   print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
+  cox_covariate_var = NULL, cox_strat_var = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -694,7 +704,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     
     if(is.null(colors)){
       
-      colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
+      colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]), palette = palette)
       
       # barplot(rep(1, length(colors)), col = colors)
       
@@ -704,7 +714,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
         colors <- as.character(rep(colors, times = nlevels(data[, treatment_var])))
       }
       
-      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE, palette = palette)
       
     }
     
@@ -715,7 +725,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     
     covariate_var <- biomarker_var
     
-    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+    colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE, palette = palette)
     
     strat1_var <- NULL
     
@@ -740,6 +750,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
     print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options,
+    cox_covariate_var = cox_covariate_var, cox_strat_var = cox_strat_var,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   
@@ -767,7 +778,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 #' @export
 wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_var = NULL,
   strat2_var = NULL,
-  colors = NULL, linetypes = 1,
+  colors = NULL, palette = NULL, linetypes = 1,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
@@ -776,6 +787,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   line_size = 1, title_size = NULL, label_size = NULL, rel_heights = c(5, 1), 
   background_grid_major = "none", risk_table_labels = TRUE,
   print_hr = FALSE, print_mst = FALSE, print_pvalues = FALSE, print_options = NULL,
+  cox_covariate_var = NULL, cox_strat_var = NULL,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
@@ -827,7 +839,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
       
       # colors <- format_colors_cat_strata(levels(data[, biomarker_var]), strata = levels(data[, treatment_var]))
       
-      colors <- format_colors_cat_strata("one_level", strata = levels(data[, treatment_var]))
+      colors <- format_colors_cat_strata("one_level", strata = levels(data[, treatment_var]), palette = palette)
       
       colors <- rep(colors, each = nlevels(data[, biomarker_var]))
       
@@ -841,7 +853,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
         colors <- as.character(rep(colors, each = nlevels(data[, biomarker_var])))
       }
       
-      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE, palette = palette)
       
     }
     
@@ -854,12 +866,12 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     
     if(is.null(colors)){
       
-      colors <- format_colors_cat_strata("one_level", strata = levels(data[, treatment_var]))
+      colors <- format_colors_cat_strata("one_level", strata = levels(data[, treatment_var]), palette = palette)
       names(colors) <- levels(data[, treatment_var])
       
     }else{
       
-      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+      colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE, palette = palette)
       
     }
     
@@ -886,6 +898,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
     line_size = line_size, title_size = title_size, label_size = label_size, rel_heights = rel_heights, 
     background_grid_major = background_grid_major, level_mapping = level_mapping, risk_table_labels = risk_table_labels,
     print_hr = print_hr, print_mst = print_mst, print_pvalues = print_pvalues, print_options = print_options, 
+    cox_covariate_var = cox_covariate_var, cox_strat_var = cox_strat_var,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol)
   
   

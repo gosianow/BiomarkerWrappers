@@ -176,9 +176,17 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   
   res <- bresults(x)
   
-  stopifnot(all(c(statistic_change, "pvalue") %in% colnames(res)))
+  statistic_change_CI95_lower <- paste0(statistic_change, "_CI95_lower")
+  statistic_change_CI95_upper <- paste0(statistic_change, "_CI95_upper")
   
-  if(readjust_pvalues){
+  log_statistic_change <- paste0("log", statistic_change)
+  log_statistic_change_CI95_lower <- paste0("log", statistic_change, "_CI95_lower")
+  log_statistic_change_CI95_upper <- paste0("log", statistic_change, "_CI95_upper")
+  
+  
+  stopifnot(all(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue") %in% colnames(res)))
+  
+  if(!readjust_pvalues){
     stopifnot(all(c("adj_pvalue") %in% colnames(res)))
   }
   
@@ -186,14 +194,6 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   if(paste0(statistic_change, "_non_empty") %in% colnames(res)){
     res <- res[res[, paste0(statistic_change, "_non_empty")], ]
   }
-  
-  log_statistic_change <- paste0("log", statistic_change)
-  
-  res[, log_statistic_change] <- log2(res[, statistic_change])
-  
-  
-  ### Add statistic for GSEA
-  res$statistic <- -log10(res$pvalue) * sign(res[, log_statistic_change])
   
   
   if(is.null(contrast_vars)){
@@ -220,44 +220,36 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   
   ### Extract statistics 
   
-  data_HR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = statistic_change)
-  colnames(data_HR)[-1] <- paste0(statistic_change, "_", colnames(data_HR)[-1])
-  
-  
-  data_logHR <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = log_statistic_change)
-  colnames(data_logHR)[-1] <- paste0(log_statistic_change, "_", colnames(data_logHR)[-1])
-  
-  
-  data_P.Value <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "pvalue")
-  colnames(data_P.Value)[-1] <- paste0("P.Value_", colnames(data_P.Value)[-1])
-  
-  
   
   if(readjust_pvalues){
     
     ### Re-adjust p-values per contrast 
     
-    data_adj.P.Val <- mutate_at(data_P.Value, -1, stats::p.adjust, method = "BH")
-    colnames(data_adj.P.Val)[-1] <- gsub("^P.Value_", "adj.P.Val_", colnames(data_adj.P.Val)[-1])
+    res$adj_pvalue <- res$pvalue
+    
+    topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue", "adj_pvalue")))
+    
+    topTable <- mutate_at(topTable, grep("^adj_pvalue", colnames(topTable)), stats::p.adjust, method = "BH")
+
     
   }else{
     
-    data_adj.P.Val <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = "adj_pvalue")
-    colnames(data_adj.P.Val)[-1] <- paste0("adj.P.Val_", colnames(data_adj.P.Val)[-1])
+    
+    topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue", "adj_pvalue")))
+    
     
   }
   
+
+  ### Update column names to be aligned with what is produced in DGE 
   
-  data_statistic <- pivot_wider(res, id_cols = id_cols, names_from = all_of("contrast"), values_from = "statistic")
-  colnames(data_statistic)[-1] <- paste0("statistic_", colnames(data_statistic)[-1])
+  topTable <- data.frame(topTable, check.names = FALSE)
   
-  
-  topTable <- data_HR %>% 
-    left_join(data_logHR, by = id_cols) %>% 
-    left_join(data_P.Value, by = id_cols) %>% 
-    left_join(data_adj.P.Val, by = id_cols) %>% 
-    left_join(data_statistic, by = id_cols) %>% 
-    data.frame(check.names = FALSE)
+  colnames(topTable) <- gsub("^pvalue_", "P.Value_", colnames(topTable))
+  colnames(topTable) <- gsub("^adj_pvalue_", "adj.P.Val_", colnames(topTable))
+  colnames(topTable) <- gsub("^sign_pvalue_", "sign.P.Val_", colnames(topTable))
+  colnames(topTable) <- gsub(paste0("^", statistic_change, "_CI95_"), paste0(statistic_change, ".CI95."), colnames(topTable))
+  colnames(topTable) <- gsub(paste0("^", log_statistic_change, "_CI95_"), paste0(log_statistic_change, ".CI95."), colnames(topTable))
   
   
   return(topTable)
@@ -334,7 +326,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   ## Find columns corresponding to the contrast and subset the data
   ## We add '$' because we want to match expression at the end of the string
   
-  contrast_vars_display <- paste0(c(lfc_prefix, stats_prefixes, pval_prefix, adjp_prefix), sep, contrast)
+  contrast_vars_display <- paste0(c(lfc_prefix, stats_prefixes, unique(c(pval_prefix, adjp_prefix))), sep, contrast)
   
   x <- x[ , c(gene_vars, contrast_vars_display), drop = FALSE]
   
@@ -383,9 +375,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   out <- res %>% 
     mutate_at(lfc_prefix, format_difference) %>% 
-    mutate_at(pval_prefix, format_pvalues2) %>% 
-    mutate_at(adjp_prefix, format_pvalues2)
-  
+    mutate_at(unique(c(pval_prefix, adjp_prefix)), format_pvalues2) 
   
   
   # --------------------------------------------------------------------------

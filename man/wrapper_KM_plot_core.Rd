@@ -35,7 +35,9 @@ wrapper_KM_plot_core(
   print_hr = FALSE,
   print_mst = FALSE,
   print_pvalues = FALSE,
-  print_options = NULL
+  print_options = NULL,
+  cox_covariate_var = NULL,
+  cox_strat_var = NULL
 )
 
 wrapper_KM_plot_core_strat(
@@ -72,6 +74,8 @@ wrapper_KM_plot_core_strat(
   print_mst = FALSE,
   print_pvalues = FALSE,
   print_options = NULL,
+  cox_covariate_var = NULL,
+  cox_strat_var = NULL,
   strat_scales = "fixed",
   strat1_nrow = 1,
   strat1_ncol = NULL,
