@@ -23,5 +23,5 @@ wrapper_gsea_core(
 \item{statistic}{Named vector of t statistics or logFC from limma.}
 }
 \description{
-Run GSEA
+Run GSEA with fgsea::fgseaMultilevel
 }

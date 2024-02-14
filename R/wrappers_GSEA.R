@@ -26,6 +26,8 @@ NULL
 
 #' Run GSEA
 #' 
+#' Run GSEA with fgsea::fgseaMultilevel
+#' 
 #' @param statistic Named vector of t statistics or logFC from limma.
 #' @export
 wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, gene_mapping = NULL, 
@@ -194,7 +196,7 @@ wrapper_gsea_core <- function(statistic, genesets, genesets_extra_info = NULL, g
   
   out[, paste0("adj.P.Val", sep, name)] <- fgsea_out$padj
   
-  out[, paste0("statistic", sep, name)] <- -log10(fgsea_out$pval) * sign(fgsea_out$NES)
+  out[, paste0("sign.P.Val", sep, name)] <- -log10(fgsea_out$pval) * sign(fgsea_out$NES)
   
   
   ### Sort by p-value

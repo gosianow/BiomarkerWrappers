@@ -268,8 +268,8 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   ### Customize the plot
   suppressMessages(ggpl_plot <- ggpl$plot +
       labs(title = title, subtitle = subtitle) +
-      theme(plot.title = element_text(size = title_size, face = "bold"),
-        plot.subtitle = element_text(size = title_size, face = "plain"),
+      theme(plot.title = element_text(size = title_size, face = "plain"),
+        plot.subtitle = element_text(size = title_size, face = "bold"),
         legend.position = legend_position,
         legend.justification = legend_justification,
         legend.background = element_rect(fill = NA),
