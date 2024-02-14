@@ -62,7 +62,9 @@ setMethod("bkable", "BclassDE", function(x, caption = NULL, header = NULL, font_
   ### We add format as an option because kableExtra::column_spec does not work if format is not specified in the kable call
   format <- getOption("knitr.table.format", default = "html")
   
-  kable <- knitr::kable(out, format = format, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE) %>%
+  ### Make unique labels to have the right numbering of the tables. See https://github.com/rstudio/bookdown/issues/1097
+  
+  kable <- knitr::kable(out, format = format, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE, label = gsub("\\.", "", make.names(Sys.time()))) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered", "striped"), latex_options = c("HOLD_position", "striped"), full_width = full_width, font_size = font_size)
   
   
