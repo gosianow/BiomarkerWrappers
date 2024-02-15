@@ -209,7 +209,7 @@ fig.rename <- function(path, options){
 #' 
 #' 
 #' @export
-subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig.suffix = NULL, fig.cap = ".", chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
+subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig.suffix = NULL, chunk_name = NULL, envir = parent.frame(), display_subchunk = FALSE){
 
 
   # -----------------------------------------------------------------------
@@ -232,7 +232,7 @@ subchunkify <- function(g, fig.height = 5, fig.width = 6, fig.prefix = NULL, fig
   # time <- paste0(gsub("[[:punct:] ]", "_", format(Sys.time())), "_", floor(runif(1) * 10000))
   time <- NULL
   
-  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", fig.cap=", fig.cap, ", fig.process=fig.rename", ifelse(is.null(fig.prefix), ", fig.prefix=NULL", paste0(", fig.prefix='", fig.prefix, "'")), ifelse(is.null(fig.suffix), ", fig.suffix=NULL", paste0(", fig.suffix='", fig.suffix, "'")), ", echo=FALSE}\n",
+  sub_chunk <- paste0("\n```{r ", chunk_name, time, ", fig.height=", fig.height, ", fig.width=", fig.width, ", fig.process=fig.rename", ifelse(is.null(fig.prefix), ", fig.prefix=NULL", paste0(", fig.prefix='", fig.prefix, "'")), ifelse(is.null(fig.suffix), ", fig.suffix=NULL", paste0(", fig.suffix='", fig.suffix, "'")), ", echo=FALSE}\n",
     g_deparsed,
     "\n```\n")
   
