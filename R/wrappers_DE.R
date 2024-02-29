@@ -477,10 +477,10 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
       
       pval <- summary_tmp$test$pvalues
       
-      lfc <- as.numeric(summary_tmp$test$coefficients)
+      difference <- as.numeric(summary_tmp$test$coefficients)
       
-      out <- data.frame(biomarker = biomarker_vars[i], lfc = lfc, pval = pval, stringsAsFactors = FALSE)
-      colnames(out) <- c("biomarker", paste0("logFC_", contrasts[k]), paste0("P.Value_", contrasts[k]))
+      out <- data.frame(biomarker = biomarker_vars[i], difference = difference, pval = pval, stringsAsFactors = FALSE)
+      colnames(out) <- c("biomarker", paste0("Difference_", contrasts[k]), paste0("P.Value_", contrasts[k]))
       
       out
       
@@ -503,7 +503,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
   
   out <- cbind(out, adjp)
   
-  column_order <- c("biomarker", apply(expand.grid(c("logFC_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
+  column_order <- c("biomarker", apply(expand.grid(c("Difference_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
   
   out <- out[, column_order, drop = FALSE]
   
@@ -563,10 +563,10 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
       
       pval <- summary_tmp$test$pvalues
       
-      lfc <- as.numeric(summary_tmp$test$coefficients)
+      difference <- as.numeric(summary_tmp$test$coefficients)
       
-      out <- data.frame(biomarker = biomarker_vars[i], lfc = lfc, pval = pval, stringsAsFactors = FALSE)
-      colnames(out) <- c("biomarker", paste0("logFC_", contrasts[k]), paste0("P.Value_", contrasts[k]))
+      out <- data.frame(biomarker = biomarker_vars[i], difference = difference, pval = pval, stringsAsFactors = FALSE)
+      colnames(out) <- c("biomarker", paste0("Difference_", contrasts[k]), paste0("P.Value_", contrasts[k]))
       
       out
       
@@ -589,7 +589,7 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
   
   out <- cbind(out, adjp)
   
-  column_order <- c("biomarker", apply(expand.grid(c("logFC_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
+  column_order <- c("biomarker", apply(expand.grid(c("Difference_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
   
   out <- out[, column_order, drop = FALSE]
   

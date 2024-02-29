@@ -87,8 +87,8 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   
   ### Squish the limits because oob = scales::squish is not possible for scale_radius
   data$log.P.Val[data$log.P.Val > max(radius_limits)] <- max(radius_limits)
- 
-   
+  
+  
   if(is.null(trim_values)){
     trim_values <- compute_trim_values(x = data[, lfc_prefix], centered = TRUE, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
   }else{
@@ -107,25 +107,46 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   # scale_colour_gradient2(limits = c(-1.5, 1.5), oob = scales::squish)
   
   
-  ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], size = .data[["log.P.Val"]], color = .data[[lfc_prefix]])) +
-    geom_point() +
-    geom_point(aes(size = .data[["log.P.Val"]] - 0.5, shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
-    ggtitle(title) +
-    theme(plot.title = element_text(size = title_size),
-      axis.line = element_blank(), 
-      axis.title = element_blank(), 
-      axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
-      axis.text.y = element_text(size = axis_text_y_size),
-      legend.position = legend_position) +
-    panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
-    background_grid(major = "xy", minor = "none", size.major = 0.25) +
-    scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
-    scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
-    scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) 
-  
-  
-  ggp
-  
+  if(length(radius_range) == 1){
+    
+    ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], color = .data[[lfc_prefix]])) +
+      geom_point(size = radius_range) +
+      ggtitle(title) +
+      theme(plot.title = element_text(size = title_size),
+        axis.line = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
+        axis.text.y = element_text(size = axis_text_y_size),
+        legend.position = legend_position) +
+      panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+      background_grid(major = "xy", minor = "none", size.major = 0.25) +
+      scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) 
+    
+    
+    ggp
+    
+  }else{
+    
+    ggp <- ggplot(data, aes(x = .data[["contrast"]], y = .data[[gene_var]], size = .data[["log.P.Val"]], color = .data[[lfc_prefix]])) +
+      geom_point() +
+      geom_point(aes(size = .data[["log.P.Val"]] - 0.5, shape = .data[["significance"]]), color = "black", show.legend = TRUE) +
+      ggtitle(title) +
+      theme(plot.title = element_text(size = title_size),
+        axis.line = element_blank(), 
+        axis.title = element_blank(), 
+        axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
+        axis.text.y = element_text(size = axis_text_y_size),
+        legend.position = legend_position) +
+      panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
+      background_grid(major = "xy", minor = "none", size.major = 0.25) +
+      scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
+      scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
+      scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) 
+    
+    
+    ggp
+    
+  }
   
   
 }
