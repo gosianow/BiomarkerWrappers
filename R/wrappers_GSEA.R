@@ -399,7 +399,7 @@ wrapper_dispaly_significant_gsea <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of gene sets enriched (", adjp_prefix, " <= ", pval, ") by ", direction_print, "regulated genes", ifelse(contrast == "", ".", paste0(" when comparing ", contrast, ".")))
+    caption <- paste0("List of gene sets enriched (", adjp_prefix, " $<=$ ", pval, ") by ", direction_print, "regulated genes", ifelse(contrast == "", ".", paste0(" when comparing ", contrast, ".")))
     
     
     if(nrow(x_sort) >  topn){

@@ -385,7 +385,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of ", direction_print, "regulated genes (", adjp_prefix, " <= ", pval, ", |", lfc_prefix, "| >= ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("List of ", direction_print, "regulated genes (", adjp_prefix, " $<=$ ", pval, ", $|$", lfc_prefix, "$|$ $>=$ ", lfc, ") when testing for ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       

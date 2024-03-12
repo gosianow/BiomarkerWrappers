@@ -8,10 +8,9 @@
 #' @param x Matrix with gene expression.
 #' @param group Vector of factors with grouping.
 #' @param adjp Matrix with adjusted p-values for selected groups. Column names must correspond to the groups.
-#' @param method Summarize and plot data 'asis' or transform it with 'z-score'.
 #' @export
 wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
-  method = "z-score", scale = TRUE, summary_fun = NULL, skip_zeros = FALSE, 
+  center = TRUE, scale = TRUE, summary_fun = NULL, skip_zeros = FALSE, 
   title = "", name = NULL,
   centered = TRUE, palette = NULL, rev = FALSE,
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
@@ -43,12 +42,11 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   }
   
   
-  stopifnot(method %in% c("asis", "z-score"))
   stopifnot(cell_fun_method %in% c("none", "circle", "rect"))
   
   
   if(is.null(name)){
-    name <- ifelse(method == "z-score" || centered, "Mean\nz-score", "Mean\nexpr.")
+    name <- ifelse(center || centered, "Mean\nz-score", "Mean\nexpr.")
   }
   
   
@@ -120,7 +118,7 @@ wrapper_summarized_expression_heatmap <- function(x, group, adjp = NULL,
   # ---------------------------------------------------------------------------
   
   
-  if(method == "z-score"){
+  if(center){
     
     zscore <- apply(x[, -1, drop = FALSE], 2, scale, center = TRUE, scale = scale)
     colnames(zscore) <- colnames(x)[-1]

@@ -6,7 +6,7 @@
 \usage{
 wrapper_gene_expression_heatmap(
   x,
-  method = "z-score",
+  center = TRUE,
   scale = TRUE,
   title = "",
   name = NULL,
@@ -38,8 +38,6 @@ wrapper_gene_expression_heatmap(
 }
 \arguments{
 \item{x}{Matrix with expression to plot}
-
-\item{method}{Plot data 'asis' or transform it with 'z-score'.}
 }
 \description{
 Heatmap with logFC or z-score normalized gene expression

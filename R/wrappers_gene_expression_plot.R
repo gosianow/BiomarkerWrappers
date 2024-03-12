@@ -5,10 +5,9 @@
 #' 
 #' 
 #' @param x Matrix with expression to plot
-#' @param method Plot data 'asis' or transform it with 'z-score'.
 #' @export
 wrapper_gene_expression_heatmap <- function(x,  
-  method = "z-score", scale = TRUE,
+  center = TRUE, scale = TRUE,
   title = "", name = NULL, 
   centered = TRUE, palette = NULL, rev = FALSE,
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE,
@@ -21,11 +20,9 @@ wrapper_gene_expression_heatmap <- function(x,
   row_names_max_width = unit(20, "cm"), column_names_max_height = unit(20, "cm"),
   row_names_width = 80, draw = TRUE, return = "ht", ...){
   
-  
-  stopifnot(method %in% c("asis", "z-score"))
-  
+
   if(is.null(name)){
-    name <- ifelse(method == "z-score" || centered, "Z-score", "Expr.")
+    name <- ifelse(center || centered, "Z-score", "Expr.")
   }
   
   
@@ -42,7 +39,7 @@ wrapper_gene_expression_heatmap <- function(x,
   
   matrix <- as.matrix(x)
   
-  if(method == "z-score"){
+  if(center){
     
     zscore <- t(apply(matrix, 1, scale, center = TRUE, scale = scale))
     colnames(zscore) <- colnames(matrix)

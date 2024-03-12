@@ -8,7 +8,7 @@ wrapper_summarized_expression_heatmap(
   x,
   group,
   adjp = NULL,
-  method = "z-score",
+  center = TRUE,
   scale = TRUE,
   summary_fun = NULL,
   skip_zeros = FALSE,
@@ -48,8 +48,6 @@ wrapper_summarized_expression_heatmap(
 \item{group}{Vector of factors with grouping.}
 
 \item{adjp}{Matrix with adjusted p-values for selected groups. Column names must correspond to the groups.}
-
-\item{method}{Summarize and plot data 'asis' or transform it with 'z-score'.}
 }
 \description{
 Heatmap of gene expression summarized per group
