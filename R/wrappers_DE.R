@@ -21,9 +21,9 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
     
     topTable_out <- topTable_out[, c(gene_vars, res_vars), drop = FALSE]
     
-    topTable_out$statistic <- -log10(topTable_out$P.Value) * sign(topTable_out$logFC)
+    topTable_out$sign.P.Val <- -log10(topTable_out$P.Value) * sign(topTable_out$logFC)
     
-    # plot(topTable_out$t, topTable_out$statistic)
+    # plot(topTable_out$t, topTable_out$sign.P.Val)
     
       
     for(p in 1:length(pval)){

@@ -11,15 +11,16 @@ NULL
 
 
 
-# statistic <- topTable$t_ECR1_VS_parental_NoTrt
-# names(statistic) <- topTable$EntrezIDs
+# statistic <- topTable$t_CNS_T
+# names(statistic) <- topTable$HGNC_Symbol
 # 
-# genesets <- geneset_list_reactome
-# genesets_extra_info <- geneset_extra_reactome
-# gene_mapping <- entrez2hgnc
+# genesets_extra_info <- NULL
+# gene_mapping <- NULL
 # 
 # 
-# min_GS_size = 10; max_GS_size = 500; topn_genes = 20; statistic_name = "t"
+# name = ""; sep = "_"
+# min_GS_size = 5; max_GS_size = 500; topn_genes = 20; 
+# statistic_name = "t"; scoreType = NULL; nPermSimple = 10000
 
 
 
