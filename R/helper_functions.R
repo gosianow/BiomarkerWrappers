@@ -1708,13 +1708,177 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
         
       }else if(palette %in% "random"){
         
-        stopifnot(length(levels_x) <= 502)
+        # colors_all <- grDevices::colors(distinct = TRUE)
+        # cat(paste0('"', paste(colors_all, collapse='", "'), '"'))
         
-        colors_default <- colors(distinct = TRUE)
         
-        # barplot(rep(1, length(colors_default)), col = colors_default)
+        c("white", "aliceblue", "antiquewhite", "antiquewhite1", "antiquewhite2", "antiquewhite3", "antiquewhite4", "aquamarine", "aquamarine2", "aquamarine3", "aquamarine4", "azure", "azure2", "azure3", "azure4", "beige", "bisque", "bisque2", "bisque3", "bisque4", "black", "blanchedalmond", "blue", "blue2", "blue3", "blue4", "blueviolet", "brown", "brown1", "brown2", "brown3", "brown4", "burlywood", "burlywood1", "burlywood2", "burlywood3", "burlywood4", "cadetblue", "cadetblue1", "cadetblue2", "cadetblue3", "cadetblue4", "chartreuse", "chartreuse2", "chartreuse3", "chartreuse4", "chocolate", "chocolate1", "chocolate2", "chocolate3", "chocolate4", "coral", "coral1", "coral2", "coral3", "coral4", "cornflowerblue", "cornsilk", "cornsilk2", "cornsilk3", "cornsilk4", "cyan", "cyan2", "cyan3", "cyan4", "darkgoldenrod", "darkgoldenrod1", "darkgoldenrod2", "darkgoldenrod3", "darkgoldenrod4", "darkgray", "darkgreen", "darkkhaki", "darkmagenta", "darkolivegreen", "darkolivegreen1", "darkolivegreen2", "darkolivegreen3", "darkolivegreen4", "darkorange", "darkorange1", "darkorange2", "darkorange3", "darkorange4", "darkorchid", "darkorchid1", "darkorchid2", "darkorchid3", "darkorchid4", "darkred", "darksalmon", "darkseagreen", "darkseagreen1", "darkseagreen2", "darkseagreen3", "darkseagreen4", "darkslateblue", "darkslategray", "darkslategray1", "darkslategray2", "darkslategray3", "darkslategray4", "darkturquoise", "darkviolet", "deeppink", "deeppink2", "deeppink3", "deeppink4", "deepskyblue", "deepskyblue2", "deepskyblue3", "deepskyblue4", "dimgray", "dodgerblue", "dodgerblue2", "dodgerblue3", "dodgerblue4", "firebrick", "firebrick1", "firebrick2", "firebrick3", "firebrick4", "floralwhite", "forestgreen", "gainsboro", "ghostwhite", "gold", "gold2", "gold3", "gold4", "goldenrod", "goldenrod1", "goldenrod2", "goldenrod3", "goldenrod4", "gray", "gray1", "gray2", "gray3", "gray4", "gray5", "gray6", "gray7", "gray8", "gray9", "gray10", "gray11", "gray12", "gray13", "gray14", "gray15", "gray16", "gray17", "gray18", "gray19", "gray20", "gray21", "gray22", "gray23", "gray24", "gray25", "gray26", "gray27", "gray28", "gray29", "gray30", "gray31", "gray32", "gray33", "gray34", "gray35", "gray36", "gray37", "gray38", "gray39", "gray40", "gray42", "gray43", "gray44", "gray45", "gray46", "gray47", "gray48", "gray49", "gray50", "gray51", "gray52", "gray53", "gray54", "gray55", "gray56", "gray57", "gray58", "gray59", "gray60", "gray61", "gray62", "gray63", "gray64", "gray65", "gray66", "gray67", "gray68", "gray69", "gray70", "gray71", "gray72", "gray73", "gray74", "gray75", "gray76", "gray77", "gray78", "gray79", "gray80", "gray81", "gray82", "gray83", "gray84", "gray85", "gray86", "gray87", "gray88", "gray89", "gray90", "gray91", "gray92", "gray93", "gray94", "gray95", "gray96", "gray97", "gray98", "gray99", "green", "green2", "green3", "green4", "greenyellow", "honeydew", "honeydew2", "honeydew3", "honeydew4", "hotpink", "hotpink1", "hotpink2", "hotpink3", "hotpink4", "indianred", "indianred1", "indianred2", "indianred3", "indianred4", "ivory", "ivory2", "ivory3", "ivory4", "khaki", "khaki1", "khaki2", "khaki3", "khaki4", "lavender", "lavenderblush", "lavenderblush2", "lavenderblush3", "lavenderblush4", "lawngreen", "lemonchiffon", "lemonchiffon2", "lemonchiffon3", "lemonchiffon4", "lightblue", "lightblue1", "lightblue2", "lightblue3", "lightblue4", "lightcoral", "lightcyan", "lightcyan2", "lightcyan3", "lightcyan4", "lightgoldenrod", "lightgoldenrod1", "lightgoldenrod2", "lightgoldenrod3", "lightgoldenrod4", "lightgoldenrodyellow", "lightgray", "lightgreen", "lightpink", "lightpink1", "lightpink2", "lightpink3", "lightpink4", "lightsalmon", "lightsalmon2", "lightsalmon3", "lightsalmon4", "lightseagreen", "lightskyblue", "lightskyblue1", "lightskyblue2", "lightskyblue3", "lightskyblue4", "lightslateblue", "lightslategray", "lightsteelblue", "lightsteelblue1", "lightsteelblue2", "lightsteelblue3", "lightsteelblue4", "lightyellow", "lightyellow2", "lightyellow3", "lightyellow4", "limegreen", "linen", "magenta", "magenta2", "magenta3", "maroon", "maroon1", "maroon2", "maroon3", "maroon4", "mediumorchid", "mediumorchid1", "mediumorchid2", "mediumorchid3", "mediumorchid4", "mediumpurple", "mediumpurple1", "mediumpurple2", "mediumpurple3", "mediumpurple4", "mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred", "midnightblue", "mintcream", "mistyrose", "mistyrose2", "mistyrose3", "mistyrose4", "moccasin", "navajowhite", "navajowhite2", "navajowhite3", "navajowhite4", "navy", "oldlace", "olivedrab", "olivedrab1", "olivedrab2", "olivedrab3", "olivedrab4", "orange", "orange2", "orange3", "orange4", "orangered", "orangered2", "orangered3", "orangered4", "orchid", "orchid1", "orchid2", "orchid3", "orchid4", "palegoldenrod", "palegreen", "palegreen1", "palegreen3", "palegreen4", "paleturquoise", "paleturquoise1", "paleturquoise2", "paleturquoise3", "paleturquoise4", "palevioletred", "palevioletred1", "palevioletred2", "palevioletred3", "palevioletred4", "papayawhip", "peachpuff", "peachpuff2", "peachpuff3", "peachpuff4", "peru", "pink", "pink1", "pink2", "pink3", "pink4", "plum", "plum1", "plum2", "plum3", "plum4", "powderblue", "purple", "purple1", "purple2", "purple3", "purple4", "red", "red2", "red3", "rosybrown", "rosybrown1", "rosybrown2", "rosybrown3", "rosybrown4", "royalblue", "royalblue1", "royalblue2", "royalblue3", "royalblue4", "salmon", "salmon1", "salmon2", "salmon3", "salmon4", "sandybrown", "seagreen", "seagreen1", "seagreen2", "seagreen3", "seashell", "seashell2", "seashell3", "seashell4", "sienna", "sienna1", "sienna2", "sienna3", "sienna4", "skyblue", "skyblue1", "skyblue2", "skyblue3", "skyblue4", "slateblue", "slateblue1", "slateblue2", "slateblue3", "slateblue4", "slategray", "slategray1", "slategray2", "slategray3", "slategray4", "snow", "snow2", "snow3", "snow4", "springgreen", "springgreen2", "springgreen3", "springgreen4", "steelblue", "steelblue1", "steelblue2", "steelblue3", "steelblue4", "tan", "tan1", "tan2", "tan4", "thistle", "thistle1", "thistle2", "thistle3", "thistle4", "tomato", "tomato2", "tomato3", "tomato4", "turquoise", "turquoise1", "turquoise2", "turquoise3", "turquoise4", "violet", "violetred", "violetred1", "violetred2", "violetred3", "violetred4", "wheat", "wheat1", "wheat2", "wheat3", "wheat4", "yellow", "yellow2", "yellow3", "yellow4")
         
-        out <- colors_default[sample.int(502, length(levels_x))]
+        
+        colors_default <- c(
+          "antiquewhite", "antiquewhite2", "antiquewhite3", "antiquewhite4", 
+          "aquamarine", "aquamarine2", "aquamarine3", "aquamarine4", 
+          "azure", "azure2", "azure3", "azure4", 
+          "bisque", "bisque2", "bisque3", "bisque4", 
+          "blue", "blue2", "blue3", "blue4", 
+          "brown", "brown2", "brown3", "brown4", 
+          "burlywood", "burlywood2", "burlywood3", "burlywood4", 
+          "cadetblue", "cadetblue2", "cadetblue3", "cadetblue4", 
+          "chartreuse", "chartreuse2", "chartreuse3", "chartreuse4", 
+          "chocolate", "chocolate2", "chocolate3", "chocolate4", 
+          "coral", "coral2", "coral3", "coral4", 
+          "cornflowerblue", 
+          "cornsilk", "cornsilk2", "cornsilk3", "cornsilk4", 
+          "cyan", "cyan2", "cyan3", "cyan4", 
+          "darkgoldenrod", "darkgoldenrod2", "darkgoldenrod3", "darkgoldenrod4", 
+          "darkgray", 
+          "darkgreen", 
+          "darkkhaki", 
+          "darkmagenta", 
+          "darkolivegreen", "darkolivegreen2", "darkolivegreen3", "darkolivegreen4", 
+          "darkorange", "darkorange2", "darkorange3", "darkorange4", 
+          "darkorchid", "darkorchid2", "darkorchid3", "darkorchid4", 
+          "darkred", 
+          "darksalmon", 
+          "darkseagreen", "darkseagreen2", "darkseagreen3", "darkseagreen4", 
+          "darkslateblue", 
+          "darkslategray", "darkslategray2", "darkslategray3", "darkslategray4",
+          "darkturquoise", 
+          "darkviolet", 
+          "deeppink", "deeppink2", "deeppink3", "deeppink4", 
+          "deepskyblue", "deepskyblue2", "deepskyblue3", "deepskyblue4", 
+          "dimgray", 
+          "dodgerblue", "dodgerblue2", "dodgerblue3", "dodgerblue4", 
+          "firebrick", "firebrick2", "firebrick3", "firebrick4", 
+          "forestgreen", 
+          "gold", "gold2", "gold3", "gold4", 
+          "goldenrod", "goldenrod2", "goldenrod3", "goldenrod4", 
+          "gray", 
+          "green", "green2", "green3", "green4", 
+          "greenyellow", 
+          "honeydew", "honeydew2", "honeydew3", "honeydew4", 
+          "hotpink", "hotpink2", "hotpink3", "hotpink4", 
+          "indianred", "indianred2", "indianred3", "indianred4", 
+          "ivory", "ivory2", "ivory3", "ivory4", 
+          "khaki", "khaki2", "khaki3", "khaki4", 
+          "lavender", 
+          "lavenderblush", "lavenderblush2", "lavenderblush3", "lavenderblush4", 
+          "lawngreen", 
+          "lemonchiffon", "lemonchiffon2", "lemonchiffon3", "lemonchiffon4", 
+          "lightblue", "lightblue2", "lightblue3", "lightblue4", 
+          "lightcoral", 
+          "lightcyan", "lightcyan2", "lightcyan3", "lightcyan4", 
+          "lightgoldenrod", "lightgoldenrod2", "lightgoldenrod3", "lightgoldenrod4",
+          "lightgoldenrodyellow", 
+          "lightgray", 
+          "lightgreen", 
+          "lightpink", "lightpink2", "lightpink3", "lightpink4", 
+          "lightsalmon", "lightsalmon2", "lightsalmon3", "lightsalmon4", 
+          "lightseagreen", 
+          "lightskyblue", "lightskyblue2", "lightskyblue3", "lightskyblue4", 
+          "lightslateblue", 
+          "lightslategray", 
+          "lightsteelblue", "lightsteelblue2", "lightsteelblue3","lightsteelblue4",
+          "lightyellow", "lightyellow2", "lightyellow3", "lightyellow4", 
+          "limegreen", 
+          "linen", 
+          "magenta", "magenta2", "magenta3", 
+          "maroon", "maroon2", "maroon3", "maroon4", 
+          "mediumorchid", "mediumorchid2", "mediumorchid3", "mediumorchid4", 
+          "mediumpurple", "mediumpurple2", "mediumpurple3", "mediumpurple4", 
+          "mediumseagreen", 
+          "mediumslateblue", 
+          "mediumspringgreen", 
+          "mediumturquoise", 
+          "mediumvioletred", 
+          "midnightblue", 
+          "mintcream", 
+          "mistyrose", "mistyrose2", "mistyrose3", "mistyrose4",
+          "moccasin", 
+          "navajowhite", "navajowhite2", "navajowhite3", "navajowhite4", 
+          "navy", 
+          "oldlace", 
+          "olivedrab", "olivedrab2", "olivedrab3", "olivedrab4", 
+          "orange", "orange2", "orange3", "orange4", 
+          "orangered", "orangered2", "orangered3", "orangered4", 
+          "orchid", "orchid2", "orchid3", "orchid4", 
+          "palegoldenrod", 
+          "palegreen", "palegreen1", "palegreen3", "palegreen4", 
+          "paleturquoise", "paleturquoise2", "paleturquoise3", "paleturquoise4",
+          "palevioletred", "palevioletred2", "palevioletred3", "palevioletred4", 
+          "papayawhip", 
+          "peachpuff", "peachpuff2", "peachpuff3", "peachpuff4", 
+          "peru", 
+          "pink", "pink2", "pink3", "pink4", 
+          "plum", "plum2", "plum3", "plum4",
+          "powderblue", 
+          "purple", "purple2", "purple3", "purple4", 
+          "red", "red2", "red3", 
+          "rosybrown", "rosybrown2", "rosybrown3", "rosybrown4", 
+          "royalblue", "royalblue2", "royalblue3", "royalblue4", 
+          "salmon", "salmon2", "salmon3", "salmon4", 
+          "sandybrown", 
+          "seagreen", "seagreen1", "seagreen2", "seagreen3", 
+          "seashell", "seashell2", "seashell3", "seashell4", 
+          "sienna", "sienna1", "sienna2", "sienna3",  
+          "skyblue", "skyblue1", "skyblue3", "skyblue4", 
+          "slateblue1", "slateblue2", "slateblue3", "slateblue4", 
+          "slategray1", "slategray2", "slategray3", "slategray4", 
+          "snow", "snow2", "snow3", "snow4", 
+          "springgreen", "springgreen2", "springgreen3", "springgreen4", 
+          "steelblue1", "steelblue2", "steelblue3", "steelblue4", 
+          "tan", "tan1", "tan2", "tan4", 
+          "thistle1", "thistle2", "thistle3", "thistle4", 
+          "tomato", "tomato2", "tomato3", "tomato4",
+          "turquoise1", "turquoise2", "turquoise3", "turquoise4", 
+          "violet", 
+          "violetred", "violetred2", "violetred3", "violetred4", 
+          "wheat1", "wheat2", "wheat3", "wheat4", 
+          "yellow", "yellow2", "yellow3", "yellow4"
+        )
+        
+        
+        
+        # # conversion function
+        # rgb2lab <- function(rgb_col) {
+        #   rgb_mat <- t(col2rgb(rgb_col)/255)
+        #   lab_mat <- convertColor(rgb_mat, from = "sRGB", to = "Lab")
+        #   return(lab_mat)
+        # }
+        # 
+        # # applying conversion function
+        # colors_default_lab <- rgb2lab(colors_default)
+        # 
+        # # Compute distance matrix
+        # dist_mat <- dist(colors_default_lab)
+        # 
+        # # Hierarchical clustering
+        # colors_cluster <- hclust(dist_mat)
+        # 
+        # # Ordered colors
+        # colors_ordered <- colors_default[colors_cluster$order]
+        # 
+        # cat(paste0('"', paste(colors_ordered, collapse='", "'), '"'))
+        
+        
+        "blue3", "blue", "blue2", "magenta3", "magenta", "magenta2", "purple3", "darkorchid", "darkorchid3", "darkorchid2", "darkviolet", "purple", "purple2", "violetred2", "deeppink3", "violetred3", "deeppink", "deeppink2", "maroon2", "mediumvioletred", "maroon3", "violetred", "hotpink4", "palevioletred4", "maroon", "maroon4", "deeppink4", "violetred4", "plum2", "plum", "plum3", "hotpink", "hotpink2", "palevioletred2", "hotpink3", "palevioletred", "palevioletred3", "dodgerblue4", "mediumpurple4", "royalblue4", "darkslateblue", "slateblue4", "dodgerblue", "dodgerblue2", "cornflowerblue", "dodgerblue3", "lightslateblue", "slateblue1", "mediumslateblue", "slateblue2", "mediumpurple2", "mediumpurple", "mediumpurple3", "slateblue3", "royalblue3", "royalblue", "royalblue2", "midnightblue", "blue4", "navy", "orchid2", "violet", "orchid", "orchid3", "mediumorchid2", "mediumorchid", "mediumorchid3", "mediumorchid4", "orchid4", "darkmagenta", "darkorchid4", "purple4", "orangered", "orangered2", "red", "red2", "orangered3", "red3", "brown3", "firebrick3", "brown2", "firebrick2", "sienna3", "coral2", "coral3", "tomato3", "tomato", "tomato2", "sienna2", "coral", "sienna1", "darkgoldenrod", "orange3", "gold3", "darkgoldenrod2", "goldenrod2", "goldenrod", "darkgoldenrod3", "goldenrod3", "darkorange", "orange", "orange2", "peru", "sandybrown", "tan1", "tan2", "darkorange3", "chocolate", "chocolate3", "chocolate2", "darkorange2", "tan4", "lightsalmon4", "salmon4", "orange4", "darkgoldenrod4", "goldenrod4", "sienna", "chocolate4", "darkorange4", "lightcoral", "indianred2", "indianred", "indianred3", "lightsalmon3", "salmon3", "lightsalmon", "darksalmon", "lightsalmon2", "salmon", "salmon2", "brown", "firebrick", "darkred", "orangered4", "brown4", "firebrick4", "indianred4", "coral4", "tomato4", "steelblue1", "steelblue2", "deepskyblue", "deepskyblue2", "skyblue3", "deepskyblue3", "steelblue3", "paleturquoise3", "cadetblue3", "darkslategray3", "paleturquoise", "paleturquoise2", "cadetblue2", "darkslategray2", "lightskyblue", "skyblue1", "lightskyblue2", "skyblue", "lightsteelblue3", "slategray3", "lightblue3", "lightskyblue3", "powderblue", "lightblue", "lightblue2", "slategray1", "lightsteelblue", "lightsteelblue2", "slategray2", "darkslategray", "skyblue4", "deepskyblue4", "steelblue4", "lightblue4", "lightslategray", "lightskyblue4", "lightsteelblue4", "slategray4", "dimgray", "honeydew4", "ivory4", "azure4", "lightcyan4", "lavenderblush4", "seashell4", "snow4", "antiquewhite4", "mistyrose4", "rosybrown4", "lightpink4", "pink4", "plum4", "thistle4", "aquamarine4", "darkseagreen4", "cyan4", "turquoise4", "cadetblue", "paleturquoise4", "cadetblue4", "darkslategray4", "lemonchiffon4", "cornsilk4", "lightyellow4", "burlywood4", "bisque4", "peachpuff4", "navajowhite4", "wheat4", "darkolivegreen", "khaki4", "lightgoldenrod4", "turquoise1", "turquoise2", "cyan", "cyan2", "lightseagreen", "mediumturquoise", "turquoise3", "cyan3", "darkturquoise", "darkseagreen2", "darkseagreen", "darkseagreen3", "palegreen3", "mediumseagreen", "seagreen3", "aquamarine3", "aquamarine", "aquamarine2", "darkkhaki", "khaki3", "lightgoldenrod3", "palegoldenrod", "lightgoldenrod", "lightgoldenrod2", "khaki", "khaki2", "burlywood3", "burlywood", "burlywood2", "navajowhite", "moccasin", "wheat1", "navajowhite2", "wheat2", "bisque2", "peachpuff2", "bisque", "peachpuff", "lemonchiffon3", "cornsilk3", "lightyellow3", "bisque3", "peachpuff3", "wheat3", "navajowhite3", "tan", "lemonchiffon2", "lemonchiffon", "lightgoldenrodyellow", "cornsilk2", "lightyellow2", "cornsilk", "lightyellow", "antiquewhite2", "antiquewhite", "papayawhip", "ivory", "oldlace", "honeydew", "honeydew2", "ivory2", "azure", "mintcream", "lightcyan", "azure2", "lightcyan2", "lavenderblush2", "mistyrose", "mistyrose2", "lavenderblush", "snow", "linen", "seashell", "seashell2", "snow2", "lightpink3", "pink3", "rosybrown", "rosybrown3", "lightpink2", "pink2", "rosybrown2", "lightpink", "pink", "lightgray", "snow3", "lavenderblush3", "gray", "seashell3", "antiquewhite3", "mistyrose3", "darkgray", "honeydew3", "ivory3", "azure3", "lightcyan3", "thistle3", "lavender", "thistle1", "thistle2", "darkolivegreen4", "olivedrab", "olivedrab4", "gold4", "yellow4", "springgreen4", "palegreen4", "seagreen", "darkgreen", "chartreuse4", "forestgreen", "green4", "yellow", "yellow2", "yellow3", "gold", "gold2", "greenyellow", "olivedrab2", "olivedrab3", "darkolivegreen2", "darkolivegreen3", "lightgreen", "palegreen", "palegreen1", "springgreen", "springgreen2", "springgreen3", "mediumspringgreen", "seagreen1", "seagreen2", "chartreuse3", "green3", "limegreen", "chartreuse2", "chartreuse", "lawngreen", "green", "green2"
+        
+        
+        
+        colors_default <- c("blue3", "blue", "magenta3", "magenta", "purple3", "darkorchid3", "purple2", "violetred2", "deeppink3", "deeppink", "hotpink4", "maroon", "maroon4", "plum2", "plum3", "hotpink", "palevioletred2", "palevioletred3", "dodgerblue4", "mediumpurple4", "royalblue4", "darkslateblue", "dodgerblue", "cornflowerblue", "dodgerblue3", "lightslateblue", "mediumslateblue", "mediumpurple2", "mediumpurple3", "slateblue3", "royalblue3", "royalblue2", "midnightblue", "orchid2", "orchid3", "mediumorchid2", "mediumorchid4", "purple4", "orangered", "red2", "orangered3", "red3", "sienna3", "coral2", "coral3", "tomato", "sienna2", "coral", "darkgoldenrod", "gold3", "goldenrod2", "darkgoldenrod3", "orange", "peru", "sandybrown", "tan1", "darkorange3", "chocolate", "chocolate2", "tan4", "salmon4", "orange4", "sienna", "lightcoral", "indianred2", "indianred", "lightsalmon3", "salmon3", "lightsalmon", "salmon", "brown", "darkred", "coral4", "steelblue1", "steelblue2", "deepskyblue", "skyblue3", "deepskyblue3", "steelblue3", "paleturquoise3", "darkslategray3", "paleturquoise", "cadetblue2", "lightskyblue", "lightskyblue2", "skyblue", "lightsteelblue3", "lightskyblue3", "powderblue", "lightblue", "slategray1", "lightsteelblue", "slategray2", "darkslategray", "skyblue4", "deepskyblue4", "steelblue4", "lightblue4", "lightslategray", "lightskyblue4", "lightsteelblue4", "dimgray", "honeydew4", "lavenderblush4", "mistyrose4", "rosybrown4", "lightpink4", "plum4", "thistle4", "aquamarine4", "darkseagreen4", "cyan4", "cadetblue", "paleturquoise4", "cadetblue4", "lemonchiffon4", "burlywood4", "bisque4", "peachpuff4", "wheat4", "darkolivegreen", "lightgoldenrod4", "turquoise1", "turquoise2", "lightseagreen", "mediumturquoise", "cyan3", "darkseagreen2", "darkseagreen", "darkseagreen3", "palegreen3", "mediumseagreen", "seagreen3", "aquamarine3", "aquamarine", "aquamarine2", "darkkhaki", "palegoldenrod", "lightgoldenrod", "burlywood3", "navajowhite", "navajowhite2", "peachpuff2", "bisque", "lemonchiffon3", "cornsilk3", "wheat3", "lemonchiffon2", "lightgoldenrodyellow", "cornsilk2", "lightyellow", "antiquewhite2", "ivory", "oldlace", "honeydew", "honeydew2", "azure", "mintcream", "lightcyan", "azure2", "lightcyan2", "lavenderblush2", "mistyrose", "mistyrose2", "lavenderblush", "linen", "seashell2", "lightpink3", "rosybrown", "lightpink2", "rosybrown2", "lightpink", "lightgray", "lavenderblush3", "gray", "antiquewhite3", "mistyrose3", "darkgray", "honeydew3", "ivory3", "azure3", "lightcyan3", "thistle3", "lavender", "thistle2", "darkolivegreen4", "gold4", "yellow4", "springgreen4", "palegreen4", "darkgreen", "chartreuse4", "forestgreen", "yellow", "yellow2", "yellow3", "gold", "gold2", "olivedrab2", "darkolivegreen2", "darkolivegreen3", "lightgreen", "palegreen",  "springgreen", "springgreen3", "chartreuse3", "green3", "limegreen", "chartreuse2", "green")
+        
+        
+        # set.seed(12344321)
+        # length(colors_default)
+        # colors_default_mix <- colors_default[sample.int(length(colors_default), length(colors_default), replace = FALSE)]
+        # cat(paste0('"', paste(colors_default_mix, collapse='", "'), '"'))
+        
+        
+        colors_default_mix <- c("palevioletred2", "burlywood4", "ivory3", "tomato", "magenta", "coral2", "aquamarine2", "lemonchiffon4", "orchid2", "purple2", "darkolivegreen4", "peachpuff4", "gold", "yellow", "lightgoldenrod", "lightskyblue3", "lightskyblue2", "royalblue3", "deeppink", "plum4", "lightsteelblue", "lightsteelblue3", "purple3", "blue3", "darkolivegreen", "mediumslateblue", "green", "darkgray", "wheat3", "purple4", "darkred", "cadetblue4", "mediumseagreen", "lightskyblue4", "lavenderblush2", "lightsalmon3", "sandybrown", "aquamarine4", "lightgray", "indianred2", "orchid3", "cornsilk2", "hotpink", "dodgerblue", "navajowhite2", "lightseagreen", "skyblue4", "red3", "olivedrab2", "mediumpurple4", "aquamarine3", "lightgoldenrodyellow", "darkorchid3", "indianred", "lightskyblue", "paleturquoise4", "lightpink", "peru", "lightgreen", "lightcoral", "gold4", "royalblue4", "lavenderblush", "lightsalmon", "mediumpurple3", "skyblue3", "dodgerblue3", "cyan3", "lightslateblue", "lightpink4", "brown", "gray", "mistyrose2", "limegreen", "bisque4", "lightcyan3", "rosybrown4", "lightslategray", "maroon4", "azure2", "powderblue", "salmon4", "maroon", "lavenderblush4", "darkkhaki", "peachpuff2", "darkorange3", "springgreen", "mistyrose", "lightcyan2", "lavenderblush3", "turquoise1", "darkgreen", "mistyrose4", "coral4", "red2", "dimgray", "lightblue4", "midnightblue", "chocolate2", "cornsilk3", "linen", "orangered3", "steelblue4", "lemonchiffon2", "deepskyblue3", "green3", "cadetblue", "slategray2", "palegreen", "thistle2", "darkolivegreen2", "chartreuse4", "chartreuse3", "darkseagreen3", "deepskyblue", "lightblue", "coral3", "lightpink3", "chartreuse2", "skyblue", "bisque", "springgreen4", "tan4", "mediumorchid2", "darkseagreen4", "orange", "azure", "yellow2", "slateblue3", "tan1", "plum2", "deeppink3", "violetred2", "goldenrod2", "slategray1", "darkseagreen2", "antiquewhite2", "palegreen4", "aquamarine", "salmon3", "oldlace", "springgreen3", "salmon", "palegreen3", "darkgoldenrod", "azure3", "yellow3", "ivory", "paleturquoise3", "cyan4", "lemonchiffon3", "lightgoldenrod4", "darkslateblue", "sienna", "honeydew2", "mediumorchid4", "honeydew", "royalblue2", "palegoldenrod", "honeydew4", "lavender", "forestgreen", "cornflowerblue", "mediumpurple2", "magenta3", "sienna3", "mediumturquoise", "rosybrown2", "gold3", "steelblue1", "lightpink2", "gold2", "wheat4", "seagreen3", "steelblue3", "thistle4", "honeydew3", "palevioletred3", "yellow4", "blue", "lightcyan", "burlywood3", "lightsteelblue4", "hotpink4", "paleturquoise", "steelblue2", "darkolivegreen3", "rosybrown", "lightyellow", "mistyrose3", "darkslategray3", "darkseagreen", "navajowhite", "deepskyblue4", "orange4", "coral", "seashell2", "plum3", "thistle3", "dodgerblue4", "turquoise2", "darkslategray", "chocolate", "antiquewhite3", "darkgoldenrod3", "cadetblue2", "sienna2", "mintcream", "orangered")
+        
+        stopifnot(length(levels_x) <= length(colors_default_mix))
+        
+        out <- colors_default_mix[seq_len(length(levels_x))]
         
         names(out) <- levels_x
         

@@ -760,6 +760,13 @@ y_var = "Response"
 
 wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var)
 
+wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var, y_type = "Count")
+
+
+wrapper_bar_plot_core(data = data, x_var = y_var, y_var = x_var, y_type = "Proportion")
+
+wrapper_bar_plot_core(data = data, x_var = y_var, y_var = x_var, y_type = "Count")
+
 
 
 data <- bdata

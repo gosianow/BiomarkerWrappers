@@ -23,6 +23,7 @@
 #' Generate a signle barplot.
 #' 
 #' @param data Data frame.
+#' @param y_type Possible values: "Proportion" or "Count"
 #' @param method One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")
 #' 
 #' @examples 
@@ -38,7 +39,7 @@
 #' wrapper_bar_plot_core(data = data, x_var = x_var, y_var = y_var)
 #' 
 #' @export
-wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FALSE, 
+wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", facet_var = NULL, rev = FALSE, 
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
@@ -145,7 +146,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     if(is.logical(ylab)){
       if(ylab){
-        ylab <- paste0(variable_names[y_var], "\nProportion (%)")
+        ylab <- paste0(variable_names[y_var], ifelse(y_type == "Proportion", "\nProportion (%)", "\nCount"))
       }else{
         ylab <- NULL
       }
@@ -172,9 +173,11 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
       }
     }
     
+    
+    
     if(is.logical(ylab)){
       if(ylab){
-        ylab <- paste0(variable_names[y_var], "\nProportion (%)")
+        ylab <- paste0(variable_names[y_var], ifelse(y_type == "Proportion", "\nProportion (%)", "\nCount"))
       }else{
         ylab <- NULL
       }
@@ -203,7 +206,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     if(is.logical(ylab)){
       if(ylab){
-        ylab <- paste0(variable_names[y_var], ": ", keep_levels, "\nProportion (%)")
+        ylab <- paste0(variable_names[y_var], ": ", keep_levels, ifelse(y_type == "Proportion", "\nProportion (%)", "\nCount"))
       }else{
         ylab <- NULL
       }
@@ -241,7 +244,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     if(is.logical(ylab)){
       if(ylab){
-        ylab <- paste0(variable_names[y_var], ": ", keep_levels, "\nProportion (%)")
+        ylab <- paste0(variable_names[y_var], ": ", keep_levels, ifelse(y_type == "Proportion", "\nProportion (%)", "\nCount"))
       }else{
         ylab <- NULL
       }
@@ -288,7 +291,8 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     ### Prepare data for ggplot
     
-    ggdata <- dplyr::left_join(tidyr::pivot_longer(propdf, cols = colnames(tbl), names_to = "Subgroup", values_to = "Proportion"),
+    ggdata <- dplyr::left_join(
+      tidyr::pivot_longer(propdf, cols = colnames(tbl), names_to = "Subgroup", values_to = "Proportion"),
       tidyr::pivot_longer(countdf, cols = colnames(tbl), names_to = "Subgroup", values_to = "Count"), by = c("Observation", "Subgroup")) %>% 
       data.frame()
     
@@ -416,9 +420,9 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     ymax <- max(ylim)
   }else{
     if(method %in% c("dodge_facet", "dodge_facet2")){
-      ymax <- max(ggdata$Proportion, na.rm = TRUE)
+      ymax <- max(ggdata[, y_type], na.rm = TRUE)
     }else{
-      ymax <- max(ggdata_total$Proportion, na.rm = TRUE)  
+      ymax <- max(ggdata_total[, y_type], na.rm = TRUE)  
     }
   }
   ynudge <- ymax * label_nudge
@@ -430,14 +434,14 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Observation), color = color_border) +
+      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data[[y_type]], fill = .data$Observation), color = color_border) +
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     ### Labels
     if(show_proportions || show_counts){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, group = .data$Observation, label = .data$Label), 
+        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data[[y_type]], group = .data$Observation, label = .data$Label), 
           position = position_stack(vjust = 0.5), size = label_size, angle = label_angle)
       
     }
@@ -445,8 +449,8 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     if(show_subtotal_proportions || show_subtotal_counts){
       
       ggpl <- ggpl +
-        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
-        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
+        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data[[y_type]] + ynudge)) +
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data[[y_type]] + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
       
     }
     
@@ -468,7 +472,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Observation), color = color_border, position = position_dodge2(preserve = "single", width = 0.75)) +
+      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data[[y_type]], fill = .data$Observation), color = color_border, position = position_dodge2(preserve = "single", width = 0.75)) +
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
@@ -476,7 +480,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     if(show_proportions || show_counts){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, group = .data$Observation, label = .data$Label), 
+        geom_text(data = ggdata, aes(x = .data$Subgroup, y = .data[[y_type]] + ynudge, group = .data$Observation, label = .data$Label), 
           position = position_dodge(preserve = "total", width = 0.9), size = label_size, angle = label_angle, vjust = 0.5)
       
     }
@@ -490,7 +494,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes(x = .data$Observation, y = .data$Proportion, fill = .data$Subgroup), color = color_border, position = position_dodge2(preserve = "single", width = 0.75)) +
+      geom_col(data = ggdata, aes(x = .data$Observation, y = .data[[y_type]], fill = .data$Subgroup), color = color_border, position = position_dodge2(preserve = "single", width = 0.75)) +
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
@@ -498,7 +502,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     if(show_proportions || show_counts){
       
       ggpl <- ggpl +
-        geom_text(data = ggdata, aes(x = .data$Observation, y = .data$Proportion + ynudge, group = .data$Subgroup, label = .data$Label), 
+        geom_text(data = ggdata, aes(x = .data$Observation, y = .data[[y_type]] + ynudge, group = .data$Subgroup, label = .data$Label), 
           position = position_dodge(preserve = "total", width = 0.9), size = label_size, angle = label_angle, vjust = 0.5)
       
     }
@@ -512,15 +516,15 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data$Proportion, fill = .data$Subgroup), color = color_border) +
+      geom_col(data = ggdata, aes(x = .data$Subgroup, y = .data[[y_type]], fill = .data$Subgroup), color = color_border) +
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
     if(show_subtotal_proportions || show_subtotal_counts){
       
       ggpl <- ggpl +
-        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge)) +
-        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data$Proportion + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
+        # geom_point(data = ggdata_total, aes(x = .data$Subgroup, y = .data[[y_type]] + ynudge)) +
+        geom_text(data = ggdata_total, aes(x = .data$Subgroup, y = .data[[y_type]] + ynudge, label = .data$Label), size = label_size, angle = label_angle, vjust = 0.5)
       
     }
     
@@ -572,7 +576,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     
     
     ggpl <- ggplot() +
-      geom_col(data = ggdata, aes(x = .data[[facet_var]], y = .data$Proportion, fill = .data$Subgroup), color = color_border, position = position_dodge2(preserve = "single", width = 0.75)) +
+      geom_col(data = ggdata, aes(x = .data[[facet_var]], y = .data[[y_type]], fill = .data$Subgroup), color = color_border, position = position_dodge2(preserve = "single", width = 0.75)) +
       scale_fill_manual(name = legend_colors_title, values = colors_bar, drop = FALSE)
     
     
@@ -582,7 +586,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
     # ggdata_total <- ggdata_total[ggdata_total$Count_Total != 0, , drop = FALSE]
     
     ggdata_total$bottom_position <- 0 - ynudge
-    ggdata_total$top_position <- ggdata_total$Proportion + ynudge
+    ggdata_total$top_position <- ggdata_total[, y_type] + ynudge
     
     
     ### For one level left in the dodge setup show_proportions is equivalent to show_subtotal_proportions
@@ -653,7 +657,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, facet_var = NULL, rev = FA
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL, rev = FALSE, 
+wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion", facet_var = NULL, rev = FALSE, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
@@ -761,7 +765,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL, re
         subtitle <- NULL
       }
       
-      ggpl <- wrapper_bar_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev,
+      ggpl <- wrapper_bar_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,
         colors_bar = colors_bar, color_border = color_border,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
@@ -824,7 +828,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, facet_var = NULL, re
 #' 
 #' @inheritParams wrapper_bar_plot_core_strat
 #' @export
-wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, rev = FALSE, 
+wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Proportion", rev = FALSE, 
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
@@ -877,7 +881,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, rev = FALSE,
   facet_label_both <- FALSE
   
   
-  ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev, 
+  ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev, 
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, color_border = color_border,
     variable_names = variable_names, 
@@ -908,7 +912,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, rev = FALSE,
 #' @param colors_bar Vector with colors for treatment X response interaction. Alternatively, 
 #' @export
 wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatment_var = NULL,
-  facet_var = NULL, rev = FALSE, strat2_var = NULL, 
+  y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL, 
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
@@ -1013,7 +1017,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev,  
+  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,  
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, color_border = color_border,
     variable_names = variable_names, 
@@ -1047,7 +1051,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
 #' @param colors_bar Vector with colors for treatment X response interaction.
 #' @export
 wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomarker_var = NULL,
-  facet_var = NULL, rev = FALSE, strat2_var = NULL,
+  y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL,
   colors_bar = NULL, color_border = "black",
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
@@ -1125,7 +1129,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   # -------------------------------------------------------------------------
   
   
-  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, facet_var = facet_var, rev = rev,
+  ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,
     strat1_var = strat1_var, strat2_var = strat2_var,
     colors_bar = colors_bar, color_border = color_border,
     variable_names = variable_names, 
