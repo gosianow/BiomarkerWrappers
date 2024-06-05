@@ -1618,8 +1618,12 @@ format_shapes <- function(x, shapes = NULL, allow_duplicated = TRUE){
 #' 
 #' 
 #' @export
-format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", rev = FALSE, allow_duplicated = TRUE){
+format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, allow_duplicated = TRUE){
   
+  
+  if(is.null(palette)){
+    palette <- "d3_40_light_first"
+  }
   
   x <- x[!is.na(x)]
   
@@ -2007,7 +2011,7 @@ format_colors_cat <- function(x, colors = NULL, palette = "d3_40_light_first", r
 
 #' @rdname format_colors_cat
 #' @export
-format_colors <- function(x, colors = NULL, palette = "d3_40_light_first", rev = FALSE, allow_duplicated = TRUE){
+format_colors <- function(x, colors = NULL, palette = NULL, rev = FALSE, allow_duplicated = TRUE){
   
   format_colors_cat(x, colors = colors, palette = palette, rev = rev, allow_duplicated = allow_duplicated)
   
