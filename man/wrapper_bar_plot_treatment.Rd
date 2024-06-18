@@ -9,6 +9,7 @@ wrapper_bar_plot_treatment(
   response_var,
   treatment_var,
   biomarker_var = NULL,
+  y_type = "Proportion",
   facet_var = NULL,
   rev = FALSE,
   strat2_var = NULL,
@@ -51,6 +52,8 @@ wrapper_bar_plot_treatment(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{y_type}{Possible values: "Proportion" or "Count"}
 
 \item{strat2_var}{Name of the second stratification variable.}
 

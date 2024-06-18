@@ -8,6 +8,7 @@ wrapper_bar_plot_yvars_core_strat(
   data,
   x_var,
   y_vars,
+  y_type = "Proportion",
   rev = FALSE,
   strat1_var = NULL,
   strat2_var = NULL,
@@ -52,6 +53,8 @@ wrapper_bar_plot_yvars_core_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{y_type}{Possible values: "Proportion" or "Count"}
 
 \item{strat1_var}{Name of the first stratification variable.}
 

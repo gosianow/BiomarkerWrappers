@@ -9,6 +9,7 @@ wrapper_bar_plot_core(
   data,
   x_var,
   y_var,
+  y_type = "Proportion",
   facet_var = NULL,
   rev = FALSE,
   colors_bar = NULL,
@@ -45,6 +46,7 @@ wrapper_bar_plot_core_strat(
   data,
   x_var,
   y_var,
+  y_type = "Proportion",
   facet_var = NULL,
   rev = FALSE,
   strat1_var = NULL,
@@ -88,6 +90,8 @@ wrapper_bar_plot_core_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{y_type}{Possible values: "Proportion" or "Count"}
 
 \item{method}{One of the methods: c("facet", "dodge_facet", "dodge_facet2", "facet2", "dodge")}
 
