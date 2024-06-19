@@ -10,7 +10,7 @@ wrapper_ora_dotplot_single(
   observed_var = "Observed",
   adjp_var = "adj.P.Val",
   color_point_var = NULL,
-  plot_x_var = "log_adjp",
+  plot_x_var = "log.adj.P.Val",
   trim_limits = 0.01,
   color_point = "darkslateblue",
   color_low = "#42399B",
@@ -27,7 +27,7 @@ wrapper_ora_dotplot_single(
 \arguments{
 \item{x}{TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant' and 'bresults'.}
 
-\item{plot_x_var}{What to plot on the x-axis. Possible values "log_adjp" which corresponds to -log10(adjp_var) or "statistic" which corresponds to -log10(adjp_var) * sign(color_point_var).}
+\item{plot_x_var}{What to plot on the x-axis. Possible values "log.adj.P.Val" which corresponds to -log10(adjp_var) or "sign.adj.P.Val" which corresponds to -log10(adjp_var) * sign(color_point_var).}
 }
 \description{
 Dot plot with ORA results for a single contrast

@@ -10,10 +10,10 @@
 #' Dot plot with ORA results for a single contrast 
 #' 
 #' @param x TopTable with selected ORA results obtained by running 'wrapper_ora_dispaly_significant' and 'bresults'.
-#' @param plot_x_var What to plot on the x-axis. Possible values "log_adjp" which corresponds to -log10(adjp_var) or "statistic" which corresponds to -log10(adjp_var) * sign(color_point_var).
+#' @param plot_x_var What to plot on the x-axis. Possible values "log.adj.P.Val" which corresponds to -log10(adjp_var) or "sign.adj.P.Val" which corresponds to -log10(adjp_var) * sign(color_point_var).
 #' @export
 wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_var = "Observed", 
-  adjp_var = "adj.P.Val", color_point_var = NULL, plot_x_var = "log_adjp",
+  adjp_var = "adj.P.Val", color_point_var = NULL, plot_x_var = "log.adj.P.Val",
   trim_limits = 0.01, color_point = 'darkslateblue',
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   size_range = c(2, 10),
@@ -22,7 +22,7 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
   
   stopifnot(length(geneset_var) == 1)
   
-  stopifnot(plot_x_var %in% c("log_adjp", "statistic"))
+  # stopifnot(plot_x_var %in% c("log.adj.P.Val", "sign.adj.P.Val"))
   
   ## Wrap the title so it can be nicely displayed in the plots
   if(title_width > 0){
@@ -44,8 +44,11 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
   x[x[, adjp_var] == 0, adjp_var] <- min(1e-15, min_non_zero_adjp)
   
   
-  x$log_adjp <- -log10(x[, adjp_var])
-  x$statistic <- x$log_adjp * sign(x[, color_point_var])
+  x$log.adj.P.Val <- -log10(x[, adjp_var])
+  if(!is.null(color_point_var)){
+    x$sign.adj.P.Val <- x$log.adj.P.Val * sign(x[, color_point_var])
+  }
+  
   
   ## Derive the number of DE genes that overlap with the gene set
   
@@ -112,10 +115,10 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
     
   }
   
-  if(plot_x_var == "log_adjp"){
+  if(plot_x_var == "log.adj.P.Val"){
     xintercept <- -log10(c(0.05))
     xlab <- paste0("-log10(", adjp_var, ")")
-    xlim <- c(0, max(c(x[, "log_adjp"], -log10(0.05)), na.rm = TRUE))
+    xlim <- c(0, max(c(x[, "log.adj.P.Val"], -log10(0.05)), na.rm = TRUE))
   }else{
     xintercept <- c(-log10(c(0.05)), log10(c(0.05)))
     xlab <- paste0("-log10(", adjp_var, ") * sign(", color_point_var, ")")
