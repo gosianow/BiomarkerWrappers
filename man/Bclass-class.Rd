@@ -62,7 +62,7 @@ bresults(x, ...)
 
 \S4method{bresults}{Bclass}(x)
 
-\S4method{bresults}{`NULL`}(x)
+\S4method{bresults}{NULL}(x)
 
 bresults(x) <- value
 
@@ -72,7 +72,7 @@ boutput(x, ...)
 
 \S4method{boutput}{Bclass}(x)
 
-\S4method{boutput}{`NULL`}(x)
+\S4method{boutput}{NULL}(x)
 
 boutput(x) <- value
 
@@ -82,7 +82,7 @@ bcaption(x, ...)
 
 \S4method{bcaption}{Bclass}(x)
 
-\S4method{bcaption}{`NULL`}(x)
+\S4method{bcaption}{NULL}(x)
 
 bcaption(x) <- value
 
@@ -92,7 +92,7 @@ bheader(x, ...)
 
 \S4method{bheader}{Bclass}(x)
 
-\S4method{bheader}{`NULL`}(x)
+\S4method{bheader}{NULL}(x)
 
 bheader(x) <- value
 

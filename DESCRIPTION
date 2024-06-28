@@ -1,7 +1,7 @@
 Package: BiomarkerWrappers
 Type: Package
 Title: Suite of functions for exploratory biomarker analysis
-Version: 0.0.0.52
+Version: 0.0.0.53
 Authors@R: 
     person(given = "Malgorzata",
            family = "Nowicka",
@@ -13,10 +13,10 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5)
-Imports: ggplot2, rlang, tidyr, plyr, dplyr, magrittr, cowplot, RColorBrewer, grDevices, grid, circlize, ComplexHeatmap, ggbeeswarm, ggnewscale, survival, survminer, forestplot, utils, stats, methods, knitr, kableExtra, fgsea, lme4, multcomp, limma, Biobase, GSEABase, scales, stringr, tools
-Suggests: BiocStyle, testthat, rmarkdown, SummarizedExperiment, edgeR, msigdbr, corrplot, tibble, ggpp
+Imports: ggplot2, rlang, tidyr, plyr, dplyr, magrittr, cowplot, RColorBrewer, grDevices, grid, circlize, ComplexHeatmap, ggbeeswarm, ggnewscale, survival, survminer, forestplot, utils, stats, methods, knitr, kableExtra, fgsea, lme4, multcomp, limma, Biobase, GSEABase, scales, stringr, tools, multipleNCC, ggpp
+Suggests: BiocStyle, testthat, rmarkdown, SummarizedExperiment, edgeR, msigdbr, corrplot, tibble
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Collate: 
     'BiomarkerWrappers.R'
     'class_Bclass.R'
