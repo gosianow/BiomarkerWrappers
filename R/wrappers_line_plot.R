@@ -1,16 +1,71 @@
 
+#' @export
+upperQ <- function(x){
+  quantile(x, 0.75)
+}
+
+#' @export
+lowerQ <- function(x){
+  quantile(x, 0.25)
+}
+
+#' @export
+upperSE <- function(x){
+  x <- x[!is.na(x)]
+  mean(x) + (sd(x) / sqrt(length(x)))
+}
+
+#' @export
+lowerSE <- function(x){
+  x <- x[!is.na(x)]
+  mean(x) - (sd(x) / sqrt(length(x)))
+}
 
 
-# colors_line = NULL; 
+#' @export
+upper95CI <- function(x){
+  x <- x[!is.na(x)]
+  n <- length(x)
+  conf.int <- 0.95
+  mult <- qt((1 + conf.int) / 2, n - 1)
+  mean(x) + (sd(x) / sqrt(n) * mult)
+}
+
+#' @export
+lower95CI <- function(x){
+  x <- x[!is.na(x)]
+  n <- length(x)
+  conf.int <- 0.95
+  mult <- qt((1 + conf.int) / 2, n - 1)
+  mean(x) - (sd(x) / sqrt(n) * mult)
+}
+
+
+
+
+# color_line_var = NULL; shape_point_var = NULL; 
+# facet_var = NULL; box_plot = FALSE; 
+# colors_line = NULL; shapes_point = NULL; colors_box = "snow";
 # variable_names = NULL; 
-# xlab = NULL; ylab = NULL; title = NULL; subtitle = NULL;
-# legend_colors_line_title = NULL; legend_position = "right"; facet_label_both = TRUE; 
-# line_size = 1; line_type = 1; line_alpha = 1;
-# smooth_method = "lm"; smooth_formula = y ~ x; smooth_se = FALSE;
-# smooth_size = 2; smooth_linetype = 1; 
+# title = TRUE; subtitle = TRUE; xlab = TRUE; ylab = TRUE;
+# legend_colors_line_title = TRUE; legend_shapes_point_title = TRUE;
+# legend_position = "right"; legend_drop = TRUE; aspect_ratio = NULL; facet_label_both = TRUE; 
+# line_size = 1; line_type = 1; line_alpha = 1; 
+# smooth = "none"; smooth_method = "lm"; smooth_formula = y ~ x; smooth_se = FALSE;
+# smooth_size = 1.5; smooth_linetype = 1; 
+# stat_summary_fun = "median"; stat_summary_geom = "crossbar";
 # point_size = 1.5; point_alpha = 1; 
-# title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
+# title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL;
+# scale_y_continuous_custome = scale_y_continuous(); 
+# axis_text_x_angle = 0; axis_text_x_vjust = 1; axis_text_x_hjust = 0.5;
 # background_grid_major = "none"
+# 
+# 
+# data = pdata
+# 
+# x_var = "Visit"; y_var = biomarker_var; group_var = block_var; title = biomarker_var_name; ylab = biomarker_var_name; aspect_ratio = 1;
+# line_size = 0.5; line_alpha = 0.5; point_size = 1; point_alpha = 0.5;
+# smooth = "none"; stat_summary_geom = "errorbar"; color_line_var = "AGEGR3"
 
 
 
@@ -19,6 +74,10 @@
 #' Line plot
 #' 
 #' @param data Data frame.
+#' @param smooth Possible values: "none", "pooled", "strat". When "strat", stratification is defined by `color_line_var`. When the x variable is continuous, `geom_smooth` is used. When the x variable is a factor, `stat_summary` is used. 
+#' @param stat_summary_fun Possible values: "median" or "mean". When "median", the plotted limits indicate the 25% and 75% quartiles. When "mean", the plotted limits indicate the 95% CIs assuming a normal distribution. When the population standard deviation is unknown, t-distribution is used instead of the normal distribution in the calculation of the CIs. See also `Hmisc::smean.cl.normal`. 
+#' @param stat_summary_geom Possible values: "crossbar", "errorbar", "linerange", "pointrange". 
+#' @param stat_summary_position Used to define the dodging of the summary lines when smoothing by strata is used. 
 #' @export
 wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, shape_point_var = NULL, 
   facet_var = NULL, box_plot = FALSE, 
@@ -29,7 +88,8 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   legend_position = "right", legend_drop = TRUE, aspect_ratio = NULL, facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1, 
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
-  smooth_size = 2, smooth_linetype = 1, 
+  smooth_size = 1.5, smooth_linetype = 1, 
+  stat_summary_fun = "median", stat_summary_geom = "errorbar", stat_summary_position = position_dodge(width = 0.2), 
   point_size = 1.5, point_alpha = 1, 
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL,
   scale_y_continuous_custome = scale_y_continuous(), 
@@ -179,7 +239,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   legend_show_colors_line <- color_line_var != "color_line_dummy"
   legend_show_shapes_point <- shape_point_var != "shape_point_dummy"
   
-  
+
   
   ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]]))
   
@@ -191,9 +251,9 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   
   
   ggpl <- ggpl +
-    geom_line(aes(group = .data[[group_var]], color = .data[[color_line_var]]), linetype = line_type, size = line_size, alpha = line_alpha) +
+    geom_line(aes(group = .data[[group_var]], color = .data[[color_line_var]]), linetype = line_type, linewidth = line_size, alpha = line_alpha) +
     scale_color_manual(name = legend_colors_line_title, values = colors_line, drop = legend_drop, na.value = "grey") +
-    guides(color = ifelse(legend_show_colors_line, guide_legend(), "none"))
+    guides(color = ifelse(legend_show_colors_line, "legend", "none"))
   
   
   if(all(shapes_point %in% 21:25)){
@@ -203,7 +263,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       geom_point(aes(fill = .data[[color_line_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
       scale_fill_manual(name = legend_colors_line_title, values = colors_line, drop = legend_drop, na.value = "grey") +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
-      guides(fill = ifelse(legend_show_colors_line, guide_legend(), "none"), shape = ifelse(legend_show_shapes_point, guide_legend(), "none"))
+      guides(fill = ifelse(legend_show_colors_line, "legend", "none"), shape = ifelse(legend_show_shapes_point, "legend", "none"))
     
     
   }else{
@@ -211,7 +271,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     ggpl <- ggpl +
       geom_point(aes(color = .data[[color_line_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
-      guides(shape = ifelse(legend_show_shapes_point, guide_legend(), "none"))
+      guides(shape = ifelse(legend_show_shapes_point, "legend", "none"))
     
   }
   
@@ -243,18 +303,33 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   
   
   
+  if(stat_summary_fun == "median"){
+    stat_summary_fun_min <- "lowerQ"
+    stat_summary_fun_max <- "upperQ"
+  }else{
+    stat_summary_fun_min <- "lower95CI"
+    stat_summary_fun_max <- "upper95CI"
+  }
+  
+  
   if(smooth == "pooled"){
     
     if(is.factor(data[, x_var])){
       
-      ggpl <- ggpl + 
-        stat_summary(aes(group = 1), 
-          geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_linetype, size = smooth_size)
+      ggpl <- ggpl +
+        stat_summary(aes(group = 1),
+          geom = "line", fun = stat_summary_fun, color = "dodgerblue3", linetype = smooth_linetype, size = smooth_size) +
+        stat_summary(aes(group = 1),
+          geom = "point", fun = stat_summary_fun, color = "dodgerblue3", size = smooth_size / 0.75) +
+        stat_summary(aes(group = 1),
+          geom = stat_summary_geom, fun = stat_summary_fun, fun.min = stat_summary_fun_min, fun.max = stat_summary_fun_max, color = "dodgerblue3", width = 0.2, size = smooth_size * 0.75)
+      
+      
       
     }else{
       
       ggpl <- ggpl + 
-        geom_smooth(aes(group = 1),
+        geom_smooth(aes(group = 1), color = "dodgerblue3",
           method = smooth_method, formula = smooth_formula, se = smooth_se, 
           linetype = smooth_linetype, size = smooth_size)
       
@@ -264,9 +339,17 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     
     if(is.factor(data[, x_var])){
       
-      ggpl <- ggpl + 
-        stat_summary(aes(group = .data[[color_line_var]], color = .data[[color_line_var]]), 
-          geom = "line", fun = "mean", color = "dodgerblue", linetype = smooth_linetype, size = smooth_size)
+      ggpl <- ggpl +
+        stat_summary(aes(group = .data[[color_line_var]], color = .data[[color_line_var]]),
+          geom = "line", fun = stat_summary_fun, linetype = smooth_linetype, size = smooth_size,
+          position = stat_summary_position) +
+        stat_summary(aes(group = .data[[color_line_var]], color = .data[[color_line_var]]),
+          geom = "point", fun = stat_summary_fun, size = smooth_size / 0.75,
+          position = stat_summary_position) +
+        stat_summary(aes(group = .data[[color_line_var]], color = .data[[color_line_var]]),
+          geom = stat_summary_geom, fun = stat_summary_fun, fun.min = stat_summary_fun_min, fun.max = stat_summary_fun_max, width = 0.2, size = smooth_size * 0.75,
+          position = stat_summary_position)
+      
       
     }else{
       
@@ -326,7 +409,8 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   legend_colors_line_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", legend_drop = TRUE, aspect_ratio = NULL, facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1,
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
-  smooth_size = 2, smooth_linetype = 1, 
+  smooth_size = 1.5, smooth_linetype = 1, 
+  stat_summary_fun = "median", stat_summary_geom = "errorbar", stat_summary_position = position_dodge(width = 0.2),
   point_size = 1.5, point_alpha = 1, 
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", xlim = NULL, ylim = NULL, 
   scale_y_continuous_custome = scale_y_continuous(), 
@@ -444,6 +528,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
         line_size = line_size, line_type = line_type, line_alpha = line_alpha,
         smooth = smooth, smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
         smooth_size = smooth_size, smooth_linetype = smooth_linetype, 
+        stat_summary_fun = stat_summary_fun, stat_summary_geom = stat_summary_geom, stat_summary_position = stat_summary_position,
         point_size = point_size, point_alpha = point_alpha, 
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, xlim = xlim, ylim = ylim,
         scale_y_continuous_custome = scale_y_continuous_custome,

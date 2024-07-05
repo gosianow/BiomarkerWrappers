@@ -12,7 +12,7 @@ wrapper_dispaly_significant_genes(
   topn = 20,
   pval = 0.05,
   lfc = 0,
-  gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"),
+  gene_vars = c("HGNC_Symbol"),
   lfc_prefix = "logFC",
   pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",

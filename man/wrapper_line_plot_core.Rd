@@ -35,8 +35,11 @@ wrapper_line_plot_core(
   smooth_method = "lm",
   smooth_formula = y ~ x,
   smooth_se = FALSE,
-  smooth_size = 2,
+  smooth_size = 1.5,
   smooth_linetype = 1,
+  stat_summary_fun = "median",
+  stat_summary_geom = "errorbar",
+  stat_summary_position = position_dodge(width = 0.2),
   point_size = 1.5,
   point_alpha = 1,
   title_size = NULL,
@@ -84,8 +87,11 @@ wrapper_line_plot_core_strat(
   smooth_method = "lm",
   smooth_formula = y ~ x,
   smooth_se = FALSE,
-  smooth_size = 2,
+  smooth_size = 1.5,
   smooth_linetype = 1,
+  stat_summary_fun = "median",
+  stat_summary_geom = "errorbar",
+  stat_summary_position = position_dodge(width = 0.2),
   point_size = 1.5,
   point_alpha = 1,
   title_size = NULL,
@@ -109,6 +115,14 @@ wrapper_line_plot_core_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{smooth}{Possible values: "none", "pooled", "strat". When "strat", stratification is defined by `color_line_var`. When the x variable is continuous, `geom_smooth` is used. When the x variable is a factor, `stat_summary` is used.}
+
+\item{stat_summary_fun}{Possible values: "median" or "mean". When "median", the plotted limits indicate the 25% and 75% quartiles. When "mean", the plotted limits indicate the 95% CIs assuming a normal distribution. When the population standard deviation is unknown, t-distribution is used instead of the normal distribution in the calculation of the CIs. See also `Hmisc::smean.cl.normal`.}
+
+\item{stat_summary_geom}{Possible values: "crossbar", "errorbar", "linerange", "pointrange".}
+
+\item{stat_summary_position}{Used to define the dodging of the summary lines when smoothing by strata is used.}
 
 \item{strat1_var}{Name of the first stratification variable.}
 

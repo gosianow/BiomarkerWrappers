@@ -25,7 +25,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
     
     # plot(topTable_out$t, topTable_out$sign.P.Val)
     
-      
+    
     for(p in 1:length(pval)){
       
       for(l in 1:length(lfc)){
@@ -64,7 +64,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
 #' @param x Data frame of merged topTables
 #' @export
 wrapper_deside_tests <- function(x, topn = Inf, pval = 0.05, lfc = 0, 
-  gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), 
+  gene_vars = c("HGNC_Symbol"), 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", summary_prefix = NULL, 
   sep = "_",
   order_both_direction = FALSE){
@@ -110,13 +110,19 @@ wrapper_deside_tests <- function(x, topn = Inf, pval = 0.05, lfc = 0,
         
         
         if(is.null(summary_prefix)){
-          name_out <- paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l], "_topn", topn, "_", contrast)
+          if(topn == Inf){
+            name_out <- paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l], "_", contrast)
+          }else{
+            name_out <- paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l], "_topn", topn, "_", contrast)
+          }
         }else{
           name_out <- paste0(summary_prefix, "_", contrast)
         }
         
         
         out <- as.numeric(x[, adjp_var] <= pval[p] & abs(x[, lfc_var]) >= lfc[l] & summary_order <= topn) * sign(x[, lfc_var])
+        
+        out <- factor(out, levels = c("-1", "0", "1"))
         
         # table(out, useNA = "always")
         
@@ -230,7 +236,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
     topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue", "adj_pvalue")))
     
     topTable <- mutate_at(topTable, grep("^adj_pvalue", colnames(topTable)), stats::p.adjust, method = "BH")
-
+    
     
   }else{
     
@@ -240,7 +246,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
     
   }
   
-
+  
   ### Update column names to be aligned with what is produced in DGE 
   
   topTable <- data.frame(topTable, check.names = FALSE)
@@ -287,7 +293,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
 #' @export
 wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, lfc = 0, 
-  gene_vars = c("Hgnc_Symbol", "EntrezIDs", "GeneName"), 
+  gene_vars = c("HGNC_Symbol"), 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
   stats_prefixes = NULL, sep = "_", 
   caption = NULL){
@@ -487,6 +493,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
     })
     
     out <- do.call(cbind, out_glht)
+
     out
     
     
@@ -495,15 +502,35 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
   
   out <- plyr::rbind.fill(out)
   
+  ## If p-value is zero, assign a small number to avoid Inf in sign.P.Val
+  for(k in seq_along(contrasts)){
+    # k = 1
+    out[out[, paste0("P.Value_", contrasts[k])] < 1e-20, paste0("P.Value_", contrasts[k])] <- 1e-20
+  }
   
   ## Adjust the p-values
   adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], stats::p.adjust, method = "BH"))
   
   colnames(adjp) <- paste0("adj.P.Val_", contrasts)
   
-  out <- cbind(out, adjp)
+  ## Compute sign.P.Val
   
-  column_order <- c("biomarker", apply(expand.grid(c("Difference_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
+  signp <- lapply(seq_along(contrasts), function(i){
+    # i = 1
+    
+    res <- -log10(out[, paste0("P.Value_", contrasts[i])]) * sign(out[, paste0("Difference_", contrasts[i])])
+    res
+    
+  })
+  
+  signp <- data.frame(signp)
+  
+  colnames(signp) <- paste0("sign.P.Val_", contrasts)
+  
+  
+  out <- cbind(out, adjp, signp)
+  
+  column_order <- c("biomarker", apply(expand.grid(c("Difference_", "P.Value_", "adj.P.Val_", "sign.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
   
   out <- out[, column_order, drop = FALSE]
   
@@ -573,6 +600,7 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
     })
     
     out <- do.call(cbind, out_glht)
+    
     out
     
     
@@ -581,15 +609,35 @@ wrapper_lmer <- function(data, biomarker_vars, formula, contrast_matrix){
   
   out <- plyr::rbind.fill(out)
   
+  ## If p-value is zero, assign a small number to avoid Inf in sign.P.Val
+  for(k in seq_along(contrasts)){
+    # k = 1
+    out[out[, paste0("P.Value_", contrasts[k])] < 1e-20, paste0("P.Value_", contrasts[k])] <- 1e-20
+  }
   
   ## Adjust the p-values
   adjp <- data.frame(lapply(out[, paste0("P.Value_", contrasts), drop = FALSE], stats::p.adjust, method = "BH"))
   
   colnames(adjp) <- paste0("adj.P.Val_", contrasts)
   
-  out <- cbind(out, adjp)
+  ## Compute sign.P.Val
   
-  column_order <- c("biomarker", apply(expand.grid(c("Difference_", "P.Value_", "adj.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
+  signp <- lapply(seq_along(contrasts), function(i){
+    # i = 1
+    
+    res <- -log10(out[, paste0("P.Value_", contrasts[i])]) * sign(out[, paste0("Difference_", contrasts[i])])
+    res
+    
+  })
+  
+  signp <- data.frame(signp)
+  
+  colnames(signp) <- paste0("sign.P.Val_", contrasts)
+  
+  
+  out <- cbind(out, adjp, signp)
+  
+  column_order <- c("biomarker", apply(expand.grid(c("Difference_", "P.Value_", "adj.P.Val_", "sign.P.Val_"), contrasts, stringsAsFactors = FALSE), 1, paste0, collapse = ""))
   
   out <- out[, column_order, drop = FALSE]
   
