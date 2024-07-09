@@ -81,7 +81,7 @@ lower95CI <- function(x){
 #' @export
 wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, shape_point_var = NULL, 
   facet_var = NULL, box_plot = FALSE, 
-  colors_line = NULL, shapes_point = NULL, colors_box = "snow",
+  colors_line = NULL, palette_line = NULL, shapes_point = NULL, colors_box = "snow",
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_line_title = TRUE, legend_shapes_point_title = TRUE,
@@ -152,7 +152,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       colors_line <- colors_line[1]
     }
   }else{
-    colors_line <- format_colors(levels(data[, color_line_var]), colors = colors_line)
+    colors_line <- format_colors(levels(data[, color_line_var]), colors = colors_line, palette = palette_line)
   }
   
   # print(levels(data[, color_line_var]))
@@ -407,7 +407,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
 #' @export
 wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, shape_point_var = NULL, facet_var = NULL, box_plot = FALSE, 
   strat1_var = NULL, strat2_var = NULL, 
-  colors_line = NULL, shapes_point = NULL, colors_box = "snow",
+  colors_line = NULL, palette_line = NULL, shapes_point = NULL, colors_box = "snow",
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
   legend_colors_line_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", legend_drop = TRUE, aspect_ratio = NULL, facet_label_both = TRUE, 
@@ -532,7 +532,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
       
       
       ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, shape_point_var = shape_point_var, facet_var = facet_var, box_plot = box_plot, 
-        colors_line = colors_line, shapes_point = shapes_point, colors_box = colors_box, 
+        colors_line = colors_line, palette_line = palette_line, shapes_point = shapes_point, colors_box = colors_box, 
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,
         legend_colors_line_title = legend_colors_line_title, legend_shapes_point_title = legend_shapes_point_title, legend_position = legend_position, legend_drop = legend_drop, aspect_ratio = aspect_ratio, facet_label_both = facet_label_both, 
