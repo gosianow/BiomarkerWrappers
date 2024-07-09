@@ -155,6 +155,9 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     colors_line <- format_colors(levels(data[, color_line_var]), colors = colors_line)
   }
   
+  # print(levels(data[, color_line_var]))
+  # print(colors_line)
+  
   # -------------------------------------------------------------------------
   # Colors for boxplots
   # -------------------------------------------------------------------------
@@ -239,7 +242,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   legend_show_colors_line <- color_line_var != "color_line_dummy"
   legend_show_shapes_point <- shape_point_var != "shape_point_dummy"
   
-
+  
   
   ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]]))
   
@@ -263,7 +266,8 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       geom_point(aes(fill = .data[[color_line_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
       scale_fill_manual(name = legend_colors_line_title, values = colors_line, drop = legend_drop, na.value = "grey") +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
-      guides(fill = ifelse(legend_show_colors_line, "legend", "none"), shape = ifelse(legend_show_shapes_point, "legend", "none"))
+      guides(fill = ifelse(legend_show_colors_line, "legend", "none"), 
+        shape = ifelse(legend_show_shapes_point, "legend", "none"))
     
     
   }else{
@@ -503,6 +507,13 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
         return(NULL)
       }
       
+      if(strat_scales == "free" || strat_scales == "free_x"){
+        if(is.factor(data_strata1[, x_var])){
+          ## Drop unused levels 
+          data_strata1[, x_var] <- factor(data_strata1[, x_var])
+        }
+      }
+      
       ### subtitle_strat1
       if(strat1_var == "strat1_dummy"){
         subtitle_strat1 <- NULL
@@ -548,7 +559,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
       # Extract the legend from one of the plots
       legend <- get_legend(
         # Create some space to the left of the legend
-        ggpl_non_empty[[1]] + theme(legend.box.margin = margin(0, 0, 0, 12))
+        ggpl_non_empty[[length(ggpl_non_empty)]] + theme(legend.box.margin = margin(0, 0, 0, 12))
       )
       
       # Remove legends in the plots
