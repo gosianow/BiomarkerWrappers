@@ -1,6 +1,17 @@
 
 
-
+# color_point_var = NULL; facet_var = NULL; 
+# colors_point = NULL; scale_gradient = "gradientn"; color_low_point = '#42399B'; color_mid_point = "white"; color_high_point = '#D70131'; midpoint = 0;
+# trim_values = NULL; trim_prop = NULL; trim_range = NULL; ceiling = FALSE; centered = FALSE;
+# variable_names = NULL; 
+# title = TRUE; subtitle = TRUE; xlab = TRUE; ylab = TRUE;
+# legend_colors_point_title = TRUE; legend_position = "right"; aspect_ratio = NULL; facet_label_both = TRUE; 
+# point_size = 1.5; point_shape = 20; point_alpha = 1; point_stroke = 0.8;
+# smooth = "none"; smooth_method = "auto"; smooth_formula = y ~ x; smooth_se = FALSE;
+# smooth_size = 1; smooth_linetype = 1; 
+# title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
+# display_correlation = FALSE; 
+# background_grid_major = "none"
 
 
 
@@ -96,6 +107,8 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     }else{
       colors_point <- colors_point[1]
     }
+    
+    names(colors_point) <- levels(data[, color_point_var])
     
   }else{
     
@@ -212,11 +225,11 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     labs(title = title, subtitle = subtitle) + 
     ylab(ylab) +
     xlab(xlab) +
-    theme(plot.title = element_text(size = title_size, face = "bold"),
-      plot.subtitle = element_text(size = title_size),
+    theme(plot.title = element_text(size = title_size, face = "plain"),
+      plot.subtitle = element_text(size = title_size, face = "bold"),
       axis.line = element_blank(),
       axis.ticks = element_line(color = "black", size = 0.5),
-      panel.border = element_rect(colour = "black", size = 0.8),
+      panel.border = element_rect(colour = "black", size = 0.8, fill = NA),
       legend.position = legend_position,
       aspect.ratio = aspect_ratio) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +

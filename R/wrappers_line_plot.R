@@ -290,7 +290,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       axis.text.x = element_text(angle = axis_text_x_angle, vjust = axis_text_x_vjust, hjust = axis_text_x_hjust),
       axis.line = element_blank(),
       axis.ticks = element_line(color = "black", size = 0.5),
-      panel.border = element_rect(colour = "black", size = 0.8),
+      panel.border = element_rect(colour = "black", size = 0.8, fill = NA),
       legend.position = legend_position,
       aspect.ratio = aspect_ratio) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
