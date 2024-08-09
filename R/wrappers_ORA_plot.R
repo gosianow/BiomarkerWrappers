@@ -177,10 +177,12 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
   
   
   stopifnot(length(geneset_var) == 1)
-  stopifnot(all(directions %in% c("up", "down", "both")))
+  stopifnot(all(directions %in% c("", "up", "down", "both")))
   
-  directions_labels <- c("up" = "Up-regulation", "down" = "Down-regulation", "both" = "Up-Down-regulation")
-  directions_labels <- directions_labels[directions]
+  if(!"" %in% directions){
+    directions_labels <- c("up" = "Up-regulation", "down" = "Down-regulation", "both" = "Up-Down-regulation")
+    directions_labels <- directions_labels[directions]
+  }
   
   
   ## Wrap the title so it can be nicely displayed in the plots
@@ -217,10 +219,10 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
   
   
   data_adjp <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_adjp, stringsAsFactors = FALSE), 
-    cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = adjp_prefix)
+    cols = all_of(contrasts_and_directions), names_to = "contrasts_and_directions", values_to = adjp_prefix)
   
   data_observed <- pivot_longer(data.frame(x[, geneset_var, drop = FALSE], data_observed, stringsAsFactors = FALSE), 
-    cols = contrasts_and_directions, names_to = "contrasts_and_directions", values_to = observed_prefix)
+    cols = all_of(contrasts_and_directions), names_to = "contrasts_and_directions", values_to = observed_prefix)
   
   
   
@@ -243,10 +245,11 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
   })
   
   
-  data$directions <- factor(data$directions, levels = directions, labels = directions_labels)
-  
-  data <- data[stats::complete.cases(data$directions), , drop = FALSE]
-  
+  if(!"" %in% directions){
+    data$directions <- factor(data$directions, levels = directions, labels = directions_labels)
+    
+    data <- data[stats::complete.cases(data$directions), , drop = FALSE]
+  }
   
   
   
@@ -308,8 +311,14 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
     coord_cartesian(xlim = xlim) +
     panel_border(colour = "black", linetype = 1, size = 0.5, remove = FALSE) +
     background_grid(major = "xy", minor = "none", size.major = 0.25) +
-    scale_color_manual(name = "Contrast", values = colors_point) +
-    facet_wrap(~ directions, nrow = 1)
+    scale_color_manual(name = "Contrast", values = colors_point)
+  
+  
+  
+  if(!"" %in% directions){
+    ggp <- ggp +
+      facet_wrap(~ directions, nrow = 1)
+  }
   
   
   ggp

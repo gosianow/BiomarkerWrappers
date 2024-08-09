@@ -324,7 +324,7 @@ wrapper_dispaly_significant_ora <- function(x, contrast, direction = "both",
   stopifnot(direction %in% c("up", "down", "both", ""))
   
   
-  if(direction ==""){
+  if(direction == ""){
     direction_print <- ""
   }else if(direction == "both"){
     direction_print <- "up- and down-regulated"
