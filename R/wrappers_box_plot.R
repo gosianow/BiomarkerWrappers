@@ -38,7 +38,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE,
   scale_y_continuous_custome = scale_y_continuous(), 
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none"){
   
   
@@ -311,7 +311,8 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
       axis.line = element_blank(),
       axis.ticks = element_line(color = "black", size = 0.5),
       panel.border = element_rect(colour = "black", size = 0.8, fill = NA),
-      legend.position = legend_position) +
+      legend.position = legend_position,
+      aspect.ratio = aspect_ratio) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
     scale_x_discrete(drop = ifelse(facet_scales %in% c("free", "free_x"), TRUE, FALSE)) +
     coord_cartesian(ylim = ylim) +
@@ -412,7 +413,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE, 
   scale_y_continuous_custome = scale_y_continuous(),
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, 
   strat1_rel_widths = 1, strat1_rel_heights = 1, strat2_rel_widths = 1, strat2_rel_heights = 1, less_legends = FALSE){
@@ -535,7 +536,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
         point_plot = point_plot, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, drop = drop,
         scale_y_continuous_custome = scale_y_continuous_custome, 
-        axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+        axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio, 
         label_size = label_size, label_nudge = label_nudge, 
         background_grid_major = background_grid_major)
       
@@ -595,7 +596,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   label_size = 3.5, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   scale_y_continuous_custome = scale_y_continuous(),
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE,
   names_to = "name", values_to = "value"){
@@ -644,7 +645,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
     point_plot = point_plot, point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
     scale_y_continuous_custome = scale_y_continuous_custome,
-    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio,
     label_size = label_size, label_nudge = label_nudge, 
     background_grid_major = background_grid_major, 
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)

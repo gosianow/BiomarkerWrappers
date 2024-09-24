@@ -12,8 +12,9 @@
 #' @param cat_var Name of a categorical variable. That variable must be a factor with at least two levels.
 #' @param method Test to be used. Possible values: "kruskal", "wilcox", "t".
 #' @param display_statistics Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".
+#' @param paired Logical. Paired test is possible only for wilcox and t. The data must be ordered by the pairing variable, usually subject ID. 
 #' @export
-wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "kruskal", alternative = "two.sided", paired = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "kruskal", alternative = "two.sided", paired = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, drop = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -22,9 +23,26 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
   
   stopifnot(method %in% c("kruskal", "wilcox", "t"))
   
-  stopifnot(length(display_statistics) >= 1)
-  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
+  ### Paired test is possible only for wilcox and t
+  if(paired){
+    if(method == "kruskal"){
+      paired <- FALSE
+    }
+  }
   
+  if(is.null(display_statistics)){
+    if(method == "t"){
+      display_statistics <- c("N", "Mean")
+    }else{
+      display_statistics <- c("N", "Median")
+    }
+    
+  }else{
+    stopifnot(length(display_statistics) >= 1)
+    stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
+  }
+  
+
   stopifnot(is.data.frame(data))
   stopifnot(nrow(data) > 0)
   
@@ -61,7 +79,7 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
   
   # N = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
   
-  N <- as.numeric(table(data[, cat_var]))
+  N <- as.numeric(table(data[stats::complete.cases(data[, c(cat_var, num_var)]), cat_var]))
   
   Median = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
   Mean = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
@@ -114,7 +132,11 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
     }else{
       pvalue <- test_res$p.value
       if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-        difference <- Median[2] - Median[1]
+        if(method == "t"){
+          difference <- Mean[2] - Mean[1]
+        }else{
+          difference <- Median[2] - Median[1]
+        }
       }else{
         difference <- NA
       }
@@ -199,10 +221,13 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
       caption <- paste0("t-test.")
     }
     
+    if(paired){
+      caption <- paste0("Paired ", caption)
+    }
     
   }
   
-  ## Remove all undescores from the caption because they are problematic when rendering to PDF
+  ## Remove all underscores from the caption because they are problematic when rendering to PDF
   caption <- gsub("_", " ", caption)
   
   rownames(res) <- NULL
@@ -224,7 +249,7 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
 #' 
 #' @inheritParams wrapper_kruskal_test_core_col_cat
 #' @export
-wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, drop = FALSE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -232,9 +257,24 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   
   stopifnot(method %in% c("kruskal", "wilcox", "t"))
   
-  stopifnot(length(display_statistics) >= 1)
-  stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
+  ### Paired test is possible only for wilcox and t
+  if(paired){
+    if(method == "kruskal"){
+      paired <- FALSE
+    }
+  }
   
+  if(is.null(display_statistics)){
+    if(method == "t"){
+      display_statistics <- c("N", "Mean")
+    }else{
+      display_statistics <- c("N", "Median")
+    }
+    
+  }else{
+    stopifnot(length(display_statistics) >= 1)
+    stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
+  }
   
   stopifnot(is.data.frame(data))
   stopifnot(nrow(data) > 0)
@@ -279,7 +319,7 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
   
   # N = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = length, drop = FALSE)[, 2]
   
-  N <- as.numeric(table(data[, cat_var]))
+  N <- as.numeric(table(data[stats::complete.cases(data[, c(cat_var, num_var)]), cat_var]))
   
   Median = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
   Mean = stats::aggregate(data[, num_var], list(subgroup = data[, cat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
@@ -341,7 +381,11 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
         }else{
           pvalue <- test_res$p.value
           if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-            difference <- median(data_sub[data_sub[, cat_var] == levels_cat_var[2], num_var]) - median(data_sub[data_sub[, cat_var] == levels_cat_var[1], num_var])
+            if(method == "t"){
+              difference <- mean(data_sub[data_sub[, cat_var] == levels_cat_var[2], num_var], na.rm = TRUE) - mean(data_sub[data_sub[, cat_var] == levels_cat_var[1], num_var], na.rm = TRUE)
+            }else{
+              difference <- median(data_sub[data_sub[, cat_var] == levels_cat_var[2], num_var], na.rm = TRUE) - median(data_sub[data_sub[, cat_var] == levels_cat_var[1], num_var], na.rm = TRUE)
+            }
           }else{
             difference <- NA
           }
@@ -401,7 +445,11 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
       }else{
         pvalue <- test_res$p.value
         if(length(tbl) == 2 && sum(tbl > 1) >= 2){
-          difference <- Median[2] - Median[1]
+          if(method == "t"){
+            difference <- Mean[2] - Mean[1]
+          }else{
+            difference <- Median[2] - Median[1]
+          }
         }else{
           difference <- NA
         }
@@ -525,7 +573,9 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
       caption <- paste0("t-test.")
     }
     
-    
+    if(paired){
+      caption <- paste0("Paired ", caption)
+    }
   }
   
   ## Remove all underscores from the caption because they are problematic when rendering to PDF
@@ -549,7 +599,7 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -582,7 +632,7 @@ wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, stra
   }
   
   ### Keep non-missing data
-  data <- data[stats::complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -708,8 +758,19 @@ wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, stra
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
   
+  if(is.null(display_statistics)){
+    if(method == "t"){
+      display_statistics <- c("N", "Mean")
+    }else{
+      display_statistics <- c("N", "Median")
+    }
+    
+  }else{
+    stopifnot(length(display_statistics) >= 1)
+    stopifnot(display_statistics %in% c("N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"))
+  }
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -741,7 +802,7 @@ wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, stra
   }
   
   ### Keep non-missing data
-  data <- data[stats::complete.cases(data[, c(num_var, cat_var, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -874,7 +935,7 @@ wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, stra
 #' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
 #' @param display_in_column Possible values: "cat", "num".
 #' @export
-wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = c("N", "Median"), display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
   
   
   # --------------------------------------------------------------------------

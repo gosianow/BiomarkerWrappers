@@ -44,6 +44,7 @@ wrapper_box_plot_yvars_core_strat(
   axis_text_x_angle = 0,
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,
+  aspect_ratio = NULL,
   background_grid_major = "none",
   strat_scales = "fixed",
   strat1_nrow = 1,

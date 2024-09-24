@@ -48,7 +48,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none"){
   
   
@@ -620,7 +620,8 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
       # axis.line = element_blank(),
       # axis.ticks = element_line(color = "black", size = 0.5),
       # panel.border = element_rect(colour = "black", size = 1, fill = NA),
-      legend.position = legend_position) +
+      legend.position = legend_position, 
+      aspect.ratio = aspect_ratio) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +
     scale_x_discrete(drop = FALSE) +
     coord_cartesian(ylim = ylim)
@@ -667,7 +668,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
@@ -774,7 +775,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
         show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
         label_size = label_size, label_angle = label_angle, label_nudge = label_nudge,
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
-        axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+        axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio,
         background_grid_major = background_grid_major)
       
       
@@ -891,7 +892,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
     show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
     label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
-    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio,
     background_grid_major = background_grid_major,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
   
@@ -921,7 +922,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
@@ -1027,7 +1028,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
     show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
     label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
-    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio,
     background_grid_major = background_grid_major,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
   
@@ -1060,7 +1061,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
@@ -1139,7 +1140,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
     show_proportions = show_proportions, show_counts = show_counts, show_subtotal_proportions = show_subtotal_proportions, show_subtotal_counts = show_subtotal_counts, show_total_counts = show_total_counts, 
     label_size = label_size, label_angle = label_angle, label_nudge = label_nudge, 
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, ylim = ylim, 
-    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, 
+    axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio,
     background_grid_major = background_grid_major,
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
   

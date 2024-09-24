@@ -79,7 +79,7 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
     radius_limits = range(radius_breaks)
     radius_labels <- formatC(radius_labels, format = "g", digits = 1)
   }else{
-    radius_labels = rev(c(1, 0.1, 0.05, 0.01, 0.001))
+    radius_labels = rev(c(1, 0.1, 0.05, 0.01, 0.001, 0.0001))
     radius_breaks = -log10(radius_labels)
     radius_limits = range(radius_breaks)
     radius_labels <- formatC(radius_labels, format = "f", drop0trailing = TRUE, digits = 10)
@@ -208,7 +208,7 @@ wrapper_logFC_heatmap <- function(x, gene_var = "Hgnc_Symbol",
     
     x[is.na(x)] <- 1
     
-    pval_asterisk <- ifelse(x <= 0.0001, "****", ifelse(x <= 0.001, "***", ifelse(x <= 0.01, "**", ifelse(x <= 0.05, "*", ifelse(x <= 0.1, ".", "")))))
+    pval_asterisk <- ifelse(x <= 0.00001, "*****", ifelse(x <= 0.0001, "****", ifelse(x <= 0.001, "***", ifelse(x <= 0.01, "**", ifelse(x <= 0.05, "*", ifelse(x <= 0.1, ".", ""))))))
     
     pval_asterisk
     

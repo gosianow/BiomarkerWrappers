@@ -16,7 +16,7 @@ wrapper_kruskal_test(
   pairwise = FALSE,
   variable_names = NULL,
   caption = NULL,
-  display_statistics = c("N", "Median"),
+  display_statistics = NULL,
   display_in_column = "cat",
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
@@ -34,6 +34,8 @@ wrapper_kruskal_test(
 \item{strat1_var}{Name of the second stratification variable.}
 
 \item{method}{Test to be used. Possible values: "kruskal", "wilcox", "t".}
+
+\item{paired}{Logical. Paired test is possible only for wilcox and t. The data must be ordered by the pairing variable, usually subject ID.}
 
 \item{display_statistics}{Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".}
 

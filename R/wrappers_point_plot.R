@@ -192,15 +192,6 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
       geom_point(aes(fill = .data[[color_point_var]]), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, 
         show.legend = legend_show_colors_point) 
     
-    if(scale == "manual"){
-      ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
-    }else if(scale == "gradientn") {
-      ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
-    }else if(scale == "gradient2"){
-      ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
-    }else if(scale == "gradient"){
-      ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
-    }
     
   }else{
     
@@ -208,16 +199,29 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
       geom_point(aes(color = .data[[color_point_var]]), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke,
         show.legend = legend_show_colors_point)
     
-    if(scale == "manual"){
-      ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
-    }else if(scale == "gradientn") {
-      ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
-    }else if(scale == "gradient2"){
-      ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
-    }else if(scale == "gradient"){
-      ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
-    }
     
+  }
+  
+  
+  if(scale == "manual"){
+    ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
+  }else if(scale == "gradientn") {
+    ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+  }else if(scale == "gradient2"){
+    ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+  }else if(scale == "gradient"){
+    ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+  }
+  
+  
+  if(scale == "manual"){
+    ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
+  }else if(scale == "gradientn") {
+    ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+  }else if(scale == "gradient2"){
+    ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+  }else if(scale == "gradient"){
+    ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
   }
   
   
@@ -246,7 +250,7 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   }else if(smooth == "strat"){
     
     ggpl <- ggpl + 
-      geom_smooth(aes(group = .data[[color_point_var]], color = .data[[color_point_var]]), 
+      geom_smooth(aes(group = .data[[color_point_var]], color = .data[[color_point_var]], fill = .data[[color_point_var]]), 
         method = smooth_method, formula = smooth_formula, se = smooth_se, 
         linetype = smooth_linetype, size = smooth_size)
   }

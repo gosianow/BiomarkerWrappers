@@ -14,7 +14,7 @@ wrapper_kruskal_test_core_col_cat(
   paired = FALSE,
   variable_names = NULL,
   caption = NULL,
-  display_statistics = c("N", "Median"),
+  display_statistics = NULL,
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
   drop = FALSE
@@ -31,7 +31,7 @@ wrapper_kruskal_test_core_col_cat_strat(
   paired = FALSE,
   variable_names = NULL,
   caption = NULL,
-  display_statistics = c("N", "Median"),
+  display_statistics = NULL,
   force_empty_cols = FALSE,
   print_pvalues = TRUE,
   print_adjpvalues = TRUE,
@@ -46,6 +46,8 @@ wrapper_kruskal_test_core_col_cat_strat(
 \item{cat_var}{Name of a categorical variable. That variable must be a factor with at least two levels.}
 
 \item{method}{Test to be used. Possible values: "kruskal", "wilcox", "t".}
+
+\item{paired}{Logical. Paired test is possible only for wilcox and t. The data must be ordered by the pairing variable, usually subject ID.}
 
 \item{display_statistics}{Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".}
 
