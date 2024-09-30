@@ -1,17 +1,13 @@
 
-# Important 
-
-This repository is not maintained anymore. To access the most up to date version of BiomarkerWrappers please see https://github.com/gosianow/BiomarkerWrappers
-
 
 
 # Overview
 
-BiomarkerWrappers is an R package that contains functions to perform exploratory biomarker analyses.
+BiomarkerWrappers is an R package that contains wrapper functions to perform exploratory biomarker analyses.
 
-Source code: https://github.roche.com/nowickm2/BiomarkerWrappers
+Source code: https://github.com/gosianow/BiomarkerWrappers
 
-Project page: https://pages.github.roche.com/nowickm2/BiomarkerWrappers/index.html
+Project page: https://pages.github.com/gosianow/BiomarkerWrappers/index.html
 
 
 
@@ -32,7 +28,7 @@ Then install **BiomarkerWrappers**:
 
 ``` r
 
-devtools::install_github("nowickm2/BiomarkerWrappers", host="https://github.roche.com/api/v3")
+devtools::install_github("gosianow/BiomarkerWrappers")
 
 ```
 
