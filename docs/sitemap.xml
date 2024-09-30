@@ -22,9 +22,6 @@
     <loc>/reference/Bclass-class.html</loc>
   </url>
   <url>
-    <loc>/reference/apply_trim_values.html</loc>
-  </url>
-  <url>
     <loc>/reference/calculate_break_time.html</loc>
   </url>
   <url>
@@ -43,15 +40,6 @@
     <loc>/reference/cut2.html</loc>
   </url>
   <url>
-    <loc>/reference/cut_core_2groups.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cut_core_median.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cut_core_quartiles.html</loc>
-  </url>
-  <url>
     <loc>/reference/densVals.html</loc>
   </url>
   <url>
@@ -64,16 +52,10 @@
     <loc>/reference/fig.rename.html</loc>
   </url>
   <url>
-    <loc>/reference/format_CIs.data.frame.html</loc>
-  </url>
-  <url>
     <loc>/reference/format_CIs.html</loc>
   </url>
   <url>
     <loc>/reference/format_CIs_df.html</loc>
-  </url>
-  <url>
-    <loc>/reference/format_colors.html</loc>
   </url>
   <url>
     <loc>/reference/format_colors_cat.html</loc>
@@ -83,9 +65,6 @@
   </url>
   <url>
     <loc>/reference/format_counts_and_props.html</loc>
-  </url>
-  <url>
-    <loc>/reference/format_counts_and_props_core.html</loc>
   </url>
   <url>
     <loc>/reference/format_counts_and_props_df.html</loc>
@@ -113,9 +92,6 @@
   </url>
   <url>
     <loc>/reference/format_summ.html</loc>
-  </url>
-  <url>
-    <loc>/reference/format_summ_core.html</loc>
   </url>
   <url>
     <loc>/reference/format_summ_df.html</loc>
@@ -187,9 +163,6 @@
     <loc>/reference/wrapper_bar_plot_yvars_core_strat.html</loc>
   </url>
   <url>
-    <loc>/reference/wrapper_betareg.html</loc>
-  </url>
-  <url>
     <loc>/reference/wrapper_box_plot_core.html</loc>
   </url>
   <url>
@@ -226,84 +199,6 @@
     <loc>/reference/wrapper_cooccurence_heatmap.html</loc>
   </url>
   <url>
-    <loc>/reference/wrapper_core_KM_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_KM_plot_strat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_bar_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_bar_plot_strat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_bar_plot_yvars_strat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_box_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_box_plot_yvars_strat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_cameraPR.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_characteristics.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_characteristics_cat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_characteristics_num.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_cox_regression_interaction.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_cox_regression_simple.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_fishers_test.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_gsea.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_kruskal_test_col_cat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_kruskal_test_col_num.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_line_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_line_plot_strat.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_log_rank_test_simple.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_logistic_regression_interaction.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_logistic_regression_simple.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_ora.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_pearsons_test.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_point_plot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_core_point_plot_strat.html</loc>
-  </url>
-  <url>
     <loc>/reference/wrapper_cox_regression_biomarker.html</loc>
   </url>
   <url>
@@ -337,9 +232,6 @@
     <loc>/reference/wrapper_deside_tests.html</loc>
   </url>
   <url>
-    <loc>/reference/wrapper_dispaly_ora_genes.html</loc>
-  </url>
-  <url>
     <loc>/reference/wrapper_dispaly_significant_camera.html</loc>
   </url>
   <url>
@@ -365,9 +257,6 @@
   </url>
   <url>
     <loc>/reference/wrapper_gene_expression_heatmap.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_glmm_beta.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_gsea.html</loc>
@@ -460,9 +349,6 @@
     <loc>/reference/wrapper_ora_dotplot_single.html</loc>
   </url>
   <url>
-    <loc>/reference/wrapper_pearsons_test.html</loc>
-  </url>
-  <url>
     <loc>/reference/wrapper_pearsons_test_biomarker.html</loc>
   </url>
   <url>
@@ -470,21 +356,6 @@
   </url>
   <url>
     <loc>/reference/wrapper_pearsons_test_treatment.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_plot_GSEA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_plot_ORA_dotplot_multiple.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_plot_ORA_dotplot_single.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_plot_logFC_dotplot.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_plot_logFC_heatmap.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_point_plot_core.html</loc>
@@ -509,12 +380,6 @@
   </url>
   <url>
     <loc>/reference/wrapper_tile_plot1_core.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_tile_plot2_core.html</loc>
-  </url>
-  <url>
-    <loc>/reference/wrapper_tileplot.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_write_gmt.html</loc>

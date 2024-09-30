@@ -7,7 +7,7 @@ BiomarkerWrappers is an R package that contains wrapper functions to perform exp
 
 Source code: https://github.com/gosianow/BiomarkerWrappers
 
-Project page: https://pages.github.com/gosianow/BiomarkerWrappers/index.html
+Project page: https://gosianow.github.io/BiomarkerWrappers/
 
 
 
