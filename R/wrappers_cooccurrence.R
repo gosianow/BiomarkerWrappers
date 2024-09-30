@@ -271,7 +271,7 @@ wrapper_cooccurence_dotplot <- function(x, order = TRUE, title = ""){
   xx <- data.frame(Gene = rownames(xlor), as.data.frame.matrix(xlor), as.data.frame.matrix(xpval), stringsAsFactors = FALSE, check.names = FALSE, row.names = NULL)
   
   
-  ggp <- wrapper_logFC_dotplot(x = xx, gene_var = "Gene", lfc_prefix = "LogOR", pval_prefix = "P.Value", adjp_prefix = "P.Value", title = title, axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 0, axis_text_y_size = 11, radius_range = c(12, 5))
+  ggp <- wrapper_logFC_dotplot(x = xx, gene_var = "Gene", lfc_prefix = "LogOR", pval_prefix = "P.Value", adjp_prefix = "P.Value", title = title, axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 0, axis_text_y_size = 11, radius_range = c(5, 12))
   
   
   ggp <- ggp +
