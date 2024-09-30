@@ -839,7 +839,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
   label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
-  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, 
+  axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none",
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE,
   names_to = "name", values_to = "value"){

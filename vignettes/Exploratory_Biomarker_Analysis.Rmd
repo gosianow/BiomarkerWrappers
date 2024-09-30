@@ -69,7 +69,7 @@ library(BiomarkerWrappers)
 ```{r library2, echo = FALSE}
 
 
-devtools::load_all()
+# devtools::load_all()
 
 
 ```
@@ -80,7 +80,7 @@ devtools::load_all()
 # Load data
 
 
-`bdata` object contains random survival and biomarker data. It is not expected to observe any biologically meaningful associations. The goal for this data sets is to solely demonstrate the functionality of this package. 
+`bdata` object contains random survival and biomarker data. It is not expected to observe any biologically meaningful associations. The goal for this data sets is solely to demonstrate the functionality of this package. 
 
 
 

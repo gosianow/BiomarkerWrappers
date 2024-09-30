@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Exploratory biomarker analysis • BiomarkerWrappers</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BiomarkerWrappers</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.45</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.58</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       <h1 data-toc-skip>Exploratory biomarker analysis</h1>
                         <h4 data-toc-skip class="author">Malgorzata Nowicka</h4>
             
-            <h4 data-toc-skip class="date">2023-11-24</h4>
+            <h4 data-toc-skip class="date">2024-09-30</h4>
       
       
       <div class="hidden name"><code>Exploratory_Biomarker_Analysis.Rmd</code></div>
@@ -102,7 +102,11 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>bkable_full_width <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>cache <span class="op">=</span> <span class="va">cache</span>, cache.comments <span class="op">=</span> <span class="cn">FALSE</span>, echo <span class="op">=</span> <span class="cn">TRUE</span>, warning <span class="op">=</span> <span class="cn">FALSE</span>, message <span class="op">=</span> <span class="cn">FALSE</span>, error <span class="op">=</span> <span class="cn">FALSE</span>, fig.width <span class="op">=</span> <span class="fl">6</span>, fig.height <span class="op">=</span> <span class="fl">5</span>, fig.align <span class="op">=</span> <span class="st">"center"</span>, tidy<span class="op">=</span><span class="cn">TRUE</span>, tidy.opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>width.cutoff <span class="op">=</span> <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html" class="external-link">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>cache <span class="op">=</span> <span class="va">cache</span>, cache.comments <span class="op">=</span> <span class="cn">FALSE</span>, echo <span class="op">=</span> <span class="cn">TRUE</span>, warning <span class="op">=</span> <span class="cn">FALSE</span>, message <span class="op">=</span> <span class="cn">FALSE</span>, error <span class="op">=</span> <span class="cn">FALSE</span>, fig.width <span class="op">=</span> <span class="fl">6</span>, fig.height <span class="op">=</span> <span class="fl">5</span>, fig.align <span class="op">=</span> <span class="st">"center"</span>, tidy<span class="op">=</span><span class="cn">TRUE</span>, tidy.opts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>width.cutoff <span class="op">=</span> <span class="fl">80</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="co">### Necessary for knit_child</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_knit.html" class="external-link">opts_knit</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>output.dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -256,154 +260,154 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 41 (39.4%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 NA
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.9 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 44 (44.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83.1
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.1 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 1.00
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.65 - 1.55)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.9828
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.9828
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 40 (41.7%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 99.9
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.2 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 43 (43.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100.3
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (81.6 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.91
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.59 - 1.41)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6827
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.9828
 </td>
 </tr>
@@ -551,154 +555,154 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 81
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 41 (39.4%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 NA
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.9 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 81
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 40 (41.7%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 99.9
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.2 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.53 - 1.30)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.4156
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.5541
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 87
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 44 (44.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83.1
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.1 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 87
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 43 (43.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100.3
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (81.6 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.75
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.49 - 1.15)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.1917
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.3835
 </td>
 </tr>
@@ -914,28 +918,28 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high vs low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT vs CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 400
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.92
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.50 - 1.70)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.7985
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8593
 </td>
 </tr>
@@ -1030,155 +1034,155 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 41 (39.4%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 NA
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.9 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8211
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8917
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 44 (44.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83.1
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.1 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 1.05
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.69 - 1.61)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 40 (41.7%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 99.9
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.2 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8917
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8917
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 43 (43.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100.3
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (81.6 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.97
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.63 - 1.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -1396,155 +1400,155 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 81
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 41 (39.4%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 NA
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.9 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.5693
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.7591
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 81
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 40 (41.7%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 99.9
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.2 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.88
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.57 - 1.37)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 87
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 44 (44.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83.1
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (82.1 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.2526
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.5052
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 87
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 43 (43.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100.3
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (81.6 - NA)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.78
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.51 - 1.19)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -1740,95 +1744,95 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.5693
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.7591
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.88
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.57 - 1.37)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.2526
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.5052
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.78
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.51 - 1.19)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -2186,142 +2190,142 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 14 (13.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 90 (86.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (78.45 - 92.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 17 (17.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83 (83.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (74.18 - 89.77)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.38 - 1.83)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6467
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6467
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 18 (18.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 78 (81.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (72.00 - 88.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 15 (15.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85 (85.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.47 - 91.35)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 1.32
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.62 - 2.84)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.4706
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6275
 </td>
 </tr>
@@ -2450,142 +2454,142 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 14 (13.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 90 (86.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (78.45 - 92.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 18 (18.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 78 (81.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (72.00 - 88.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.67
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.31 - 1.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.3098
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6195
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 17 (17.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83 (83.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (74.18 - 89.77)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 15 (15.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85 (85.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.47 - 91.35)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 1.27
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.58 - 2.79)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.5434
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6679
 </td>
 </tr>
@@ -2778,28 +2782,28 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high vs low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT vs CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 400
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 1.83
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (0.62 - 5.39)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.2766
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.2766
 </td>
 </tr>
@@ -2889,143 +2893,143 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 14 (13.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 90 (86.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (78.45 - 92.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 -3.54
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-14.38 - 7.30)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6110
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6110
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 17 (17.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83 (83.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (74.18 - 89.77)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 18 (18.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 78 (81.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (72.00 - 88.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 3.75
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-7.76 - 15.26)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6097
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6110
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 15 (15.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85 (85.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.47 - 91.35)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
@@ -3086,143 +3090,143 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 14 (13.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 90 (86.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (78.45 - 92.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 -5.29
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-16.49 - 5.91)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.4087
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8174
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 18 (18.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 78 (81.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (72.00 - 88.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 17 (17.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83 (83.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (74.18 - 89.77)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 2.00
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-9.16 - 13.16)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8471
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.8471
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 15 (15.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85 (85.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.47 - 91.35)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
@@ -3288,143 +3292,143 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 14 (13.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 90 (86.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (78.45 - 92.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 -3.54
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-14.38 - 7.30)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.7990
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.7990
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 17 (17.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83 (83.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (74.18 - 89.77)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 18 (18.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 78 (81.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (72.00 - 88.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 3.75
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-7.76 - 15.26)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6010
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.7990
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 15 (15.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85 (85.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.47 - 91.35)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
@@ -3487,143 +3491,143 @@ Adj. P-value
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 104
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 14 (13.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 90 (86.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (78.45 - 92.44)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 -5.29
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-16.49 - 5.91)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.4133
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6850
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 96
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 18 (18.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 78 (81.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (72.00 - 88.49)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 17 (17.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 83 (83.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (74.18 - 89.77)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 2.00
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (-9.16 - 13.16)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6850
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.6850
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 200
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 100
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 15 (15.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 85 (85.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 (76.47 - 91.35)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
@@ -3675,6 +3679,15 @@ TRT
 <span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, y_type <span class="op">=</span> <span class="st">"Count"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-2.png" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">y_var</span>, y_var <span class="op">=</span> <span class="va">x_var</span>, y_type <span class="op">=</span> <span class="st">"Proportion"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-3.png" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">y_var</span>, y_var <span class="op">=</span> <span class="va">x_var</span>, y_type <span class="op">=</span> <span class="st">"Count"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-4.png" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span></span>
@@ -3684,11 +3697,11 @@ TRT
 <span></span>
 <span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, show_subtotal_proportions <span class="op">=</span> <span class="va">show_subtotal_proportions</span>,</span>
 <span>    skip_levels <span class="op">=</span> <span class="va">skip_levels</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-2.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="Exploratory_Biomarker_Analysis_files/figure-html/barplot-5.png" width="576" style="display: block; margin: auto;"></p>
 <div class="section level3">
 <h3 id="stratified">Stratified<a class="anchor" aria-label="anchor" href="#stratified"></a>
 </h3>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span></span>
@@ -3698,7 +3711,7 @@ TRT
 <span></span>
 <span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-8-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">=</span> <span class="st">"GeneA_cat2"</span></span>
@@ -3711,7 +3724,7 @@ TRT
 <span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>,</span>
 <span>    strat2_var <span class="op">=</span> <span class="va">strat2_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-9-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wrapper_bar_plot_core.html">wrapper_bar_plot_core_strat</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, strat1_var <span class="op">=</span> <span class="va">strat1_var</span>,</span>
 <span>    strat2_var <span class="op">=</span> <span class="va">strat2_var</span>, less_legends <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/unnamed-chunk-9-2.png" width="960" style="display: block; margin: auto;"></p>
@@ -3720,7 +3733,7 @@ TRT
 <div class="section level2">
 <h2 id="complex-barplot">Complex barplot<a class="anchor" aria-label="anchor" href="#complex-barplot"></a>
 </h2>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -3729,7 +3742,7 @@ TRT
 <span></span>
 <span><span class="fu"><a href="../reference/wrapper_bar_plot_yvars_core_strat.html">wrapper_bar_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span>, values_to <span class="op">=</span> <span class="st">"Gene expression"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Complex_barplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -3746,7 +3759,7 @@ TRT
 <div class="section level2">
 <h2 id="fishers-test">Fisher’s test<a class="anchor" aria-label="anchor" href="#fishers-test"></a>
 </h2>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">col_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -3796,46 +3809,46 @@ Adj. P-value
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 116 (59.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 23 (11.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 56 (28.7%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0810 .
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0810 .
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 102 (52.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 39 (19.9%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 55 (28.1%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -3882,51 +3895,51 @@ high
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneC cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 109 (56.5%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 23 (11.9%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 61 (31.6%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0782 .
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0810 .
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 109 (55.1%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 39 (19.7%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 50 (25.3%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wrapper_fishers_test.html">wrapper_fishers_test</a></span><span class="op">(</span><span class="va">data</span>, col_var <span class="op">=</span> <span class="va">col_var</span>, row_vars <span class="op">=</span> <span class="va">row_vars</span>, margin <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <table class="table table table-condensed table-bordered" style="font-size: 9px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
@@ -3970,46 +3983,46 @@ Adj. P-value
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 116 (53.2%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 23 (37.1%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 56 (50.5%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0810 .
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0810 .
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 102 (46.8%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 39 (62.9%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 55 (49.5%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -4056,46 +4069,46 @@ high
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneC cat2
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 low
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 109 (50.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 23 (37.1%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 61 (55.0%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0782 .
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0810 .
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 high
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 109 (50.0%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 39 (62.9%)
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 50 (45.0%)
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
@@ -4104,7 +4117,7 @@ high
 <div class="section level2">
 <h2 id="box-plot">Box plot<a class="anchor" aria-label="anchor" href="#box-plot"></a>
 </h2>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -4116,7 +4129,7 @@ high
 <div class="section level3">
 <h3 id="stratified-1">Stratified<a class="anchor" aria-label="anchor" href="#stratified-1"></a>
 </h3>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -4128,7 +4141,7 @@ high
 <span><span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>,</span>
 <span>    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-1.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span></span>
@@ -4140,7 +4153,7 @@ high
 <span><span class="fu"><a href="../reference/wrapper_box_plot_core.html">wrapper_box_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>,</span>
 <span>    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Box_plot_strat-2.png" width="768" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -4157,14 +4170,14 @@ high
 <div class="section level2">
 <h2 id="complex-boxplot">Complex boxplot<a class="anchor" aria-label="anchor" href="#complex-boxplot"></a>
 </h2>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span><span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-1.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span><span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span><span class="op">)</span></span>
 <span></span>
@@ -4176,7 +4189,7 @@ high
 <span><span class="fu"><a href="../reference/wrapper_box_plot_yvars_core_strat.html">wrapper_box_plot_yvars_core_strat</a></span><span class="op">(</span><span class="va">data</span>, y_vars <span class="op">=</span> <span class="va">y_vars</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>,</span>
 <span>    dodge_var <span class="op">=</span> <span class="va">dodge_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/complex_boxplot-2.png" width="960" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span><span class="va">y_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span>, <span class="st">"GeneC"</span><span class="op">)</span></span>
 <span></span>
@@ -4192,7 +4205,7 @@ high
 <div class="section level2">
 <h2 id="kruskalwallis-h-test">Kruskal–Wallis H test<a class="anchor" aria-label="anchor" href="#kruskalwallis-h-test"></a>
 </h2>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">cat_vars</span> <span class="op">&lt;-</span> <span class="st">"Cell_Of_Origin"</span></span>
@@ -4242,46 +4255,46 @@ Adj. P-value
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 N
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 218
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 62
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 111
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0265 *
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0440 *
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 Median
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.95
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 8.53
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.98
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -4329,7 +4342,7 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/wrapper_kruskal_test.html">wrapper_kruskal_test</a></span><span class="op">(</span><span class="va">data</span>, num_vars <span class="op">=</span> <span class="va">num_vars</span>, cat_vars <span class="op">=</span> <span class="va">cat_vars</span>, print_pvalues <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <table class="table table table-condensed table-bordered" style="font-size: 9px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
@@ -4365,35 +4378,35 @@ ABC
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GeneA
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 N
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 218
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 62
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 111
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 Median
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.95
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 8.53
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.98
 </td>
 </tr>
@@ -4432,7 +4445,7 @@ Median
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">cat_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Cell_Of_Origin"</span>, <span class="st">"IPI"</span>, <span class="st">"Treatment_Arm"</span><span class="op">)</span></span>
@@ -4482,64 +4495,64 @@ Adj. P-value
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 Cell Of Origin
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 GCB
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 218
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.95
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 NA
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0265 *
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.0794 .
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 UNCLASSIFIED
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 62
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 8.53
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 ABC
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 111
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.98
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 <tr>
@@ -4623,45 +4636,45 @@ High
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 Treatment Arm
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 CTRL
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 204
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 7.98
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.06
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.9043
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 0.9043
 </td>
 </tr>
 <tr>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 TRT
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 196
 </td>
-<td style="text-align:left;background-color: #F2F4F4 !important;">
+<td style="text-align:left;background-color: rgba(242, 244, 244, 255) !important;">
 8.03
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #F2F4F4 !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(242, 244, 244, 255) !important;">
 </td>
 </tr>
 </tbody>
@@ -4670,7 +4683,7 @@ TRT
 <div class="section level2">
 <h2 id="point-plot">Point plot<a class="anchor" aria-label="anchor" href="#point-plot"></a>
 </h2>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span></span>
@@ -4682,7 +4695,7 @@ TRT
 <div class="section level3">
 <h3 id="stratified-2">Stratified<a class="anchor" aria-label="anchor" href="#stratified-2"></a>
 </h3>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneA"</span></span>
@@ -4694,7 +4707,7 @@ TRT
 <span><span class="fu"><a href="../reference/wrapper_point_plot_core.html">wrapper_point_plot_core</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, x_var <span class="op">=</span> <span class="va">x_var</span>, y_var <span class="op">=</span> <span class="va">y_var</span>, facet_var <span class="op">=</span> <span class="va">facet_var</span>,</span>
 <span>    color_point_var <span class="op">=</span> <span class="va">color_point_var</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Exploratory_Biomarker_Analysis_files/figure-html/Point_plot_strat-1.png" width="1152" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">x_var</span> <span class="op">&lt;-</span> <span class="st">"GeneD"</span></span>
@@ -4711,7 +4724,7 @@ TRT
 <div class="section level2">
 <h2 id="characteristics-of-itt-and-bep">Characteristics of ITT and BEP<a class="anchor" aria-label="anchor" href="#characteristics-of-itt-and-bep"></a>
 </h2>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">bdata</span></span>
 <span></span>
 <span><span class="va">strat_var</span> <span class="op">&lt;-</span> <span class="st">"Treatment_Arm"</span></span>
@@ -4744,33 +4757,33 @@ TRT
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 Age
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 N
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 252
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 248
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 NAs
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
 </tr>
@@ -4797,33 +4810,33 @@ Mean
 </td>
 </tr>
 <tr>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 IPI
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 N
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 252
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 248
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 NAs
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
 </tr>
@@ -4873,7 +4886,7 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bep_vars</span> <span class="op">&lt;-</span> <span class="st">"BEP_RNAseq"</span></span>
 <span><span class="va">covariate_vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Age"</span>, <span class="st">"IPI"</span><span class="op">)</span></span>
 <span></span>
@@ -4909,65 +4922,65 @@ BEP RNAseq : TRT
 </tr></thead>
 <tbody>
 <tr>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 Age
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 N
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 500
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 252
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 248
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 400
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 204
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 196
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 NAs
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
 </tr>
@@ -5018,65 +5031,65 @@ Mean
 </td>
 </tr>
 <tr>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 IPI
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
-<td style="text-align:left;font-weight: bold;background-color: #d7ecff !important;">
+<td style="text-align:left;font-weight: bold;background-color: rgba(215, 236, 255, 255) !important;">
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 N
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 500
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 252
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 248
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 400
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 204
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 196
 </td>
 </tr>
 <tr>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 NAs
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
-<td style="text-align:left;color: #666666 !important;background-color: #f0f8ff !important;">
+<td style="text-align:left;color: rgba(102, 102, 102, 255) !important;background-color: rgba(240, 248, 255, 255) !important;">
 0
 </td>
 </tr>
@@ -5174,15 +5187,15 @@ High
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.3.1 (2023-06-16)</span></span>
-<span><span class="co">## Platform: x86_64-apple-darwin20 (64-bit)</span></span>
-<span><span class="co">## Running under: macOS Ventura 13.5.2</span></span>
+<pre><code><span><span class="co">## R version 4.4.1 (2024-06-14)</span></span>
+<span><span class="co">## Platform: x86_64-apple-darwin20</span></span>
+<span><span class="co">## Running under: macOS Sonoma 14.6.1</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
-<span><span class="co">## BLAS:   /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRblas.0.dylib </span></span>
-<span><span class="co">## LAPACK: /Library/Frameworks/R.framework/Versions/4.3-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.11.0</span></span>
+<span><span class="co">## BLAS:   /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRblas.0.dylib </span></span>
+<span><span class="co">## LAPACK: /Library/Frameworks/R.framework/Versions/4.4-x86_64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.0</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## locale:</span></span>
 <span><span class="co">## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8</span></span>
@@ -5194,67 +5207,49 @@ High
 <span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">## [1] BiomarkerWrappers_0.0.0.45 testthat_3.2.0            </span></span>
-<span><span class="co">## [3] ggplot2_3.4.3              kableExtra_1.3.4          </span></span>
-<span><span class="co">## [5] rmarkdown_2.25             knitr_1.44                </span></span>
+<span><span class="co">## [1] BiomarkerWrappers_0.0.0.58 ggplot2_3.5.1             </span></span>
+<span><span class="co">## [3] kableExtra_1.4.0           rmarkdown_2.27            </span></span>
+<span><span class="co">## [5] knitr_1.47                </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] splines_4.3.1           later_1.3.1             bitops_1.0-7           </span></span>
-<span><span class="co">##   [4] tibble_3.2.1            ggpp_0.5.4              graph_1.78.0           </span></span>
-<span><span class="co">##   [7] XML_3.99-0.14           forestplot_3.1.3        lifecycle_1.0.3        </span></span>
-<span><span class="co">##  [10] rstatix_0.7.2           doParallel_1.0.17       rprojroot_2.0.3        </span></span>
-<span><span class="co">##  [13] processx_3.8.2          lattice_0.21-9          MASS_7.3-60            </span></span>
-<span><span class="co">##  [16] backports_1.4.1         magrittr_2.0.3          limma_3.56.2           </span></span>
-<span><span class="co">##  [19] sass_0.4.7              jquerylib_0.1.4         yaml_2.3.7             </span></span>
-<span><span class="co">##  [22] remotes_2.4.2.1         httpuv_1.6.11           sessioninfo_1.2.2      </span></span>
-<span><span class="co">##  [25] pkgbuild_1.4.2          cowplot_1.1.1           DBI_1.1.3              </span></span>
-<span><span class="co">##  [28] minqa_1.2.6             RColorBrewer_1.1-3      zlibbioc_1.46.0        </span></span>
-<span><span class="co">##  [31] multcomp_1.4-25         abind_1.4-5             pkgload_1.3.3          </span></span>
-<span><span class="co">##  [34] rvest_1.0.3             purrr_1.0.2             RCurl_1.98-1.12        </span></span>
-<span><span class="co">##  [37] BiocGenerics_0.46.0     TH.data_1.1-2           sandwich_3.0-2         </span></span>
-<span><span class="co">##  [40] GenomeInfoDbData_1.2.10 circlize_0.4.15         IRanges_2.34.1         </span></span>
-<span><span class="co">##  [43] KMsurv_0.1-5            S4Vectors_0.38.2        annotate_1.78.0        </span></span>
-<span><span class="co">##  [46] commonmark_1.9.0        pkgdown_2.0.7           svglite_2.1.1          </span></span>
-<span><span class="co">##  [49] codetools_0.2-19        ggtext_0.1.2            xml2_1.3.5             </span></span>
-<span><span class="co">##  [52] tidyselect_1.2.0        shape_1.4.6             farver_2.1.1           </span></span>
-<span><span class="co">##  [55] lme4_1.1-34             matrixStats_1.0.0       stats4_4.3.1           </span></span>
-<span><span class="co">##  [58] webshot_0.5.5           jsonlite_1.8.7          GetoptLong_1.0.5       </span></span>
-<span><span class="co">##  [61] ellipsis_0.3.2          survival_3.5-7          iterators_1.0.14       </span></span>
-<span><span class="co">##  [64] systemfonts_1.0.5       foreach_1.5.2           tools_4.3.1            </span></span>
-<span><span class="co">##  [67] ggnewscale_0.4.9        ragg_1.2.6              Rcpp_1.0.11            </span></span>
-<span><span class="co">##  [70] glue_1.6.2              gridExtra_2.3           xfun_0.40              </span></span>
-<span><span class="co">##  [73] usethis_2.2.2           GenomeInfoDb_1.36.4     dplyr_1.1.3            </span></span>
-<span><span class="co">##  [76] withr_2.5.1             formatR_1.14            fastmap_1.1.1          </span></span>
-<span><span class="co">##  [79] boot_1.3-28.1           fansi_1.0.5             callr_3.7.3            </span></span>
-<span><span class="co">##  [82] digest_0.6.33           R6_2.5.1                mime_0.12              </span></span>
-<span><span class="co">##  [85] textshaping_0.3.7       colorspace_2.1-0        markdown_1.9           </span></span>
-<span><span class="co">##  [88] RSQLite_2.3.1           utf8_1.2.3              tidyr_1.3.0            </span></span>
-<span><span class="co">##  [91] generics_0.1.3          data.table_1.14.8       prettyunits_1.2.0      </span></span>
-<span><span class="co">##  [94] httr_1.4.7              htmlwidgets_1.6.2       pkgconfig_2.0.3        </span></span>
-<span><span class="co">##  [97] gtable_0.3.4            blob_1.2.4              ComplexHeatmap_2.16.0  </span></span>
-<span><span class="co">## [100] XVector_0.40.0          survMisc_0.5.6          brio_1.1.3             </span></span>
-<span><span class="co">## [103] htmltools_0.5.6.1       carData_3.0-5           profvis_0.3.8          </span></span>
-<span><span class="co">## [106] fgsea_1.26.0            GSEABase_1.62.0         clue_0.3-65            </span></span>
-<span><span class="co">## [109] scales_1.2.1            Biobase_2.60.0          png_0.1-8              </span></span>
-<span><span class="co">## [112] km.ci_0.5-6             rstudioapi_0.15.0       rjson_0.2.21           </span></span>
-<span><span class="co">## [115] checkmate_2.2.0         nlme_3.1-163            nloptr_2.0.3           </span></span>
-<span><span class="co">## [118] cachem_1.0.8            zoo_1.8-12              GlobalOptions_0.1.2    </span></span>
-<span><span class="co">## [121] stringr_1.5.0           parallel_4.3.1          miniUI_0.1.1.1         </span></span>
-<span><span class="co">## [124] vipor_0.4.5             AnnotationDbi_1.62.2    desc_1.4.2             </span></span>
-<span><span class="co">## [127] pillar_1.9.0            grid_4.3.1              vctrs_0.6.3            </span></span>
-<span><span class="co">## [130] urlchecker_1.0.1        promises_1.2.1          ggpubr_0.6.0           </span></span>
-<span><span class="co">## [133] car_3.1-2               xtable_1.8-4            cluster_2.1.4          </span></span>
-<span><span class="co">## [136] beeswarm_0.4.0          evaluate_0.22           mvtnorm_1.2-3          </span></span>
-<span><span class="co">## [139] cli_3.6.1               compiler_4.3.1          rlang_1.1.1            </span></span>
-<span><span class="co">## [142] crayon_1.5.2            ggsignif_0.6.4          labeling_0.4.3         </span></span>
-<span><span class="co">## [145] survminer_0.4.9         ps_1.7.5                plyr_1.8.9             </span></span>
-<span><span class="co">## [148] fs_1.6.3                ggbeeswarm_0.7.2        stringi_1.7.12         </span></span>
-<span><span class="co">## [151] viridisLite_0.4.2       BiocParallel_1.34.2     Biostrings_2.68.1      </span></span>
-<span><span class="co">## [154] munsell_0.5.0           devtools_2.4.5          Matrix_1.6-1.1         </span></span>
-<span><span class="co">## [157] bit64_4.0.5             KEGGREST_1.40.1         shiny_1.7.5            </span></span>
-<span><span class="co">## [160] highr_0.10              gridtext_0.1.5          broom_1.0.5            </span></span>
-<span><span class="co">## [163] memoise_2.0.1           bslib_0.5.1             fastmatch_1.1-4        </span></span>
-<span><span class="co">## [166] bit_4.0.5               polynom_1.4-1</span></span></code></pre>
+<span><span class="co">##   [1] polynom_1.4-1         gridExtra_2.3         formatR_1.14         </span></span>
+<span><span class="co">##   [4] rlang_1.1.4           magrittr_2.0.3        clue_0.3-65          </span></span>
+<span><span class="co">##   [7] GetoptLong_1.0.5      matrixStats_1.3.0     compiler_4.4.1       </span></span>
+<span><span class="co">##  [10] png_0.1-8             systemfonts_1.1.0     vctrs_0.6.5          </span></span>
+<span><span class="co">##  [13] stringr_1.5.1         pkgconfig_2.0.3       shape_1.4.6.1        </span></span>
+<span><span class="co">##  [16] crayon_1.5.3          fastmap_1.2.0         backports_1.5.0      </span></span>
+<span><span class="co">##  [19] labeling_0.4.3        KMsurv_0.1-5          utf8_1.2.4           </span></span>
+<span><span class="co">##  [22] markdown_1.13         forestplot_3.1.3      ggbeeswarm_0.7.2     </span></span>
+<span><span class="co">##  [25] ragg_1.3.2            purrr_1.0.2           xfun_0.45            </span></span>
+<span><span class="co">##  [28] cachem_1.1.0          jsonlite_1.8.8        highr_0.11           </span></span>
+<span><span class="co">##  [31] broom_1.0.6           parallel_4.4.1        cluster_2.1.6        </span></span>
+<span><span class="co">##  [34] R6_2.5.1              bslib_0.7.0           stringi_1.8.4        </span></span>
+<span><span class="co">##  [37] RColorBrewer_1.1-3    limma_3.60.3          car_3.1-2            </span></span>
+<span><span class="co">##  [40] jquerylib_0.1.4       Rcpp_1.0.12           iterators_1.0.14     </span></span>
+<span><span class="co">##  [43] zoo_1.8-12            IRanges_2.38.0        Matrix_1.7-0         </span></span>
+<span><span class="co">##  [46] splines_4.4.1         tidyselect_1.2.1      rstudioapi_0.16.0    </span></span>
+<span><span class="co">##  [49] abind_1.4-5           yaml_2.3.8            ggtext_0.1.2         </span></span>
+<span><span class="co">##  [52] doParallel_1.0.17     codetools_0.2-20      lattice_0.22-6       </span></span>
+<span><span class="co">##  [55] tibble_3.2.1          plyr_1.8.9            withr_3.0.0          </span></span>
+<span><span class="co">##  [58] evaluate_0.24.0       desc_1.4.3            survival_3.7-0       </span></span>
+<span><span class="co">##  [61] ggpp_0.5.8            xml2_1.3.6            circlize_0.4.16      </span></span>
+<span><span class="co">##  [64] survMisc_0.5.6        pillar_1.9.0          ggpubr_0.6.0         </span></span>
+<span><span class="co">##  [67] carData_3.0-5         checkmate_2.3.1       foreach_1.5.2        </span></span>
+<span><span class="co">##  [70] stats4_4.4.1          generics_0.1.3        S4Vectors_0.42.0     </span></span>
+<span><span class="co">##  [73] commonmark_1.9.1      munsell_0.5.1         scales_1.3.0         </span></span>
+<span><span class="co">##  [76] xtable_1.8-4          glue_1.7.0            survminer_0.4.9      </span></span>
+<span><span class="co">##  [79] tools_4.4.1           data.table_1.15.4     ggsignif_0.6.4       </span></span>
+<span><span class="co">##  [82] fs_1.6.4              cowplot_1.1.3         grid_4.4.1           </span></span>
+<span><span class="co">##  [85] tidyr_1.3.1           colorspace_2.1-0      beeswarm_0.4.0       </span></span>
+<span><span class="co">##  [88] vipor_0.4.7           cli_3.6.3             km.ci_0.5-6          </span></span>
+<span><span class="co">##  [91] textshaping_0.4.0     fansi_1.0.6           viridisLite_0.4.2    </span></span>
+<span><span class="co">##  [94] svglite_2.1.3         ComplexHeatmap_2.20.0 dplyr_1.1.4          </span></span>
+<span><span class="co">##  [97] gtable_0.3.5          rstatix_0.7.2         sass_0.4.9           </span></span>
+<span><span class="co">## [100] digest_0.6.36         BiocGenerics_0.50.0   rjson_0.2.21         </span></span>
+<span><span class="co">## [103] htmlwidgets_1.6.4     farver_2.1.2          memoise_2.0.1        </span></span>
+<span><span class="co">## [106] htmltools_0.5.8.1     pkgdown_2.0.9         lifecycle_1.0.4      </span></span>
+<span><span class="co">## [109] GlobalOptions_0.1.2   statmod_1.5.0         gridtext_0.1.5       </span></span>
+<span><span class="co">## [112] MASS_7.3-61</span></span></code></pre>
 </div>
   </div>
 
@@ -5275,7 +5270,7 @@ High
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>

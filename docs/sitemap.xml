@@ -61,6 +61,9 @@
     <loc>/reference/eSet2csv.html</loc>
   </url>
   <url>
+    <loc>/reference/fig.rename.html</loc>
+  </url>
+  <url>
     <loc>/reference/format_CIs.data.frame.html</loc>
   </url>
   <url>
@@ -149,6 +152,9 @@
   </url>
   <url>
     <loc>/reference/subchunkify.html</loc>
+  </url>
+  <url>
+    <loc>/reference/wrapper_HR_dotplot.html</loc>
   </url>
   <url>
     <loc>/reference/wrapper_KM_plot_biomarker.html</loc>
