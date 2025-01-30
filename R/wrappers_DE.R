@@ -288,13 +288,13 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
 #' Display significantly DE genes
 #' 
 #' @param x Data frame of merged topTables
-#' @param sort_by Possible values: "none", "pval", "lfc".
+#' @param sort_by Possible values: "none", "pval", "lfc", "signp".
 #' @param direction Possible values: "up", "down", "both".
 #' @export
 wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up", 
   sort_by = "pval", topn = 20, pval = 0.05, lfc = 0, 
   gene_vars = c("HGNC_Symbol"), 
-  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", 
+  lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val", signp_prefix = "sign.P.Val", pcut_prefix = "adj.P.Val", endpoints = "genes", 
   stats_prefixes = NULL, sep = "_", 
   caption = NULL){
   
@@ -307,12 +307,12 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   stopifnot(topn > 1)
   
-  stopifnot(sort_by %in% c("none", "pval", "lfc"))
+  stopifnot(sort_by %in% c("none", "pval", "lfc", "signp"))
   
   stopifnot(direction %in% c("up", "down", "both"))
   
   if(direction == "both"){
-    direction_print <- "up-, down-"
+    direction_print <- "up- and down-"
   }else{
     direction_print <- paste0(direction, "-")  
   }
@@ -332,7 +332,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   ## Find columns corresponding to the contrast and subset the data
   ## We add '$' because we want to match expression at the end of the string
   
-  contrast_vars_display <- paste0(c(lfc_prefix, stats_prefixes, unique(c(pval_prefix, adjp_prefix))), sep, contrast)
+  contrast_vars_display <- paste0(c(lfc_prefix, stats_prefixes, unique(c(pval_prefix, adjp_prefix, pcut_prefix)), signp_prefix), sep, contrast)
   
   x <- x[ , c(gene_vars, contrast_vars_display), drop = FALSE]
   
@@ -344,13 +344,15 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
     x_sort <- x[order(x[, pval_prefix], decreasing = FALSE), , drop = FALSE]
   }else if(sort_by == "lfc"){
     x_sort <- x[order(x[, lfc_prefix], decreasing = TRUE), , drop = FALSE]
+  }else if(sort_by == "signp"){
+    x_sort <- x[order(x[, signp_prefix], decreasing = TRUE), , drop = FALSE]
   }else{
     x_sort <- x
   }
   
   
   ## Subset by adj. p-value
-  x_sort <- x_sort[x_sort[, adjp_prefix] <= pval & !is.na(x_sort[, adjp_prefix]), , drop = FALSE]
+  x_sort <- x_sort[x_sort[, pcut_prefix] <= pval & !is.na(x_sort[, pcut_prefix]), , drop = FALSE]
   
   
   ## Subset by direction
@@ -365,9 +367,9 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   if(nrow(x_sort) == 0){
     
-    caption <- paste0("There are no ", direction_print, "regulated genes (", adjp_prefix, " <= ", pval, ", |", lfc_prefix, "| >= ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("There are no ", direction_print, "regulated ", endpoints, " (", pcut_prefix, " <= ", pval, ", |", lfc_prefix, "| >= ", lfc, ") when testing for ", contrast, ".")
     
-    ## Remove all undescores from the caption because they are problematic when rendering to PDF
+    ## Remove all underscores from the caption because they are problematic when rendering to PDF
     caption <- gsub("_", " ", caption)
     
     return(BclassDE(caption = caption))
@@ -379,7 +381,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   res <- x_sort[1:(min(nrow(x_sort), topn)), , drop = FALSE]
   rownames(res) <- NULL
   
-  out <- res %>% 
+  out <- res[, !grepl(paste0("^", signp_prefix), colnames(res))] %>% 
     mutate_at(lfc_prefix, format_difference) %>% 
     mutate_at(unique(c(pval_prefix, adjp_prefix)), format_pvalues2) 
   
@@ -391,11 +393,11 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
   
   if(is.null(caption)){
     
-    caption <- paste0("List of ", direction_print, "regulated genes (", adjp_prefix, " $<=$ ", pval, ", $|$", lfc_prefix, "$|$ $>=$ ", lfc, ") when testing for ", contrast, ".")
+    caption <- paste0("List of ", direction_print, "regulated ", endpoints, " (", pcut_prefix, " $<=$ ", pval, ", $|$", lfc_prefix, "$|$ $>=$ ", lfc, ") when testing for ", contrast, ".")
     
     if(nrow(x_sort) >  topn){
       
-      caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " genes.")
+      caption <- paste0(caption, " Printed ", topn, " out of ", nrow(x_sort), " ", endpoints, ".")
       
     }
     

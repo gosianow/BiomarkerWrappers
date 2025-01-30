@@ -87,14 +87,14 @@ wrapper_ora_dotplot_single <- function(x, geneset_var = "GenesetID", observed_va
       
       ggp <- ggplot(x, aes(x = .data[[plot_x_var]], y = .data[[geneset_var]], size = .data[["DE_in_set"]], color = .data[[color_point_var]])) +
         geom_point() +
-        scale_size_area(name = "No. DE in set", max_size = size_range[2]) +
+        scale_size_area(name = "No. genes in set", max_size = size_range[2]) +
         scale_colour_gradient2(low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish)
       
     }else{
       
       ggp <- ggplot(x, aes(x = .data[[plot_x_var]], y = .data[[geneset_var]], size = .data[["DE_in_set"]])) +
         geom_point(color = color_point) +
-        scale_size_area(name = "No. DE in set", max_size = size_range[2]) 
+        scale_size_area(name = "No. genes in set", max_size = size_range[2]) 
       
     }
     
@@ -284,7 +284,7 @@ wrapper_ora_dotplot_multiple <- function(x, geneset_var = "GenesetID", observed_
     
     ggp <- ggplot(data, aes(x = .data[["log_adjp"]], y = .data[[geneset_var]], color = .data[["contrasts"]], size = .data[["DE_in_set"]])) +
       geom_point(alpha = point_alpha) +
-      scale_size_area(name = "No. DE in set", max_size = size_range[2]) 
+      scale_size_area(name = "No. genes in set", max_size = size_range[2]) 
     
   }else{
     

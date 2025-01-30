@@ -6,7 +6,7 @@ Authors@R:
     person(given = "Malgorzata",
            family = "Nowicka",
            role = c("aut", "cre"),
-           email = "malgorzata.nowicka@roche.com")
+           email = "gosianowicka87@gmail.com")
 Description: What the package does (one paragraph).
 biocViews: WorkflowStep
 License: GPL-3
