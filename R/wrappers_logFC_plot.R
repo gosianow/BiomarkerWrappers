@@ -4,13 +4,14 @@
 #' Dot plot with logFC and p-values for multiple contrasts
 #' 
 #' @param x TopTable
+#' @param radius_labels Labels for p-values e.g. `formatC(rev(c(1, 0.1, 0.05, 0.01, 1e-04, 1e-06, 1e-08, 1e-10)), format = "g", digits = 1)`, `formatC(rev(c(1, 0.1, 0.05, 0.01, 0.001, 0.0001)), format = "f", drop0trailing = TRUE, digits = 10)`
 #' @export
 wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol", 
   lfc_prefix = "logFC", pval_prefix = "P.Value", adjp_prefix = "adj.P.Val",  
   sep = "_", pval = 0.05, title = "", 
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_values = 3, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
-  radius_range = c(3, 10), legend_position = "right", 
+  radius_range = c(3, 10), radius_labels = NULL, legend_position = "right", 
   axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 1, 
   axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
   
@@ -73,17 +74,24 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
   data$log.P.Val <- -log10(data[, pval_prefix])
   
   
-  if(lfc_prefix %in% c("logFC", "NES", "statistic", "sign.P.Val")){
-    radius_labels = rev(c(1, 0.1, 0.05, 0.01, 1e-04, 1e-06, 1e-08, 1e-10))
-    radius_breaks = -log10(radius_labels)
-    radius_limits = range(radius_breaks)
-    radius_labels <- formatC(radius_labels, format = "g", digits = 1)
+  if(is.null(radius_labels)){
+    if(lfc_prefix %in% c("logFC", "NES", "statistic", "sign.P.Val")){
+      radius_labels_num <- rev(c(1, 0.1, 0.05, 0.01, 1e-04, 1e-06, 1e-08, 1e-10))
+      radius_breaks <- -log10(radius_labels_num)
+      radius_limits <- range(radius_breaks)
+      radius_labels <- formatC(radius_labels_num, format = "g", digits = 1)
+    }else{
+      radius_labels_num <- rev(c(1, 0.1, 0.05, 0.01, 0.001, 0.0001))
+      radius_breaks <- -log10(radius_labels_num)
+      radius_limits <- range(radius_breaks)
+      radius_labels <- formatC(radius_labels_num, format = "f", drop0trailing = TRUE, digits = 10)
+    }
   }else{
-    radius_labels = rev(c(1, 0.1, 0.05, 0.01, 0.001, 0.0001))
-    radius_breaks = -log10(radius_labels)
-    radius_limits = range(radius_breaks)
-    radius_labels <- formatC(radius_labels, format = "f", drop0trailing = TRUE, digits = 10)
+    radius_labels_num <- as.numeric(radius_labels)
+    radius_breaks <- -log10(radius_labels_num)
+    radius_limits <- range(radius_breaks)
   }
+
   
   ### Squish the limits because oob = scales::squish is not possible for scale_radius
   data$log.P.Val[data$log.P.Val > max(radius_limits)] <- max(radius_limits)

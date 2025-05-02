@@ -38,9 +38,12 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
   # --------------------------------------------------------------------------
   
   tbl <- table(data[, row_var], data[, col_var])
-
-  prop <- prop.table(tbl, margin = margin) * 100
   
+  if(margin == 3){
+    prop <- tbl / margin.table(tbl) * 100
+  }else{
+    prop <- prop.table(tbl, margin = margin) * 100
+  }
   
   if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
     ## Fisher's exact test: get odds rations and CI for OR

@@ -285,6 +285,8 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     ggpl <- ggpl +
       annotate("label",  x = Inf, y = Inf, label = correlation, vjust = 1, hjust = 1, size = 6)
     
+    # annotate("label",  x = -Inf, y = Inf, label = correlation, vjust = 1, hjust = 0, size = 8)
+    
   }
   
   

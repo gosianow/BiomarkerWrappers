@@ -194,7 +194,7 @@ wrapper_gsea_plot_core <- function(statistic, genesets, adjp = NULL, enrichment_
       
       ### Use a trick with the title. Otherwise, the plots are not aligned :/
       
-      ggp3 <- wrapper_ora_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = enrichment_score_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5)) +
+      ggp3 <- wrapper_ora_dotplot_single(gsea_results, geneset_var = geneset_var, observed_var = NULL, adjp_var = adjp_var, color_point_var = enrichment_score_var, title = paste0(" ", paste0(rep("\n", stringr::str_count(title, "\n")), collapse = " ")," "), title_width = 0, title_size = title_size, size_range = c(2, 5), color_low = color_low, color_high = color_high) +
         theme(axis.text.y = element_blank(), 
           axis.ticks.y = element_blank())
       

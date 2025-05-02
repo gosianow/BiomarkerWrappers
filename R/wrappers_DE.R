@@ -452,7 +452,7 @@ wrapper_dispaly_significant_genes <- function(x, contrast, direction = "up",
 #' @param data Data frame.
 #' @param biomarker_vars Variables defining dependent variables.
 #' @export
-wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
+wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix, weights = NULL){
   
   
   stopifnot(length(biomarker_vars) >= 1)
@@ -471,7 +471,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
     
     formula_tmp <- stats::as.formula(paste0("dummy_biomarker_var", paste0(as.character(formula), collapse = "")))
     
-    fit <- stats::lm(formula_tmp, data)
+    fit <- stats::lm(formula_tmp, data, weights = weights)
     
     
     ## Fit contrasts one by one
@@ -495,7 +495,7 @@ wrapper_lm <- function(data, biomarker_vars, formula, contrast_matrix){
     })
     
     out <- do.call(cbind, out_glht)
-
+    
     out
     
     

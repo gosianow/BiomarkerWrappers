@@ -21,6 +21,7 @@ wrapper_logFC_dotplot(
   trim_range = NULL,
   ceiling = FALSE,
   radius_range = c(3, 10),
+  radius_labels = NULL,
   legend_position = "right",
   axis_text_x_angle = 90,
   axis_text_x_vjust = 0.5,
@@ -32,6 +33,8 @@ wrapper_logFC_dotplot(
 }
 \arguments{
 \item{x}{TopTable}
+
+\item{radius_labels}{Labels for p-values e.g. `formatC(rev(c(1, 0.1, 0.05, 0.01, 1e-04, 1e-06, 1e-08, 1e-10)), format = "g", digits = 1)`, `formatC(rev(c(1, 0.1, 0.05, 0.01, 0.001, 0.0001)), format = "f", drop0trailing = TRUE, digits = 10)`}
 }
 \description{
 Dot plot with logFC and p-values for multiple contrasts

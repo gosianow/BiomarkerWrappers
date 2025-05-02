@@ -113,7 +113,7 @@ wrapper_HR_dotplot <- function(x, biomarker_var = "biomarker",
   }
   
   limits <- trim_values
-
+  
   
   # ---------------------------------------------------------------------------
   # ggplot
@@ -141,7 +141,7 @@ wrapper_HR_dotplot <- function(x, biomarker_var = "biomarker",
     scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
     scale_fill_gradient2(name = hr_prefix, trans = "log2", breaks = scales::log_breaks(n = 7, base = 2), low = color_low, mid = color_mid, high = color_high, limits = limits, oob = scales::squish) +
     scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) + 
-    scale_x_continuous(trans = "log2", breaks = scales::log_breaks(n = 7, base = 2)) +
+    scale_x_continuous(trans = "log2", breaks = scales::log_breaks(n = 5, base = 2), labels = scales::label_number(drop0trailing = TRUE)) +
     facet_grid(~contrast)
   
   
@@ -153,7 +153,11 @@ wrapper_HR_dotplot <- function(x, biomarker_var = "biomarker",
 
 
 
-
+# demo_log10(
+#   c(1e-9, 1, 1e9),
+#   breaks = log_breaks(10),
+#   labels = label_number(drop0trailing = TRUE)
+# )
 
 
 

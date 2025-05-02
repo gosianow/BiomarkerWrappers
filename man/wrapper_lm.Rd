@@ -4,7 +4,7 @@
 \alias{wrapper_lm}
 \title{Fit a linear model}
 \usage{
-wrapper_lm(data, biomarker_vars, formula, contrast_matrix)
+wrapper_lm(data, biomarker_vars, formula, contrast_matrix, weights = NULL)
 }
 \arguments{
 \item{data}{Data frame.}

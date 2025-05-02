@@ -16,6 +16,9 @@ wrapper_dispaly_significant_genes(
   lfc_prefix = "logFC",
   pval_prefix = "P.Value",
   adjp_prefix = "adj.P.Val",
+  signp_prefix = "sign.P.Val",
+  pcut_prefix = "adj.P.Val",
+  endpoints = "genes",
   stats_prefixes = NULL,
   sep = "_",
   caption = NULL
@@ -26,7 +29,7 @@ wrapper_dispaly_significant_genes(
 
 \item{direction}{Possible values: "up", "down", "both".}
 
-\item{sort_by}{Possible values: "none", "pval", "lfc".}
+\item{sort_by}{Possible values: "none", "pval", "lfc", "signp".}
 }
 \description{
 Display significantly DE genes
