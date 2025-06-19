@@ -1,16 +1,16 @@
 
 
-# color_point_var = NULL; facet_var = NULL; 
-# colors_point = NULL; scale_gradient = "gradientn"; color_low_point = '#42399B'; color_mid_point = "white"; color_high_point = '#D70131'; midpoint = 0;
+# facet_var = NULL;
+# colors_point = NULL; scale_gradient = "gradientn"; color_low_point = '#42399B'; color_mid_point = "white"; color_high_point = '#D70131'; midpoint = 0; shapes_point = NULL;
 # trim_values = NULL; trim_prop = NULL; trim_range = NULL; ceiling = FALSE; centered = FALSE;
-# variable_names = NULL; 
+# variable_names = NULL;
 # title = TRUE; subtitle = TRUE; xlab = TRUE; ylab = TRUE;
-# legend_colors_point_title = TRUE; legend_position = "right"; aspect_ratio = NULL; facet_label_both = TRUE; 
+# legend_colors_point_title = TRUE; legend_shapes_point_title = TRUE; legend_position = "right"; aspect_ratio = NULL; facet_label_both = TRUE;
 # point_size = 1.5; point_shape = 20; point_alpha = 1; point_stroke = 0.8;
 # smooth = "none"; smooth_method = "auto"; smooth_formula = y ~ x; smooth_se = FALSE;
-# smooth_size = 1; smooth_linetype = 1; 
-# title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL; 
-# display_correlation = FALSE; 
+# smooth_size = 1; smooth_linetype = 1;
+# title_size = NULL; strip_text_size = NULL; facet_scales = "fixed"; xlim = NULL; ylim = NULL;
+# display_correlation = FALSE;
 # background_grid_major = "none"
 
 
@@ -39,12 +39,12 @@
 #' wrapper_point_plot_core(data = bdata, x_var = x_var, y_var = y_var, color_point_var = "Age")
 #' 
 #' @export
-wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
-  colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, shape_point_var = NULL, facet_var = NULL, 
+  colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, shapes_point = NULL, 
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
-  legend_colors_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
+  legend_colors_point_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 1, smooth_linetype = 1, 
@@ -69,6 +69,11 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   if(!is.null(color_point_var)){
     stopifnot(length(color_point_var) == 1)
     stopifnot(is.factor(data[, color_point_var]) || is.numeric(data[, color_point_var]))
+  }
+  
+  if(!is.null(shape_point_var)){
+    stopifnot(length(shape_point_var) == 1)
+    stopifnot(is.factor(data[, shape_point_var]))
   }
   
   if(!is.null(facet_var)){
@@ -139,6 +144,29 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
   }
   
   # -------------------------------------------------------------------------
+  # Shapes 
+  # -------------------------------------------------------------------------
+  
+  
+  if(is.null(shape_point_var)){
+    
+    ### Create a dummy variable 
+    stopifnot(!"shape_point_dummy" %in% colnames(data))
+    data[, "shape_point_dummy"] <- factor("shape_point_dummy")
+    shape_point_var <- "shape_point_dummy"
+    
+    if(is.null(shapes_point)){
+      shapes_point <- point_shape
+    }else{
+      shapes_point <- shapes_point[1]
+    }
+  }else{
+    shapes_point <- format_shapes(levels(data[, shape_point_var]), shapes = shapes_point)
+  }
+  
+  
+  
+  # -------------------------------------------------------------------------
   # Axis and legend labels
   # -------------------------------------------------------------------------
   
@@ -175,54 +203,77 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     }
   }
   
+  if(is.logical(legend_shapes_point_title)){
+    if(legend_shapes_point_title){
+      legend_shapes_point_title <- variable_names[shape_point_var]
+    }else{
+      legend_shapes_point_title <- NULL
+    }
+  }
+  
   
   # -------------------------------------------------------------------------
   # Make the plot
   # -------------------------------------------------------------------------
   
   legend_show_colors_point <- color_point_var != "color_point_dummy"
+  legend_show_shapes_point <- shape_point_var != "shape_point_dummy"
   
   
   ggpl <- ggplot(data, aes(x = .data[[x_var]], y = .data[[y_var]])) 
   
   
-  if(point_shape %in% 21:25){
+  if(all(shapes_point %in% 21:25)){
     
     ggpl <- ggpl +
-      geom_point(aes(fill = .data[[color_point_var]]), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, 
-        show.legend = legend_show_colors_point) 
+      geom_point(aes(fill = .data[[color_point_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha, stroke = point_stroke) +
+      scale_shape_manual(name = legend_shapes_point_title, values = shapes_point, na.value = 1) +
+      guides(fill = ifelse(legend_show_colors_point, "legend", "none"), 
+        shape = ifelse(legend_show_shapes_point, "legend", "none"))
     
     
   }else{
     
     ggpl <- ggpl +
-      geom_point(aes(color = .data[[color_point_var]]), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke,
-        show.legend = legend_show_colors_point)
+      geom_point(aes(color = .data[[color_point_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha, stroke = point_stroke) +
+      scale_shape_manual(name = legend_shapes_point_title, values = shapes_point, na.value = 1) +
+      guides(color = ifelse(legend_show_colors_point, "legend", "none"), 
+        shape = ifelse(legend_show_shapes_point, "legend", "none"))
     
     
   }
   
   
-  if(scale == "manual"){
-    ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
-  }else if(scale == "gradientn") {
-    ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
-  }else if(scale == "gradient2"){
-    ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
-  }else if(scale == "gradient"){
-    ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+  
+  if(all(shapes_point %in% 21:25)){
+    
+    if(scale == "manual"){
+      ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
+    }else if(scale == "gradientn") {
+      ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient2"){
+      ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient"){
+      ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+    }
+    
+    
+  }else{
+    
+    if(scale == "manual"){
+      ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
+    }else if(scale == "gradientn") {
+      ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient2"){
+      ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient"){
+      ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+    }
+    
+    
   }
   
   
-  if(scale == "manual"){
-    ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE)
-  }else if(scale == "gradientn") {
-    ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
-  }else if(scale == "gradient2"){
-    ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
-  }else if(scale == "gradient"){
-    ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
-  }
   
   
   ggpl <- ggpl +
@@ -305,13 +356,13 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
 #' @export
-wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, facet_var = NULL, 
+wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, shape_point_var = NULL, facet_var = NULL, 
   strat1_var = NULL, strat2_var = NULL, 
-  colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, shapes_point = NULL, 
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
-  legend_colors_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
+  legend_colors_point_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,
   smooth_size = 1, smooth_linetype = 1, 
@@ -424,12 +475,12 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
       }
       
       
-      ggpl <- wrapper_point_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, facet_var = facet_var, 
-        colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+      ggpl <- wrapper_point_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, color_point_var = color_point_var, shape_point_var = shape_point_var, facet_var = facet_var, 
+        colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint, shapes_point = shapes_point,
         trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
-        legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, aspect_ratio = aspect_ratio, facet_label_both = facet_label_both, 
+        legend_colors_point_title = legend_colors_point_title, legend_shapes_point_title = legend_shapes_point_title, legend_position = legend_position, aspect_ratio = aspect_ratio, facet_label_both = facet_label_both, 
         point_size = point_size, point_shape = point_shape, point_alpha = point_alpha, point_stroke = point_stroke,
         smooth = smooth, smooth_method = smooth_method, smooth_formula = smooth_formula, smooth_se = smooth_se,
         smooth_size = smooth_size, smooth_linetype = smooth_linetype,

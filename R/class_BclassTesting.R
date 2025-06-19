@@ -170,6 +170,10 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     xlab <- mean_var
   }
   
+  if(!is.null(xticks)){
+    clip <- range(xticks)
+  }
+  
   
   if(mean_var %in% c("HR", "OR") && is.null(clip)){
     if(xlog){

@@ -611,7 +611,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   stopifnot(is.null(x_var) || is.null(facet_var))
   
   
-  data <- data[, c(y_vars, x_var, color_point_var, dodge_var, facet_var), drop = FALSE]
+  data <- data[, c(y_vars, x_var, color_point_var, dodge_var, facet_var, strat1_var, strat2_var), drop = FALSE]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

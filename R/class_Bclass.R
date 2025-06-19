@@ -521,8 +521,8 @@ setMethod("rbind", "Bclass", function(..., deparse.level = 1){
   new_header <- bheader(listData[[1]])
   
   
-  new_results <- do.call(rbind, lapply(listData, bresults))
-  new_output <- do.call(rbind, lapply(listData, boutput))
+  new_results <- do.call(base::rbind, lapply(listData, bresults))
+  new_output <- do.call(base::rbind, lapply(listData, boutput))
   
   
   x <- methods::new(listData_class, results = new_results, 
@@ -571,8 +571,8 @@ setMethod("cbind", "Bclass", function(..., deparse.level = 1){
   new_header <- NULL
   
   
-  new_results <- do.call(cbind, lapply(listData, bresults))
-  new_output <- do.call(cbind, lapply(listData, boutput))
+  new_results <- do.call(base::cbind, lapply(listData, bresults))
+  new_output <- do.call(base::cbind, lapply(listData, boutput))
   
   
   x <- methods::new(listData_class, results = new_results, 
