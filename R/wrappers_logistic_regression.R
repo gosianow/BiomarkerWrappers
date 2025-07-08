@@ -262,6 +262,17 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   }
   
   
+  ### Add logOR and logOR_CI95
+  
+  res$logOR <- log2(res$OR)
+  res$logOR_CI95_lower <- log2(res$OR_CI95_lower)
+  res$logOR_CI95_upper <- log2(res$OR_CI95_upper)
+  
+  ### Add signed p-value: -log10(p-value) * sign(logOR)
+  
+  res$sign_pvalue <- -log10(res$pvalue) * sign(res$logOR)
+  
+  
   # --------------------------------------------------------------------------
   # Prepare the output data frame that will be displayed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
