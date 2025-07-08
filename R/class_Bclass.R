@@ -491,43 +491,17 @@ setMethod("[", signature(x = "Bclass"), function(x, i, j){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("rbind", signature("Bclass"), function(..., deparse.level = 1){
+setMethod("rbind2", signature(x = "Bclass", y = "Bclass"), function(x, y){
   
-  listData <- list(...)
-  
-  if(length(listData) == 1L && is.list(listData[[1L]])){
-    listData <- listData[[1L]]
-  }
-  
-  
-  if(length(listData) == 0L){
-    return()
-  }
-  
-  if(length(listData) == 1L){
-    return(listData[[1]])
-  }
-  
-  
-  ### All the objects have to be of the same class.
-  listData_class <- unique(sapply(listData, class))
-  
-  if(length(listData_class) > 1){
-    stop("All elements in '...' must be of the same class.")
-  }
+  listData_class <- class(x)
   
   ### Caption and header are preserved from the first element
-  new_caption <- bcaption(listData[[1]])
-  new_header <- bheader(listData[[1]])
+  new_caption <- bcaption(x)
+  new_header <- bheader(x)
   
-  
-  # new_results <- do.call(rbind, lapply(listData, bresults))
-  # new_output <- do.call(rbind, lapply(listData, boutput))
-  
-  new_results <- Reduce(rbind2, lapply(listData, bresults))
-  new_output <- Reduce(rbind2, lapply(listData, boutput))
-  
-  
+  new_results <- rbind2(bresults(x), bresults(y))
+  new_output <- rbind2(boutput(x), boutput(y))
+
   x <- methods::new(listData_class, results = new_results, 
     output = new_output,
     caption = new_caption,
@@ -540,57 +514,148 @@ setMethod("rbind", signature("Bclass"), function(..., deparse.level = 1){
 })
 
 
+#' @rdname Bclass-class
+#' @export
+setMethod("rbind", signature("Bclass"), function(..., deparse.level = 1){
+  objs <- list(...)
+  Reduce(rbind2, objs)
+})
+
+
+
+
+# setMethod("rbind", signature("Bclass"), function(..., deparse.level = 1){
+#   
+#   listData <- list(...)
+#   
+#   if(length(listData) == 1L && is.list(listData[[1L]])){
+#     listData <- listData[[1L]]
+#   }
+#   
+#   
+#   if(length(listData) == 0L){
+#     return()
+#   }
+#   
+#   if(length(listData) == 1L){
+#     return(listData[[1]])
+#   }
+#   
+#   
+#   ### All the objects have to be of the same class.
+#   listData_class <- unique(sapply(listData, class))
+#   
+#   if(length(listData_class) > 1){
+#     stop("All elements in '...' must be of the same class.")
+#   }
+#   
+#   ### Caption and header are preserved from the first element
+#   new_caption <- bcaption(listData[[1]])
+#   new_header <- bheader(listData[[1]])
+#   
+#   
+#   # new_results <- do.call(rbind, lapply(listData, bresults))
+#   # new_output <- do.call(rbind, lapply(listData, boutput))
+#   
+#   new_results <- Reduce(rbind2, lapply(listData, bresults))
+#   new_output <- Reduce(rbind2, lapply(listData, boutput))
+#   
+#   
+#   x <- methods::new(listData_class, results = new_results, 
+#     output = new_output,
+#     caption = new_caption,
+#     header = new_header)
+#   
+#   
+#   return(x)
+#   
+#   
+# })
+
+
+#' @rdname Bclass-class
+#' @export
+setMethod("cbind2", signature(x = "Bclass", y = "Bclass"), function(x, y){
+  
+  listData_class <- class(x)
+  
+  ### Caption and header are preserved from the first element
+  new_caption <- bcaption(x)
+  new_header <- NULL
+  
+  new_results <- cbind2(bresults(x), bresults(y))
+  new_output <- cbind2(boutput(x), boutput(y))
+  
+  x <- methods::new(listData_class, results = new_results, 
+    output = new_output,
+    caption = new_caption,
+    header = new_header)
+  
+  
+  return(x)
+  
+  
+})
 
 
 #' @rdname Bclass-class
 #' @export
 setMethod("cbind", signature("Bclass"), function(..., deparse.level = 1){
-  
-  listData <- list(...)
-  
-  if(length(listData) == 1L && is.list(listData[[1L]])){
-    listData <- listData[[1L]]
-  }
-  
-  if(length(listData) == 0L){
-    return()
-  }
-  
-  if(length(listData) == 1L){
-    return(listData[[1]])
-  }
-  
-  
-  ### All the objects have to be of the same class.
-  listData_class <- unique(sapply(listData, class))
-  
-  if(length(listData_class) > 1){
-    stop("All elements in '...' must be of the same class.")
-  }
-  
-  ### Caption is preserved from the first element
-  ### Header is set to NULL
-  new_caption <- bcaption(listData[[1]])
-  new_header <- NULL
-  
-  
-  # new_results <- do.call(cbind, lapply(listData, bresults))
-  # new_output <- do.call(cbind, lapply(listData, boutput))
-  
-  new_results <- Reduce(cbind2, lapply(listData, bresults))
-  new_output <- Reduce(cbind2, lapply(listData, boutput))
-  
-  
-  x <- methods::new(listData_class, results = new_results, 
-    output = new_output,
-    caption = new_caption,
-    header = new_header)
-  
-  
-  return(x)
-  
-  
+  objs <- list(...)
+  Reduce(cbind2, objs)
 })
+
+
+
+
+
+# setMethod("cbind", signature("Bclass"), function(..., deparse.level = 1){
+#   
+#   listData <- list(...)
+#   
+#   if(length(listData) == 1L && is.list(listData[[1L]])){
+#     listData <- listData[[1L]]
+#   }
+#   
+#   if(length(listData) == 0L){
+#     return()
+#   }
+#   
+#   if(length(listData) == 1L){
+#     return(listData[[1]])
+#   }
+#   
+#   
+#   ### All the objects have to be of the same class.
+#   listData_class <- unique(sapply(listData, class))
+#   
+#   if(length(listData_class) > 1){
+#     stop("All elements in '...' must be of the same class.")
+#   }
+#   
+#   ### Caption is preserved from the first element
+#   ### Header is set to NULL
+#   new_caption <- bcaption(listData[[1]])
+#   new_header <- NULL
+#   
+#   
+#   # new_results <- do.call(cbind, lapply(listData, bresults))
+#   # new_output <- do.call(cbind, lapply(listData, boutput))
+#   
+#   new_results <- Reduce(cbind2, lapply(listData, bresults))
+#   new_output <- Reduce(cbind2, lapply(listData, boutput))
+#   
+#   
+#   x <- methods::new(listData_class, results = new_results, 
+#     output = new_output,
+#     caption = new_caption,
+#     header = new_header)
+#   
+#   
+#   return(x)
+#   
+#   
+# })
 
 
 

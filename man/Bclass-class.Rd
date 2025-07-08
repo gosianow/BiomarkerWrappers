@@ -40,7 +40,9 @@
 \alias{[,Bclass,ANY,ANY,ANY-method}
 \alias{[,Bclass-method}
 \alias{[,Bclass,ANY-method}
+\alias{rbind2,Bclass,Bclass-method}
 \alias{rbind,Bclass-method}
+\alias{cbind2,Bclass,Bclass-method}
 \alias{cbind,Bclass-method}
 \alias{BclassCharacteristics-class}
 \alias{BclassCharacteristics}
@@ -118,7 +120,11 @@ bheader(x) <- value
 
 \S4method{[}{Bclass,ANY,ANY,ANY}(x, i, j)
 
+\S4method{rbind2}{Bclass,Bclass}(x, y)
+
 \S4method{rbind}{Bclass}(..., deparse.level = 1)
+
+\S4method{cbind2}{Bclass,Bclass}(x, y)
 
 \S4method{cbind}{Bclass}(..., deparse.level = 1)
 
