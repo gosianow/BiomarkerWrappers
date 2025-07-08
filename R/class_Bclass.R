@@ -491,7 +491,7 @@ setMethod("[", signature(x = "Bclass"), function(x, i, j){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("rbind", signature = "Bclass", function(..., deparse.level = 1){
+setMethod("rbind", signature("Bclass"), function(..., deparse.level = 1){
   
   listData <- list(...)
   
@@ -541,7 +541,7 @@ setMethod("rbind", signature = "Bclass", function(..., deparse.level = 1){
 
 #' @rdname Bclass-class
 #' @export
-setMethod("cbind", signature = "Bclass", function(..., deparse.level = 1){
+setMethod("cbind", signature("Bclass"), function(..., deparse.level = 1){
   
   listData <- list(...)
   
