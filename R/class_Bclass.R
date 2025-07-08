@@ -490,6 +490,7 @@ setMethod("[", signature(x = "Bclass"), function(x, i, j){
 
 
 #' @rdname Bclass-class
+#' @importMethodsFrom base rbind
 #' @export
 setMethod("rbind", "Bclass", function(..., deparse.level = 1){
   
@@ -540,6 +541,7 @@ setMethod("rbind", "Bclass", function(..., deparse.level = 1){
 
 
 #' @rdname Bclass-class
+#' @importMethodsFrom base cbind
 #' @export
 setMethod("cbind", "Bclass", function(..., deparse.level = 1){
   
