@@ -178,7 +178,7 @@ wrapper_extract_from_topTable <- function(x, contrasts = NULL, extract_prefix = 
 #' 
 #' @param x "BclassTesting" object, for example, output of the wrapper_cox_regression_biomarker function. It does not work with log-rank test results.
 #' @export
-wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker", statistic_change = "HR", readjust_pvalues = TRUE){
+wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker", statistic_change = "HR", readjust_pvalues = TRUE, contrast_name = "pooled"){
   
   res <- bresults(x)
   
@@ -190,21 +190,27 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   log_statistic_change_CI95_upper <- paste0("log", statistic_change, "_CI95_upper")
   
   
-  stopifnot(all(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue") %in% colnames(res)))
+  # stopifnot(all(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue", "adj_pvalue") %in% colnames(res)))
   
-  if(!readjust_pvalues){
-    stopifnot(all(c("adj_pvalue") %in% colnames(res)))
-  }
+  stopifnot(all(c(statistic_change, "pvalue") %in% colnames(res)))
+  
+  value_statistics <- c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, 
+    log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, 
+    "pvalue", "sign_pvalue", "adj_pvalue")
+  
+  value_statistics <- value_statistics[value_statistics %in% colnames(res)]
   
   
   if(paste0(statistic_change, "_non_empty") %in% colnames(res)){
     res <- res[res[, paste0(statistic_change, "_non_empty")], ]
+  }else{
+    res <- res[!is.na(res[, statistic_change]), ]
   }
   
   
   if(is.null(contrast_vars)){
-    res$pooled <- "pooled"
-    contrast_vars <- "pooled"
+    contrast_vars <- contrast_name
+    res[, contrast_vars] <- contrast_vars
   }
   
   
@@ -233,7 +239,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
     
     res$adj_pvalue <- res$pvalue
     
-    topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue", "adj_pvalue")))
+    topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(value_statistics))
     
     topTable <- mutate_at(topTable, grep("^adj_pvalue", colnames(topTable)), stats::p.adjust, method = "BH")
     
@@ -241,7 +247,7 @@ wrapper_bresults_to_topTable <- function(x, contrast_vars, id_cols = "biomarker"
   }else{
     
     
-    topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(c(statistic_change, statistic_change_CI95_lower, statistic_change_CI95_upper, log_statistic_change, log_statistic_change_CI95_lower, log_statistic_change_CI95_upper, "pvalue", "sign_pvalue", "adj_pvalue")))
+    topTable <- pivot_wider(res, id_cols = all_of(id_cols), names_from = all_of("contrast"), values_from = all_of(value_statistics))
     
     
   }

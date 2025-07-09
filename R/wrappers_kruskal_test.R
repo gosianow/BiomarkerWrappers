@@ -162,7 +162,7 @@ wrapper_kruskal_test_core_col_cat <- function(data, num_var, cat_var, method = "
     pvalue = c(pvalue, rep(NA, nrow(summdf) - 1)), 
     stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
   
-  
+  res$sign_pvalue <- -log10(res$pvalue) * sign(res$difference)
   
   
   # --------------------------------------------------------------------------

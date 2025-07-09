@@ -9,7 +9,8 @@ wrapper_bresults_to_topTable(
   contrast_vars,
   id_cols = "biomarker",
   statistic_change = "HR",
-  readjust_pvalues = TRUE
+  readjust_pvalues = TRUE,
+  contrast_name = "pooled"
 )
 }
 \arguments{
