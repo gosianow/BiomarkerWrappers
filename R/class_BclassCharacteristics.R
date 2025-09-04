@@ -85,12 +85,14 @@ setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header 
   
   which_row_spec <- which(rowSums(out[, -1, drop = FALSE] == "") >= 1)
   
-  which_row_spec_isna <- which(out[, 1] %in% c("N", "NAs"))
+  which_row_spec_isn <- which(out[, 1] %in% c("N"))[1]
+  
+  which_row_spec_isna <- which(out[, 1] %in% c("NAs"))
   
   
   kable <- kable %>% 
     kableExtra::row_spec(which_row_spec, bold = TRUE, background = "#d7ecff") %>% 
-    kableExtra::row_spec(which_row_spec_isna, background = "#f0f8ff", color = "#666666")
+    kableExtra::row_spec(c(which_row_spec_isn, which_row_spec_isna), background = "#f0f8ff", color = "#666666")
   
   
   

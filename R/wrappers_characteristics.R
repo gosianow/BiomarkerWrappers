@@ -380,118 +380,88 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
 #' Table with distribution summary for a list of covariates for ITT and BEP
 #' 
 #' @param data Data frame.
+#' @param covariate_vars Covariates to summarise
 #' @param bep_vars Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).
 #' @export
-wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean")){
+wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, population_var = "Population", strat_vars = c(population_var, treatment_var), strat1_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean"), lex_order = TRUE, include_pooled_arms = TRUE){
   
+  
+  
+  ### Keep only those variables that are used for the analysis
+  
+  data <- data[, c(covariate_vars, bep_vars, treatment_var, strat1_var), drop = FALSE]
+  
+  
+  data_list <- list()
+  
+  data_itt <- data
+  data_itt[, population_var] <- itt_name
+  
+  
+  data_list[[itt_name]] <- data_itt
+  
+  for(i in seq_along(bep_vars)){
+    # i = 1
+    
+    data_bep <- data[data[, bep_vars[i]], ]
+    data_bep[, population_var] <- bep_vars[i]
+    data_list[[bep_vars[i]]] <- data_bep
+    
+  }
+  
+  
+  data_rbind <- plyr::rbind.fill(data_list)
+  data_rbind[, population_var] <- factor(data_rbind[, population_var], levels = c(itt_name, bep_vars))
+  
+
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
   # --------------------------------------------------------------------------
   
   
-  ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_vars, bep_vars, treatment_var), drop = FALSE]
+  variable_names <- format_variable_names(data = data_rbind, variable_names = variable_names)
   
-  
-  variable_names <- format_variable_names(data = data, variable_names = variable_names)
-  
-
-  # --------------------------------------------------------------------------
-  # Calculate characteristics for ITT
-  # --------------------------------------------------------------------------
-  
-  
-  characteristics_itt <- wrapper_characteristics_core(data = data, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = itt_name, display_statistics = display_statistics)
-  
-  
-  if(!is.null(treatment_var)){
-    
-    data$population_dummy <- factor(itt_name)
-    
-    ### Calculate population-treatment interaction
-    data$population_treatment_interaction <- interaction(data$population_dummy, data[, treatment_var], drop = FALSE, lex.order = TRUE, sep = " : ")
-    
-    
-    characteristics_itt_treatment <- wrapper_characteristics_core(data = data, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL, display_statistics = display_statistics)
-    
-    
-    res <- cbind(bresults(characteristics_itt), bresults(characteristics_itt_treatment)[, -1, drop = FALSE])
-    out <- cbind(boutput(characteristics_itt), boutput(characteristics_itt_treatment)[, -1, drop = FALSE])
-    
-    rownames(res) <- NULL
-    rownames(out) <- NULL
-    
-    characteristics_itt <- BclassCharacteristics(results = res, output = out)
-    
-  }
   
   
   # --------------------------------------------------------------------------
-  # Calculate characteristics for BEPs
+  # Calculate characteristics for pooled arms
   # --------------------------------------------------------------------------
   
   
-  if(!is.null(bep_vars)){
+  strat_var <- paste0(strat_vars, collapse = " : ")
+  
+  
+  if(!is.null(treatment_var) && treatment_var %in% strat_vars && include_pooled_arms){
     
-    characteristics_beps <- lapply(1:length(bep_vars), function(i){
-      # i = 1
-      
-      data_bep <- data[data[, bep_vars[i]] %in% TRUE, , drop = FALSE]
-      
-      if(nrow(data_bep) == 0){
-        return(NULL)
-      }
-      
-      
-      characteristics_bep <- wrapper_characteristics_core(data = data_bep, covariate_vars = covariate_vars, strat_var = NULL, variable_names = variable_names, caption = NULL, out_colname = variable_names[bep_vars[i]], display_statistics = display_statistics)
-      
-      
-      if(!is.null(treatment_var)){
-        
-        data_bep$population_dummy <- factor(variable_names[bep_vars[i]])
-        
-        ### Calculate population-treatment interaction
-        data_bep$population_treatment_interaction <- interaction(data_bep$population_dummy, data_bep[, treatment_var], drop = FALSE, lex.order = TRUE, sep = " : ")
-        
-        
-        characteristics_bep_treatment <- wrapper_characteristics_core(data = data_bep, covariate_vars = covariate_vars, strat_var = "population_treatment_interaction", variable_names = variable_names, caption = NULL, display_statistics = display_statistics)
-        
-        
-        res <- cbind(bresults(characteristics_bep), bresults(characteristics_bep_treatment)[, -1, drop = FALSE])
-        out <- cbind(boutput(characteristics_bep), boutput(characteristics_bep_treatment)[, -1, drop = FALSE])
-        
-        rownames(res) <- NULL
-        rownames(out) <- NULL
-        
-        characteristics_bep <- BclassCharacteristics(results = res, output = out)
-        
-      }
-      
-      
-      characteristics_bep <- BclassCharacteristics(results = bresults(characteristics_bep)[, -1, drop = FALSE], output = boutput(characteristics_bep)[, -1, drop = FALSE])
-      
-      return(characteristics_bep)
-      
-    })
+    data_rbind_pooled <- data_rbind
+    data_rbind_pooled[, treatment_var] <- ""
+    
+    levels_treatment <- levels(data_rbind[, treatment_var])
+    
+    data_rbind[, treatment_var] <- as.character(data_rbind[, treatment_var])
     
     
-    res <- cbind(bresults(characteristics_itt), do.call("cbind", lapply(characteristics_beps, bresults)))
-    out <- cbind(boutput(characteristics_itt), do.call("cbind", lapply(characteristics_beps, boutput)))
+    data_rbind <- rbind.fill(data_rbind_pooled, data_rbind)
     
-    rownames(res) <- NULL
-    rownames(out) <- NULL
-    
-    characteristics_itt <- BclassCharacteristics(results = res, output = out)
+    data_rbind[, treatment_var] <- factor(data_rbind[, treatment_var], levels = c("", levels_treatment))
     
     
   }
   
   
-  bcaption(characteristics_itt) <- caption
+  data_rbind[, strat_var] <- interaction(data_rbind[, strat_vars, drop = FALSE], drop = TRUE, lex.order = lex_order, sep = " : ")
+  
+  table(data_rbind[, strat_var])
   
   
-  return(characteristics_itt)
+  characteristics_bep <- wrapper_characteristics_core(data = data_rbind, covariate_vars = covariate_vars, strat_var = strat_var, variable_names = variable_names, caption = caption, display_statistics = display_statistics)
+  
+  
+  bheader(characteristics_bep) <- NULL
+  
+  
+  return(characteristics_bep)
   
   
 }

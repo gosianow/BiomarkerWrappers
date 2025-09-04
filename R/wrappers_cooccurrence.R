@@ -28,7 +28,10 @@ or_matrix <- function(x){
   for(i in 1:(ncol(x) - 1)){
     
     for(j in (i+1):ncol(x)){
-      # i = 2; j = 3
+      # i = 1; j = 3
+      
+      # print(i)
+      # print(j)
       
       tbl <- table(x[, i], x[, j])
       
@@ -45,8 +48,15 @@ or_matrix <- function(x){
         out_pval[i, j] <- NA
         out_pval[j, i] <- NA
       }else{
-        out_or[i, j] <- prop_test_res$estimate
-        out_or[j, i] <- prop_test_res$estimate
+        
+        if(is.null(prop_test_res$estimate)){
+          out_or[i, j] <- NA
+          out_or[j, i] <- NA
+        }else{
+          out_or[i, j] <- prop_test_res$estimate
+          out_or[j, i] <- prop_test_res$estimate  
+        }
+        
         out_pval[i, j] <- prop_test_res$p.value
         out_pval[j, i] <- prop_test_res$p.value
       }
@@ -243,27 +253,63 @@ wrapper_cooccurence_heatmap <- function(x, method = "Jaccard", column_title = ""
 wrapper_cooccurence_dotplot <- function(x, order = TRUE, title = ""){
   
   
-  ### Order using Jaccard similarity
-  if(order){
-    d <- dist(t(x), method = "binary")
-    cluster <- hclust(d, method = "ward.D2")
-    x <- x[cluster$order]
+  out <- or_matrix(x)
+  
+  ### We can compute OR only for variables with two factor levels. Otherwise, replace with -log10(p-value)
+  if(!all(sapply(x, nlevels) == 2)){
+    
+    
+    ## LogOR
+    xlor <- -log10(out$pval)
+    
+    xlor[xlor == Inf] <- 100
+    xlor[xlor == -Inf] <- -100
+    
+    ### Order using clustering
+    if(order){
+      d <- dist(t(x), method = "binary")
+      cluster <- hclust(d, method = "ward.D2")
+      x_order <- cluster$order
+    }else{
+      x_order <- seq_len(ncol(x))
+    }
+    
+    xlor <- xlor[x_order, x_order]
+    
+    colnames(xlor) <- paste0("Log.P.Value_", gsub("_", " ", colnames(xlor)))
+    rownames(xlor) <- gsub("_", " ", rownames(xlor))  
+    
+    lfc_prefix <- "Log.P.Value"
+    
+    
+  }else{
+    
+    ### Order using Jaccard similarity
+    if(order){
+      d <- dist(t(x), method = "binary")
+      cluster <- hclust(d, method = "ward.D2")
+      x_order <- cluster$order
+    }else{
+      x_order <- seq_len(ncol(x))
+    }
+    
+    ## LogOR
+    xlor <- log10(out$or[x_order, x_order])
+    
+    xlor[xlor == Inf] <- 100
+    xlor[xlor == -Inf] <- -100
+    
+    
+    colnames(xlor) <- paste0("LogOR_", gsub("_", " ", colnames(xlor)))
+    rownames(xlor) <- gsub("_", " ", rownames(xlor))  
+    
+    lfc_prefix <- "LogOR"
+    
   }
   
   
-  out <- or_matrix(x)
   
-  ## LogOR
-  xlor <- log10(out$or)
-  
-  xlor[xlor == Inf] <- 100
-  xlor[xlor == -Inf] <- -100
-  
-  
-  colnames(xlor) <- paste0("LogOR_", gsub("_", " ", colnames(xlor)))
-  rownames(xlor) <- gsub("_", " ", rownames(xlor))
-  
-  xpval <- out$pval
+  xpval <- out$pval[x_order, x_order]
   colnames(xpval) <- paste0("P.Value_", gsub("_", " ", colnames(xpval)))
   rownames(xpval) <- gsub("_", " ", rownames(xpval))
   
@@ -271,7 +317,7 @@ wrapper_cooccurence_dotplot <- function(x, order = TRUE, title = ""){
   xx <- data.frame(Gene = rownames(xlor), as.data.frame.matrix(xlor), as.data.frame.matrix(xpval), stringsAsFactors = FALSE, check.names = FALSE, row.names = NULL)
   
   
-  ggp <- wrapper_logFC_dotplot(x = xx, gene_var = "Gene", lfc_prefix = "LogOR", pval_prefix = "P.Value", adjp_prefix = "P.Value", title = title, axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 0, axis_text_y_size = 11, radius_range = c(5, 12))
+  ggp <- wrapper_logFC_dotplot(x = xx, gene_var = "Gene", lfc_prefix = lfc_prefix, pval_prefix = "P.Value", adjp_prefix = "P.Value", title = title, axis_text_x_angle = 90, axis_text_x_vjust = 0.5, axis_text_x_hjust = 0, axis_text_y_size = 11, radius_range = c(5, 12))
   
   
   ggp <- ggp +

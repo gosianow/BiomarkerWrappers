@@ -257,7 +257,7 @@ wrapper_log_rank_test_core_simple <- function(data, tte_var, censor_var, covaria
 #' boutput(x)
 #' 
 #' @export
-wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, covariate_var, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -303,7 +303,15 @@ wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, c
     wrapper_res <- lapply(1:length(strata1_levels), function(i){
       # i = 1
       
+      # By introducing keep_obs we are able to display empty results in the output tables for empty subgroups
+      
       keep_obs <- data[, strat2_var] %in% strata2_levels[j] & data[, strat1_var] %in% strata1_levels[i]
+      
+      if(strat1_levels != "fixed"){
+        if(all(keep_obs == FALSE)){
+          return(NULL)
+        }
+      }
       
       
       wrapper_res <- wrapper_log_rank_test_core_simple(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, keep_obs = keep_obs, variable_names = variable_names, caption = caption, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues)
@@ -405,7 +413,7 @@ wrapper_log_rank_test_core_simple_strat <- function(data, tte_var, censor_var, c
 #' @inheritParams wrapper_log_rank_test_core_simple_strat
 #' @param biomarker_vars Vector of biomarker names.
 #' @export
-wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, treatment_var = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker_vars, treatment_var = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -428,7 +436,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
     covariate_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, strat1_levels = strat1_levels, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     
     return(wrapper_res)
@@ -501,7 +509,7 @@ wrapper_log_rank_test_biomarker <- function(data, tte_var, censor_var, biomarker
 #' @param treatment_var Name of column with treatment information.
 #' @param biomarker_vars Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated. 
 #' @export
-wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_vars = NULL, strata_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_hr = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -536,7 +544,7 @@ wrapper_log_rank_test_treatment <- function(data, tte_var, censor_var, treatment
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_log_rank_test_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, strata_vars = strata_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, strat1_levels = strat1_levels, sr_times = sr_times, print_nevent = print_nevent, print_mst = print_mst, print_hr = print_hr, print_total = print_total, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
