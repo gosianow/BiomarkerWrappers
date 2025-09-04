@@ -9,14 +9,21 @@ wrapper_characteristics_bep(
   covariate_vars,
   bep_vars = NULL,
   treatment_var = NULL,
+  population_var = "Population",
+  strat_vars = c(population_var, treatment_var),
+  strat1_var = NULL,
   variable_names = NULL,
   caption = NULL,
   itt_name = "ITT",
-  display_statistics = c("Median", "Mean")
+  display_statistics = c("Median", "Mean"),
+  lex_order = TRUE,
+  include_pooled_arms = TRUE
 )
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{covariate_vars}{Covariates to summarise}
 
 \item{bep_vars}{Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).}
 }

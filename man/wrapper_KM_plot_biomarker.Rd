@@ -19,6 +19,7 @@ wrapper_KM_plot_biomarker(
   xlab = TRUE,
   strat1_label_both = TRUE,
   strat2_label_both = TRUE,
+  strat1_levels = "fixed",
   legend_colors_title = TRUE,
   legend_position = c(0.03, 0.03),
   legend_justification = c(0, 0),

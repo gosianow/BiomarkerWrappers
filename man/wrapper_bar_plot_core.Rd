@@ -40,7 +40,8 @@ wrapper_bar_plot_core(
   axis_text_x_vjust = 1,
   axis_text_x_hjust = 0.5,
   aspect_ratio = NULL,
-  background_grid_major = "none"
+  background_grid_major = "none",
+  scale_x_discrete_drop = FALSE
 )
 
 wrapper_bar_plot_core_strat(
@@ -60,6 +61,7 @@ wrapper_bar_plot_core_strat(
   ylab = TRUE,
   strat1_label_both = TRUE,
   strat2_label_both = TRUE,
+  strat1_levels = "fixed",
   legend_colors_title = TRUE,
   legend_position = "right",
   facet_label_both = TRUE,
@@ -82,6 +84,7 @@ wrapper_bar_plot_core_strat(
   axis_text_x_hjust = 0.5,
   aspect_ratio = NULL,
   background_grid_major = "none",
+  scale_x_discrete_drop = FALSE,
   strat_scales = "fixed",
   strat1_nrow = 1,
   strat1_ncol = NULL,

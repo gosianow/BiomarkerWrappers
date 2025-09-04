@@ -32,6 +32,7 @@ wrapper_log_rank_test_core_simple_strat(
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
+  strat1_levels = "fixed",
   sr_times = NULL,
   print_nevent = TRUE,
   print_mst = TRUE,

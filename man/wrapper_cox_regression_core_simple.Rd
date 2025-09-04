@@ -37,6 +37,7 @@ wrapper_cox_regression_core_simple_strat(
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
+  strat1_levels = "fixed",
   force_empty_cols = FALSE,
   sr_times = NULL,
   print_nevent = TRUE,
@@ -60,6 +61,8 @@ wrapper_cox_regression_core_simple_strat(
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{return_vars}{Vector with names of covariates for which the statistics should be returned. If NULL, statistics are returned for all covariates.}
+
+\item{keep_obs}{By introducing this parameter we are able to display empty results in the output tables for empty subgroups.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 

@@ -32,6 +32,7 @@ wrapper_cox_regression_core_interaction_strat(
   strat2_var = NULL,
   variable_names = NULL,
   caption = NULL,
+  strat1_levels = "fixed",
   print_pvalues = TRUE,
   print_adjpvalues = TRUE
 )
@@ -50,6 +51,8 @@ wrapper_cox_regression_core_interaction_strat(
 \item{covariate_vars}{Vector with names of covariates that are included in the formula of the simple additive model: `~ covariate_vars[1] + covariate_vars[2] + covariate_vars[3] + ....`}
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
+
+\item{keep_obs}{By introducing this parameter we are able to display empty results in the output tables for empty subgroups.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
