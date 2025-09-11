@@ -21,7 +21,7 @@ wrapper_HR_dotplot <- function(x, biomarker_var = "biomarker",
   sep = "_", pval = 0.05, title = "", 
   color_low = '#42399B', color_mid = "white", color_high = '#D70131', 
   trim_values = c(0.25, 4), trim_prop = NULL, trim_range = NULL, ceiling = FALSE, 
-  radius_range = c(3, 10), legend_position = "right", 
+  radius_range = c(3, 10), xlim = NULL, legend_position = "right", 
   axis_text_y_size = NULL, axis_text_y_width = 80, title_size = NULL){
   
   
@@ -115,6 +115,24 @@ wrapper_HR_dotplot <- function(x, biomarker_var = "biomarker",
   limits <- trim_values
   
   
+  
+  final_xlim <- NULL # Default to ggplot's automatic scaling
+  
+  if (!is.null(xlim)) {
+    # Validate the user input
+    stopifnot(is.numeric(xlim) && length(xlim) == 2 && xlim[1] < xlim[2])
+    
+    # Get the full range of data to be plotted on the x-axis (points and error bars)
+    data_range <- range(c(data[[hr_prefix]], data[[hr_ci_lower_prefix]], data[[hr_ci_upper_prefix]]), na.rm = TRUE)
+    
+    # Check if the data range exceeds the user-defined limits
+    if (data_range[1] < xlim[1] || data_range[2] > xlim[2]) {
+      final_xlim <- c(max(data_range[1], xlim[1]), min(data_range[2], xlim[2])) # Apply user limits only if data is outside
+    }
+  }
+  
+  
+  
   # ---------------------------------------------------------------------------
   # ggplot
   # ---------------------------------------------------------------------------
@@ -141,7 +159,7 @@ wrapper_HR_dotplot <- function(x, biomarker_var = "biomarker",
     scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
     scale_fill_gradient2(name = hr_prefix, trans = "log2", breaks = scales::log_breaks(n = 7, base = 2), low = color_low, mid = color_mid, high = color_high, limits = limits, oob = scales::squish) +
     scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) + 
-    scale_x_continuous(trans = "log2", breaks = scales::log_breaks(n = 5, base = 2), labels = scales::label_number(drop0trailing = TRUE)) +
+    scale_x_continuous(trans = "log2", breaks = scales::log_breaks(n = 5, base = 2), labels = scales::label_number(drop0trailing = TRUE), limits = final_xlim, oob = scales::squish) +
     facet_grid(~contrast)
   
   

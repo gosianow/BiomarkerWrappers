@@ -12,6 +12,7 @@ wrapper_KM_plot_interaction(
   treatment_var,
   strat1_var = NULL,
   strat2_var = NULL,
+  weights_var = NULL,
   colors = NULL,
   palette = NULL,
   linetypes = 1,

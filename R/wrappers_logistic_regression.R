@@ -21,7 +21,7 @@
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 #' @export
-wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -47,6 +47,15 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   data <- data[stats::complete.cases(data[, c(response_var, covariate_vars)]), ]
   
   stopifnot(nrow(data) > 0)
+  
+  weights <- NULL
+  if(!is.null(weights_var)){
+    weights <- data[, weights_var]
+    if(all(weights == 1)){
+      weights_var <- NULL
+      weights <- NULL
+    }
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -85,19 +94,43 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       
       reference_indx <- which(tbl > 0)[1]
       
-      ## Calculate nresponse and propresponse
-      tbl_response <- table(data[, covariate_vars[i]], data[, response_var])
-      prop_response <- prop.table(tbl_response, margin = 1) * 100
-      ## Replace NaN with NA
-      prop_response[is.na(prop_response)] <- NA
       
+      
+      if(!is.null(weights_var)){
+        
+        survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+        
+        tbl <- survey::svytable(as.formula(paste0("~ ", covariate_vars[i])), design = survey_design)
+        
+        tbl <- round(tbl, digits = 1)
+        
+        tbl_response <- survey::svytable(as.formula(paste0("~ ", covariate_vars[i], " + ", response_var)), design = survey_design)
+        
+        prop_response <- prop.table(tbl_response, margin = 1) * 100
+        ## Replace NaN with NA
+        prop_response[is.na(prop_response)] <- NA
+        
+        tbl_response <- round(tbl_response, digits = 1)
+        
+        
+      }else{
+        
+        tbl <- table(data[, covariate_vars[i]])
+        
+        ## Calculate nresponse and propresponse
+        tbl_response <- table(data[, covariate_vars[i]], data[, response_var])
+        prop_response <- prop.table(tbl_response, margin = 1) * 100
+        ## Replace NaN with NA
+        prop_response[is.na(prop_response)] <- NA
+        
+        
+      }
       
       ndf <- as.data.frame.matrix(tbl_response)
       colnames(ndf) <- paste0("n_", colnames(tbl_response))
       
       propdf <- as.data.frame.matrix(prop_response)
       colnames(propdf) <- paste0("prop_", colnames(prop_response))
-      
       
       
       res <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
@@ -111,22 +144,41 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       # --------------------------------------------------------------------------
       # Calculate CIs for proportions of response/success 
       # --------------------------------------------------------------------------
-
       
-      tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response))), drop = FALSE]
-      
-      
-      response_CI <- lapply(1:nrow(tbl_test), function(k){
-        # k = 1
+      if(!is.null(weights_var)){
         
-        binom_test_res <- binom.test(as.numeric(tbl_test[k, ]))
+        results <- survey::svyby(
+          formula = as.numeric(data[, response_var]) - 1,    # Variable to analyze (the mean of 0/1 is the proportion)
+          by = data[, covariate_vars[i]],            # Grouping variable
+          design = survey_design,
+          FUN = svymean,                  # Function to calculate the weighted mean (proportion)
+          keep.var = TRUE                 # Keep the variance/SE for CI calculation
+        )
         
-        res <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
         
-      })
-      
-      response_CI <- rbind.fill(response_CI)
-      colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
+        response_CI <- confint(results) * 100
+        colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
+        
+        
+      }else{
+        
+        tbl_test <- tbl_response[, rev(seq_len(ncol(tbl_response))), drop = FALSE]
+        
+        
+        response_CI <- lapply(1:nrow(tbl_test), function(k){
+          # k = 1
+          
+          binom_test_res <- binom.test(as.numeric(tbl_test[k, ]))
+          
+          res <- data.frame(response_CI95_lower = binom_test_res$conf.int[1] * 100, response_CI95_upper = binom_test_res$conf.int[2] * 100)
+          
+        })
+        
+        response_CI <- rbind.fill(response_CI)
+        colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
+        
+        
+      }
       
       
       res <- cbind(res, response_CI)
@@ -151,27 +203,59 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   # Logistic regression
   # --------------------------------------------------------------------------
   
-  
   ## Create the formula
   formula_covariates <- paste0(covariate_vars, collapse = " + ")
   f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
   
   
-  ## Fit the logistic model
-  regression_fit <- NULL
-  
-  try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data), silent = TRUE)
-  
-  if(is.null(regression_fit)){
-    regression_summ <- NULL
+  if(!is.null(weights_var)){
+    
+    # ## The Difference Between glm() and svyglm() ⚖️
+    # When you use weights in a regression, the model needs to know why they are there.
+    # 
+    # glm(..., weights = ...): This function treats the weights as "frequency" or "precision" weights. It assumes they are fixed, known quantities. It correctly adjusts the coefficient estimates but calculates standard errors without considering that your IPW weights were estimated from the data and have their own uncertainty. This often leads to underestimated standard errors.
+    # 
+    # svyglm() from the survey package: This function is specifically designed for sampling weights like IPW. It uses robust variance estimators (sandwich estimators) to calculate the standard errors. This method properly accounts for the variability in the weights, giving you more reliable standard errors, confidence intervals, and p-values.
+    
+    # Create a survey design object
+    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+    
+    # Fit the model
+    regression_fit <- NULL
+    
+    try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit")), silent = TRUE)
+    
+    if(is.null(regression_fit)){
+      regression_summ <- NULL
+    }else{
+      regression_summ <- summary(regression_fit)
+    }
+    
+    # regression_summ$coefficients
+    
+    
   }else{
-    regression_summ <- summary(regression_fit)
+    
+    
+    ## Fit the logistic model
+    regression_fit <- NULL
+    
+    try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights), silent = TRUE)
+    
+    if(is.null(regression_fit)){
+      regression_summ <- NULL
+    }else{
+      regression_summ <- summary(regression_fit)
+    }
+    
+    # regression_summ$coefficients
+    
+    
+    # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
+    # h(mm)
+    
+    
   }
-  
-  
-  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-  # h(mm)
-  
   
   
   # --------------------------------------------------------------------------
@@ -213,7 +297,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     colnames(conf_int) <- c("coefficient", "OR_CI95_lower", "OR_CI95_upper")
     
     
-    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", grep("Pr", colnames(regression_summ$coefficients), value = TRUE)), drop = FALSE], stringsAsFactors = FALSE)
     
     colnames(coefficients) <- c("coefficient", "OR", "pvalue")
     
@@ -221,7 +305,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     
   }
   
-
+  
   # --------------------------------------------------------------------------
   # Append results from regression
   # --------------------------------------------------------------------------
@@ -285,7 +369,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     format_counts_and_props_df(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
     
     as.data.frame(matrix(format_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")], non_empty = res$covariate_class == "factor"), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
-
+    
     `OR` = format_or(res$OR, non_empty = res$OR_non_empty),
     `OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper, non_empty = res$OR_non_empty),
     `P-value` = format_pvalues(res$pvalue, non_empty = res$OR_non_empty),
@@ -371,7 +455,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -431,7 +515,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
       }
       
       
-      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
+      wrapper_res <- wrapper_logistic_regression_core_simple(data = data_strata1, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = force_empty_cols, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
       
       
       
@@ -530,7 +614,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -558,7 +642,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     return_vars <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     
     return(wrapper_res)
@@ -640,7 +724,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Checks
@@ -675,7 +759,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
@@ -789,7 +873,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
 #' @param interaction1_var Name of the first interaction variable. 
 #' @param interaction2_var Name of the second interaction variable.
 #' @export
-wrapper_logistic_regression_core_interaction <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_interaction <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -812,38 +896,29 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars)]), ]
   
+  weights <- NULL
+  if(!is.null(weights_var)){
+    weights <- data[, weights_var]
+    if(all(weights == 1)){
+      weights_var <- NULL
+      weights <- NULL
+    }
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   if(print_adjpvalues){
     print_pvalues <- TRUE
   }
-
-  
-  # --------------------------------------------------------------------------
-  # Logistic regression
-  # --------------------------------------------------------------------------
   
   
-  ## Create the formula
-  formula_covariates <- paste0(paste0(covariate_vars, collapse = " + "), " + ", interaction1_var, " * ", interaction2_var)
-  f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
-  
-  
-  ## Fit the logistic model
-  regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data)
-  regression_summ <- summary(regression_fit)
-  
-  
-  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-  # h(mm)
   
   
   # --------------------------------------------------------------------------
-  ### Parse the regression summary for the interaction terms
+  # Generate data frame with coefficient names and levels and information about reference groups
   # --------------------------------------------------------------------------
   
-  ## Generate data frame with coefficient names and levels and information about reference groups
+  
   
   if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
     
@@ -902,6 +977,44 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   
   # --------------------------------------------------------------------------
+  # Logistic regression
+  # --------------------------------------------------------------------------
+  
+  
+  ## Create the formula
+  formula_covariates <- paste0(ifelse(!is.null(covariate_vars), paste0(paste0(covariate_vars, collapse = " + "), " + "), ""), interaction1_var, " * ", interaction2_var)
+  f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
+  
+  
+  
+  if(!is.null(weights_var)){
+    
+    # Create a survey design object
+    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+    
+    regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit"))
+    
+    regression_summ <- summary(regression_fit)
+    
+    # regression_summ$coefficients
+    
+    
+  }else{
+    
+    ## Fit the logistic model
+    regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights)
+    
+    regression_summ <- summary(regression_fit)
+    
+    
+    # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
+    # h(mm)
+    
+    
+  }
+  
+  
+  # --------------------------------------------------------------------------
   ## Calculate confidence intervals
   # --------------------------------------------------------------------------
   
@@ -926,11 +1039,15 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   # --------------------------------------------------------------------------
   
   conf_int <- data.frame(coefficient = rownames(confint_res), confint_res[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(conf_int) <- c("coefficient", "CI95_lower", "CI95_upper")
+  colnames(conf_int) <- c("coefficient", "OR_CI95_lower", "OR_CI95_upper")
   
-  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", "Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+  
+  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", grep("Pr", colnames(regression_summ$coefficients), value = TRUE)), drop = FALSE], stringsAsFactors = FALSE)
   colnames(coefficients) <- c("coefficient", "OR", "pvalue")
+  
   coefficients$OR <- exp(coefficients$OR)
+  
+  
   
   coef_info$n <- nrow(data) - length(regression_summ$na.action)
   
@@ -947,8 +1064,9 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   ### Return results 
   # --------------------------------------------------------------------------
   
+  ### USE conf_int$coefficient instead of regression_summ$coefficients because when the coefficient is NA it is not included in the output table 
   
-  res <- coef_info[coef_info$coefficient %in% rownames(regression_summ$coefficients), , drop = FALSE]
+  res <- coef_info[coef_info$coefficient %in% conf_int$coefficient, , drop = FALSE]
   
   ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA because eventually this level is not used as a reference in the fitted model.
   if(any(c(res$reference1_indx > 1, res$reference2_indx > 1))){
@@ -958,18 +1076,29 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   }
   
   
+  ### Add logOR and logOR_CI95
+  
+  res$logOR <- log2(res$OR)
+  res$logOR_CI95_lower <- log2(res$OR_CI95_lower)
+  res$logOR_CI95_upper <- log2(res$OR_CI95_upper)
+  
+  ### Add signed p-value: -log10(p-value) * sign(logOR)
+  
+  res$sign_pvalue <- -log10(res$pvalue) * sign(res$logOR)
+  
   
   # --------------------------------------------------------------------------
   ### Prepare the output data frame that will be displayed. All columns in `out` are characters.
   # --------------------------------------------------------------------------
   
-  out <- data.frame(Covariate1 = variable_names[res$covariate1], 
+  out <- data.frame(
+    Covariate1 = variable_names[res$covariate1], 
     Effect1 = format_vs(res$levels1, res$reference1),
     Covariate2 = variable_names[res$covariate2], 
     Effect2 = format_vs(res$levels2, res$reference2),
     `Total n` = as.character(res$n),
     `OR` = as.character(round(res$OR, 2)),
-    `OR 95% CI` = format_CIs(res$CI95_lower, res$CI95_upper),
+    `OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -1035,7 +1164,7 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_logistic_regression_core_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -1069,7 +1198,7 @@ wrapper_logistic_regression_core_interaction_strat <- function(data, response_va
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
-
+  
   strata1_levels <- levels(data[, strat1_var])
   strata2_levels <- levels(data[, strat2_var])
   
@@ -1094,7 +1223,7 @@ wrapper_logistic_regression_core_interaction_strat <- function(data, response_va
       }
       
       
-      wrapper_res <- wrapper_logistic_regression_core_interaction(data = data_strata1, response_var = response_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+      wrapper_res <- wrapper_logistic_regression_core_interaction(data = data_strata1, response_var = response_var, interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, weights_var = weights_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
       
       
       res <- bresults(wrapper_res)
@@ -1177,7 +1306,7 @@ wrapper_logistic_regression_core_interaction_strat <- function(data, response_va
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_interaction <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_interaction <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -1206,7 +1335,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
     interaction2_var <- treatment_var
     covariate_vars <- adjustment_vars
     
-    wrapper_res <- wrapper_logistic_regression_core_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     

@@ -14,6 +14,7 @@ wrapper_bar_plot_yvars_core_strat(
   strat2_var = NULL,
   colors_bar = NULL,
   color_border = "black",
+  weights_var = NULL,
   variable_names = NULL,
   title = TRUE,
   xlab = TRUE,

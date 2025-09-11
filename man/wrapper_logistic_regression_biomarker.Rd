@@ -11,6 +11,7 @@ wrapper_logistic_regression_biomarker(
   treatment_var = NULL,
   adjustment_vars = NULL,
   strat2_var = NULL,
+  weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_total = TRUE,

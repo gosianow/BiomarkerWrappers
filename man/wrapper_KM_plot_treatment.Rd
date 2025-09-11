@@ -11,6 +11,7 @@ wrapper_KM_plot_treatment(
   treatment_var,
   biomarker_var = NULL,
   strat2_var = NULL,
+  weights_var = NULL,
   colors = NULL,
   palette = NULL,
   linetypes = 1,

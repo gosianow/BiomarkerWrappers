@@ -39,7 +39,7 @@ NULL
 #' 
 #' @export
 wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var, 
-  colors = NULL, linetypes = 1, 
+  colors = NULL, linetypes = 1, weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE,
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
@@ -64,6 +64,15 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_var)]), ]
   
   stopifnot(nrow(data) > 0)
+  
+  weights <- NULL
+  if(!is.null(weights_var)){
+    weights <- data[, weights_var]
+    if(all(weights == 1)){
+      weights_var <- NULL
+      weights <- NULL
+    }
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -191,21 +200,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   max_tte <- max_tte + break_time_by * 0.05
   
   
-  # -------------------------------------------------------------------------
-  # Fit the survival model
-  # -------------------------------------------------------------------------
-  
-  
-  ### Define the model formula
-  f <- stats::as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
-  
-  ### Fit the model
-  fit <- survival::survfit(f, data, conf.type = "plain")
-  
-  ## Overwrite the formula. Otherwise, it does not work!!! 
-  fit$call$formula <- f
-  
-  
+
   # -------------------------------------------------------------------------
   # To display results from Cox regression as table on the KM plot 
   # -------------------------------------------------------------------------
@@ -218,7 +213,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
       cox_covariate_var <- covariate_var
     }
     
-    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var,  covariate_vars = cox_covariate_var, strat1_var = cox_strat_var, strata_vars = NULL, return_vars = cox_covariate_var, variable_names = variable_names, caption = NULL, force_empty_cols = TRUE, print_hr = print_hr, print_nevent = FALSE, print_mst = print_mst, print_total = FALSE, print_pvalues = print_pvalues, print_adjpvalues = FALSE)
+    wrapper_res <- wrapper_cox_regression_core_simple_strat(data = data, tte_var = tte_var, censor_var = censor_var,  covariate_vars = cox_covariate_var, strat1_var = cox_strat_var, strata_vars = NULL, return_vars = cox_covariate_var, weights_var = weights_var, variable_names = variable_names, caption = NULL, force_empty_cols = TRUE, print_hr = print_hr, print_nevent = FALSE, print_mst = print_mst, print_total = FALSE, print_pvalues = print_pvalues, print_adjpvalues = FALSE)
     
     
     res <- bresults(wrapper_res)
@@ -230,6 +225,20 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
     tb <- tibble::tibble(x = 1, y = 1, label = list(tb))
     
   }
+  
+  # -------------------------------------------------------------------------
+  # Fit the survival model
+  # -------------------------------------------------------------------------
+  
+  
+  ### Define the model formula
+  f <- stats::as.formula(paste0("Surv(", tte_var, ",", censor_var,") ~ ", covariate_var))
+  
+  ### Fit the model
+  fit <- survival::survfit(f, data, conf.type = "plain", weights = weights)
+  
+  ## Overwrite the formula. Otherwise, it does not work!!! 
+  fit$call$formula <- f
   
   
   
@@ -377,7 +386,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
 #' 
 #' @export
 wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var, 
-  strat1_var = NULL, strat2_var = NULL,
+  strat1_var = NULL, strat2_var = NULL, weights_var = NULL, 
   colors = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
@@ -497,7 +506,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
       
       
       ggpl <- wrapper_KM_plot_core(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
-        colors = colors, linetypes = linetypes, 
+        colors = colors, linetypes = linetypes, weights_var = weights_var,
         variable_names = variable_names, 
         title = title, subtitle = subtitle, xlab = xlab,
         legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
@@ -548,7 +557,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
 #' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`.
 #' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
-  strat1_var = NULL, strat2_var = NULL,
+  strat1_var = NULL, strat2_var = NULL, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
@@ -616,7 +625,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
-    strat1_var = strat1_var, strat2_var = strat2_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
     colors = colors, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
@@ -645,7 +654,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 #' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for biomarker levels. 
 #' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
-  strat2_var = NULL,
+  strat2_var = NULL, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
@@ -744,7 +753,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
-    strat1_var = strat1_var, strat2_var = strat2_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
     colors = colors, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels, 
@@ -781,7 +790,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 #' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for treatment levels.
 #' @export
 wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_var = NULL,
-  strat2_var = NULL,
+  strat2_var = NULL, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
@@ -892,7 +901,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
-    strat1_var = strat1_var, strat2_var = strat2_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
     colors = colors, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,

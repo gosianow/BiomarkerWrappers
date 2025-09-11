@@ -12,6 +12,7 @@ wrapper_logistic_regression_interaction(
   adjustment_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
   print_pvalues = TRUE,

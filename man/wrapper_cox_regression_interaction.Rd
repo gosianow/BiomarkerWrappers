@@ -14,6 +14,7 @@ wrapper_cox_regression_interaction(
   strata_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
   strat1_levels = "fixed",

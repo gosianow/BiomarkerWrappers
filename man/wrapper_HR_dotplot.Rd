@@ -23,6 +23,7 @@ wrapper_HR_dotplot(
   trim_range = NULL,
   ceiling = FALSE,
   radius_range = c(3, 10),
+  xlim = NULL,
   legend_position = "right",
   axis_text_y_size = NULL,
   axis_text_y_width = 80,
