@@ -174,7 +174,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
         
       }
       
-
+      
       
       out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event[, "1"]), propevent = as.numeric(prop_event[, "1"]),
         stringsAsFactors = FALSE)
@@ -373,7 +373,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
     colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
     
-    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, grep("Pr", colnames(regression_summ$coefficients), value = TRUE), drop = FALSE], stringsAsFactors = FALSE)
     colnames(coefficients) <- c("coefficient", "pvalue")
     
   }
@@ -486,7 +486,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     out <- cbind(out1, out3) 
   }
   
-
+  
   stopifnot(all(sapply(out, class) == "character"))
   
   
@@ -1108,82 +1108,11 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   
   
   
-  # --------------------------------------------------------------------------
-  # Cox regression
-  # --------------------------------------------------------------------------
-  
-  
-  if(nrow(data) > 0){
-    
-    ## Create the formula
-    
-    formula_covariates <- paste0(paste0(c(covariate_vars, interaction1_vars, interaction2_var), collapse = " + "), " + ", paste0(paste0(interaction1_vars, " : ", interaction2_var), collapse = " + "))
-    
-    
-    if(!is.null(strata_vars)){
-      formula_strata <- paste0("strata(", paste0(strata_vars, collapse = ", "), ")")
-      formula_model <- paste0(formula_covariates, " + ", formula_strata)
-    }else{
-      formula_model <- formula_covariates
-    }
-
-    f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
-
-    
-    if(!is.null(weights_var)){
-      
-      # Create a survey design object
-      survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
-      
-      # Fit the model
-      regression_fit <- NULL
-      
-      try(regression_fit <- survey::svycoxph(formula = f, design = survey_design), silent = TRUE)
-      
-      if(is.null(regression_fit)){
-        regression_summ <- NULL
-      }else{
-        regression_summ <- summary(regression_fit)
-      }
-      
-      # regression_summ$coefficients
-      
-      
-    }else{
-      
-      
-      ## Fit the Cox model
-      regression_fit <- NULL
-      
-      try(regression_fit <- survival::coxph(f, data, weights = weights), silent = TRUE)
-      
-      if(is.null(regression_fit)){
-        regression_summ <- NULL
-      }else{
-        regression_summ <- summary(regression_fit)
-      }
-      
-      
-      # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-      # h(mm)
-      
-      
-    }
-    
-    
-  }else{
-    
-    regression_summ <- NULL
-    
-  }
-  
-  
   
   # --------------------------------------------------------------------------
-  # Parse the regression summary for the interaction terms
+  # Generate data frame with coefficient names and levels and information about reference groups
   # --------------------------------------------------------------------------
   
-  ## Generate data frame with coefficient names and levels and information about reference groups
   
   
   out <- lapply(seq_along(interaction1_vars), function(i){
@@ -1302,6 +1231,76 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   rownames(coef_info) <- coef_info$coefficient
   
   
+  # --------------------------------------------------------------------------
+  # Cox regression
+  # --------------------------------------------------------------------------
+  
+  ## Create the formula
+  
+  formula_covariates <- paste0(paste0(c(covariate_vars, interaction1_vars, interaction2_var), collapse = " + "), " + ", paste0(paste0(interaction1_vars, " : ", interaction2_var), collapse = " + "))
+  
+  
+  if(!is.null(strata_vars)){
+    formula_strata <- paste0("strata(", paste0(strata_vars, collapse = ", "), ")")
+    formula_model <- paste0(formula_covariates, " + ", formula_strata)
+  }else{
+    formula_model <- formula_covariates
+  }
+  
+  f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
+  
+  
+  # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
+  # h(mm)
+  
+  
+  if(nrow(data) > 0){
+    
+    if(!is.null(weights_var)){
+      
+      # Create a survey design object
+      survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+      
+      # Fit the model
+      regression_fit <- NULL
+      
+      try(regression_fit <- survey::svycoxph(formula = f, design = survey_design), silent = TRUE)
+      
+      if(is.null(regression_fit)){
+        regression_summ <- NULL
+      }else{
+        regression_summ <- summary(regression_fit)
+      }
+      
+      # regression_summ$coefficients
+      
+      
+    }else{
+      
+      
+      ## Fit the Cox model
+      regression_fit <- NULL
+      
+      try(regression_fit <- survival::coxph(f, data, weights = weights), silent = TRUE)
+      
+      if(is.null(regression_fit)){
+        regression_summ <- NULL
+      }else{
+        regression_summ <- summary(regression_fit)
+      }
+      
+      
+    }
+    
+    
+  }else{
+    
+    regression_fit <- NULL
+    regression_summ <- NULL
+    
+  }
+  
+  
   
   # --------------------------------------------------------------------------
   # Append results from regression
@@ -1318,7 +1317,7 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     conf_int <- data.frame(coefficient = rownames(regression_summ$conf.int), regression_summ$conf.int[, c("exp(coef)", "lower .95", "upper .95"), drop = FALSE], stringsAsFactors = FALSE)
     colnames(conf_int) <- c("coefficient", "HR", "HR_CI95_lower", "HR_CI95_upper")
     
-    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Pr(>|z|)"), drop = FALSE], stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, grep("Pr", colnames(regression_summ$coefficients), value = TRUE), drop = FALSE], stringsAsFactors = FALSE)
     colnames(coefficients) <- c("coefficient", "pvalue")
     
   }
@@ -1336,6 +1335,7 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   # --------------------------------------------------------------------------
   # Return results 
   # --------------------------------------------------------------------------
+  
   
   res <- coef_info
   

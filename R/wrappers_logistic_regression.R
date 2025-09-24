@@ -203,57 +203,68 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   # Logistic regression
   # --------------------------------------------------------------------------
   
-  ## Create the formula
-  formula_covariates <- paste0(covariate_vars, collapse = " + ")
-  f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
   
-  
-  if(!is.null(weights_var)){
+  if(nrow(data) > 0){
     
-    # ## The Difference Between glm() and svyglm() ⚖️
-    # When you use weights in a regression, the model needs to know why they are there.
-    # 
-    # glm(..., weights = ...): This function treats the weights as "frequency" or "precision" weights. It assumes they are fixed, known quantities. It correctly adjusts the coefficient estimates but calculates standard errors without considering that your IPW weights were estimated from the data and have their own uncertainty. This often leads to underestimated standard errors.
-    # 
-    # svyglm() from the survey package: This function is specifically designed for sampling weights like IPW. It uses robust variance estimators (sandwich estimators) to calculate the standard errors. This method properly accounts for the variability in the weights, giving you more reliable standard errors, confidence intervals, and p-values.
+    ## Create the formula
+    formula_covariates <- paste0(covariate_vars, collapse = " + ")
+    f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
     
-    # Create a survey design object
-    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
     
-    # Fit the model
-    regression_fit <- NULL
-    
-    try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit")), silent = TRUE)
-    
-    if(is.null(regression_fit)){
-      regression_summ <- NULL
+    if(!is.null(weights_var)){
+      
+      # ## The Difference Between glm() and svyglm() ⚖️
+      # When you use weights in a regression, the model needs to know why they are there.
+      # 
+      # glm(..., weights = ...): This function treats the weights as "frequency" or "precision" weights. It assumes they are fixed, known quantities. It correctly adjusts the coefficient estimates but calculates standard errors without considering that your IPW weights were estimated from the data and have their own uncertainty. This often leads to underestimated standard errors.
+      # 
+      # svyglm() from the survey package: This function is specifically designed for sampling weights like IPW. It uses robust variance estimators (sandwich estimators) to calculate the standard errors. This method properly accounts for the variability in the weights, giving you more reliable standard errors, confidence intervals, and p-values.
+      
+      # Create a survey design object
+      survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+      
+      # Fit the model
+      regression_fit <- NULL
+      
+      try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit")), silent = TRUE)
+      
+      if(is.null(regression_fit)){
+        regression_summ <- NULL
+      }else{
+        regression_summ <- summary(regression_fit)
+      }
+      
+      # regression_summ$coefficients
+      
+      
     }else{
-      regression_summ <- summary(regression_fit)
+      
+      
+      ## Fit the logistic model
+      regression_fit <- NULL
+      
+      try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights), silent = TRUE)
+      
+      if(is.null(regression_fit)){
+        regression_summ <- NULL
+      }else{
+        regression_summ <- summary(regression_fit)
+      }
+      
+      # regression_summ$coefficients
+      
+      
+      # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
+      # h(mm)
+      
+      
     }
-    
-    # regression_summ$coefficients
     
     
   }else{
     
-    
-    ## Fit the logistic model
     regression_fit <- NULL
-    
-    try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights), silent = TRUE)
-    
-    if(is.null(regression_fit)){
-      regression_summ <- NULL
-    }else{
-      regression_summ <- summary(regression_fit)
-    }
-    
-    # regression_summ$coefficients
-    
-    
-    # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-    # h(mm)
-    
+    regression_summ <- NULL
     
   }
   
@@ -913,7 +924,6 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   
   
-  
   # --------------------------------------------------------------------------
   # Generate data frame with coefficient names and levels and information about reference groups
   # --------------------------------------------------------------------------
@@ -922,56 +932,102 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
     
-    out <- data.frame(covariate1 = interaction1_var, levels1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, levels2 = "", reference2 = "", reference2_indx = 0, 
+    out <- data.frame(covariate1 = interaction1_var, subgroup1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, subgroup2 = "", reference2 = "", reference2_indx = 0, 
       stringsAsFactors = FALSE)
+    
+    
+    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+    
     
   }else if(class(data[, interaction1_var]) %in% c("numeric", "integer") && class(data[, interaction2_var]) %in% c("factor")){
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
+    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
     tbl <- table(data[, interaction2_var])
     
-    reference_indx <- which(tbl > 0)[1]
+    if(tbl[1] > 0){
+      reference_indx <- 1
+      names(reference_indx) <- names(tbl[1])
+    }else{
+      reference_indx <- rev(which(tbl > 0))[1]
+    }
     
     
-    out <- data.frame(covariate1 = interaction1_var, levels1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, levels2 = levels(data[, interaction2_var]), reference2 = names(reference_indx), reference2_indx = as.numeric(reference_indx),
+    out <- data.frame(covariate1 = interaction1_var, subgroup1 = "", reference1 = "", reference1_indx = 0, covariate2 = interaction2_var, subgroup2 = levels(data[, interaction2_var]), reference2 = names(tbl[1]), reference2_indx = as.numeric(reference_indx),
       stringsAsFactors = FALSE)
+    
+    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+    
+    out <- out[out$coefficient %in% paste0(interaction1_var, ":", interaction2_var, levels(data[, interaction2_var])[-1]), , drop = FALSE]
+    
     
   }else if(class(data[, interaction1_var]) %in% c("factor") && class(data[, interaction2_var]) %in% c("numeric", "integer")){
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
+    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
     tbl <- table(data[, interaction1_var])
     
-    reference_indx <- which(tbl > 0)[1]
+    if(tbl[1] > 0){
+      reference_indx <- 1
+      names(reference_indx) <- names(tbl[1])
+    }else{
+      reference_indx <- rev(which(tbl > 0))[1]
+    }
     
     
-    out <- data.frame(covariate1 = interaction1_var, levels1 = levels(data[, interaction1_var]), reference1 = names(reference_indx), reference1_indx = as.numeric(reference_indx), covariate2 = interaction2_var, levels2 = "", reference2 = "", reference2_indx = 0,
+    out <- data.frame(covariate1 = interaction1_var, subgroup1 = levels(data[, interaction1_var]), reference1 = names(tbl[1]), reference1_indx = as.numeric(reference_indx), covariate2 = interaction2_var, subgroup2 = "", reference2 = "", reference2_indx = 0,
       stringsAsFactors = FALSE)
+    
+    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+    
+    out <- out[out$coefficient %in% paste0(interaction1_var, levels(data[, interaction1_var])[-1], ":", interaction2_var), , drop = FALSE]
+    
+    
     
   }else{
     
     ## Check if the first level has non zero counts so it can be used as a reference group in the regression
-    ## When the first level has zero counts, then the next level with non-zero counts is used as a reference 
-    tbl <- table(data[, interaction1_var])
+    ## Actually, when the first level has zero counts, then the last level with non-zero counts is used as a reference 
+    tbl1 <- table(data[, interaction1_var])
     
-    reference1_indx <- which(tbl > 0)[1]
+    if(tbl1[1] > 0){
+      reference1_indx <- 1
+      names(reference1_indx) <- names(tbl1[1])
+    }else{
+      reference1_indx <- rev(which(tbl1 > 0))[1]
+    }
     
-    tbl <- table(data[, interaction2_var])
+    tbl2 <- table(data[, interaction2_var])
     
-    reference2_indx <- which(tbl > 0)[1]
+    if(tbl2[1] > 0){
+      reference2_indx <- 1
+      names(reference2_indx) <- names(tbl2[1])
+    }else{
+      reference2_indx <- rev(which(tbl2 > 0))[1]
+    }
     
     
-    out <- data.frame(covariate1 = interaction1_var, levels1 = rep(levels(data[, interaction1_var]), times = nlevels(data[, interaction2_var])), reference1 = names(reference1_indx), reference1_indx = as.numeric(reference1_indx), covariate2 = interaction2_var, levels2 = rep(levels(data[, interaction2_var]), each = nlevels(data[, interaction1_var])), reference2 = names(reference2_indx), reference2_indx = as.numeric(reference2_indx),
+    out <- data.frame(covariate1 = interaction1_var, subgroup1 = rep(levels(data[, interaction1_var]), times = nlevels(data[, interaction2_var])), reference1 = names(tbl1[1]), reference1_indx = as.numeric(reference1_indx), covariate2 = interaction2_var, subgroup2 = rep(levels(data[, interaction2_var]), each = nlevels(data[, interaction1_var])), reference2 = names(tbl2[1]), reference2_indx = as.numeric(reference2_indx),
       stringsAsFactors = FALSE)
+    
+    
+    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+    
+    coeff_var1 <- paste0(interaction1_var, levels(data[, interaction1_var])[-1])
+    coeff_var1 <- factor(coeff_var1, levels = coeff_var1)
+    coeff_var2 <- paste0(interaction2_var, levels(data[, interaction2_var])[-1])
+    coeff_var2 <- factor(coeff_var2, levels = coeff_var2)
+    
+    out <- out[out$coefficient %in% interaction(coeff_var1, coeff_var2, sep = ":", lex.order = TRUE), , drop = FALSE]
     
     
   }
   
   
+  
   coef_info <- out
   
-  coef_info$coefficient <- paste0(coef_info$covariate1, coef_info$levels1, ":", coef_info$covariate2, coef_info$levels2)
+  coef_info$n_total <- nrow(data)
   
   rownames(coef_info) <- coef_info$coefficient
   
@@ -980,38 +1036,58 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   # Logistic regression
   # --------------------------------------------------------------------------
   
-  
   ## Create the formula
   formula_covariates <- paste0(ifelse(!is.null(covariate_vars), paste0(paste0(covariate_vars, collapse = " + "), " + "), ""), interaction1_var, " * ", interaction2_var)
+  
   f <- stats::as.formula(paste0(response_var, " ~ ", formula_covariates))
   
+  # mm <- model.matrix(f, data)
   
   
-  if(!is.null(weights_var)){
+  if(nrow(data) > 0){
     
-    # Create a survey design object
-    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
-    
-    regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit"))
-    
-    regression_summ <- summary(regression_fit)
-    
-    # regression_summ$coefficients
+    if(!is.null(weights_var)){
+      
+      # Create a survey design object
+      survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+      
+      regression_fit <- NULL
+      
+      try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit")), silent = TRUE)
+      
+      if(is.null(regression_fit)){
+        regression_summ <- NULL
+      }else{
+        regression_summ <- summary(regression_fit)
+      }
+      
+      # regression_summ$coefficients
+      
+      
+    }else{
+      
+      regression_fit <- NULL
+      
+      ## Fit the logistic model
+      try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights), silent = TRUE)
+      
+      if(is.null(regression_fit)){
+        regression_summ <- NULL
+      }else{
+        regression_summ <- summary(regression_fit)
+      }
+      
+      
+    }
     
     
   }else{
     
-    ## Fit the logistic model
-    regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights)
-    
-    regression_summ <- summary(regression_fit)
-    
-    
-    # mm <- model.matrix(stats::as.formula(paste0(" ~ ", formula_covariates)), data)
-    # h(mm)
-    
+    regression_fit <- NULL
+    regression_summ <- NULL
     
   }
+  
   
   
   # --------------------------------------------------------------------------
@@ -1031,25 +1107,42 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   # }
   
   ## I use the Wald CIs because they are in concordance with p-values i.e. they contain 1 when p-value is not significant
-  confint_res <- exp(stats::confint.default(regression_fit))
+  if(!is.null(regression_fit)){
+    confint_res <- exp(stats::confint.default(regression_fit))
+  }
   
   
   # --------------------------------------------------------------------------
   ## Append results from regression
   # --------------------------------------------------------------------------
   
-  conf_int <- data.frame(coefficient = rownames(confint_res), confint_res[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(conf_int) <- c("coefficient", "OR_CI95_lower", "OR_CI95_upper")
+  
+  if(is.null(regression_summ)){
+    
+    conf_int <- data.frame(coefficient = coef_info$coefficient, OR_CI95_lower = NA, OR_CI95_upper = NA, stringsAsFactors = FALSE)
+    coefficients <- data.frame(coefficient = coef_info$coefficient, OR = NA, pvalue = NA, stringsAsFactors = FALSE)
+    
+    
+  }else{
+    
+    conf_int <- data.frame(coefficient = rownames(confint_res), confint_res[, c("2.5 %", "97.5 %"), drop = FALSE], stringsAsFactors = FALSE)
+    
+    colnames(conf_int) <- c("coefficient", "OR_CI95_lower", "OR_CI95_upper")
+    
+    
+    coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", grep("Pr", colnames(regression_summ$coefficients), value = TRUE)), drop = FALSE], stringsAsFactors = FALSE)
+    
+    colnames(coefficients) <- c("coefficient", "OR", "pvalue")
+    
+    coefficients$OR <- exp(coefficients$OR)
+    
+  }
   
   
-  coefficients <- data.frame(coefficient = rownames(regression_summ$coefficients), regression_summ$coefficients[, c("Estimate", grep("Pr", colnames(regression_summ$coefficients), value = TRUE)), drop = FALSE], stringsAsFactors = FALSE)
-  colnames(coefficients) <- c("coefficient", "OR", "pvalue")
+  # --------------------------------------------------------------------------
+  # Append results from regression
+  # --------------------------------------------------------------------------
   
-  coefficients$OR <- exp(coefficients$OR)
-  
-  
-  
-  coef_info$n <- nrow(data) - length(regression_summ$na.action)
   
   coef_info <- coef_info %>% 
     dplyr::left_join(conf_int, by = "coefficient") %>% 
@@ -1061,12 +1154,12 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   
   # --------------------------------------------------------------------------
-  ### Return results 
+  # Return results 
   # --------------------------------------------------------------------------
   
-  ### USE conf_int$coefficient instead of regression_summ$coefficients because when the coefficient is NA it is not included in the output table 
   
-  res <- coef_info[coef_info$coefficient %in% conf_int$coefficient, , drop = FALSE]
+  res <- coef_info
+  
   
   ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA because eventually this level is not used as a reference in the fitted model.
   if(any(c(res$reference1_indx > 1, res$reference2_indx > 1))){
@@ -1096,8 +1189,8 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
     Effect1 = format_vs(res$levels1, res$reference1),
     Covariate2 = variable_names[res$covariate2], 
     Effect2 = format_vs(res$levels2, res$reference2),
-    `Total n` = as.character(res$n),
-    `OR` = as.character(round(res$OR, 2)),
+    `Total n` = as.character(res$n_total),
+    `OR` = format_or(res$OR),
     `OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
