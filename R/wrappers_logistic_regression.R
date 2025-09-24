@@ -151,7 +151,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
           formula = as.numeric(data[, response_var]) - 1,    # Variable to analyze (the mean of 0/1 is the proportion)
           by = data[, covariate_vars[i]],            # Grouping variable
           design = survey_design,
-          FUN = svymean,                  # Function to calculate the weighted mean (proportion)
+          FUN = survey::svymean,                  # Function to calculate the weighted mean (proportion)
           keep.var = TRUE                 # Keep the variance/SE for CI calculation
         )
         
