@@ -100,7 +100,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   # stopifnot(nrow(data) > 0)
   
   weights <- NULL
-  if(!is.null(weights_var)){
+  if(!is.null(weights_var) & nrow(data) > 0){
     weights <- data[, weights_var]
     if(all(weights == 1)){
       weights_var <- NULL
@@ -145,7 +145,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       }
       
       
-      if(!is.null(weights_var)){
+      if(!is.null(weights)){
         
         survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
         
@@ -166,8 +166,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
         
         tbl <- table(data[, covariate_vars[i]])
         
-        ## Calculate nresponse and propresponse
-        tbl_event <- table(data[, covariate_vars[i]], data[, censor_var])
+        tbl_event <- table(data[, covariate_vars[i]], factor(data[, censor_var], levels = c(0, 1)))
         prop_event <- prop.table(tbl_event, margin = 1) * 100
         ## Replace NaN with NA
         prop_event[is.na(prop_event)] <- NA
@@ -304,7 +303,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", formula_model))
     
     
-    if(!is.null(weights_var)){
+    if(!is.null(weights)){
       
       # survival::coxph(..., weights = weights)
       # This function treats weights as "frequency" or "case" weights. It assumes each weight is a fixed, known integer telling the model how many times that observation occurred. It correctly calculates the hazard ratios, but it underestimates the standard errors because it doesn't account for the fact that your IPW weights were estimated from the data. This leads to overly narrow confidence intervals and artificially low p-values.
