@@ -12,6 +12,7 @@ wrapper_characteristics_bep(
   population_var = "Population",
   strat_vars = c(population_var, treatment_var),
   strat1_var = NULL,
+  weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
   itt_name = "ITT",

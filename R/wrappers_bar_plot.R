@@ -102,10 +102,10 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
   weights <- NULL
   if(!is.null(weights_var)){
     weights <- data[, weights_var]
-    if(all(weights == 1)){
-      weights_var <- NULL
-      weights <- NULL
-    }
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
   }
   
   

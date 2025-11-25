@@ -4,7 +4,7 @@
 \alias{or_matrix}
 \title{Compute odds ratios for pairs of covariates}
 \usage{
-or_matrix(x)
+or_matrix(x, weights = NULL)
 }
 \arguments{
 \item{x}{Data frame with covariates where absence is encoded as 0 and presence is encoded as 1.}

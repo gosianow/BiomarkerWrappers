@@ -8,7 +8,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
+wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -18,7 +18,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
   stopifnot(nrow(data) > 0)
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_var, strat_var), drop = FALSE]
+  data <- data[, c(covariate_var, strat_var, weights_var), drop = FALSE]
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.factor(data[, covariate_var]))
@@ -35,6 +35,16 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
     strat_var <- "strat_dummy"
   }
   
+  
+  weights <- NULL
+  if(!is.null(weights_var) & nrow(data) > 0){
+    weights <- data[, weights_var]
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
+  }
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
@@ -42,11 +52,43 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
   # Calculate counts and proportions
   # --------------------------------------------------------------------------
   
-  tbl <- table(data[, covariate_var], data[, strat_var])
+  data[, paste0(covariate_var, "IS.NA")] <- factor(is.na(data[, covariate_var]), levels = c(FALSE, TRUE))
   
-  prop <- prop.table(tbl, margin = 2) * 100
   
-  tbl_isna <- table(factor(is.na(data[, covariate_var]), levels = c(FALSE, TRUE)), data[, strat_var])
+  if(!is.null(weights_var)){
+    
+    
+    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+    
+    tbl <- survey::svytable(as.formula(paste0("~ ", covariate_var, " + ", strat_var)), design = survey_design)
+    
+    prop <- prop.table(tbl, margin = 2) * 100
+    ## Replace NaN with NA
+    prop[is.na(prop)] <- NA
+    
+    tbl <- round(tbl, digits = 1)
+    
+    
+    ### Table with non-NA and NA counts
+    
+    tbl_isna <- survey::svytable(as.formula(paste0("~ ", paste0(covariate_var, "IS.NA"), " + ", strat_var)), design = survey_design)
+    
+    tbl_isna <- round(tbl_isna, digits = 1)
+    
+    
+  }else{
+    
+    tbl <- table(data[, covariate_var], data[, strat_var])
+    
+    prop <- prop.table(tbl, margin = 2) * 100
+    
+    ### Table with non-NA and NA counts
+    
+    tbl_isna <- table(data[, paste0(covariate_var, "IS.NA")], data[, strat_var])
+    
+    
+  }
+  
   
   empty_row <- matrix(NA, nrow = 1, ncol = nlevels(data[, strat_var]))
   colnames(empty_row) <- levels(data[, strat_var])
@@ -141,7 +183,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
+wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -155,7 +197,7 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_var, strat_var), drop = FALSE]
+  data <- data[, c(covariate_var, strat_var, weights_var), drop = FALSE]
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.numeric(data[, covariate_var]))
@@ -172,6 +214,17 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
     strat_var <- "strat_dummy"
   }
   
+  
+  weights <- NULL
+  if(!is.null(weights_var) & nrow(data) > 0){
+    weights <- data[, weights_var]
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
+  }
+  
+  
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
@@ -179,20 +232,54 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   # Calculate summary statistics
   # --------------------------------------------------------------------------
   
-  tbl_isna <- table(factor(is.na(data[, covariate_var]), levels = c(FALSE, TRUE)), data[, strat_var])
+  data[, paste0(covariate_var, "IS.NA")] <- factor(is.na(data[, covariate_var]), levels = c(FALSE, TRUE))
+  
+  
+  if(!is.null(weights_var)){
+    
+    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+    
+    covariate_form  <- as.formula(paste0("~", covariate_var))
+    strat_form <- as.formula(paste0("~", strat_var))
+    
+    
+    Median = survey::svyby(formula = covariate_form, by = strat_form, design = survey_design, FUN = survey::svyquantile, quantiles = 0.5, na.rm = TRUE, keep.names = FALSE, vartype = NULL)[, 2]
+    Mean = survey::svyby(formula = covariate_form, by = strat_form, design = survey_design, FUN = survey::svymean, na.rm = TRUE, keep.names = FALSE, vartype = NULL)[, 2]
+    
+    Min = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+    Max = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+    
+    First.Quartile = survey::svyby(formula = covariate_form, by = strat_form, design = survey_design, FUN = survey::svyquantile, quantiles = 0.25, na.rm = TRUE, keep.names = FALSE, vartype = NULL)[, 2]
+    Third.Quartile = survey::svyby(formula = covariate_form, by = strat_form, design = survey_design, FUN = survey::svyquantile, quantiles = 0.75, na.rm = TRUE, keep.names = FALSE, vartype = NULL)[, 2]
+    
+    
+    ### Table with non-NA and NA counts
+    
+    tbl_isna <- survey::svytable(as.formula(paste0("~ ", paste0(covariate_var, "IS.NA"), " + ", strat_var)), design = survey_design)
+    
+    tbl_isna <- round(tbl_isna, digits = 1)
+    
+    
+  }else{
+    
+    Median = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
+    Mean = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
+    
+    Min = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
+    Max = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
+    
+    First.Quartile = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = quantile, probs = 0.25, na.rm = TRUE, drop = FALSE)[, 2]
+    Third.Quartile = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = quantile, probs = 0.75, na.rm = TRUE, drop = FALSE)[, 2]
+    
+    ### Table with non-NA and NA counts
+    
+    tbl_isna <- table(data[, paste0(covariate_var, "IS.NA")], data[, strat_var])
+    
+    }
+
   
   empty_row <- matrix(NA, nrow = 1, ncol = nlevels(data[, strat_var]))
   colnames(empty_row) <- levels(data[, strat_var])
-  
-  
-  Median = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = median, na.rm = TRUE, drop = FALSE)[, 2]
-  Mean = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = mean, na.rm = TRUE, drop = FALSE)[, 2]
-  
-  Min = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = min, na.rm = TRUE, drop = FALSE)[, 2]
-  Max = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = max, na.rm = TRUE, drop = FALSE)[, 2]
-  
-  First.Quartile = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = quantile, probs = 0.25, na.rm = TRUE, drop = FALSE)[, 2]
-  Third.Quartile = stats::aggregate(data[, covariate_var], list(subgroup = data[, strat_var]), FUN = quantile, probs = 0.75, na.rm = TRUE, drop = FALSE)[, 2]
   
   
   summdf <- data.frame(Median, Mean, Min, Max, First.Quartile, Third.Quartile)
@@ -279,7 +366,7 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
+wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -289,7 +376,7 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
   stopifnot(nrow(data) > 0)
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_vars, strat_var), drop = FALSE]
+  data <- data[, c(covariate_vars, strat_var, weights_var), drop = FALSE]
   
   
   stopifnot(length(covariate_vars) >= 1)
@@ -327,11 +414,11 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
     
     if(class(data[, covariate_var]) == "factor"){
       
-      wrapper_res <- wrapper_characteristics_core_cat(data = data, covariate_var = covariate_var, strat_var = strat_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
+      wrapper_res <- wrapper_characteristics_core_cat(data = data, covariate_var = covariate_var, strat_var = strat_var, weights_var = weights_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
       
     }else{
       
-      wrapper_res <- wrapper_characteristics_core_num(data = data, covariate_var = covariate_var, strat_var = strat_var, variable_names = variable_names, caption = caption, out_colname = out_colname, display_statistics = display_statistics)
+      wrapper_res <- wrapper_characteristics_core_num(data = data, covariate_var = covariate_var, strat_var = strat_var, weights_var = weights_var, variable_names = variable_names, caption = caption, out_colname = out_colname, display_statistics = display_statistics)
       
     }
     
@@ -383,13 +470,13 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
 #' @param covariate_vars Covariates to summarise
 #' @param bep_vars Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).
 #' @export
-wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, population_var = "Population", strat_vars = c(population_var, treatment_var), strat1_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean"), lex_order = TRUE, include_pooled_arms = TRUE){
+wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, population_var = "Population", strat_vars = c(population_var, treatment_var), strat1_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean"), lex_order = TRUE, include_pooled_arms = TRUE){
   
   
   
   ### Keep only those variables that are used for the analysis
   
-  data <- data[, c(covariate_vars, bep_vars, treatment_var, strat1_var), drop = FALSE]
+  data <- data[, c(covariate_vars, bep_vars, treatment_var, strat1_var, weights_var), drop = FALSE]
   
   
   data_list <- list()
@@ -455,7 +542,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
   table(data_rbind[, strat_var])
   
   
-  characteristics_bep <- wrapper_characteristics_core(data = data_rbind, covariate_vars = covariate_vars, strat_var = strat_var, variable_names = variable_names, caption = caption, display_statistics = display_statistics)
+  characteristics_bep <- wrapper_characteristics_core(data = data_rbind, covariate_vars = covariate_vars, strat_var = strat_var, weights_var = weights_var, variable_names = variable_names, caption = caption, display_statistics = display_statistics)
   
   
   bheader(characteristics_bep) <- NULL

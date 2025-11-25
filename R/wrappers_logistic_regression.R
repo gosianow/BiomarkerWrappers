@@ -21,7 +21,7 @@
 #' @details 
 #' If for a factor covariate that should be returned the reference level has zero counts, results are set to NA because this levels is not used as a reference which means that it is not possible to estimate odds ratios that we want.
 #' @export
-wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_core_simple <- function(data, response_var, covariate_vars, return_vars = covariate_vars, weights_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -44,17 +44,17 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   
   ### Keep non-missing data
   
-  data <- data[stats::complete.cases(data[, c(response_var, covariate_vars)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, covariate_vars, weights_var)]), ]
   
   stopifnot(nrow(data) > 0)
   
   weights <- NULL
   if(!is.null(weights_var)){
     weights <- data[, weights_var]
-    if(all(weights == 1)){
-      weights_var <- NULL
-      weights <- NULL
-    }
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
   }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -97,7 +97,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       
       
       if(!is.null(weights_var)){
-        
+
         survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
         
         tbl <- survey::svytable(as.formula(paste0("~ ", covariate_vars[i])), design = survey_design)
@@ -152,10 +152,11 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
           by = data[, covariate_vars[i]],            # Grouping variable
           design = survey_design,
           FUN = survey::svymean,                  # Function to calculate the weighted mean (proportion)
-          keep.var = TRUE                 # Keep the variance/SE for CI calculation
+          keep.var = TRUE,
+          na.rm    = TRUE,
+          drop.empty.groups = FALSE
         )
-        
-        
+
         response_CI <- confint(results) * 100
         colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
         
@@ -226,7 +227,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       # Fit the model
       regression_fit <- NULL
       
-      try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit")), silent = TRUE)
+      try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = quasibinomial()), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL
@@ -243,7 +244,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       ## Fit the logistic model
       regression_fit <- NULL
       
-      try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights), silent = TRUE)
+      try(regression_fit <- glm(formula = f, family = binomial(), data = data, weights = weights), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL
@@ -466,7 +467,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = NULL, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = covariate_vars, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -496,7 +497,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
   
   ### Keep non-missing data
   
-  data <- data[stats::complete.cases(data[, c(response_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, covariate_vars, weights_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -651,7 +652,6 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     
     covariate_vars <- c(biomarker_vars[i], adjustment_vars)
     return_vars <- biomarker_vars[i]
-    
     
     wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
@@ -910,10 +910,10 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   weights <- NULL
   if(!is.null(weights_var)){
     weights <- data[, weights_var]
-    if(all(weights == 1)){
-      weights_var <- NULL
-      weights <- NULL
-    }
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
   }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -1053,7 +1053,7 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
       
       regression_fit <- NULL
       
-      try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = binomial(link = "logit")), silent = TRUE)
+      try(regression_fit <- survey::svyglm(formula = f, design = survey_design, family = quasibinomial()), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL
@@ -1069,7 +1069,7 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
       regression_fit <- NULL
       
       ## Fit the logistic model
-      try(regression_fit <- glm(formula = f, family = binomial(link = "logit"), data = data, weights = weights), silent = TRUE)
+      try(regression_fit <- glm(formula = f, family = binomial(), data = data, weights = weights), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL

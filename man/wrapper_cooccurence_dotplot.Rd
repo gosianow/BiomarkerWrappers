@@ -4,7 +4,7 @@
 \alias{wrapper_cooccurence_dotplot}
 \title{Dotplot with cooccurence odds ratios}
 \usage{
-wrapper_cooccurence_dotplot(x, order = TRUE, title = "")
+wrapper_cooccurence_dotplot(x, order = TRUE, weights = NULL, title = "")
 }
 \arguments{
 \item{x}{Data frame with covariates where absence is encoded as 0 and presence is encoded as 1.}

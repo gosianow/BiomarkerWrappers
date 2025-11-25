@@ -68,10 +68,10 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   weights <- NULL
   if(!is.null(weights_var)){
     weights <- data[, weights_var]
-    if(all(weights == 1)){
-      weights_var <- NULL
-      weights <- NULL
-    }
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
   }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)

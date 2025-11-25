@@ -1,7 +1,7 @@
 Package: BiomarkerWrappers
 Type: Package
 Title: Suite of wrapper functions for exploratory biomarker analysis
-Version: 0.0.0.65
+Version: 0.0.0.66
 Authors@R: 
     person(given = "Malgorzata",
            family = "Nowicka",

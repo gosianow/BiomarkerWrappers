@@ -52,7 +52,7 @@
 #' 
 #' 
 #' @export
-wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, weights_var = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
+wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = covariate_vars, weights_var = NULL, keep_obs = TRUE, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -102,10 +102,10 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   weights <- NULL
   if(!is.null(weights_var) & nrow(data) > 0){
     weights <- data[, weights_var]
-    if(all(weights == 1)){
-      weights_var <- NULL
-      weights <- NULL
-    }
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
   }
   
   
@@ -388,6 +388,8 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     dplyr::left_join(coefficients, by = "coefficient")
   
   
+  coef_info$pvalue[!is.na(coef_info$pvalue) & coef_info$pvalue == 0] <- 1e-320
+  
   ## Calculate adjusted p-values using the Benjamini & Hochberg method
   coef_info$adj_pvalue <- stats::p.adjust(coef_info$pvalue, method = "BH")
   
@@ -598,7 +600,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
 #' boutput(x)
 #' 
 #' @export
-wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = NULL, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
+wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = covariate_vars, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
@@ -1097,10 +1099,10 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   weights <- NULL
   if(!is.null(weights_var)){
     weights <- data[, weights_var]
-    if(all(weights == 1)){
-      weights_var <- NULL
-      weights <- NULL
-    }
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
   }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
@@ -1326,6 +1328,8 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     dplyr::left_join(conf_int, by = "coefficient") %>% 
     dplyr::left_join(coefficients, by = "coefficient")
   
+  
+  coef_info$pvalue[!is.na(coef_info$pvalue) & coef_info$pvalue == 0] <- 1e-320
   
   ## Calculate adjusted p-values using the Benjamini & Hochberg method
   coef_info$adj_pvalue <- stats::p.adjust(coef_info$pvalue, method = "BH")

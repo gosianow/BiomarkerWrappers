@@ -8,6 +8,7 @@ wrapper_characteristics_core_cat(
   data,
   covariate_var,
   strat_var = NULL,
+  weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
   out_colname = "Value"

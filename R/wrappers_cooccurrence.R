@@ -15,7 +15,8 @@ NULL
 #' 
 #' @param x Data frame with covariates where absence is encoded as 0 and presence is encoded as 1.
 #' @export
-or_matrix <- function(x){
+or_matrix <- function(x, weights = NULL){
+  
   
   out_or <- matrix(Inf, nrow = ncol(x), ncol = ncol(x))
   rownames(out_or) <- colnames(x)
@@ -25,22 +26,40 @@ or_matrix <- function(x){
   rownames(out_pval) <- colnames(x)
   colnames(out_pval) <- colnames(x)
   
+  
   for(i in 1:(ncol(x) - 1)){
     
     for(j in (i+1):ncol(x)){
-      # i = 1; j = 3
+      # i = 1; j = 2
       
       # print(i)
       # print(j)
       
-      tbl <- table(x[, i], x[, j])
-      
-      ## Fisher's exact test
-      prop_test_res <- NULL
-      try(prop_test_res <- fisher.test(tbl), silent = TRUE)
-      if(is.null(prop_test_res)){
-        try(prop_test_res <- fisher.test(tbl, simulate.p.value = TRUE))
+      if(!is.null(weights)){
+        
+        xx <- x
+        colnames(xx) <- make.names(colnames(xx))
+        
+        survey_design <- survey::svydesign(ids = ~1, weights = weights, data = xx)
+        
+        prop_test_res <- NULL
+        
+        try(prop_test_res <- survey::svychisq(as.formula(paste0("~ ", colnames(xx)[i], " + ", colnames(xx)[j])), design = survey_design, statistic = "F", na.rm = TRUE))
+        
+
+      }else{
+        
+        tbl <- table(x[, i], x[, j])
+        
+        ## Fisher's exact test
+        prop_test_res <- NULL
+        try(prop_test_res <- fisher.test(tbl), silent = TRUE)
+        if(is.null(prop_test_res)){
+          try(prop_test_res <- fisher.test(tbl, simulate.p.value = TRUE))
+        }
+        
       }
+
       
       if(is.null(prop_test_res)){
         out_or[i, j] <- NA
@@ -250,13 +269,14 @@ wrapper_cooccurence_heatmap <- function(x, method = "Jaccard", column_title = ""
 #' 
 #' @param x Data frame with covariates where absence is encoded as 0 and presence is encoded as 1.
 #' @export
-wrapper_cooccurence_dotplot <- function(x, order = TRUE, title = ""){
+wrapper_cooccurence_dotplot <- function(x, order = TRUE, weights = NULL, title = ""){
   
   
-  out <- or_matrix(x)
+  out <- or_matrix(x, weights = weights)
   
   ### We can compute OR only for variables with two factor levels. Otherwise, replace with -log10(p-value)
-  if(!all(sapply(x, nlevels) == 2)){
+  ### And no OR when using weights
+  if(!all(sapply(x, nlevels) == 2) || !is.null(weights)){
     
     
     ## LogOR
