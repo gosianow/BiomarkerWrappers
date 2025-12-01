@@ -8,6 +8,7 @@ wrapper_fishers_test(
   data,
   col_var,
   row_vars,
+  weights_var = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
   variable_names = NULL,

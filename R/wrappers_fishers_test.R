@@ -8,7 +8,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_OR = TRUE){
+wrapper_fishers_test_core <- function(data, col_var, row_var, weights_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -26,9 +26,19 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
   
   
   ### Keep non-missing data
-  all_vars <- c(col_var, row_var)
+  all_vars <- c(col_var, row_var, weights_var)
   data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
   stopifnot(nrow(data) > 0)
+  
+  
+  weights <- NULL
+  if(!is.null(weights_var)){
+    weights <- data[, weights_var]
+    # if(all(weights == 1)){
+    #   weights_var <- NULL
+    #   weights <- NULL
+    # }
+  }
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -37,40 +47,88 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
   # Calculate counts and proportions and do testing
   # --------------------------------------------------------------------------
   
-  tbl <- table(data[, row_var], data[, col_var])
   
-  if(margin == 3){
-    prop <- tbl / margin.table(tbl) * 100
-  }else{
-    prop <- prop.table(tbl, margin = margin) * 100
-  }
-  
-  if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
-    ## Fisher's exact test: get odds rations and CI for OR
+  if(!is.null(weights_var)){
     
-    test_res <- NULL
-    try(test_res <- fisher.test(tbl), silent = TRUE)
-    if(is.null(test_res)){
-      try(test_res <- fisher.test(tbl, simulate.p.value = TRUE), silent = TRUE)
+    survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+    
+    tbl <- survey::svytable(as.formula(paste0("~ ", row_var, " + ", col_var)), design = survey_design)
+    
+    if(margin == 3){
+      prop <- tbl / margin.table(tbl) * 100
+    }else{
+      prop <- prop.table(tbl, margin = margin) * 100
     }
     
-    if(is.null(test_res)){
+    ## Replace NaN with NA
+    prop[is.na(prop)] <- NA
+    
+    tbl <- round(tbl, digits = 1)
+    
+    if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
+      ## Rao–Scott second-order design-adjusted chi-square test of independence
+      
+      test_res <- NULL
+      
+      try(test_res <- survey::svychisq(as.formula(paste0("~ ", row_var, " + ", col_var)), design = survey_design, statistic = "F", na.rm = TRUE))
+      
+      ## This test does not calculate OR
+      
+      OR <- NA
+      
+      if(is.null(test_res)){
+        pvalue <- NA
+      }else{
+        pvalue <- test_res$p.value
+      }
+      
+    }else{
       pvalue <- NA
       OR <- NA
-    }else{
-      pvalue <- test_res$p.value
-      OR <- test_res$estimate
-      if(is.null(OR)){
-        OR <- NA
-      }
     }
     
+    
   }else{
-    pvalue <- NA
-    OR <- NA
+    
+    
+    tbl <- table(data[, row_var], data[, col_var])
+    
+    if(margin == 3){
+      prop <- tbl / margin.table(tbl) * 100
+    }else{
+      prop <- prop.table(tbl, margin = margin) * 100
+    }
+    
+    if(sum(margin.table(tbl, margin = 1) >= 1) >= 2 && sum(margin.table(tbl, margin = 2) >= 1) >= 2){
+      ## Fisher's exact test: get odds rations and CI for OR
+      
+      test_res <- NULL
+      try(test_res <- fisher.test(tbl), silent = TRUE)
+      if(is.null(test_res)){
+        try(test_res <- fisher.test(tbl, simulate.p.value = TRUE), silent = TRUE)
+      }
+      
+      if(is.null(test_res)){
+        pvalue <- NA
+        OR <- NA
+      }else{
+        pvalue <- test_res$p.value
+        OR <- test_res$estimate
+        if(is.null(OR)){
+          OR <- NA
+        }
+      }
+      
+    }else{
+      pvalue <- NA
+      OR <- NA
+    }
+    
+    
+    
   }
   
-  
+
   
   # --------------------------------------------------------------------------
   # Prepare 'res' data frame
@@ -140,7 +198,11 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
   
   if(is.null(caption)){
     
-    caption <- paste0("Fisher's exact test.")
+    if(!is.null(weights_var)){
+      caption <- paste0("Rao–Scott second-order design-adjusted chi-square test of independence.")
+    }else{
+      caption <- paste0("Fisher's exact test.")
+    }
     
   }
   
@@ -167,7 +229,7 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, variable_names = N
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat1_var Name of the second stratification variable.
 #' @export
-wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_fishers_test_core_strat <- function(data, col_var, row_var, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -200,7 +262,7 @@ wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var =
   }
   
   ### Keep non-missing data
-  all_vars <- c(col_var, row_var, strat1_var, strat2_var)
+  all_vars <- c(col_var, row_var, weights_var, strat1_var, strat2_var)
   data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
   stopifnot(nrow(data) > 0)
   
@@ -237,7 +299,7 @@ wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var =
       }
       
       
-      wrapper_res <- wrapper_fishers_test_core(data = data_strata1, col_var = col_var, row_var = row_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues, print_OR = print_OR)
+      wrapper_res <- wrapper_fishers_test_core(data = data_strata1, col_var = col_var, row_var = row_var, weights_var = weights_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = force_empty_cols, print_pvalues = print_pvalues, print_OR = print_OR)
       
       res <- bresults(wrapper_res)
       out <- boutput(wrapper_res)
@@ -333,7 +395,7 @@ wrapper_fishers_test_core_strat <- function(data, col_var, row_var, strat1_var =
 #' @inheritParams wrapper_fishers_test_core_strat
 #' @param row_vars Vector with names of categorical variables.
 #' @export
-wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_fishers_test <- function(data, col_var, row_vars, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, margin = 1, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -357,7 +419,7 @@ wrapper_fishers_test <- function(data, col_var, row_vars, strat1_var = NULL, str
     
     row_var <- row_vars[i]
     
-    wrapper_res <- wrapper_fishers_test_core_strat(data, col_var = col_var, row_var = row_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
+    wrapper_res <- wrapper_fishers_test_core_strat(data, col_var = col_var, row_var = row_var, weights_var = weights_var, strat1_var = strat1_var, strat2_var = strat2_var, variable_names = variable_names, caption = caption, margin = margin, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     return(wrapper_res)
     
