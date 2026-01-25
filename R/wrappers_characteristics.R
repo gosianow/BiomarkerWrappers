@@ -38,7 +38,11 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
   
   weights <- NULL
   if(!is.null(weights_var) & nrow(data) > 0){
+    
+    data <- data[!is.na(data[, weights_var]), , drop = FALSE]
+    
     weights <- data[, weights_var]
+
     # if(all(weights == 1)){
     #   weights_var <- NULL
     #   weights <- NULL
@@ -217,7 +221,11 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   
   weights <- NULL
   if(!is.null(weights_var) & nrow(data) > 0){
+
+    data <- data[!is.na(data[, weights_var]), , drop = FALSE]
+    
     weights <- data[, weights_var]
+    
     # if(all(weights == 1)){
     #   weights_var <- NULL
     #   weights <- NULL

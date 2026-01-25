@@ -147,7 +147,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       
       if(!is.null(weights)){
         
-        survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
+        survey_design <- survey::svydesign(ids = ~1, weights = weights, data = mutate_at(data, censor_var, factor, levels = c(0, 1)))
         
         tbl <- survey::svytable(as.formula(paste0("~ ", covariate_vars[i])), design = survey_design)
         
@@ -172,7 +172,6 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
         prop_event[is.na(prop_event)] <- NA
         
       }
-      
       
       
       out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event[, "1"]), propevent = as.numeric(prop_event[, "1"]),
@@ -640,6 +639,9 @@ wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, 
     
     wrapper_res <- lapply(1:length(strata1_levels), function(i){
       # i = 3
+      
+      # print(strata2_levels[j])
+      # print(strata1_levels[i])
       
       
       # By introducing keep_obs we are able to display empty results in the output tables for empty subgroups

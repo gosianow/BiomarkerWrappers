@@ -319,7 +319,7 @@ cut2 <- function(x, breaks, labels = NULL, right = TRUE, dig.lab = 3){
   
   breaks_orig <- breaks
   
-  breaks <- c(min(x, na.rm = TRUE) - 1, breaks_orig, max(x, na.rm = TRUE) + 1)
+  breaks <- c(min(c(x, breaks_orig), na.rm = TRUE) - 1, breaks_orig, max(c(x, breaks_orig), na.rm = TRUE) + 1)
   
   
   if(is.null(labels)){
