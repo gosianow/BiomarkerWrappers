@@ -46,7 +46,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
-  label_size = 4.5, label_angle = 0, label_nudge = 0.025,
+  label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", scale_x_discrete_drop = FALSE){
@@ -666,7 +666,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
 # strat1_var = NULL; strat2_var = NULL;
 # colors_bar = NULL;
 # variable_names = NULL;
-# xlab = NULL; ylab = NULL; title = NULL; strat1_label_both = TRUE; strat2_label_both = TRUE;
+# xlab = NULL; ylab = NULL; title = NULL; strat1_label_both = FALSE; strat2_label_both = FALSE;
 # legend_colors_title = NULL; facet_label_both = TRUE;
 # skip_levels = NULL; method = "facet";
 # show_proportions = TRUE; show_counts = TRUE; show_subtotal_proportions = FALSE; show_total_counts = TRUE;
@@ -688,11 +688,11 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, color_border = "black", weights_var = NULL, 
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
-  label_size = 4.5, label_angle = 0, label_nudge = 0.025,
+  label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", scale_x_discrete_drop = FALSE, 
@@ -871,11 +871,11 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
   strat1_var = NULL, strat2_var = NULL,
   colors_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
-  label_size = 4.5, label_angle = 0, label_nudge = 0.025,
+  label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", scale_x_discrete_drop = FALSE, 
@@ -954,11 +954,11 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL, 
   colors_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
-  label_size = 4.5, label_angle = 0, label_nudge = 0.025,
+  label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", scale_x_discrete_drop = FALSE, 
@@ -1093,11 +1093,11 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL,
   colors_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, strat1_levels = "fixed",
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   skip_levels = NULL, method = "facet", 
   show_proportions = TRUE, show_counts = TRUE, show_subtotal_proportions = FALSE, show_subtotal_counts = FALSE, show_total_counts = FALSE, 
-  label_size = 4.5, label_angle = 0, label_nudge = 0.025,
+  label_size = 4, label_angle = 0, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", ylim = NULL, 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
   background_grid_major = "none", scale_x_discrete_drop = FALSE, 

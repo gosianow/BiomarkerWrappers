@@ -64,7 +64,7 @@ wrapper_error_line_plot_core_strat <- function(data, x_var, y_var, color_line_va
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, 
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
   legend_colors_line_title = TRUE, legend_position = "right",
   xlim = NULL, ylim = NULL, 
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){

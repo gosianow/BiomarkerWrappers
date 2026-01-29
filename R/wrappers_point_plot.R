@@ -361,7 +361,7 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, shapes_point = NULL, 
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
   legend_colors_point_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", aspect_ratio = NULL, facet_label_both = TRUE, 
   point_size = 1.5, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
   smooth = "none", smooth_method = "auto", smooth_formula = y ~ x, smooth_se = FALSE,

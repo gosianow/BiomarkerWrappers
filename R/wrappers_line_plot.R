@@ -439,7 +439,7 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   strat1_var = NULL, strat2_var = NULL, 
   colors_line = NULL, palette_line = NULL, colors_point = NULL, palette_point = NULL, shapes_point = NULL, colors_box = "snow",
   variable_names = NULL, 
-  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = TRUE, strat2_label_both = TRUE, 
+  title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
   legend_colors_line_title = TRUE, legend_colors_point_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", legend_drop = TRUE, aspect_ratio = NULL, facet_label_both = TRUE, 
   line_size = 1, line_type = 1, line_alpha = 1,
   smooth = "none", smooth_method = "lm", smooth_formula = y ~ x, smooth_se = FALSE,
