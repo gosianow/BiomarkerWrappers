@@ -2,18 +2,18 @@
 % Please edit documentation in R/helper_functions.R
 \name{format_or}
 \alias{format_or}
-\title{Format Odds Ratios}
+\title{Format Odds/Hazard Ratios}
 \usage{
 format_or(x, digits = 2, non_empty = NULL)
 }
 \arguments{
-\item{x}{Vector with odds ratios.}
+\item{x}{Vector with odds/hazard ratios.}
 
 \item{digits}{Number of decimal places.}
 
 \item{non_empty}{Vector defining which values should be displayed despite being NAs.}
 }
 \description{
-Format Odds Ratios
+Format Odds/Hazard Ratios
 }
 \keyword{internal}

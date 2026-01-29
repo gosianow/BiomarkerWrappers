@@ -1073,15 +1073,15 @@ format_pvalues2 <- function(x, digits = 4, asterisk = TRUE){
 
 
 
-#' Format Odds Ratios
+#' Format Odds/Hazard Ratios
 #' 
-#' @param x Vector with odds ratios.
+#' @param x Vector with odds/hazard ratios.
 #' @param digits Number of decimal places.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal 
 format_or <- function(x, digits = 2, non_empty = NULL){
   
-  max_val <- 100
+  max_val <- 10^digits
   
   if(!is.null(non_empty)){
     if(is.logical(non_empty)){
@@ -1153,8 +1153,6 @@ format_difference <- function(x, digits = 2, non_empty = NULL){
     return(output)
   }
   
-  min_val <- 1/10^digits
-  
   output <- formatC(x, format = "f", digits = digits, drop0trailing = FALSE)
   output[is.na(x)] <- "NA"
   
@@ -1170,14 +1168,14 @@ format_difference <- function(x, digits = 2, non_empty = NULL){
 
 
 
-#' Format CIs (confidence intervals)
+#' Format CIs (confidence intervals) for Odds/Hazard Ratios
 #' 
 #' @param CI_lower Vector with lower CIs.
 #' @param CI_upper Vector with upper CIs.
 #' @param digits Number of decimal places.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL, parentheses = FALSE){
+format_or_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL, parentheses = FALSE){
   
   stopifnot(length(CI_lower) == length(CI_upper))
   
@@ -1203,9 +1201,16 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL, parenth
   
   
   if(parentheses){
-    output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), "% - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), "%)")
+    # output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), "% - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), "%)")
+    
+    output <- paste0("(", format_or(CI_lower, digits = digits, non_empty = non_empty), "% - ", format_or(CI_upper, digits = digits, non_empty = non_empty), "%)")
+    
+    
   }else{
-    output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
+    # output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
+    
+    output <- paste0("(", format_or(CI_lower, digits = digits, non_empty = non_empty), " - ", format_or(CI_upper, digits = digits, non_empty = non_empty), ")")
+    
   }
   
   
@@ -1222,16 +1227,78 @@ format_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL, parenth
 }
 
 
-#' Format CIs (confidence intervals)
+
+
+#' Format CIs (confidence intervals) for Difference
+#' 
+#' @param CI_lower Vector with lower CIs.
+#' @param CI_upper Vector with upper CIs.
+#' @param digits Number of decimal places.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
+#' @keywords internal
+format_difference_CIs <- function(CI_lower, CI_upper, digits = 2, non_empty = NULL, parentheses = FALSE){
+  
+  stopifnot(length(CI_lower) == length(CI_upper))
+  
+  if(!is.null(non_empty)){
+    if(is.logical(non_empty)){
+      stopifnot(length(non_empty) == length(CI_lower))
+    }else{
+      non_empty_logical <- rep(FALSE, length(CI_lower))
+      non_empty_logical[non_empty] <- TRUE
+      non_empty <- non_empty_logical
+      stopifnot(length(non_empty) == length(CI_lower))
+    }
+  }
+  
+  if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper) && is.null(non_empty)){
+    output <- rep("", length(CI_lower))
+    return(output)
+  }else if(sum(is.na(CI_lower)) == length(CI_lower) && sum(is.na(CI_upper)) == length(CI_upper) && !is.null(non_empty)){
+    output <- rep("", length(CI_lower))
+    output[non_empty] <- "NA"
+    return(output)
+  }
+  
+  
+  if(parentheses){
+    # output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), "% - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), "%)")
+    
+    output <- paste0("(", format_difference(CI_lower, digits = digits, non_empty = non_empty), "% - ", format_difference(CI_upper, digits = digits, non_empty = non_empty), "%)")
+    
+    
+  }else{
+    # output <- paste0("(", formatC(CI_lower, format = "f", digits = digits, drop0trailing = FALSE), " - ", formatC(CI_upper, format = "f", digits = digits, drop0trailing = FALSE), ")")
+    
+    output <- paste0("(", format_difference(CI_lower, digits = digits, non_empty = non_empty), " - ", format_difference(CI_upper, digits = digits, non_empty = non_empty), ")")
+    
+  }
+  
+  
+  output[is.na(CI_lower) & is.na(CI_upper)] <- "NA"
+  
+  if(is.null(non_empty)){
+    output[output == "NA"] <- ""
+  }else{
+    output[output == "NA" & !non_empty] <- ""
+  }
+  
+  return(output)
+  
+}
+
+
+
+#' Format CIs (confidence intervals) for Odds/Hazard Ratios
 #' 
 #' @param x Data frame.
 #' @param digits Number of decimal places.
 #' @param colnames New colnames.
 #' @param non_empty Vector defining which values should be displayed despite being NAs.
 #' @keywords internal
-format_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL, parentheses = FALSE){
+format_or_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL, parentheses = FALSE){
   
-  output <- data.frame(format_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty, parentheses = parentheses), stringsAsFactors = FALSE)
+  output <- data.frame(format_or_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty, parentheses = parentheses), stringsAsFactors = FALSE)
   colnames(output) <- colnames
   
   return(output)
@@ -1239,6 +1306,21 @@ format_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL, pare
 }
 
 
+#' Format CIs (confidence intervals) for Difference
+#' 
+#' @param x Data frame.
+#' @param digits Number of decimal places.
+#' @param colnames New colnames.
+#' @param non_empty Vector defining which values should be displayed despite being NAs.
+#' @keywords internal
+format_difference_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty = NULL, parentheses = FALSE){
+  
+  output <- data.frame(format_difference_CIs(x[, 1], x[, 2], digits = digits, non_empty = non_empty, parentheses = parentheses), stringsAsFactors = FALSE)
+  colnames(output) <- colnames
+  
+  return(output)
+  
+}
 
 
 #' Format versus
@@ -1645,7 +1727,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
         
         ### d3_20 + Add another 20 colors
         
-        colors_default <- c("#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
+        colors_default <- c("#2385ca", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5",
           "#CD5B45", "#FF7256", "#CD950C", "#FFB90F", "#66CDAA", "#7FFFD4", "#3A5FCD", "#1E90FF", "#CD00CD", "#FF00FF", "#698B22", "#C0FF3E", "#6C7B8B", "#B9D3EE", "#CDCD00", "#FFFF00", "#008B45", "#00FF7F", "#CDB5CD", "#FFE1FF")
         
         
@@ -1661,7 +1743,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
         
         ### Mix d3 20 - light color first with paired colors from brewer.pal + Add another 20 colors
         
-        colors_default <- c("#aec7e8", "#1F78B4", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf",
+        colors_default <- c("#aec7e8", "#2385ca", "#FDBF6F", "#FF7F00", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#c5b0d5", "#9467bd", "#c49c94", "#8c564b", "#f7b6d2", "#e377c2", "#c7c7c7", "#7f7f7f", "#dbdb8d", "#bcbd22", "#9edae5", "#17becf",
           "#FF7256", "#CD5B45", "#FFB90F", "#CD950C", "#7FFFD4", "#66CDAA", "#1E90FF", "#3A5FCD", "#FF00FF", "#CD00CD", "#C0FF3E", "#698B22", "#B9D3EE", "#6C7B8B", "#FFFF00", "#CDCD00", "#00FF7F", "#008B45", "#FFE1FF", "#CDB5CD")
         
         
@@ -1675,7 +1757,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
         
       }else if(palette == "d3_20"){
         
-        colors_default <- c("#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5")
+        colors_default <- c("#2385ca", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5")
         
         
         # barplot(rep(1, length(colors_default)), col = colors_default)
@@ -1689,7 +1771,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
       }else if(palette == "d3_10"){
         
         
-        colors_default <-c('#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf')
+        colors_default <-c('#2385ca', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf')
         
         
         # barplot(rep(1, length(colors_default)), col = colors_default)
@@ -1891,7 +1973,7 @@ format_colors_cat <- function(x, colors = NULL, palette = NULL, rev = FALSE, all
         
         ### paired
         
-        colors_default <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+        colors_default <- c("#A6CEE3", "#2385ca", "#B2DF8A", "#33A02C", "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00", "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
         
         # barplot(rep(1, length(colors_default)), col = colors_default)
         

@@ -296,14 +296,14 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
     `N` = format_difference(res$n, digits = 0),
     format_counts_and_props_df(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
     
-    as.data.frame(matrix(format_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")]), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
+    as.data.frame(matrix(format_difference_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")]), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
     check.names = FALSE, stringsAsFactors = FALSE)
   
   
   
   if(method == "pearson"){
     out$Difference = format_difference(res$difference, digits = 2, non_empty = 1)
-    out$`Difference 95% CI` = format_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2, non_empty = 1)
+    out$`Difference 95% CI` = format_difference_CIs(res$difference_CI95_lower, res$difference_CI95_upper, digits = 2, non_empty = 1)
     ### If all Difference are empty, do not display that column.
     if(all(out$Difference %in% c("", "NA")) && !force_empty_cols){
       out$Difference <- NULL
@@ -312,7 +312,7 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
     
   }else{
     out$OR = format_or(res$OR, digits = 2, non_empty = 1)
-    out$`OR 95% CI` = format_CIs(res$OR_CI95_lower, res$OR_CI95_upper, digits = 2, non_empty = 1)
+    out$`OR 95% CI` = format_or_CIs(res$OR_CI95_lower, res$OR_CI95_upper, digits = 2, non_empty = 1)
     
     ### If all OR are empty, do not display that column.
     if(all(out$OR %in% c("", "NA")) && !force_empty_cols){

@@ -269,7 +269,7 @@ wrapper_ncc_cox_regression_core_prognostic <- function(data, tte_var, censor_var
   
   out3 <- data.frame(
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
-    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
+    `HR 95% CI` = format_or_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
     `P-value` = format_pvalues(res$pvalue, non_empty = res$HR_non_empty),
     `Adj. P-value` = format_pvalues(res$adj_pvalue, non_empty = res$HR_non_empty),
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -633,7 +633,7 @@ wrapper_ncc_cox_regression_core_predictive <- function(data, tte_var, censor_var
   
   out3 <- data.frame(
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
-    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
+    `HR 95% CI` = format_or_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
     `P-value` = format_pvalues(res$pvalue, non_empty = -1),
     check.names = FALSE, stringsAsFactors = FALSE)
   
@@ -1014,7 +1014,7 @@ wrapper_ncc_cox_regression_core_predictive2 <- function(data, tte_var, censor_va
   
   out3 <- data.frame(
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
-    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
+    `HR 95% CI` = format_or_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
     `P-value` = format_pvalues(res$pvalue, non_empty = -1),
     check.names = FALSE, stringsAsFactors = FALSE)
   

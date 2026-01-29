@@ -443,13 +443,13 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     `N` = format_difference(res$n, digits = 0),
     `Events` = format_counts_and_props(counts = res$nevent, props = res$propevent, digits = 1),
     `MST` = format_difference(res$MST, digits = 1, non_empty = res$covariate_class == "factor"),
-    `MST 95% CI` = format_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = res$covariate_class == "factor"),
+    `MST 95% CI` = format_difference_CIs(res$MST_CI95_lower, res$MST_CI95_upper, digits = 1, non_empty = res$covariate_class == "factor"),
     check.names = FALSE, stringsAsFactors = FALSE)
   
   
   out3 <- data.frame(
     `HR` = format_or(res$HR, non_empty = res$HR_non_empty),
-    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
+    `HR 95% CI` = format_or_CIs(res$HR_CI95_lower, res$HR_CI95_upper, non_empty = res$HR_non_empty),
     `P-value` = format_pvalues(res$pvalue, non_empty = res$HR_non_empty),
     `Adj. P-value` = format_pvalues(res$adj_pvalue, non_empty = res$HR_non_empty),
     check.names = FALSE, stringsAsFactors = FALSE)
@@ -468,7 +468,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       
       if(print_sr_cis){
         
-        out2$SR_CI95 <- format_CIs(res[, paste0("SR", sr_times[j], "_CI95_lower")], res[, paste0("SR", sr_times[j], "_CI95_upper")], digits = 1, non_empty = res$covariate_class == "factor", parentheses = TRUE)
+        out2$SR_CI95 <- format_difference_CIs(res[, paste0("SR", sr_times[j], "_CI95_lower")], res[, paste0("SR", sr_times[j], "_CI95_upper")], digits = 1, non_empty = res$covariate_class == "factor", parentheses = TRUE)
         
         colnames(out2) <- paste0(paste0("SR ", sr_times[j]), c("", " 95% CI"))
         
@@ -1372,7 +1372,7 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     Effect2 = format_vs(res$subgroup2, res$reference2),
     `Total N` = as.character(res$n_total),
     `HR` = format_or(res$HR),
-    `HR 95% CI` = format_CIs(res$HR_CI95_lower, res$HR_CI95_upper),
+    `HR 95% CI` = format_or_CIs(res$HR_CI95_lower, res$HR_CI95_upper),
     `P-value` = format_pvalues(res$pvalue),
     `Adj. P-value` = format_pvalues(res$adj_pvalue),
     check.names = FALSE, stringsAsFactors = FALSE)
