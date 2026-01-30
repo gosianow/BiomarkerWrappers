@@ -32,7 +32,7 @@ wrapper_bar_plot_yvars_core_strat(
   show_subtotal_proportions = FALSE,
   show_subtotal_counts = FALSE,
   show_total_counts = FALSE,
-  label_size = 4,
+  label_size = 12,
   label_angle = 0,
   label_nudge = 0.025,
   title_size = NULL,
