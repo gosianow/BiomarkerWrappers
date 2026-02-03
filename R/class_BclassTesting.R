@@ -270,7 +270,17 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   ### Displayed text
   ### ----------------------------------------------------------------------
   
-  res[res[, upper_var] %in% Inf, upper_var] <- NA
+  if(mean_var %in% c("HR", "OR")){
+    
+    res[res[, upper_var] > clip[2] & !is.na(res[, upper_var]), upper_var] <- clip[2]
+    res[res[, lower_var] < clip[1] & !is.na(res[, lower_var]), lower_var] <- clip[1]
+    
+  }else{
+    res[res[, upper_var] %in% Inf, upper_var] <- NA
+    res[res[, lower_var] %in% -Inf, lower_var] <- NA
+  }
+  
+
   
   labeltext <- rbind(colnames(out), out)
   
