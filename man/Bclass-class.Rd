@@ -151,7 +151,6 @@ bheader(x) <- value
   xlog = FALSE,
   clip = NULL,
   xticks = NULL,
-  xticks_by = NULL,
   lineheight = "auto",
   label_fontsize = 14,
   caption_width = 150,

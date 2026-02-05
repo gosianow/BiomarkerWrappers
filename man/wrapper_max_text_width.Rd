@@ -6,7 +6,7 @@
 \usage{
 wrapper_max_text_width(
   text,
-  fontsize = 12,
+  fontsize = ggplot2::theme_get()$axis.text$size,
   rot = 0,
   wrap_width = NULL,
   unit = "inches"

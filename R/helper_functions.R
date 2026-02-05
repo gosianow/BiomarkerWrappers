@@ -2,7 +2,7 @@
 #' Maximum height of text
 #' 
 #' @export
-wrapper_max_text_height <- function(text, fontsize = 12, rot = 0, wrap_width = NULL, unit = "inches"){
+wrapper_max_text_height <- function(text, fontsize = ggplot2::theme_get()$axis.text$size, rot = 0, wrap_width = NULL, unit = "inches"){
   
   if(!is.null(wrap_width)){
     text <- stringr::str_wrap(text, width = wrap_width)
@@ -18,7 +18,7 @@ wrapper_max_text_height <- function(text, fontsize = 12, rot = 0, wrap_width = N
 #' Maximum width of text
 #' 
 #' @export
-wrapper_max_text_width <- function(text, fontsize = 12, rot = 0, wrap_width = NULL, unit = "inches"){
+wrapper_max_text_width <- function(text, fontsize = ggplot2::theme_get()$axis.text$size, rot = 0, wrap_width = NULL, unit = "inches"){
   
   if(!is.null(wrap_width)){
     text <- stringr::str_wrap(text, width = wrap_width)

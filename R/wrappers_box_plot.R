@@ -35,7 +35,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_plot = TRUE, point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
-  label_size = 12, label_nudge = 0.025,
+  label_size = ggplot2::theme_get()$axis.text$size, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE,
   scale_y_continuous_custome = scale_y_continuous(), 
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
@@ -410,7 +410,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_plot = TRUE, point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8, 
-  label_size = 12, label_nudge = 0.025,
+  label_size = ggplot2::theme_get()$axis.text$size, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, drop = FALSE, 
   scale_y_continuous_custome = scale_y_continuous(),
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
@@ -537,7 +537,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
         title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, drop = drop,
         scale_y_continuous_custome = scale_y_continuous_custome, 
         axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio, 
-        label_fontface = "plain", size = label_size, size.unit = "pt", label_nudge = label_nudge, 
+        label_size = label_size, label_nudge = label_nudge, 
         background_grid_major = background_grid_major)
       
       
@@ -593,7 +593,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
   show_total_counts = FALSE, show_median = FALSE, 
   point_plot = TRUE, point_size = 1, point_shape = 20, point_alpha = 1, point_stroke = 0.8,
-  label_size = 12, label_nudge = 0.025,
+  label_size = ggplot2::theme_get()$axis.text$size, label_nudge = 0.025,
   title_size = NULL, strip_text_size = NULL, facet_scales = "fixed", facet_nrow = NULL, facet_ncol = NULL, ylim = NULL, 
   scale_y_continuous_custome = scale_y_continuous(),
   axis_text_x_angle = 0, axis_text_x_vjust = 1, axis_text_x_hjust = 0.5, aspect_ratio = NULL, 
@@ -646,7 +646,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
     title_size = title_size, strip_text_size = strip_text_size, facet_scales = facet_scales, facet_nrow = facet_nrow, facet_ncol = facet_ncol, ylim = ylim, 
     scale_y_continuous_custome = scale_y_continuous_custome,
     axis_text_x_angle = axis_text_x_angle, axis_text_x_vjust = axis_text_x_vjust, axis_text_x_hjust = axis_text_x_hjust, aspect_ratio = aspect_ratio,
-    label_fontface = "plain", size = label_size, size.unit = "pt", label_nudge = label_nudge, 
+    label_size = label_size, label_nudge = label_nudge, 
     background_grid_major = background_grid_major, 
     strat_scales = strat_scales, strat1_nrow = strat1_nrow, strat1_ncol = strat1_ncol, strat2_nrow = strat2_nrow, strat2_ncol = strat2_ncol, less_legends = less_legends)
   

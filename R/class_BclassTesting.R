@@ -63,7 +63,7 @@ setMethod("bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
   format <- getOption("knitr.table.format", default = "html")
   
   ### Make unique labels to have the right numbering of the tables. See https://github.com/rstudio/bookdown/issues/1097
-
+  
   kable <- knitr::kable(out, format = format, caption = caption, booktabs = TRUE, linesep = "", row.names = FALSE, label = gsub("\\.", "", make.names(Sys.time()))) %>%
     kableExtra::kable_styling(bootstrap_options = c("condensed", "bordered"), latex_options = c("HOLD_position"), full_width = full_width, font_size = font_size) %>% 
     kableExtra::column_spec(which(colnames(out) %in% c("HR", "OR", "Difference", "P-value", "Adj. P-value")), bold = TRUE) 
@@ -112,7 +112,7 @@ setMethod("bkable", "BclassTesting", function(x, caption = NULL, header = NULL, 
 
 
 setMethod("show", "BclassTesting", function(object){
-
+  
   if(interactive()){
     print(bkable(object))
   }else{
@@ -128,12 +128,41 @@ setMethod("show", "BclassTesting", function(object){
 ################################################################################
 
 
+
 #' @rdname Bclass-class
 #' @export
-setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, xlog = FALSE, clip = NULL, xticks = NULL, xticks_by = NULL, lineheight = "auto", label_fontsize = 14, caption_width = 150, shapes_gp = forestplot::fpShapesGp()){
+setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = NULL, upper_var = NULL, block_vars = NULL, xlab = NULL, xlog = FALSE, clip = NULL, xticks = NULL, lineheight = "auto", label_fontsize = 14, caption_width = 150, shapes_gp = forestplot::fpShapesGp()){
   
-  # lineheight = unit(1, "cm")
+  # ------------------------------------------------------------------
+  # Helpers
+  # ------------------------------------------------------------------
   
+  pick_one <- function(res_colnames, candidates, label){
+    hit <- candidates[candidates %in% res_colnames]
+    if(length(hit) < 1){
+      stop(paste0("Could not infer ", label, ". None of these columns found: ", paste(candidates, collapse = ", ")), call. = FALSE)
+    }
+    if(length(hit) > 1){
+      stop(paste0("Multiple matches for ", label, ": ", paste(candidates, collapse = ", ")), call. = FALSE)
+    }
+    hit
+  }
+  
+  log_ticks_125 <- function(lims){
+    if(any(!is.finite(lims)) || any(lims <= 0)){
+      stop("For xlog=TRUE, limits must be finite and > 0.", call. = FALSE)
+    }
+    e <- seq(floor(log10(lims[1])), ceiling(log10(lims[2])))
+    sort(unique(as.vector(outer(c(1, 2, 5), 10^e, `*`))))
+  }
+  
+  cap_range <- function(res_range, clip){
+    c(max(res_range[1], clip[1]), min(res_range[2], clip[2]))
+  }
+  
+  # ------------------------------------------------------------------
+  # Pull data from object
+  # ------------------------------------------------------------------
   
   out <- boutput(x)
   res <- bresults(x)
@@ -143,213 +172,186 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     caption <- stringr::str_wrap(caption, width = caption_width)
   }
   
+  res_colnames <- colnames(res)
   
-  ### ----------------------------------------------------------------------
-  ### Some checks
-  ### ----------------------------------------------------------------------
+  # ------------------------------------------------------------------
+  # Infer columns
+  # ------------------------------------------------------------------
   
   if(is.null(mean_var)){
-    mean_var <- colnames(res)[which(colnames(res) %in% c("HR", "OR", "difference"))]
+    mean_var <- pick_one(res_colnames, c("HR", "OR", "difference"), "mean_var")
   }
-  stopifnot(length(mean_var) == 1)
-
-  
   if(is.null(lower_var)){
-    lower_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_lower", "OR_CI95_lower", "difference_CI95_lower"))]
+    lower_var <- pick_one(res_colnames, c("HR_CI95_lower", "OR_CI95_lower", "difference_CI95_lower"), "lower_var")
   }
-  stopifnot(length(lower_var) == 1)
-
-  
   if(is.null(upper_var)){
-    upper_var <- colnames(res)[which(colnames(res) %in% c("HR_CI95_upper", "OR_CI95_upper", "difference_CI95_upper"))]
+    upper_var <- pick_one(res_colnames, c("HR_CI95_upper", "OR_CI95_upper", "difference_CI95_upper"), "upper_var")
   }
-  stopifnot(length(upper_var) == 1)
   
+  
+  # Validate they exist and are scalar
+  stopifnot(length(mean_var) == 1, length(lower_var) == 1, length(upper_var) == 1)
+  stopifnot(all(c(mean_var, lower_var, upper_var) %in% res_colnames))
   
   if(is.null(xlab)){
     xlab <- mean_var
-  }
+  } 
   
-  if(!is.null(xticks)){
-    clip <- range(xticks)
-  }
+  is_ratio <- mean_var %in% c("HR", "OR")
   
-  
-  if(mean_var %in% c("HR", "OR") && is.null(clip)){
-    if(xlog){
-      clip = c(0.1, 10)
-    }else{
-      clip = c(0, 4)
-    }
-  }else if(is.null(clip)){
-    clip = c(-40, 40)
-  }
-  
-  if(mean_var %in% c("HR", "OR")){
-    zero = 1
+  if(is_ratio){
+    zero <- 1
   }else{
-    zero = 0
+    zero <- 0  
   }
   
+  # ------------------------------------------------------------------
+  # Clip defaults
+  # ------------------------------------------------------------------
   
-  ### ----------------------------------------------------------------------
-  ### Make the xticks
-  ### ----------------------------------------------------------------------
+  # If xticks supplied, let them define clip unless user explicitly set clip
   
+  if(!is.null(xticks) && is.null(clip)){
+    clip <- range(xticks, finite = TRUE)
+  }
+  
+  if(is.null(clip)){
+    if(is_ratio){
+      clip <- if(xlog) c(0.1, 10) else c(0, 4)
+    } else {
+      clip <- c(-40, 40)
+    }
+  }
+  
+  if(xlog && any(clip <= 0)){
+    stop("For xlog=TRUE, clip must be strictly > 0.", call. = FALSE)
+  }
+  
+  if(!is.null(xticks) && xlog && any(xticks <= 0)){
+    stop("For xlog=TRUE, xticks must be strictly > 0.", call. = FALSE)
+  }
+  
+  # ------------------------------------------------------------------
+  # Build xticks if missing
+  # ------------------------------------------------------------------
   
   if(is.null(xticks)){
     
+    res_range <- range(c(res[[lower_var]], res[[upper_var]]), na.rm = TRUE, finite = TRUE)
+    
+    res_range <- cap_range(res_range, clip)
+    
+    center <- if(is_ratio) 1 else 0
+    
     if(!xlog){
-      
-      if(is.null(xticks_by)){
-        
-        res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
-        res_width <- min(c(res_range[2], clip[2])) - max(c(res_range[1], clip[1]))
-        
-        tick_width_original <- res_width / 7
-        
-        tick_width_rounded <- cut(tick_width_original, breaks = c(0, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500), labels = c(0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500))
-        tick_width_rounded <- as.numeric(as.character(tick_width_rounded))
-        
-        xticks_by <- tick_width_rounded
-        
-      }
-      
-      
-      if(mean_var %in% c("HR", "OR")){
-        
-        xticks_by <- min(xticks_by, 1)
-        
-        xticks_right <- seq(1, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 1+xticks_by)), by = xticks_by)
-        xticks_left <- seq(1, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 1-xticks_by)), by = -xticks_by)
-        xticks <- sort(unique(c(xticks_left, xticks_right)))
-        
-      }else{
-        
-        xticks_right <- seq(0, max(c(min(c(max(res[, upper_var], na.rm = TRUE)+xticks_by, clip[2])), 0+xticks_by)), by = xticks_by)
-        xticks_left <- seq(0, min(c(max(c(min(res[, lower_var], na.rm = TRUE)-xticks_by, clip[1])), 0-xticks_by)), by = -xticks_by)
-        xticks <- sort(unique(c(xticks_left, xticks_right)))
-        
-      }
-      
-    }else{
-      
-      res_range <- range(c(res[, lower_var], res[, upper_var]), na.rm = TRUE)
-      res_range_with_clip <- c(max(c(res_range[1], clip[1])), min(c(res_range[2], clip[2])))
-      
-      # xticks_initial = c(0.1, 0.25, 0.5, 0.7, 1, 1.5, 2, 4, 10)
-      xticks_initial = c(0.1, 0.2, 0.5, 1, 2, 5, 10)
-      
-      
-      xticks_index1 <- xticks_initial <= max(res_range_with_clip)
-      xticks_index1_to_add <- max(which(xticks_index1)) + 1
-      if(xticks_index1_to_add <= length(xticks_initial)){
-        xticks_index1[xticks_index1_to_add] <- TRUE
-      }
-      
-      xticks_index2 <- xticks_initial >= min(res_range_with_clip)
-      xticks_index2_to_add <- min(which(xticks_index2)) - 1
-      if(xticks_index2_to_add > 0){
-        xticks_index2[xticks_index2_to_add] <- TRUE
-      }
-      
-      xticks_index <- xticks_index1 & xticks_index2
-      
-      xticks <- xticks_initial[xticks_index]
-      
+      # Use pretty breaks; then ensure center is included
+      xticks <- sort(unique(c(center, pretty(res_range, n = 7))))
+    } else {
+      xticks <- log_ticks_125(res_range)
+      xticks <- xticks[xticks >= clip[1] & xticks <= clip[2]]
+      xticks <- sort(unique(c(1, xticks)))
     }
-    
-    
-    
   }
   
   
-
+  # ------------------------------------------------------------------
+  # Prepare plotting data (don’t mutate res)
+  # ------------------------------------------------------------------
   
-  ### ----------------------------------------------------------------------
-  ### Displayed text
-  ### ----------------------------------------------------------------------
+  res_plot <- res
   
-  if(mean_var %in% c("HR", "OR")){
+  if(is_ratio){
+    # clip CI to plotting range
+    up <- res_plot[[upper_var]]
+    lo <- res_plot[[lower_var]]
     
-    res[res[, upper_var] > clip[2] & !is.na(res[, upper_var]), upper_var] <- clip[2]
-    res[res[, lower_var] < clip[1] & !is.na(res[, lower_var]), lower_var] <- clip[1]
-    
-  }else{
-    res[res[, upper_var] %in% Inf, upper_var] <- NA
-    res[res[, lower_var] %in% -Inf, lower_var] <- NA
+    res_plot[[upper_var]] <- ifelse(!is.na(up) & up > clip[2], clip[2], up)
+    res_plot[[lower_var]] <- ifelse(!is.na(lo) & lo < clip[1], clip[1], lo)
+  } else {
+    # set +/-Inf to NA
+    res_plot[[upper_var]][is.infinite(res_plot[[upper_var]])] <- NA
+    res_plot[[lower_var]][is.infinite(res_plot[[lower_var]])] <- NA
   }
   
-
+  # ------------------------------------------------------------------
+  # Label text
+  # ------------------------------------------------------------------
+  # Ensure matrix-like structure for forestplot labeltext
+  labeltext <- rbind(colnames(out), as.matrix(out))
   
-  labeltext <- rbind(colnames(out), out)
-  
-  
-  ### ----------------------------------------------------------------------
-  ### To separate Biomarkers with a horizontal line
-  ### ----------------------------------------------------------------------
-  
-  ## By default color per covariate/biomarker block
+  # ------------------------------------------------------------------
+  # Horizontal lines for blocks
+  # ------------------------------------------------------------------
   if(is.null(block_vars)){
-    block_vars <- colnames(res)[which(colnames(res) %in% c("covariate", "biomarker", "covariate1"))]
+    # preserve your original default candidates, but deterministic priority
+    # (take all that exist)
+    candidates <- c("covariate", "biomarker", "covariate1")
+    block_vars <- candidates[candidates %in% colnames(res_plot)]
   }
-  stopifnot(all(block_vars %in% colnames(res)))
+  stopifnot(length(block_vars) >= 1)
+  stopifnot(all(block_vars %in% colnames(res_plot)))
   
-  
-  
-  ## Find numbers of rows where the biomarker blocks end. This value has to be shifted by 2
-  line_row <- indicate_blocks(res, block_vars = block_vars, return = "line") + 2
-  
-  line_row <- line_row[-length(line_row)]
-  
+  line_row <- indicate_blocks(res_plot, block_vars = block_vars, return = "line") + 2
+  if(length(line_row) > 0) line_row <- line_row[-length(line_row)]  # drop last
   
   hrzl_lines <- list()
-  
   if(length(line_row) >= 1){
-    hrzl_lines <- lapply(line_row, function(x){
-      grid::gpar(col = "#b4b4b4", lwd = 0.5)
-    })
-    names(hrzl_lines) <- line_row
+    hrzl_lines <- setNames(
+      rep(list(grid::gpar(col = "#b4b4b4", lwd = 0.5)), length(line_row)),
+      as.character(line_row)
+    )
   }
-  
+  # thick line under header row
   hrzl_lines[["2"]] <- grid::gpar(col = "#444444", lwd = 1)
   
-  
-  ### ----------------------------------------------------------------------
-  ### Generate plot
-  ### ----------------------------------------------------------------------
-  
-  forestplot::forestplot(labeltext, 
-    mean = c(NA, res[, mean_var]), 
-    lower = c(NA, res[, lower_var]), 
-    upper = c(NA, res[, upper_var]), 
-    is.summary = c(TRUE, rep(FALSE, nrow(res))), xlab = xlab, zero = zero,
+  # ------------------------------------------------------------------
+  # Plot
+  # ------------------------------------------------------------------
+  p <- forestplot::forestplot(labeltext,
+    mean  = c(NA, res_plot[[mean_var]]),
+    lower = c(NA, res_plot[[lower_var]]),
+    upper = c(NA, res_plot[[upper_var]]),
+    is.summary = c(TRUE, rep(FALSE, nrow(res_plot))),
+    xlab = xlab,
+    zero = zero,
     title = "\n",
-    col = forestplot::fpColors(box = "darkblue", line = "darkblue"), 
+    col = forestplot::fpColors(box = "darkblue", line = "darkblue"),
     boxsize = 0.4,
-    hrzl_lines = hrzl_lines, 
-    graphwidth = grid::unit(10, "cm"), colgap = grid::unit(6, "mm"),
+    hrzl_lines = hrzl_lines,
+    graphwidth = grid::unit(10, "cm"),
+    colgap = grid::unit(6, "mm"),
     lineheight = lineheight,
-    lwd.ci = 2, lwd.xaxis = 2, lwd.zero = 2.5, 
-    txt_gp = forestplot::fpTxtGp(label = grid::gpar(fontsize = label_fontsize), xlab = grid::gpar(fontsize = 24), ticks = grid::gpar(fontsize = 22)), 
-    mar = grid::unit(c(5, rep(5, times = 3)), "mm"), # grid::unit(rep(5, times = 4)
-    clip = clip, 
+    lwd.ci = 2,
+    lwd.xaxis = 2,
+    lwd.zero = 2.5,
+    txt_gp = forestplot::fpTxtGp(
+      label = grid::gpar(fontsize = label_fontsize),
+      xlab  = grid::gpar(fontsize = 24),
+      ticks = grid::gpar(fontsize = 22)
+    ),
+    mar = grid::unit(c(5, 5, 5, 5), "mm"),
+    clip = clip,
     ci.vertices = TRUE,
     align = "l",
     xticks = xticks,
     xticks.digits = 2,
     xlog = xlog,
-    shapes_gp = shapes_gp) %>% 
-    print()
+    shapes_gp = shapes_gp
+  )
   
-  grid::grid.text(caption, 0.5, 0.90, just = c("center", "top"), gp = grid::gpar(fontsize = 16, fontface = "bold"))
+  print(p)
   
+  # Caption
+  grid::grid.text(caption,
+    x = 0.5,
+    y = 0.90,
+    just = c("center", "top"),
+    gp = grid::gpar(fontsize = 16, fontface = "bold")
+  )
   
+  invisible(p)
   
 })
-
-
-
 
 
 
