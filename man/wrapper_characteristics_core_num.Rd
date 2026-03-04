@@ -7,7 +7,8 @@
 wrapper_characteristics_core_num(
   data,
   covariate_var,
-  strat_var = NULL,
+  strat1_var = NULL,
+  strat2_var = NULL,
   weights_var = NULL,
   variable_names = NULL,
   caption = NULL,

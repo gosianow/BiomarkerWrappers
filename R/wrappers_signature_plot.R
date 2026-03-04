@@ -7,7 +7,7 @@
 #' @param signature Vector with precalculated signature.
 #' @param title Title.
 #' @export
-wrapper_signature_heatmap <- function(x, signature, title = "", plot_expr = FALSE, show_row_names = FALSE){
+wrapper_signature_heatmap <- function(x, signature, title = "", show_row_names = FALSE){
   
   
   zscore <- apply(x, 1, scale, center = TRUE, scale = TRUE)
@@ -50,37 +50,26 @@ wrapper_signature_heatmap <- function(x, signature, title = "", plot_expr = FALS
     annotation_name_gp = gpar(fontsize = 7))
   
   
+  expr_mean <- colMeans(x)
+  
+  color_expr <- format_colors_num(expr_mean, centered = FALSE, trim_values = c(-2, 8))
+  
+  extra_top_annotation2 <- HeatmapAnnotation("Mean expr." = anno_barplot(expr_mean, gp = gpar(fill = color_expr(expr_mean), col = NA)))
+  
+  top_annotation <- c(extra_top_annotation2)
+  
+  
   ### Heatmap with the z-score of signature genes
   ht2 <- Heatmap(zscore, name = "Z-score", column_title = title, 
     col = color_zscore, cluster_columns = cluster_columns, cluster_rows = cluster_rows, 
     row_dend_reorder = FALSE, heatmap_legend_param = list(color_bar = "continuous"), 
     show_row_names = show_row_names,
     row_dend_width = unit(2, "cm"), 
-    rect_gp = gpar(col = NA), column_names_gp = gpar(fontsize = 8))
+    rect_gp = gpar(col = NA), column_names_gp = gpar(fontsize = 8),
+    top_annotation = top_annotation)
   
   
-  if(!plot_expr){
-    
-    draw_out <- ht2 + ha_bar
-    
-  }else{
-    
-    # Colors for the heatmap
-    
-    color_expr <- format_colors_num(x, centered = FALSE)
-    
-    ### Heatmap with the expression of signature genes
-    ht1 <- Heatmap(x, name = "Expr.",
-      col = color_expr, cluster_columns = cluster_columns, cluster_rows = cluster_rows,
-      row_dend_reorder = FALSE, heatmap_legend_param = list(color_bar = "continuous"),
-      show_row_names = FALSE, 
-      row_dend_width = unit(2, "cm"),
-      rect_gp = gpar(col = NA), column_names_gp = gpar(fontsize = 8))
-    
-    draw_out <- ht1 + ht2 + ha_bar
-    
-    
-  }
+  draw_out <- ht2 + ha_bar
   
   
   ComplexHeatmap::draw(draw_out, auto_adjust = FALSE)

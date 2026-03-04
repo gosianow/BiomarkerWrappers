@@ -83,13 +83,16 @@ setMethod("bkable", "BclassCharacteristics", function(x, caption = NULL, header 
   
   ## Rows with names of covariates. They contain "".
   
-  which_row_spec <- which(rowSums(out[, -1, drop = FALSE] == "") >= 1)
+  which_row_spec <- which(rowMeans(out[, -1, drop = FALSE] == "") == 1)
   
-  which_row_spec_isn <- which(out[, 1] %in% c("N"))[1]
+  # which_row_spec_isn <- which(out[, 1] %in% c("N"))
+  # which_row_spec_isna <- which(out[, 1] %in% c("NAs"))
+
+  which_row_spec_isn <- which_row_spec + 1
   
-  which_row_spec_isna <- which(out[, 1] %in% c("NAs"))
-  
-  
+  which_row_spec_isna <- which_row_spec + 2
+
+
   kable <- kable %>% 
     kableExtra::row_spec(which_row_spec, bold = TRUE, background = "#d7ecff") %>% 
     kableExtra::row_spec(c(which_row_spec_isn, which_row_spec_isna), background = "#f0f8ff", color = "#666666")

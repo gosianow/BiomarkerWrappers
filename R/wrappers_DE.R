@@ -30,7 +30,7 @@ wrapper_merge_topTables <- function(fit, contrasts, gene_vars = c("Hgnc_Symbol",
       
       for(l in 1:length(lfc)){
         
-        topTable_out[, paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l])] <- as.numeric(limma::decideTests(fit, p.value = pval[p], lfc = lfc[l])[, contrast])
+        topTable_out[, paste0("summary.pval", round(pval[p]*100), ".lfc", lfc[l])] <- as.numeric(limma::decideTests(fit, p.value = pval[p], lfc = lfc[l])[, contrast])
         
       }
       
@@ -111,9 +111,9 @@ wrapper_deside_tests <- function(x, topn = Inf, pval = 0.05, lfc = 0,
         
         if(is.null(summary_prefix)){
           if(topn == Inf){
-            name_out <- paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l], "_", contrast)
+            name_out <- paste0("summary.pval", round(pval[p]*100), ".lfc", lfc[l], "_", contrast)
           }else{
-            name_out <- paste0("summary_pval", round(pval[p]*100), "_lfc", lfc[l], "_topn", topn, "_", contrast)
+            name_out <- paste0("summary.pval", round(pval[p]*100), ".lfc", lfc[l], ".topn", topn, "_", contrast)
           }
         }else{
           name_out <- paste0(summary_prefix, "_", contrast)

@@ -4,13 +4,7 @@
 \alias{wrapper_signature_heatmap}
 \title{Heatmap with signature and expression of genes defining that signature}
 \usage{
-wrapper_signature_heatmap(
-  x,
-  signature,
-  title = "",
-  plot_expr = FALSE,
-  show_row_names = FALSE
-)
+wrapper_signature_heatmap(x, signature, title = "", show_row_names = FALSE)
 }
 \arguments{
 \item{x}{Matrix with log transformed and normalized gene expression. Genes in rows and samples in columns.}

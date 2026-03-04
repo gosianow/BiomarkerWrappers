@@ -8,7 +8,7 @@
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
+wrapper_characteristics_core_cat <- function(data, covariate_var, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value"){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -18,21 +18,42 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
   stopifnot(nrow(data) > 0)
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_var, strat_var, weights_var), drop = FALSE]
+  data <- data[, c(covariate_var, strat1_var, strat2_var, weights_var), drop = FALSE]
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.factor(data[, covariate_var]))
   
   stopifnot(length(out_colname) == 1)
   
-  if(!is.null(strat_var)){
-    stopifnot(length(strat_var) == 1)
-    stopifnot(is.factor(data[, strat_var]))
-  }else{
+  if(is.null(strat1_var) & is.null(strat2_var)){
     ### Add dummy variable to data
     stopifnot(!"strat_dummy" %in% colnames(data))
     data[, "strat_dummy"] <- factor(out_colname)
     strat_var <- "strat_dummy"
+    variable_names <- c(variable_names, setNames("strat_dummy", strat_var))
+  }else{
+    if(!is.null(strat1_var)){
+      stopifnot(length(strat1_var) == 1)
+      stopifnot(is.factor(data[, strat1_var]))
+    }
+    if(!is.null(strat2_var)){
+      stopifnot(length(strat2_var) == 1)
+      stopifnot(is.factor(data[, strat2_var]))
+    }
+    
+    if(!is.null(strat1_var) & !is.null(strat2_var)){
+      strat_var <- paste0(strat2_var, "..", strat1_var)
+      data[, strat_var] <- interaction(data[, strat2_var], data[, strat1_var], sep = " | ", lex.order = TRUE)
+      variable_names <- c(variable_names, setNames(paste0(variable_names[strat2_var], " | ", variable_names[strat1_var]), strat_var))
+    }else if(!is.null(strat1_var)){
+      strat_var <- strat1_var
+    }else if(!is.null(strat2_var)){
+      strat_var <- strat2_var
+    }
+    
   }
   
   
@@ -49,9 +70,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
     # }
   }
   
-  variable_names <- format_variable_names(data = data, variable_names = variable_names)
-  
-  
+
   # --------------------------------------------------------------------------
   # Calculate counts and proportions
   # --------------------------------------------------------------------------
@@ -187,7 +206,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat_var = NU
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
+wrapper_characteristics_core_num <- function(data, covariate_var, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -201,21 +220,42 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
   
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_var, strat_var, weights_var), drop = FALSE]
+  data <- data[, c(covariate_var, strat1_var, strat2_var, weights_var), drop = FALSE]
+  
+  variable_names <- format_variable_names(data = data, variable_names = variable_names)
+  
   
   stopifnot(length(covariate_var) == 1)
   stopifnot(is.numeric(data[, covariate_var]))
   
   stopifnot(length(out_colname) == 1)
   
-  if(!is.null(strat_var)){
-    stopifnot(length(strat_var) == 1)
-    stopifnot(is.factor(data[, strat_var]))
-  }else{
+  if(is.null(strat1_var) & is.null(strat2_var)){
     ### Add dummy variable to data
     stopifnot(!"strat_dummy" %in% colnames(data))
     data[, "strat_dummy"] <- factor(out_colname)
     strat_var <- "strat_dummy"
+    variable_names <- c(variable_names, setNames("strat_dummy", strat_var))
+  }else{
+    if(!is.null(strat1_var)){
+      stopifnot(length(strat1_var) == 1)
+      stopifnot(is.factor(data[, strat1_var]))
+    }
+    if(!is.null(strat2_var)){
+      stopifnot(length(strat2_var) == 1)
+      stopifnot(is.factor(data[, strat2_var]))
+    }
+    
+    if(!is.null(strat1_var) & !is.null(strat2_var)){
+      strat_var <- paste0(strat2_var, "..", strat1_var)
+      data[, strat_var] <- interaction(data[, strat2_var], data[, strat1_var], sep = " | ", lex.order = TRUE)
+      variable_names <- c(variable_names, setNames(paste0(variable_names[strat2_var], " | ", variable_names[strat1_var]), strat_var))
+    }else if(!is.null(strat1_var)){
+      strat_var <- strat1_var
+    }else if(!is.null(strat2_var)){
+      strat_var <- strat2_var
+    }
+    
   }
   
   
@@ -231,9 +271,6 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
     #   weights <- NULL
     # }
   }
-  
-  
-  variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
   
   # --------------------------------------------------------------------------
@@ -374,7 +411,7 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat_var = NU
 #' 
 #' @param data Data frame.
 #' @export
-wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
+wrapper_characteristics_core <- function(data, covariate_vars, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   
   # --------------------------------------------------------------------------
   # Check about input data and some preprocessing
@@ -384,7 +421,7 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
   stopifnot(nrow(data) > 0)
   
   ### Keep only those variables that are used for the analysis
-  data <- data[, c(covariate_vars, strat_var, weights_var), drop = FALSE]
+  data <- data[, c(covariate_vars, strat1_var, strat2_var, weights_var), drop = FALSE]
   
   
   stopifnot(length(covariate_vars) >= 1)
@@ -393,18 +430,6 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
   stopifnot(all(vars_class %in% c("factor", "numeric", "integer")))
   
   stopifnot(length(out_colname) == 1)
-  
-  
-  if(!is.null(strat_var)){
-    stopifnot(length(strat_var) == 1)
-    stopifnot(is.factor(data[, strat_var]))
-  }else{
-    ### Add dummy variable to data
-    stopifnot(!"strat_dummy" %in% colnames(data))
-    data[, "strat_dummy"] <- factor(out_colname)
-    strat_var <- "strat_dummy"
-  }
-  
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -422,11 +447,11 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
     
     if(class(data[, covariate_var]) == "factor"){
       
-      wrapper_res <- wrapper_characteristics_core_cat(data = data, covariate_var = covariate_var, strat_var = strat_var, weights_var = weights_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
+      wrapper_res <- wrapper_characteristics_core_cat(data = data, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, out_colname = out_colname)
       
     }else{
       
-      wrapper_res <- wrapper_characteristics_core_num(data = data, covariate_var = covariate_var, strat_var = strat_var, weights_var = weights_var, variable_names = variable_names, caption = caption, out_colname = out_colname, display_statistics = display_statistics)
+      wrapper_res <- wrapper_characteristics_core_num(data = data, covariate_var = covariate_var, strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, out_colname = out_colname, display_statistics = display_statistics)
       
     }
     
@@ -478,13 +503,13 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat_var = NULL,
 #' @param covariate_vars Covariates to summarise
 #' @param bep_vars Vector with column names for logical variables where TRUE indicates the biomarker evaluable population (BEP).
 #' @export
-wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, population_var = "Population", strat_vars = c(population_var, treatment_var), strat1_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean"), lex_order = TRUE, include_pooled_arms = TRUE){
+wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, treatment_var = NULL, population_var = "Population", strat_vars = c(population_var, treatment_var), strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, itt_name = "ITT", display_statistics = c("Median", "Mean"), lex_order = TRUE, include_pooled_arms = TRUE){
   
   
   
   ### Keep only those variables that are used for the analysis
   
-  data <- data[, c(covariate_vars, bep_vars, treatment_var, strat1_var, weights_var), drop = FALSE]
+  data <- data[, c(covariate_vars, bep_vars, treatment_var, strat2_var, weights_var), drop = FALSE]
   
   
   data_list <- list()
@@ -550,7 +575,7 @@ wrapper_characteristics_bep <- function(data, covariate_vars, bep_vars = NULL, t
   table(data_rbind[, strat_var])
   
   
-  characteristics_bep <- wrapper_characteristics_core(data = data_rbind, covariate_vars = covariate_vars, strat_var = strat_var, weights_var = weights_var, variable_names = variable_names, caption = caption, display_statistics = display_statistics)
+  characteristics_bep <- wrapper_characteristics_core(data = data_rbind, covariate_vars = covariate_vars, strat1_var = strat_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, display_statistics = display_statistics)
   
   
   bheader(characteristics_bep) <- NULL
