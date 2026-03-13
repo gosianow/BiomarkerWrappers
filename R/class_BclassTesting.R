@@ -260,28 +260,49 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   
   res_plot <- res
   
+  # Clip CIs and mean to plotting range
+  
   if(is_ratio){
-    # clip CI to plotting range
-    up <- res_plot[[upper_var]]
-    lo <- res_plot[[lower_var]]
+
+    offset_upper <- clip[2] / 100
+    offset_lower <- clip[1] / 100
     
-    res_plot[[upper_var]] <- ifelse(!is.na(up) & up > clip[2], clip[2], up)
-    res_plot[[lower_var]] <- ifelse(!is.na(lo) & lo < clip[1], clip[1], lo)
-  } else {
+    # res_plot[[upper_var]] <- ifelse(!is.na(res_plot[[upper_var]]) & res_plot[[upper_var]] > clip[2], clip[2], res_plot[[upper_var]])
+    res_plot[[upper_var]] <- ifelse(is.na(res_plot[[upper_var]]) | res_plot[[upper_var]] > clip[2] + offset_upper, clip[2] + offset_upper, res_plot[[upper_var]])
+    # res_plot[[lower_var]] <- ifelse(!is.na(res_plot[[lower_var]]) & res_plot[[lower_var]] < clip[1], clip[1], res_plot[[lower_var]])
+    res_plot[[lower_var]] <- ifelse(is.na(res_plot[[lower_var]]) | res_plot[[lower_var]] < clip[1] - offset_lower, clip[1] - offset_lower, res_plot[[lower_var]])
+    res_plot[[mean_var]] <- ifelse(!is.na(res_plot[[mean_var]]) & res_plot[[mean_var]] > clip[2], clip[2], res_plot[[mean_var]])
+    res_plot[[mean_var]] <- ifelse(!is.na(res_plot[[mean_var]]) & res_plot[[mean_var]] < clip[1], clip[1], res_plot[[mean_var]])
+
+  }else{
     # set +/-Inf to NA
-    res_plot[[upper_var]][is.infinite(res_plot[[upper_var]])] <- NA
-    res_plot[[lower_var]][is.infinite(res_plot[[lower_var]])] <- NA
+    # res_plot[[upper_var]][is.infinite(res_plot[[upper_var]])] <- NA
+    # res_plot[[lower_var]][is.infinite(res_plot[[lower_var]])] <- NA
+    # res_plot[[mean_var]][is.infinite(res_plot[[mean_var]])] <- NA
+    
+    offset <- (clip[2] - clip[1]) / 100
+    
+    # res_plot[[upper_var]] <- ifelse(!is.na(res_plot[[upper_var]]) & res_plot[[upper_var]] > clip[2], clip[2], res_plot[[upper_var]])
+    res_plot[[upper_var]] <- ifelse(is.na(res_plot[[upper_var]]) | res_plot[[upper_var]] > clip[2] + offset, clip[2] + offset, res_plot[[upper_var]])
+    # res_plot[[lower_var]] <- ifelse(!is.na(res_plot[[lower_var]]) & res_plot[[lower_var]] < clip[1], clip[1], res_plot[[lower_var]])
+    res_plot[[lower_var]] <- ifelse(is.na(res_plot[[lower_var]]) | res_plot[[lower_var]] < clip[1] - offset, clip[1] - offset, res_plot[[lower_var]])
+    res_plot[[mean_var]] <- ifelse(!is.na(res_plot[[mean_var]]) & res_plot[[mean_var]] > clip[2], clip[2], res_plot[[mean_var]])
+    res_plot[[mean_var]] <- ifelse(!is.na(res_plot[[mean_var]]) & res_plot[[mean_var]] < clip[1], clip[1], res_plot[[mean_var]])
+    
   }
   
   # ------------------------------------------------------------------
   # Label text
   # ------------------------------------------------------------------
+  
   # Ensure matrix-like structure for forestplot labeltext
   labeltext <- rbind(colnames(out), as.matrix(out))
   
   # ------------------------------------------------------------------
   # Horizontal lines for blocks
   # ------------------------------------------------------------------
+  
+  
   if(is.null(block_vars)){
     # preserve your original default candidates, but deterministic priority
     # (take all that exist)
@@ -304,9 +325,13 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   # thick line under header row
   hrzl_lines[["2"]] <- grid::gpar(col = "#444444", lwd = 1)
   
+  
   # ------------------------------------------------------------------
   # Plot
   # ------------------------------------------------------------------
+  
+  
+  
   p <- forestplot::forestplot(labeltext,
     mean  = c(NA, res_plot[[mean_var]]),
     lower = c(NA, res_plot[[lower_var]]),

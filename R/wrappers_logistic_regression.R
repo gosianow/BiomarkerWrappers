@@ -147,17 +147,33 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       
       if(!is.null(weights_var)){
         
-        results <- survey::svyby(
-          formula = as.numeric(data[, response_var]) - 1,    # Variable to analyze (the mean of 0/1 is the proportion)
-          by = data[, covariate_vars[i]],            # Grouping variable
-          design = survey_design,
-          FUN = survey::svymean,                  # Function to calculate the weighted mean (proportion)
-          keep.var = TRUE,
-          na.rm    = TRUE,
-          drop.empty.groups = FALSE
-        )
+        # results <- survey::svyby(
+        #   formula = as.numeric(data[, response_var]) - 1,    # Variable to analyze (the mean of 0/1 is the proportion)
+        #   by = data[, covariate_vars[i]],            
+        #   design = survey_design,
+        #   FUN = survey::svymean,                  
+        #   keep.var = TRUE,
+        #   na.rm    = TRUE,
+        #   drop.empty.groups = FALSE
+        # )
+        # 
+        # response_CI <- confint(results) * 100
+        # colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
+        
 
-        response_CI <- confint(results) * 100
+        results <- survey::svyby(
+          formula = as.formula(paste0("~ ", response_var)),
+          by = as.formula(paste0("~", covariate_vars[i])),
+          design = survey_design,
+          FUN = survey::svyciprop,
+          method = "logit",
+          level = 0.95,
+          na.rm = TRUE,
+          drop.empty.groups = FALSE,
+          vartype = c("ci")
+        )
+        
+        response_CI <- results[, c("ci_l", "ci_u"), drop = FALSE] * 100
         colnames(response_CI) <- paste0(response_levels[2], c("_CI95_lower", "_CI95_upper"))
         
         

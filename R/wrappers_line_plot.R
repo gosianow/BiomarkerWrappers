@@ -283,9 +283,10 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   ggpl <- ggpl +
     geom_line(aes(group = .data[[group_var]], color = .data[[color_line_var]]), linetype = line_type, linewidth = line_size, alpha = line_alpha) +
     scale_color_manual(name = legend_colors_line_title, values = colors_line, drop = legend_drop, na.value = "grey") +
-    guides(color = ifelse(legend_show_colors_line, "legend", "none"))
+    guides(color = if (legend_show_colors_line) guide_legend(ncol = 1) else "none")
   
   
+
   if(all(shapes_point %in% 21:25)){
     
     ggpl <- ggpl +
@@ -293,8 +294,8 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       geom_point(aes(fill = .data[[color_point_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
       scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = legend_drop, na.value = "grey") +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
-      guides(fill = ifelse(legend_show_colors_point, "legend", "none"), 
-        shape = ifelse(legend_show_shapes_point, "legend", "none"))
+      guides(fill = if (legend_show_colors_point) guide_legend(ncol = 1) else "none", 
+        shape = if (legend_show_shapes_point) guide_legend(ncol = 1) else "none")
     
     
   }else{
@@ -304,8 +305,8 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
       geom_point(aes(color = .data[[color_point_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
       scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = legend_drop, na.value = "grey") +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
-      guides(color = ifelse(legend_show_colors_point, "legend", "none"),
-        shape = ifelse(legend_show_shapes_point, "legend", "none"))
+      guides(color = if (legend_show_colors_point) guide_legend(ncol = 1) else "none",
+        shape = if (legend_show_shapes_point) guide_legend(ncol = 1) else "none")
     
   }
   
