@@ -810,9 +810,9 @@ wrapper_cox_regression_biomarker <- function(data, tte_var, censor_var, biomarke
   
   
   ### When all covariates are numerical, some outputs are empty, and we remove them
-  for(i in colnames(out)){
-    if(all(out[, i] %in% "")){
-      out[, i] <- NULL
+  for(x in colnames(out)){
+    if(all(out[, x] %in% "")){
+      out[, x] <- NULL
     }
   }
   

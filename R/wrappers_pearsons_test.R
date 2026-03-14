@@ -331,8 +331,8 @@ wrapper_pearsons_test_core <- function(data, response_var, covariate_var, strata
   
   if(!print_total){
     col_total <- grep("^Total", colnames(out), value = TRUE)
-    for(i in seq_along(col_total)){
-      out[, col_total[i]] <- NULL
+    for(x in col_total){
+      out[, x] <- NULL
     }
   }
   

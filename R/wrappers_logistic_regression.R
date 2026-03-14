@@ -405,21 +405,21 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     check.names = FALSE, stringsAsFactors = FALSE)
   
   stopifnot(all(sapply(out, class) == "character"))
-  
+
   
   ### When all covariates are numerical, some outputs are empty, and we remove them
   if(!force_empty_cols){
-    for(i in seq_len(ncol(out))){
-      if(all(out[, i] %in% "")){
-        out[, i] <- NULL
+    for(x in colnames(out)){
+      if(all(out[, x] %in% "")){
+        out[, x] <- NULL
       }
     }
   }
   
   if(!print_total){
     col_total <- grep("^Total", colnames(out), value = TRUE)
-    for(i in seq_along(col_total)){
-      out[, col_total[i]] <- NULL
+    for(x in col_total){
+      out[, x] <- NULL
     }
   }
   
@@ -617,7 +617,6 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
     out$`strat1 dummy` <- NULL
   }
   
-  
   rownames(res) <- NULL
   rownames(out) <- NULL
   
@@ -683,7 +682,6 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
   res <- plyr::rbind.fill(lapply(wrapper_res, bresults))
   out <- plyr::rbind.fill(lapply(wrapper_res, boutput))
   
-  
   ## Re-calculate adjusted p-values using the Benjamini & Hochberg method
   res$adj_pvalue <- stats::p.adjust(res$pvalue, method = "BH")
   
@@ -691,14 +689,14 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     out$`Adj. P-value` <- format_pvalues(res$adj_pvalue)
   }
   
-  
+
   ### When all covariates are numerical, some outputs are empty, and we remove them
-  for(i in seq_len(ncol(out))){
-    if(all(out[, i] %in% "")){
-      out[, i] <- NULL
+  for(x in colnames(out)){
+    if(all(out[, x] %in% "")){
+      out[, x] <- NULL
     }
   }
-  
+
   
   ### Rename 'Covariate' column name to 'Biomarker'
   
