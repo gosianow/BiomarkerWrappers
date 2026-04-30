@@ -311,6 +311,12 @@ wrapper_calculate_sample_logFC <- function(x, comparison_var, subgroup_var = NUL
 
 
 
+#' Vectorized version of identical
+#' 
+#' @export
+identical2 <- Vectorize(identical)
+
+
 
 #' My version of cut
 #' 

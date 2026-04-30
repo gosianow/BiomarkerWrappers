@@ -149,6 +149,8 @@ wrapper_logFC_dotplot <- function(x, gene_var = "Hgnc_Symbol",
       background_grid(major = "xy", minor = "none", size.major = 0.25) +
       scale_shape_manual(name = adjp_prefix, values = values_shape, drop = FALSE) +
       scale_colour_gradient2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
+      # scale_colour_steps2(name = lfc_prefix, low = color_low, mid = color_mid, high = color_high, midpoint = 0, limits = limits, oob = scales::squish) +
+      # scale_colour_gradientn(name = lfc_prefix, colours = c(color_low, "white", "white", "white", color_high), values = scales::rescale(c(limits[1], -0.25, 0, 0.25, limits[2]), from = limits), limits = limits, oob = scales::squish) +
       scale_radius(name = pval_prefix, range = radius_range, breaks = radius_breaks, labels = radius_labels, limits = radius_limits) 
     
     
