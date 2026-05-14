@@ -16,6 +16,7 @@
 #' Boxplot
 #' 
 #' @param data Data frame.
+#' @param scale_gradient Possible values: "gradientn", "gradient2", "gradient".
 #' 
 #' @examples 
 #' 
@@ -29,7 +30,8 @@
 #' 
 #' @export
 wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
-  colors_box = NULL, colors_point = NULL, 
+  colors_box = NULL, colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, 
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -57,7 +59,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
   
   if(!is.null(color_point_var)){
     stopifnot(length(color_point_var) == 1)
-    stopifnot(is.factor(data[, color_point_var]))
+    stopifnot(is.factor(data[, color_point_var]) || is.numeric(data[, color_point_var]))
   }
   
   if(!is.null(dodge_var)){
@@ -69,6 +71,9 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
     stopifnot(length(facet_var) == 1)
     stopifnot(is.factor(data[, facet_var]))
   }
+  
+  stopifnot(length(scale_gradient) == 1)
+  stopifnot(scale_gradient %in% c("gradientn", "gradient2", "gradient"))
   
   
   ### Keep non-missing data
@@ -98,8 +103,31 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
     }else{
       colors_point <- colors_point[1]
     }
+    
+    names(colors_point) <- levels(data[, color_point_var])
+    
   }else{
-    colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point)
+    
+    if(is.factor(data[, color_point_var])){
+      colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point)
+    }else{
+      if(is.null(colors_point)){
+        colors_point <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
+      }
+      
+      if(is.null(trim_values)){
+        trim_values <- compute_trim_values(x = data[, color_point_var], centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+      }
+      limits <- trim_values
+      
+    }
+  }
+  
+  
+  if(is.factor(data[, color_point_var])){
+    scale <- "manual"
+  }else{
+    scale <- scale_gradient
   }
   
   
@@ -249,16 +277,14 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
         ggpl <- ggpl +
           ggnewscale::new_scale_fill() +
           # geom_jitter(aes(fill = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+          ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point)
         
         
       }else{
         
         ggpl <- ggpl +
           # geom_jitter(aes(color = .data[[color_point_var]]), width = 0.3, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+          ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]]), width = 0.3, varwidth = TRUE, na.rm = TRUE, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point)
         
       }
       
@@ -279,8 +305,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
         ggpl <- ggpl +
           ggnewscale::new_scale_fill() +
           # geom_jitter(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+          ggbeeswarm::geom_quasirandom(aes(fill = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point)
         
         
       }else{
@@ -288,14 +313,44 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
         ## The group determines dodging 
         ggpl <- ggpl +
           # geom_jitter(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), position = position_jitterdodge(jitter.width = 0.3, dodge.width = 0.75), size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point) +
-          scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey") 
+          ggbeeswarm::geom_quasirandom(aes(color = .data[[color_point_var]], group = .data[[dodge_var]]), width = 0.1, varwidth = TRUE, dodge.width = 0.75, size = point_size, shape = point_shape, alpha = point_alpha, stroke = point_stroke, show.legend = legend_show_colors_point)
         
       }
       
       
     }
     
+    
+  }
+  
+  
+  if(point_plot){
+    
+    if(point_shape %in% 21:25){
+      
+      if(scale == "manual"){
+        ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey")
+      }else if(scale == "gradientn") {
+        ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+      }else if(scale == "gradient2"){
+        ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+      }else if(scale == "gradient"){
+        ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+      }
+      
+    }else{
+      
+      if(scale == "manual"){
+        ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey")
+      }else if(scale == "gradientn") {
+        ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+      }else if(scale == "gradient2"){
+        ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+      }else if(scale == "gradient"){
+        ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+      }
+      
+    }
     
   }
   
@@ -404,7 +459,8 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
 #' @export
 wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
-  colors_box = NULL, colors_point = NULL,
+  colors_box = NULL, colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -528,7 +584,8 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
       
       
       ggpl <- wrapper_box_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var, 
-        colors_box = colors_box, colors_point = colors_point, 
+        colors_box = colors_box, colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+        trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,  
         legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
@@ -587,7 +644,8 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
 #' @export
 wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
-  colors_box = NULL, colors_point = NULL, 
+  colors_box = NULL, colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
   legend_colors_box_title = TRUE, legend_colors_point_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -636,7 +694,8 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
   ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var,
-    colors_box = colors_box, colors_point = colors_point, 
+    colors_box = colors_box, colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+    trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
     strat1_var = strat1_var, strat2_var = strat2_var, 
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both,
@@ -656,8 +715,6 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
 }
-
-
 
 
 

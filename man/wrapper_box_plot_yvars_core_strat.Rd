@@ -15,6 +15,16 @@ wrapper_box_plot_yvars_core_strat(
   strat2_var = NULL,
   colors_box = NULL,
   colors_point = NULL,
+  scale_gradient = "gradientn",
+  color_low_point = "#42399B",
+  color_mid_point = "white",
+  color_high_point = "#D70131",
+  midpoint = 0,
+  trim_values = NULL,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE,
+  centered = FALSE,
   variable_names = NULL,
   title = TRUE,
   xlab = TRUE,
@@ -62,6 +72,8 @@ wrapper_box_plot_yvars_core_strat(
 \item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{scale_gradient}{Possible values: "gradientn", "gradient2", "gradient".}
 }
 \description{
 Generate boxplots for multiple variables in one faceted or dodged panel.

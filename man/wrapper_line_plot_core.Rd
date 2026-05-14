@@ -19,8 +19,18 @@ wrapper_line_plot_core(
   palette_line = NULL,
   colors_point = NULL,
   palette_point = NULL,
+  scale_gradient = "gradientn",
+  color_low_point = "#42399B",
+  color_mid_point = "white",
+  color_high_point = "#D70131",
+  midpoint = 0,
   shapes_point = NULL,
   colors_box = "snow",
+  trim_values = NULL,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE,
+  centered = FALSE,
   variable_names = NULL,
   title = TRUE,
   subtitle = TRUE,
@@ -75,8 +85,18 @@ wrapper_line_plot_core_strat(
   palette_line = NULL,
   colors_point = NULL,
   palette_point = NULL,
+  scale_gradient = "gradientn",
+  color_low_point = "#42399B",
+  color_mid_point = "white",
+  color_high_point = "#D70131",
+  midpoint = 0,
   shapes_point = NULL,
   colors_box = "snow",
+  trim_values = NULL,
+  trim_prop = NULL,
+  trim_range = NULL,
+  ceiling = FALSE,
+  centered = FALSE,
   variable_names = NULL,
   title = TRUE,
   xlab = TRUE,
@@ -125,6 +145,8 @@ wrapper_line_plot_core_strat(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{scale_gradient}{Possible values: "gradientn", "gradient2", "gradient".}
 
 \item{smooth}{Possible values: "none", "pooled", "strat". When "strat", stratification is defined by `color_line_var`. When the x variable is continuous, `geom_smooth` is used. When the x variable is a factor, `stat_summary` is used.}
 

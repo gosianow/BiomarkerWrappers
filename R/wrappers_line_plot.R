@@ -45,7 +45,8 @@ lower95CI <- function(x){
 
 # color_line_var = NULL; shape_point_var = NULL; 
 # facet_var = NULL; box_plot = FALSE; 
-# colors_line = NULL; shapes_point = NULL; colors_box = "snow";
+# colors_line = NULL; colors_point = NULL; scale_gradient = "gradientn"; color_low_point = '#42399B'; color_mid_point = "white"; color_high_point = '#D70131'; midpoint = 0; shapes_point = NULL; colors_box = "snow";
+# trim_values = NULL; trim_prop = NULL; trim_range = NULL; ceiling = FALSE; centered = FALSE;
 # variable_names = NULL; 
 # title = TRUE; subtitle = TRUE; xlab = TRUE; ylab = TRUE;
 # legend_colors_line_title = TRUE; legend_shapes_point_title = TRUE;
@@ -78,10 +79,12 @@ lower95CI <- function(x){
 #' @param stat_summary_fun Possible values: "median" or "mean". When "median", the plotted limits indicate the 25% and 75% quartiles. When "mean", the plotted limits indicate the 95% CIs assuming a normal distribution. When the population standard deviation is unknown, t-distribution is used instead of the normal distribution in the calculation of the CIs. See also `Hmisc::smean.cl.normal`. 
 #' @param stat_summary_geom Possible values: "crossbar", "errorbar", "linerange", "pointrange". 
 #' @param stat_summary_position Used to define the dodging of the summary lines when smoothing by strata is used. 
+#' @param scale_gradient Possible values: "gradientn", "gradient2", "gradient".
 #' @export
 wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_point_var = NULL, shape_point_var = NULL, 
   facet_var = NULL, box_plot = FALSE, 
-  colors_line = NULL, palette_line = NULL, colors_point = NULL, palette_point = NULL, shapes_point = NULL, colors_box = "snow",
+  colors_line = NULL, palette_line = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, shapes_point = NULL, colors_box = "snow",
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_line_title = TRUE, legend_colors_point_title = TRUE, legend_shapes_point_title = TRUE,
@@ -118,7 +121,7 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   
   if(!is.null(color_point_var)){
     stopifnot(length(color_point_var) == 1)
-    stopifnot(is.factor(data[, color_point_var]))
+    stopifnot(is.factor(data[, color_point_var]) || is.numeric(data[, color_point_var]))
   }
   
   if(!is.null(shape_point_var)){
@@ -133,6 +136,9 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
   
   stopifnot(length(smooth) == 1)
   stopifnot(smooth %in% c("none", "pooled", "strat"))
+  
+  stopifnot(length(scale_gradient) == 1)
+  stopifnot(scale_gradient %in% c("gradientn", "gradient2", "gradient"))
   
   ### Keep non-missing data
   data <- data[stats::complete.cases(data[, c(x_var, y_var, facet_var)]), , drop = FALSE]
@@ -173,7 +179,29 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     colors_point <- colors_line
     
   }else{
-    colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point, palette = palette_point)
+    
+    if(is.factor(data[, color_point_var])){
+      colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point, palette = palette_point)
+    }else{
+      if(is.null(colors_point)){
+        colors_point <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
+      }
+      
+      if(is.null(trim_values)){
+        trim_values <- compute_trim_values(x = data[, color_point_var], centered = centered, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling)
+      }
+      limits <- trim_values
+      
+    }
+  }
+  
+  if(is.factor(data[, color_point_var])){
+    scale <- "manual"
+  }else{
+    scale <- scale_gradient
+    if(smooth == "strat"){
+      smooth <- "pooled"
+    }
   }
   
   # -------------------------------------------------------------------------
@@ -292,7 +320,6 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     ggpl <- ggpl +
       ggnewscale::new_scale_fill() +
       geom_point(aes(fill = .data[[color_point_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
-      scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = legend_drop, na.value = "grey") +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
       guides(fill = if (legend_show_colors_point) guide_legend(ncol = 1) else "none", 
         shape = if (legend_show_shapes_point) guide_legend(ncol = 1) else "none")
@@ -303,10 +330,36 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
     ggpl <- ggpl +
       ggnewscale::new_scale_color() +
       geom_point(aes(color = .data[[color_point_var]], shape = .data[[shape_point_var]]), size = point_size, alpha = point_alpha) +
-      scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = legend_drop, na.value = "grey") +
       scale_shape_manual(name = legend_shapes_point_title, values = shapes_point) +
       guides(color = if (legend_show_colors_point) guide_legend(ncol = 1) else "none",
         shape = if (legend_show_shapes_point) guide_legend(ncol = 1) else "none")
+    
+  }
+  
+  
+  if(all(shapes_point %in% 21:25)){
+    
+    if(scale == "manual"){
+      ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = legend_drop, na.value = "grey")
+    }else if(scale == "gradientn") {
+      ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient2"){
+      ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient"){
+      ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+    }
+    
+  }else{
+    
+    if(scale == "manual"){
+      ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = legend_drop, na.value = "grey")
+    }else if(scale == "gradientn") {
+      ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient2"){
+      ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+    }else if(scale == "gradient"){
+      ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+    }
     
   }
   
@@ -438,7 +491,8 @@ wrapper_line_plot_core <- function(data, x_var, y_var, group_var, color_line_var
 #' @export
 wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_line_var = NULL, color_point_var = NULL, shape_point_var = NULL, facet_var = NULL, box_plot = FALSE, 
   strat1_var = NULL, strat2_var = NULL, 
-  colors_line = NULL, palette_line = NULL, colors_point = NULL, palette_point = NULL, shapes_point = NULL, colors_box = "snow",
+  colors_line = NULL, palette_line = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, shapes_point = NULL, colors_box = "snow",
+  trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
   legend_colors_line_title = TRUE, legend_colors_point_title = TRUE, legend_shapes_point_title = TRUE, legend_position = "right", legend_drop = TRUE, aspect_ratio = NULL, facet_label_both = TRUE, 
@@ -563,7 +617,8 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
       
       
       ggpl <- wrapper_line_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, group_var = group_var, color_line_var = color_line_var, color_point_var = color_point_var, shape_point_var = shape_point_var, facet_var = facet_var, box_plot = box_plot, 
-        colors_line = colors_line, palette_line = palette_line, colors_point = colors_point, palette_point = palette_point, shapes_point = shapes_point, colors_box = colors_box, 
+        colors_line = colors_line, palette_line = palette_line, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint, shapes_point = shapes_point, colors_box = colors_box, 
+        trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,
         legend_colors_line_title = legend_colors_line_title, legend_colors_point_title = legend_colors_point_title, legend_shapes_point_title = legend_shapes_point_title, legend_position = legend_position, legend_drop = legend_drop, aspect_ratio = aspect_ratio, facet_label_both = facet_label_both, 
@@ -620,8 +675,6 @@ wrapper_line_plot_core_strat <- function(data, x_var, y_var, group_var, color_li
   
   
 }
-
-
 
 
 
