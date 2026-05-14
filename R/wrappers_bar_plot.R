@@ -40,7 +40,7 @@
 #' 
 #' @export
 wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", facet_var = NULL, rev = FALSE, 
-  colors_bar = NULL, color_border = "black", weights_var = NULL,
+  colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -125,11 +125,11 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
   # -------------------------------------------------------------------------
   
   if(method %in% c("facet", "dodge_facet")){
-    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar)
+    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, palette = palette_bar)
   }
   
   if(method %in% c("dodge", "facet2", "dodge_facet2")){
-    colors_bar <- format_colors(levels(data[, x_var]), colors = colors_bar)
+    colors_bar <- format_colors(levels(data[, x_var]), colors = colors_bar, palette = palette_bar)
   }
   
   # -------------------------------------------------------------------------
@@ -686,7 +686,7 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
 #' @export
 wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion", facet_var = NULL, rev = FALSE, 
   strat1_var = NULL, strat2_var = NULL,
-  colors_bar = NULL, color_border = "black", weights_var = NULL, 
+  colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -801,7 +801,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
       
       
       ggpl <- wrapper_bar_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,
-        colors_bar = colors_bar, color_border = color_border, weights_var = weights_var,
+        colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle, 
         legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
@@ -869,7 +869,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
 #' @export
 wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Proportion", rev = FALSE, 
   strat1_var = NULL, strat2_var = NULL,
-  colors_bar = NULL, color_border = "black", weights_var = NULL,
+  colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -922,7 +922,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
   
   ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev, 
     strat1_var = strat1_var, strat2_var = strat2_var,
-    colors_bar = colors_bar, color_border = color_border, weights_var = weights_var,
+    colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
     legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
@@ -952,7 +952,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
 #' @export
 wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatment_var = NULL,
   y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL, 
-  colors_bar = NULL, color_border = "black", weights_var = NULL,
+  colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -1021,7 +1021,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
     
     if(is.null(colors_bar)){
       
-      colors_bar <- format_colors_cat_strata(levels(data[, response_var]), strata = levels(data[, treatment_var]))
+      colors_bar <- format_colors_cat_strata(levels(data[, response_var]), strata = levels(data[, treatment_var]), palette = palette_bar)
       
       # barplot(rep(1, length(colors_bar)), col = colors_bar)
       
@@ -1031,7 +1031,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
         colors_bar <- as.character(rep(colors_bar, times = nlevels(data[, treatment_var])))
       }
       
-      colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = TRUE)
+      colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = TRUE, palette = palette_bar)
       
     }
     
@@ -1045,7 +1045,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
     # Colors
     # -------------------------------------------------------------------------
     
-    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE)
+    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE, palette = palette_bar)
     
   }
   
@@ -1058,7 +1058,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   
   ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,  
     strat1_var = strat1_var, strat2_var = strat2_var,
-    colors_bar = colors_bar, color_border = color_border, weights_var = weights_var,
+    colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
@@ -1091,7 +1091,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
 #' @export
 wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomarker_var = NULL,
   y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL,
-  colors_bar = NULL, color_border = "black", weights_var = NULL,
+  colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = "right", facet_label_both = TRUE, 
@@ -1152,13 +1152,13 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   
   if(is.null(colors_bar)){
     
-    colors_bar <- format_colors_cat_strata(levels(data[, response_var]), strata = levels(data[, treatment_var]))
+    colors_bar <- format_colors_cat_strata(levels(data[, response_var]), strata = levels(data[, treatment_var]), palette = palette_bar)
     
     # barplot(rep(1, length(colors_bar)), col = colors_bar)
     
   }else{
     
-    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE)
+    colors_bar <- format_colors(levels(data[, y_var]), colors = colors_bar, allow_duplicated = FALSE, palette = palette_bar)
     
   }
   
@@ -1170,7 +1170,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   
   ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,
     strat1_var = strat1_var, strat2_var = strat2_var,
-    colors_bar = colors_bar, color_border = color_border, weights_var = weights_var,
+    colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
     legend_colors_title = legend_colors_title, legend_position = legend_position, facet_label_both = facet_label_both, 
@@ -1189,7 +1189,6 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   
   
 }
-
 
 
 

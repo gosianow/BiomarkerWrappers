@@ -39,7 +39,7 @@ NULL
 #' 
 #' @export
 wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var, 
-  colors = NULL, linetypes = 1, weights_var = NULL,
+  colors = NULL, palette = NULL, linetypes = 1, weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE,
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
@@ -105,7 +105,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
   # Colors
   # -------------------------------------------------------------------------
   
-  colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE)
+  colors <- format_colors(levels(data[, covariate_var]), colors = colors, allow_duplicated = TRUE, palette = palette)
   
   ### Because colors are taken in a row from the beginning of the vector to have consistent coloring we have to remove colors for the levels with zero counts. For the ggsurvplot function and in ggplot adjustment colors cannot have names. Otherwise, it does not work. 
   
@@ -387,7 +387,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
 #' @export
 wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var, 
   strat1_var = NULL, strat2_var = NULL, weights_var = NULL, 
-  colors = NULL, linetypes = 1, 
+  colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
   legend_colors_title = TRUE, legend_position = c(0.03, 0.03), legend_justification = c(0, 0),
@@ -506,7 +506,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
       
       
       ggpl <- wrapper_KM_plot_core(data = data_strata1, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var, 
-        colors = colors, linetypes = linetypes, weights_var = weights_var,
+        colors = colors, palette = palette, linetypes = linetypes, weights_var = weights_var,
         variable_names = variable_names, 
         title = title, subtitle = subtitle, xlab = xlab,
         legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
@@ -626,7 +626,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
     strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
-    colors = colors, linetypes = linetypes, 
+    colors = colors, palette = palette, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
@@ -754,7 +754,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
     strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
-    colors = colors, linetypes = linetypes, 
+    colors = colors, palette = palette, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels, 
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
@@ -902,7 +902,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
     strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
-    colors = colors, linetypes = linetypes, 
+    colors = colors, palette = palette, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
     legend_colors_title = legend_colors_title, legend_position = legend_position, legend_justification = legend_justification,
@@ -920,7 +920,6 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   
   
 }
-
 
 
 

@@ -30,7 +30,7 @@
 #' 
 #' @export
 wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
-  colors_box = NULL, colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, 
+  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, 
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
@@ -109,7 +109,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
   }else{
     
     if(is.factor(data[, color_point_var])){
-      colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point)
+      colors_point <- format_colors(levels(data[, color_point_var]), colors = colors_point, palette = palette_point)
     }else{
       if(is.null(colors_point)){
         colors_point <- rev(RColorBrewer::brewer.pal(11, "Spectral"))
@@ -137,10 +137,10 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
       colors_box <- rep(colors_box, nlevels(data[, x_var]))
       names(colors_box) <- levels(data[, x_var])
     }else{
-      colors_box <- format_colors(levels(data[, x_var]), colors = colors_box)
+      colors_box <- format_colors(levels(data[, x_var]), colors = colors_box, palette = palette_box)
     }
   }else{
-    colors_box <- format_colors(levels(data[, dodge_var]), colors = colors_box)
+    colors_box <- format_colors(levels(data[, dodge_var]), colors = colors_box, palette = palette_box)
   }
   
   
@@ -459,7 +459,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
 #' @export
 wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
-  colors_box = NULL, colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
@@ -584,7 +584,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
       
       
       ggpl <- wrapper_box_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var, 
-        colors_box = colors_box, colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+        colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
         trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,  
@@ -644,7 +644,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
 #' @export
 wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
-  colors_box = NULL, colors_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
@@ -694,7 +694,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
   ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var,
-    colors_box = colors_box, colors_point = colors_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+    colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
     trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
     strat1_var = strat1_var, strat2_var = strat2_var, 
     variable_names = variable_names, 
@@ -715,7 +715,6 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
 }
-
 
 
 
