@@ -129,7 +129,7 @@ wrapper_tile_plot1_core <- function(data, y_vars, colors = NULL, variable_names 
 
 #' @rdname wrapper_tile_plot1_core
 #' @export
-wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = TRUE, rev_levels_skip = NULL, return_plotlist = FALSE, nrow_legend = 3){
+wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names = NULL, skip_NAs = FALSE, rev = TRUE, rev_levels_skip = NULL, return_plotlist = FALSE, nrow_legend = 4, label_size = ggplot2::theme_get()$axis.text$size){
   
   
   stopifnot(length(y_vars) >= 1)
@@ -256,6 +256,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
       levels_with_prop_y_var = factor(levels_y_var, levels = levels(data[, y_vars[i]]), 
         labels = paste0(levels(data[, y_vars[i]]), ", ", format_counts_and_props(tbl_y_var, prop_y_var, digits = 0))), 
       prop = as.numeric(prop), 
+      prop_label = format_props(prop, digits = 0),
       stringsAsFactors = FALSE, row.names = NULL)
     
     
@@ -309,6 +310,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
     
     ggplot(data_tile_size) +
       geom_col(aes(x = names_y_var, y = prop, group = value_interaction, fill = levels_with_prop_y_var)) +
+      geom_text(aes(x = names_y_var, y = prop, group = value_interaction, label = prop_label), position = position_stack(vjust = 0.5), size = label_size, size.unit = "pt", color = "black") +
       coord_flip() +
       theme(axis.text.x = element_blank(), 
         axis.title = element_blank(),
@@ -321,7 +323,7 @@ wrapper_tile_plot2_core <- function(data, y_vars, colors = NULL, variable_names 
         legend.key.size = unit(0.5, "line"),
         plot.margin = margin(t = 2, r = 7, b = 2, l = 7, unit = "pt")) +
       scale_fill_manual(values = colors_tmp) +
-      scale_y_discrete(expand = c(0,0)) +
+      scale_y_continuous(expand = c(0,0)) +
       scale_x_discrete(expand = c(0,0)) +
       guides(fill = guide_legend(nrow = nrow_legend, reverse = FALSE))
     

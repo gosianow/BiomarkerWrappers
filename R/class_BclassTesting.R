@@ -331,7 +331,6 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   # ------------------------------------------------------------------
   
   
-  
   p <- forestplot::forestplot(labeltext,
     mean  = c(NA, res_plot[[mean_var]]),
     lower = c(NA, res_plot[[lower_var]]),
@@ -339,7 +338,7 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     is.summary = c(TRUE, rep(FALSE, nrow(res_plot))),
     xlab = xlab,
     zero = zero,
-    title = "\n",
+    title = caption,
     col = forestplot::fpColors(box = "darkblue", line = "darkblue"),
     boxsize = 0.4,
     hrzl_lines = hrzl_lines,
@@ -352,7 +351,8 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
     txt_gp = forestplot::fpTxtGp(
       label = grid::gpar(fontsize = label_fontsize),
       xlab  = grid::gpar(fontsize = 24),
-      ticks = grid::gpar(fontsize = 22)
+      ticks = grid::gpar(fontsize = 22),
+      title = grid::gpar(fontsize = label_fontsize, fontface = "bold")
     ),
     mar = grid::unit(c(5, 5, 5, 5), "mm"),
     clip = clip,
@@ -365,14 +365,6 @@ setMethod("bforest", "BclassTesting", function(x, mean_var = NULL, lower_var = N
   )
   
   print(p)
-  
-  # Caption
-  grid::grid.text(caption,
-    x = 0.5,
-    y = 0.90,
-    just = c("center", "top"),
-    gp = grid::gpar(fontsize = 16, fontface = "bold")
-  )
   
   invisible(p)
   

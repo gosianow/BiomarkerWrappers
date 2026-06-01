@@ -27,7 +27,8 @@ wrapper_tile_plot2_core(
   rev = TRUE,
   rev_levels_skip = NULL,
   return_plotlist = FALSE,
-  nrow_legend = 3
+  nrow_legend = 4,
+  label_size = ggplot2::theme_get()$axis.text$size
 )
 }
 \arguments{
