@@ -30,7 +30,7 @@
 #' 
 #' @export
 wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
-  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, 
+  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, color_na_point = "grey50",
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, subtitle = TRUE, xlab = TRUE, ylab = TRUE,
@@ -74,6 +74,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
   
   stopifnot(length(scale_gradient) == 1)
   stopifnot(scale_gradient %in% c("gradientn", "gradient2", "gradient"))
+  stopifnot(length(color_na_point) == 1)
   
   
   ### Keep non-missing data
@@ -329,25 +330,25 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
     if(point_shape %in% 21:25){
       
       if(scale == "manual"){
-        ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey")
+        ggpl <- ggpl + scale_fill_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = color_na_point)
       }else if(scale == "gradientn") {
-        ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+        ggpl <- ggpl + scale_fill_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish, na.value = color_na_point)
       }else if(scale == "gradient2"){
-        ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+        ggpl <- ggpl + scale_fill_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish, na.value = color_na_point)
       }else if(scale == "gradient"){
-        ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+        ggpl <- ggpl + scale_fill_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish, na.value = color_na_point)
       }
       
     }else{
       
       if(scale == "manual"){
-        ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = "grey")
+        ggpl <- ggpl + scale_color_manual(name = legend_colors_point_title, values = colors_point, drop = FALSE, na.value = color_na_point)
       }else if(scale == "gradientn") {
-        ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish)
+        ggpl <- ggpl + scale_color_gradientn(name = legend_colors_point_title, colors = colors_point, limits = limits, oob = scales::squish, na.value = color_na_point)
       }else if(scale == "gradient2"){
-        ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish)
+        ggpl <- ggpl + scale_color_gradient2(name = legend_colors_point_title, low = color_low_point, mid = color_mid_point, high = color_high_point, midpoint = midpoint, limits = limits, oob = scales::squish, na.value = color_na_point)
       }else if(scale == "gradient"){
-        ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish)
+        ggpl <- ggpl + scale_color_gradient(name = legend_colors_point_title, low = color_low_point, high = color_high_point, limits = limits, oob = scales::squish, na.value = color_na_point)
       }
       
     }
@@ -459,7 +460,7 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
 #' @export
 wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
-  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, color_na_point = "grey50",
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
@@ -584,7 +585,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
       
       
       ggpl <- wrapper_box_plot_core(data = data_strata1, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var, 
-        colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+        colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint, color_na_point = color_na_point,
         trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
         variable_names = variable_names, 
         xlab = xlab, ylab = ylab, title = title, subtitle = subtitle,  
@@ -644,7 +645,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
 #' @export
 wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
   strat1_var = NULL, strat2_var = NULL, 
-  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0,
+  colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, color_na_point = "grey50",
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
@@ -694,7 +695,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
   ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var,
-    colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint,
+    colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint, color_na_point = color_na_point,
     trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
     strat1_var = strat1_var, strat2_var = strat2_var, 
     variable_names = variable_names, 
@@ -715,7 +716,6 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
 }
-
 
 
 

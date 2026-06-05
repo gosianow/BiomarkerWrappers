@@ -22,6 +22,7 @@ wrapper_box_plot_yvars_core_strat(
   color_mid_point = "white",
   color_high_point = "#D70131",
   midpoint = 0,
+  color_na_point = "grey50",
   trim_values = NULL,
   trim_prop = NULL,
   trim_range = NULL,
