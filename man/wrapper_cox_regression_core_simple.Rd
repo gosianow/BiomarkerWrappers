@@ -36,6 +36,8 @@ wrapper_cox_regression_core_simple_strat(
   return_vars = covariate_vars,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -72,7 +74,7 @@ wrapper_cox_regression_core_simple_strat(
 
 \item{force_empty_cols}{Logical. Whether to display output columns which are all empty.}
 
-\item{sr_times}{Vector of times used to compute survival rates, for example, percent of 3-year IDSF.}
+\item{sr_times}{Vector of times used to compute survival rates, for example, percent of 3-year IDSF, survival rate of 12 months.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 
@@ -87,6 +89,10 @@ wrapper_cox_regression_core_simple_strat(
 \item{strat1_var}{Name of the first stratification variable used for splitting the data.}
 
 \item{strat2_var}{Name of the second stratification variable used for splitting the data.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 }
 \description{
 This function can be used if one is interested in effects of multiple covariates in a multivariate model.

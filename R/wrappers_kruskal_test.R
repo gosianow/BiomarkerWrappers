@@ -597,28 +597,46 @@ wrapper_kruskal_test_core_col_num <- function(data, num_var, cat_var, method = "
 #' @rdname wrapper_kruskal_test_core_col_cat
 #' @inheritParams wrapper_kruskal_test_core_col_cat
 #' @param strat1_var Name of the first stratification variable.
-#' @param strat1_var Name of the second stratification variable.
+#' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
-wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, method = "kruskal", alternative = "two.sided", paired = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
   
   
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     data[, "strat2_dummy"] <- factor("strat2_dummy")
     strat2_var <- "strat2_dummy"
@@ -756,9 +774,11 @@ wrapper_kruskal_test_core_col_cat_strat <- function(data, num_var, cat_var, stra
 #' @rdname wrapper_kruskal_test_core_col_num
 #' @inheritParams wrapper_kruskal_test_core_col_num
 #' @param strat1_var Name of the first stratification variable.
-#' @param strat1_var Name of the second stratification variable.
+#' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
-wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
   
   if(is.null(display_statistics)){
     if(method == "t"){
@@ -776,19 +796,35 @@ wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, stra
   # Check on strat vars
   # --------------------------------------------------------------------------
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     data[, "strat2_dummy"] <- factor("strat2_dummy")
     strat2_var <- "strat2_dummy"
@@ -935,7 +971,7 @@ wrapper_kruskal_test_core_col_num_strat <- function(data, num_var, cat_var, stra
 #' @param cat_vars Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.
 #' @param display_in_column Possible values: "cat", "num".
 #' @export
-wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
+wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, method = "kruskal", alternative = "two.sided", paired = FALSE, pairwise = FALSE, variable_names = NULL, caption = NULL, display_statistics = NULL, display_in_column = "cat", force_empty_cols = FALSE, print_pvalues = TRUE, print_adjpvalues = TRUE, drop = FALSE){
   
   
   # --------------------------------------------------------------------------
@@ -982,7 +1018,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
       num_var <- num_vars
       cat_var <- cat_vars[i]
       
-      wrapper_res <- wrapper_kruskal_test_core_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, alternative = alternative, paired = paired, pairwise = pairwise, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, drop = drop)
+      wrapper_res <- wrapper_kruskal_test_core_col_num_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, method = method, alternative = alternative, paired = paired, pairwise = pairwise, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, drop = drop)
       
       return(wrapper_res)
       
@@ -998,7 +1034,7 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
       num_var <- num_vars[i]
       cat_var <- cat_vars
       
-      wrapper_res <- wrapper_kruskal_test_core_col_cat_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, method = method, alternative = alternative, paired = paired, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, drop = drop)
+      wrapper_res <- wrapper_kruskal_test_core_col_cat_strat(data = data, num_var = num_var, cat_var = cat_var, strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, method = method, alternative = alternative, paired = paired, variable_names = variable_names, caption = caption, display_statistics = display_statistics, force_empty_cols = TRUE, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, drop = drop)
       
       return(wrapper_res)
       
@@ -1042,8 +1078,6 @@ wrapper_kruskal_test <- function(data, num_vars, cat_vars, strat1_var = NULL, st
   return(wrapper_res)
   
 }
-
-
 
 
 

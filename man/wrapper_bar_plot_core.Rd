@@ -55,6 +55,8 @@ wrapper_bar_plot_core_strat(
   rev = FALSE,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   colors_bar = NULL,
   palette_bar = NULL,
   color_border = "black",
@@ -107,6 +109,10 @@ wrapper_bar_plot_core_strat(
 \item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 }
 \description{
 Generate a signle barplot.

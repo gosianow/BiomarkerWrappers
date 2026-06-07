@@ -26,6 +26,8 @@ wrapper_kruskal_test_core_col_cat_strat(
   cat_var,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   method = "kruskal",
   alternative = "two.sided",
   paired = FALSE,
@@ -51,7 +53,13 @@ wrapper_kruskal_test_core_col_cat_strat(
 
 \item{display_statistics}{Vector of possible values: "N", "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile".}
 
-\item{strat1_var}{Name of the second stratification variable.}
+\item{strat1_var}{Name of the first stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 }
 \description{
 Returns a table where stratification subgroups are in columns and distribution summary statistics for the numerical variable are in rows.

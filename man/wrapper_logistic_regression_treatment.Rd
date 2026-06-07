@@ -11,6 +11,8 @@ wrapper_logistic_regression_treatment(
   biomarker_vars = NULL,
   adjustment_vars = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -31,6 +33,12 @@ wrapper_logistic_regression_treatment(
 \item{biomarker_vars}{Vector of biomarker names.}
 
 \item{adjustment_vars}{Vector of covariate names used for adjustment.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 

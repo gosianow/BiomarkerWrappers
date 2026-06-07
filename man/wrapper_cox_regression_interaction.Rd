@@ -14,6 +14,8 @@ wrapper_cox_regression_interaction(
   strata_vars = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -37,9 +39,13 @@ wrapper_cox_regression_interaction(
 
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 
-\item{strat1_var}{Name of the second stratification variable.}
+\item{strat1_var}{Name of the first stratification variable.}
 
-\item{strat2_var}{Name of the second stratification variable used for splitting the data.}
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 

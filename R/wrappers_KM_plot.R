@@ -367,6 +367,8 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
 #' @rdname wrapper_KM_plot_core
 #' @param strat1_var Name of the firts stratification variable.
 #' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @examples 
 #' 
 #' data(bdata)
@@ -386,7 +388,7 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
 #' 
 #' @export
 wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var, 
-  strat1_var = NULL, strat2_var = NULL, weights_var = NULL, 
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -400,20 +402,37 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1){
   
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat1_dummy" %in% colnames(data))
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
+
+
+  use_strat2_dummy <- is.null(strat2_var)
   
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat2_dummy" %in% colnames(data))
     data[, "strat2_dummy"] <- factor("strat2_dummy")
@@ -557,7 +576,7 @@ wrapper_KM_plot_core_strat <- function(data, tte_var, censor_var, covariate_var,
 #' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`.
 #' @export
 wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var, treatment_var, 
-  strat1_var = NULL, strat2_var = NULL, weights_var = NULL, 
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -625,7 +644,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
   
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
-    strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, weights_var = weights_var, 
     colors = colors, palette = palette, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
@@ -654,7 +673,7 @@ wrapper_KM_plot_interaction <- function(data, tte_var, censor_var, biomarker_var
 #' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for biomarker levels. 
 #' @export
 wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, treatment_var = NULL, 
-  strat2_var = NULL, weights_var = NULL, 
+  strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -753,7 +772,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
   
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
-    strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, weights_var = weights_var, 
     colors = colors, palette = palette, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels, 
@@ -790,7 +809,7 @@ wrapper_KM_plot_biomarker <- function(data, tte_var, censor_var, biomarker_var, 
 #' @param colors Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for treatment levels.
 #' @export
 wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, biomarker_var = NULL,
-  strat2_var = NULL, weights_var = NULL, 
+  strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, 
   colors = NULL, palette = NULL, linetypes = 1,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -901,7 +920,7 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   
   
   ggpl <- wrapper_KM_plot_core_strat(data = data, tte_var = tte_var, censor_var = censor_var, covariate_var = covariate_var,
-    strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, weights_var = weights_var, 
     colors = colors, palette = palette, linetypes = linetypes, 
     variable_names = variable_names, 
     title = title, xlab = xlab, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
@@ -920,8 +939,6 @@ wrapper_KM_plot_treatment <- function(data, tte_var, censor_var, treatment_var, 
   
   
 }
-
-
 
 
 

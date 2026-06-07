@@ -13,6 +13,8 @@ wrapper_bar_plot_biomarker(
   facet_var = NULL,
   rev = FALSE,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   colors_bar = NULL,
   palette_bar = NULL,
   color_border = "black",
@@ -61,6 +63,10 @@ wrapper_bar_plot_biomarker(
 \item{y_type}{Possible values: "Proportion" or "Count"}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{colors_bar}{Vector with colors for treatment X response interaction. Alternatively,}
 

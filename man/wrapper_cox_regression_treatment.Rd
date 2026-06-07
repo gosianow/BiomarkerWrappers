@@ -13,6 +13,8 @@ wrapper_cox_regression_treatment(
   adjustment_vars = NULL,
   strata_vars = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   weights_var = NULL,
   variable_names = NULL,
   caption = NULL,
@@ -44,11 +46,15 @@ wrapper_cox_regression_treatment(
 
 \item{strat2_var}{Name of the second stratification variable used for splitting the data.}
 
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
+
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 
 \item{caption}{Caption for the table with results.}
 
-\item{sr_times}{Vector of times used to compute survival rates, for example, percent of 3-year IDSF.}
+\item{sr_times}{Vector of times used to compute survival rates, for example, percent of 3-year IDSF, survival rate of 12 months.}
 
 \item{print_nevent}{Logical. Whether to print numbers of events.}
 

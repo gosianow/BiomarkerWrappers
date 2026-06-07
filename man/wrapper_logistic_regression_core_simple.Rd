@@ -29,6 +29,8 @@ wrapper_logistic_regression_core_simple_strat(
   weights_var = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   variable_names = NULL,
   caption = NULL,
   force_empty_cols = FALSE,
@@ -60,7 +62,13 @@ wrapper_logistic_regression_core_simple_strat(
 
 \item{print_adjpvalues}{Logical. Whether to print adjusted p-values.}
 
-\item{strat1_var}{Name of the second stratification variable.}
+\item{strat1_var}{Name of the first stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 }
 \description{
 Logistic regression with simple additive model

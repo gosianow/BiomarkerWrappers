@@ -11,6 +11,8 @@ wrapper_pearsons_test_treatment(
   biomarker_vars = NULL,
   strata_vars = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   method = "pearson",
   variable_names = NULL,
   caption = NULL,
@@ -30,6 +32,12 @@ wrapper_pearsons_test_treatment(
 \item{biomarker_vars}{Vector with names of categorical biomarkers. When NULL, overall treatment effect is estimated.}
 
 \item{strata_vars}{Stratification factors. If defined, then the Cochran-Mantel-Haenszel Chi-Squared Test is applied.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{method}{Method 'pearson' or 'fisher' test.}
 

@@ -49,6 +49,8 @@ wrapper_KM_plot_core_strat(
   covariate_var,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   weights_var = NULL,
   colors = NULL,
   palette = NULL,
@@ -106,6 +108,10 @@ wrapper_KM_plot_core_strat(
 \item{strat1_var}{Name of the firts stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 }
 \description{
 KM plot

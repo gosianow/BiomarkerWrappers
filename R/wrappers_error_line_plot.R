@@ -59,9 +59,11 @@ wrapper_error_line_plot_core <- function(data = NULL, x_var, y_var, color_line_v
 #' @rdname wrapper_error_line_plot_core
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
 wrapper_error_line_plot_core_strat <- function(data, x_var, y_var, color_line_var, 
-  strat1_var = NULL, strat2_var = NULL, 
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, 
   colors_line = NULL, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, 
@@ -70,20 +72,36 @@ wrapper_error_line_plot_core_strat <- function(data, x_var, y_var, color_line_va
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat1_dummy" %in% colnames(data))
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat2_dummy" %in% colnames(data))
     data[, "strat2_dummy"] <- factor("strat2_dummy")
@@ -220,8 +238,6 @@ wrapper_error_line_plot_core_strat <- function(data, x_var, y_var, color_line_va
   
   
 }
-
-
 
 
 

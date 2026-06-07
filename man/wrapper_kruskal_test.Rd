@@ -10,6 +10,8 @@ wrapper_kruskal_test(
   cat_vars,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   method = "kruskal",
   alternative = "two.sided",
   paired = FALSE,
@@ -31,7 +33,13 @@ wrapper_kruskal_test(
 
 \item{cat_vars}{Vector with names of categorical variables. If it has length >= 1, then 'num_var' must be of length 1, and stratification subgroups are displayed in rows and statistics in columns.}
 
-\item{strat1_var}{Name of the second stratification variable.}
+\item{strat1_var}{Name of the first stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{method}{Test to be used. Possible values: "kruskal", "wilcox", "t".}
 

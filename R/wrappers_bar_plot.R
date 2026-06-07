@@ -683,9 +683,11 @@ wrapper_bar_plot_core <- function(data, x_var, y_var, y_type = "Proportion", fac
 #' @rdname wrapper_bar_plot_core
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
 wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion", facet_var = NULL, rev = FALSE, 
-  strat1_var = NULL, strat2_var = NULL,
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE,
   colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL, 
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -699,20 +701,36 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
   strat_scales = "fixed", strat1_nrow = 1, strat1_ncol = NULL, strat2_nrow = NULL, strat2_ncol = 1, less_legends = FALSE){
   
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat1_dummy" %in% colnames(data))
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat2_dummy" %in% colnames(data))
     data[, "strat2_dummy"] <- factor("strat2_dummy")
@@ -868,7 +886,7 @@ wrapper_bar_plot_core_strat <- function(data, x_var, y_var, y_type = "Proportion
 #' @inheritParams wrapper_bar_plot_core_strat
 #' @export
 wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Proportion", rev = FALSE, 
-  strat1_var = NULL, strat2_var = NULL,
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE,
   colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -921,7 +939,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
   
   
   ggpl <- wrapper_bar_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev, 
-    strat1_var = strat1_var, strat2_var = strat2_var,
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy,
     colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
@@ -951,7 +969,7 @@ wrapper_bar_plot_yvars_core_strat <- function(data, x_var, y_vars, y_type = "Pro
 #' @param colors_bar Vector with colors for treatment X response interaction. Alternatively, 
 #' @export
 wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatment_var = NULL,
-  y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL, 
+  y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, 
   colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -1057,7 +1075,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
   
   
   ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,  
-    strat1_var = strat1_var, strat2_var = strat2_var,
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy,
     colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels, 
@@ -1090,7 +1108,7 @@ wrapper_bar_plot_biomarker <- function(data, response_var, biomarker_var, treatm
 #' @param colors_bar Vector with colors for treatment X response interaction.
 #' @export
 wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomarker_var = NULL,
-  y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL,
+  y_type = "Proportion", facet_var = NULL, rev = FALSE, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE,
   colors_bar = NULL, palette_bar = NULL, color_border = "black", weights_var = NULL,
   variable_names = NULL, 
   title = TRUE, xlab = TRUE, ylab = TRUE, strat1_label_both = FALSE, strat2_label_both = FALSE, strat1_levels = "fixed",
@@ -1169,7 +1187,7 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   
   
   ggpl <- wrapper_bar_plot_core_strat(data = data, x_var = x_var, y_var = y_var, y_type = y_type, facet_var = facet_var, rev = rev,
-    strat1_var = strat1_var, strat2_var = strat2_var,
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy,
     colors_bar = colors_bar, palette_bar = palette_bar, color_border = color_border, weights_var = weights_var,
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both, strat1_levels = strat1_levels,
@@ -1189,6 +1207,4 @@ wrapper_bar_plot_treatment <- function(data, response_var, treatment_var, biomar
   
   
 }
-
-
 

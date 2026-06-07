@@ -457,9 +457,11 @@ wrapper_box_plot_core <- function(data, x_var, y_var, dodge_var = NULL, facet_va
 #' 
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
 wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
-  strat1_var = NULL, strat2_var = NULL, 
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, 
   colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, color_na_point = "grey50",
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
@@ -477,20 +479,36 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
   
   
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat1_dummy" %in% colnames(data))
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat2_dummy" %in% colnames(data))
     data[, "strat2_dummy"] <- factor("strat2_dummy")
@@ -644,7 +662,7 @@ wrapper_box_plot_core_strat <- function(data, x_var, y_var, dodge_var = NULL, fa
 #' @inheritParams wrapper_box_plot_core_strat
 #' @export
 wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_var = NULL, facet_var = NULL, color_point_var = NULL,
-  strat1_var = NULL, strat2_var = NULL, 
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, 
   colors_box = NULL, palette_box = NULL, colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, color_na_point = "grey50",
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
@@ -697,7 +715,7 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   ggpl <- wrapper_box_plot_core_strat(data = data_longer, x_var = x_var, y_var = y_var, dodge_var = dodge_var, facet_var = facet_var, color_point_var = color_point_var,
     colors_box = colors_box, palette_box = palette_box, colors_point = colors_point, palette_point = palette_point, scale_gradient = scale_gradient, color_low_point = color_low_point, color_mid_point = color_mid_point, color_high_point = color_high_point, midpoint = midpoint, color_na_point = color_na_point,
     trim_values = trim_values, trim_prop = trim_prop, trim_range = trim_range, ceiling = ceiling, centered = centered,
-    strat1_var = strat1_var, strat2_var = strat2_var, 
+    strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, 
     variable_names = variable_names, 
     xlab = xlab, ylab = ylab, title = title, strat1_label_both = strat1_label_both, strat2_label_both = strat2_label_both,
     legend_colors_box_title = legend_colors_box_title, legend_colors_point_title = legend_colors_point_title, legend_position = legend_position, facet_label_both = facet_label_both, 
@@ -716,8 +734,6 @@ wrapper_box_plot_yvars_core_strat <- function(data, y_vars, x_var = NULL, dodge_
   
   
 }
-
-
 
 
 

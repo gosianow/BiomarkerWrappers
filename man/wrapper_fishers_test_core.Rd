@@ -25,6 +25,8 @@ wrapper_fishers_test_core_strat(
   weights_var = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   variable_names = NULL,
   caption = NULL,
   margin = 1,
@@ -37,7 +39,13 @@ wrapper_fishers_test_core_strat(
 \arguments{
 \item{data}{Data frame.}
 
-\item{strat1_var}{Name of the second stratification variable.}
+\item{strat1_var}{Name of the first stratification variable.}
+
+\item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 }
 \description{
 Fisher's test

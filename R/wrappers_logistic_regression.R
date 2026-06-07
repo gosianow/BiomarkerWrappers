@@ -481,27 +481,45 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
 #' @rdname wrapper_logistic_regression_core_simple
 #' @inheritParams wrapper_logistic_regression_core_simple
 #' @param strat1_var Name of the first stratification variable.
-#' @param strat1_var Name of the second stratification variable.
+#' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
-wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = covariate_vars, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = covariate_vars, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     data[, "strat2_dummy"] <- factor("strat2_dummy")
     strat2_var <- "strat2_dummy"
@@ -641,7 +659,7 @@ wrapper_logistic_regression_core_simple_strat <- function(data, response_var, co
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_vars, treatment_var = NULL, adjustment_vars = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -668,7 +686,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
     covariate_vars <- c(biomarker_vars[i], adjustment_vars)
     return_vars <- biomarker_vars[i]
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = treatment_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     
     return(wrapper_res)
@@ -749,7 +767,7 @@ wrapper_logistic_regression_biomarker <- function(data, response_var, biomarker_
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
+wrapper_logistic_regression_treatment <- function(data, response_var, treatment_var, biomarker_vars = NULL, adjustment_vars = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
   # --------------------------------------------------------------------------
   # Checks
@@ -784,7 +802,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     strat1_var <- biomarker_vars[i]
     
     
-    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
+    wrapper_res <- wrapper_logistic_regression_core_simple_strat(data = data, response_var = response_var, covariate_vars = covariate_vars, return_vars = return_vars, strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, weights_var = weights_var, variable_names = variable_names, caption = caption, force_empty_cols = TRUE, print_total = print_total, print_non_response = print_non_response, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues, print_OR = print_OR)
     
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
@@ -793,6 +811,11 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     
     colnames(res)[colnames(res) == strat1_var] <- "biomarker_subgroup"
     colnames(out)[colnames(out) == variable_names[strat1_var]] <- "Biomarker Subgroup"
+    
+    if(!"biomarker_subgroup" %in% colnames(res)){
+      res[, "biomarker_subgroup"] <- ""
+      out[, "Biomarker Subgroup"] <- ""
+    }
     
     ### Treatment is the same for all the biomarkers and biomarker info is missing. Thus, we remove covariate and add biomarker.
     
@@ -805,8 +828,8 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     out[, "Covariate"] <- NULL
     
     
-    res <- dplyr::select(res, c(strat2_var, "biomarker", "biomarker_subgroup"), everything())
-    out <- dplyr::select(out, c(as.character(variable_names[strat2_var]), "Biomarker", "Biomarker Subgroup"), everything())
+    res <- dplyr::select(res, c(intersect(strat2_var, colnames(res)), "biomarker", "biomarker_subgroup"), everything())
+    out <- dplyr::select(out, c(intersect(as.character(variable_names[strat2_var]), colnames(out)), "Biomarker", "Biomarker Subgroup"), everything())
     
     
     bresults(wrapper_res) <- res
@@ -1269,27 +1292,45 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
 #' 
 #' @inheritParams wrapper_logistic_regression_core_interaction
 #' @param strat1_var Name of the first stratification variable.
-#' @param strat1_var Name of the second stratification variable.
+#' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
-wrapper_logistic_regression_core_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_core_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     data[, "strat2_dummy"] <- factor("strat2_dummy")
     strat2_var <- "strat2_dummy"
@@ -1413,7 +1454,7 @@ wrapper_logistic_regression_core_interaction_strat <- function(data, response_va
 #' @param biomarker_vars Vector of biomarker names.
 #' @param adjustment_vars Vector of covariate names used for adjustment.
 #' @export
-wrapper_logistic_regression_interaction <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
+wrapper_logistic_regression_interaction <- function(data, response_var, treatment_var, biomarker_vars, adjustment_vars = NULL, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
   
   # --------------------------------------------------------------------------
@@ -1442,7 +1483,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
     interaction2_var <- treatment_var
     covariate_vars <- adjustment_vars
     
-    wrapper_res <- wrapper_logistic_regression_core_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, weights_var = weights_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
+    wrapper_res <- wrapper_logistic_regression_core_interaction_strat(data = data, response_var = response_var,  interaction1_var = interaction1_var, interaction2_var = interaction2_var, covariate_vars = covariate_vars, strat1_var = strat1_var, strat2_var = strat2_var, strat1_dummy = strat1_dummy, strat2_dummy = strat2_dummy, weights_var = weights_var, variable_names = variable_names, caption = caption, print_pvalues = print_pvalues, print_adjpvalues = print_adjpvalues)
     
     return(wrapper_res)
     
@@ -1515,11 +1556,6 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   
 }
-
-
-
-
-
 
 
 

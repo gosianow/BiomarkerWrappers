@@ -11,6 +11,8 @@ wrapper_KM_plot_treatment(
   treatment_var,
   biomarker_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   weights_var = NULL,
   colors = NULL,
   palette = NULL,
@@ -57,6 +59,10 @@ wrapper_KM_plot_treatment(
 \item{censor_var}{Name of the variable containing censoring information. Censor variable must be numeric and encode 1 for event and 0 for censor.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{colors}{Vector with colors for treatment X biomarker levels. Unique colors can be generated with function `format_colors_cat_strata`. Alternatively, vector with colors for treatment levels.}
 

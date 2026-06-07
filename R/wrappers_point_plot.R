@@ -355,9 +355,11 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
 #' @rdname wrapper_point_plot_core
 #' @param strat1_var Name of the first stratification variable.
 #' @param strat2_var Name of the second stratification variable.
+#' @param strat1_dummy Logical. Add a dummy first stratification variable.
+#' @param strat2_dummy Logical. Add a dummy second stratification variable.
 #' @export
 wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = NULL, shape_point_var = NULL, facet_var = NULL, 
-  strat1_var = NULL, strat2_var = NULL, 
+  strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, 
   colors_point = NULL, palette_point = NULL, scale_gradient = "gradientn", color_low_point = '#42399B', color_mid_point = "white", color_high_point = '#D70131', midpoint = 0, shapes_point = NULL, 
   trim_values = NULL, trim_prop = NULL, trim_range = NULL, ceiling = FALSE, centered = FALSE,
   variable_names = NULL, 
@@ -373,20 +375,36 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   
   
   
+  use_strat1_dummy <- is.null(strat1_var)
+  
   if(!is.null(strat1_var)){
     stopifnot(length(strat1_var) == 1)
     stopifnot(is.factor(data[, strat1_var]))
-  }else{
+    
+    if(strat1_dummy && nlevels(data[, strat1_var]) == 1){
+      use_strat1_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat1_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat1_dummy" %in% colnames(data))
     data[, "strat1_dummy"] <- factor("strat1_dummy")
     strat1_var <- "strat1_dummy"
   }
   
+  use_strat2_dummy <- is.null(strat2_var)
+  
   if(!is.null(strat2_var)){
     stopifnot(length(strat2_var) == 1)
     stopifnot(is.factor(data[, strat2_var]))
-  }else{
+    
+    if(strat2_dummy && nlevels(data[, strat2_var]) == 1){
+      use_strat2_dummy <- TRUE
+    }
+  }
+  
+  if(use_strat2_dummy){
     ### Add dummy variable to data
     stopifnot(!"strat2_dummy" %in% colnames(data))
     data[, "strat2_dummy"] <- factor("strat2_dummy")
@@ -524,8 +542,6 @@ wrapper_point_plot_core_strat <- function(data, x_var, y_var, color_point_var = 
   
   
 }
-
-
 
 
 

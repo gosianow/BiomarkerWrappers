@@ -12,6 +12,8 @@ wrapper_log_rank_test_biomarker(
   treatment_var = NULL,
   strata_vars = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   variable_names = NULL,
   caption = NULL,
   strat1_levels = "fixed",
@@ -36,6 +38,10 @@ wrapper_log_rank_test_biomarker(
 \item{strata_vars}{Vector with names of covariates that are used as strata.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{variable_names}{Named vector with variable names. If not supplied, variable names are created by replacing in column names underscores with spaces.}
 

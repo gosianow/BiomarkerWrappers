@@ -13,6 +13,8 @@ wrapper_box_plot_yvars_core_strat(
   color_point_var = NULL,
   strat1_var = NULL,
   strat2_var = NULL,
+  strat1_dummy = FALSE,
+  strat2_dummy = FALSE,
   colors_box = NULL,
   palette_box = NULL,
   colors_point = NULL,
@@ -75,6 +77,10 @@ wrapper_box_plot_yvars_core_strat(
 \item{strat1_var}{Name of the first stratification variable.}
 
 \item{strat2_var}{Name of the second stratification variable.}
+
+\item{strat1_dummy}{Logical. Add a dummy first stratification variable.}
+
+\item{strat2_dummy}{Logical. Add a dummy second stratification variable.}
 
 \item{scale_gradient}{Possible values: "gradientn", "gradient2", "gradient".}
 }
