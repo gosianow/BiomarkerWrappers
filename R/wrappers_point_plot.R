@@ -283,8 +283,8 @@ wrapper_point_plot_core <- function(data, x_var, y_var, color_point_var = NULL, 
     theme(plot.title = element_text(size = title_size, face = "plain"),
       plot.subtitle = element_text(size = title_size, face = "bold"),
       axis.line = element_blank(),
-      axis.ticks = element_line(color = "black", size = 0.5),
-      panel.border = element_rect(colour = "black", size = 0.8, fill = NA),
+      axis.ticks = element_line(color = "black", linewidth = 0.5),
+      panel.border = element_rect(colour = "black", linewidth = 0.8, fill = NA),
       legend.position = legend_position,
       aspect.ratio = aspect_ratio) +
     background_grid(major = background_grid_major, minor = "none", size.major = 0.15) +

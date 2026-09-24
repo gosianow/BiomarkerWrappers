@@ -219,8 +219,13 @@ wrapper_KM_plot_core <- function(data, tte_var, censor_var, covariate_var,
     res <- bresults(wrapper_res)
     out <- boutput(wrapper_res)
     
+    # Remove the first column with Covariate name
     
     tb <- out[, -grep("Covariate", colnames(out))]
+
+    # Remove the "Subgroup" name from the column
+
+    colnames(tb)[colnames(tb) == "Subgroup"] <- ""
     
     tb <- tibble::tibble(x = 1, y = 1, label = list(tb))
     

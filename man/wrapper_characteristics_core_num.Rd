@@ -18,6 +18,8 @@ wrapper_characteristics_core_num(
 }
 \arguments{
 \item{data}{Data frame.}
+
+\item{display_statistics}{Vector with possible values: "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"}
 }
 \description{
 Table with distribution summary for a numerical covariate

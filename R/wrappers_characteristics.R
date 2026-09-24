@@ -205,6 +205,7 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat1_var = N
 #' Table with distribution summary for a numerical covariate
 #' 
 #' @param data Data frame.
+#' @param display_statistics Vector with possible values: "Median", "Mean", "Min", "Max", "First.Quartile", "Third.Quartile"
 #' @export
 wrapper_characteristics_core_num <- function(data, covariate_var, strat1_var = NULL, strat2_var = NULL, weights_var = NULL, variable_names = NULL, caption = NULL, out_colname = "Value", display_statistics = c("Median", "Mean")){
   

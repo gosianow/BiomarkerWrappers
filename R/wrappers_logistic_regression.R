@@ -396,7 +396,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
     `N` = format_difference(res$n, digits = 0),
     format_counts_and_props_df(counts = res[, paste0("n_", response_levels)], props = res[, paste0("prop_", response_levels)], digits = 1, prefix_counts = "n_"),
     
-    as.data.frame(matrix(format_difference_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")], non_empty = res$covariate_class == "factor"), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
+    as.data.frame(matrix(format_difference_CIs(res[, paste0(response_levels[2], "_CI95_lower")], res[, paste0(response_levels[2], "_CI95_upper")], non_empty = res$covariate_class == "factor", digits = 1), ncol = 1, dimnames = list(NULL, paste0(response_levels[2], " 95% CI")))),
     
     `OR` = format_or(res$OR, non_empty = res$OR_non_empty),
     `OR 95% CI` = format_or_CIs(res$OR_CI95_lower, res$OR_CI95_upper, non_empty = res$OR_non_empty),
