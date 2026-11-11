@@ -38,14 +38,16 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
   stopifnot(nlevels(data[, response_var]) == 2)
   
   
-  covariate_class <- sapply(data[, covariate_vars], class)
+  covariate_class <- sapply(data[, covariate_vars, drop = FALSE], class)
   stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
   
   
   ### Keep non-missing data
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   data <- data[stats::complete.cases(data[, c(response_var, covariate_vars, weights_var)]), ]
-  
+
   stopifnot(nrow(data) > 0)
   
   weights <- NULL
@@ -76,7 +78,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       colnames(out_dummy) <- c(paste0("n_", response_levels), paste0("prop_", response_levels), paste0(response_levels[2], c("_CI95_lower", "_CI95_upper")))
       
       
-      res <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
+      res <- data.frame(covariate = covariate_vars[i], covariate_class = unname(covariate_class[i]), 
         subgroup = "", reference = "", reference_indx = 0, n = NA, 
         out_dummy,
         OR_non_empty = TRUE,
@@ -133,7 +135,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       colnames(propdf) <- paste0("prop_", colnames(prop_response))
       
       
-      res <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], 
+      res <- data.frame(covariate = covariate_vars[i], covariate_class = unname(covariate_class[i]), 
         subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), 
         ndf, propdf,
         stringsAsFactors = FALSE, row.names = NULL, check.names = FALSE)
@@ -260,7 +262,7 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
       ## Fit the logistic model
       regression_fit <- NULL
       
-      try(regression_fit <- glm(formula = f, family = binomial(), data = data, weights = weights), silent = TRUE)
+      try(regression_fit <- glm(formula = f, family = binomial(), data = data), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL
@@ -487,6 +489,8 @@ wrapper_logistic_regression_core_simple <- function(data, response_var, covariat
 #' @export
 wrapper_logistic_regression_core_simple_strat <- function(data, response_var, covariate_vars, return_vars = covariate_vars, weights_var = NULL, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, variable_names = NULL, caption = NULL, force_empty_cols = FALSE, print_total = TRUE, print_non_response = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_OR = TRUE){
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
@@ -787,7 +791,7 @@ wrapper_logistic_regression_treatment <- function(data, response_var, treatment_
     biomarker_vars <- "biomarker_dummy"
   }
   
-  vars_class <- sapply(data[, c(treatment_var, biomarker_vars)], class)
+  vars_class <- sapply(data[, c(treatment_var, biomarker_vars), drop = FALSE], class)
   stopifnot(all(vars_class == "factor"))
   
   
@@ -935,14 +939,16 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   stopifnot(is.factor(data[, response_var]))
   stopifnot(nlevels(data[, response_var]) == 2)
   
-  covariate_class <- sapply(data[, c(interaction1_var, interaction2_var, covariate_vars)], class)
+  covariate_class <- sapply(data[, c(interaction1_var, interaction2_var, covariate_vars), drop = FALSE], class)
   
   stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
   
   
   ### Keep non-missing data
   
-  data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars)]), ]
+  check_weights_column(data = data, weights_var = weights_var)
+
+  data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars, weights_var)]), ]
   
   weights <- NULL
   if(!is.null(weights_var)){
@@ -1056,14 +1062,30 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
     coeff_var2 <- factor(coeff_var2, levels = coeff_var2)
     
     out <- out[out$coefficient %in% interaction(coeff_var1, coeff_var2, sep = ":", lex.order = TRUE), , drop = FALSE]
-    
-    
+
+
   }
-  
-  
-  
+
+
+  ## When one of the interaction variables is a factor with a single level, no interaction
+  ## contrast exists and the filtering above leaves no rows. We keep one placeholder row so that
+  ## the variable is still listed in the output table. The model cannot be fitted in that case,
+  ## so all the statistics end up being NA.
+
+  if(nrow(out) == 0){
+
+    out <- data.frame(covariate1 = interaction1_var, subgroup1 = format_interaction_placeholder(data[, interaction1_var], "subgroup"), reference1 = format_interaction_placeholder(data[, interaction1_var], "reference"), reference1_indx = 0,
+      covariate2 = interaction2_var, subgroup2 = format_interaction_placeholder(data[, interaction2_var], "subgroup"), reference2 = format_interaction_placeholder(data[, interaction2_var], "reference"), reference2_indx = 0,
+      stringsAsFactors = FALSE)
+
+    out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+
+  }
+
+
+
   coef_info <- out
-  
+
   coef_info$n_total <- nrow(data)
   
   rownames(coef_info) <- coef_info$coefficient
@@ -1106,7 +1128,10 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
       regression_fit <- NULL
       
       ## Fit the logistic model
-      try(regression_fit <- glm(formula = f, family = binomial(), data = data, weights = weights), silent = TRUE)
+      ## Note: `weights` is NULL in this branch. It must not be passed to glm() because glm()
+      ## resolves it in `data` first, so a column of the data called 'weights' would be used
+      ## as case weights without any warning.
+      try(regression_fit <- glm(formula = f, family = binomial(), data = data), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL
@@ -1199,10 +1224,10 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   
   ## If for a factor covariate that should be returned the (first) reference level has zero count, results are set to NA because eventually this level is not used as a reference in the fitted model.
-  if(any(c(res$reference1_indx > 1, res$reference2_indx > 1))){
-    
-    res[, -which(colnames(res) %in% c("covariate1", "levels1", "reference1", "reference1_indx", "covariate2", "levels2", "reference2", "reference2_indx", "coefficient", "n"))] <- NA
-    
+  if(any(res$reference1_indx > 1 | is.na(res$reference1_indx)) | any(res$reference2_indx > 1 | is.na(res$reference2_indx))){
+
+    res[, colnames(res) %in% c("OR", "OR_CI95_lower", "OR_CI95_upper", "pvalue", "adj_pvalue")] <- NA
+
   }
   
   
@@ -1223,9 +1248,9 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
   
   out <- data.frame(
     Covariate1 = variable_names[res$covariate1], 
-    Effect1 = format_vs(res$levels1, res$reference1),
+    Effect1 = format_vs(res$subgroup1, res$reference1),
     Covariate2 = variable_names[res$covariate2], 
-    Effect2 = format_vs(res$levels2, res$reference2),
+    Effect2 = format_vs(res$subgroup2, res$reference2),
     `Total n` = as.character(res$n_total),
     `OR` = format_or(res$OR),
     `OR 95% CI` = format_or_CIs(res$OR_CI95_lower, res$OR_CI95_upper),
@@ -1298,6 +1323,8 @@ wrapper_logistic_regression_core_interaction <- function(data, response_var, int
 #' @export
 wrapper_logistic_regression_core_interaction_strat <- function(data, response_var, interaction1_var, interaction2_var, covariate_vars = NULL, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, print_pvalues = TRUE, print_adjpvalues = TRUE){
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
@@ -1342,7 +1369,7 @@ wrapper_logistic_regression_core_interaction_strat <- function(data, response_va
   
   ### Keep non-missing data
   
-  data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars, strat1_var, strat2_var)]), ]
+  data <- data[stats::complete.cases(data[, c(response_var, interaction1_var, interaction2_var, covariate_vars, weights_var, strat1_var, strat2_var)]), ]
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -1469,7 +1496,7 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   stopifnot(length(intersect(c(treatment_var, biomarker_vars, adjustment_vars), c(strat1_var, strat2_var))) == 0)
   
   
-  vars_class <- sapply(data[, c(treatment_var)], class)
+  vars_class <- sapply(data[, c(treatment_var), drop = FALSE], class)
   stopifnot(all(vars_class == "factor"))
   
   
@@ -1520,8 +1547,29 @@ wrapper_logistic_regression_interaction <- function(data, response_var, treatmen
   
   ### Replace NAs with "" for columns that are missing for numerical biomarkers
   
-  out$`Biomarker Effect`[is.na(out$`Biomarker Effect`)] <- ""
-  
+  if("Biomarker Effect" %in% colnames(out)){
+    out$`Biomarker Effect`[is.na(out$`Biomarker Effect`)] <- ""
+  }
+
+  if("Treatment Effect" %in% colnames(out)){
+    out$`Treatment Effect`[is.na(out$`Treatment Effect`)] <- ""
+  }
+
+
+  ### When biomarkers of mixed class are analysed together, `rbind.fill` appends the effect
+  ### columns at the end. Move them back next to the 'Biomarker' column.
+
+  effect_cols <- intersect(c("Biomarker Effect", "Treatment Effect"), colnames(out))
+
+  if(length(effect_cols) > 0 && "Biomarker" %in% colnames(out)){
+
+    other_cols <- setdiff(colnames(out), effect_cols)
+    biomarker_indx <- which(other_cols == "Biomarker")
+
+    out <- out[, c(other_cols[seq_len(biomarker_indx)], effect_cols, other_cols[-seq_len(biomarker_indx)]), drop = FALSE]
+
+  }
+
   
   
   ### Generate caption

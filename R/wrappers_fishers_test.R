@@ -29,6 +29,8 @@ wrapper_fishers_test_core <- function(data, col_var, row_var, weights_var = NULL
   all_vars <- c(col_var, row_var, weights_var)
   data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
   stopifnot(nrow(data) > 0)
+
+  check_weights_column(data = data, weights_var = weights_var)
   
   
   weights <- NULL
@@ -283,6 +285,8 @@ wrapper_fishers_test_core_strat <- function(data, col_var, row_var, weights_var 
   all_vars <- c(col_var, row_var, weights_var, strat1_var, strat2_var)
   data <- data[stats::complete.cases(data[, all_vars]), all_vars, drop = FALSE]
   stopifnot(nrow(data) > 0)
+
+  check_weights_column(data = data, weights_var = weights_var)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   

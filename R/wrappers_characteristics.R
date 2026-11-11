@@ -19,6 +19,8 @@ wrapper_characteristics_core_cat <- function(data, covariate_var, strat1_var = N
   
   ### Keep only those variables that are used for the analysis
   data <- data[, c(covariate_var, strat1_var, strat2_var, weights_var), drop = FALSE]
+
+  check_weights_column(data = data, weights_var = weights_var)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -222,6 +224,8 @@ wrapper_characteristics_core_num <- function(data, covariate_var, strat1_var = N
   
   ### Keep only those variables that are used for the analysis
   data <- data[, c(covariate_var, strat1_var, strat2_var, weights_var), drop = FALSE]
+
+  check_weights_column(data = data, weights_var = weights_var)
   
   variable_names <- format_variable_names(data = data, variable_names = variable_names)
   
@@ -423,6 +427,8 @@ wrapper_characteristics_core <- function(data, covariate_vars, strat1_var = NULL
   
   ### Keep only those variables that are used for the analysis
   data <- data[, c(covariate_vars, strat1_var, strat2_var, weights_var), drop = FALSE]
+
+  check_weights_column(data = data, weights_var = weights_var)
   
   
   stopifnot(length(covariate_vars) >= 1)

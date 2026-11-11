@@ -1335,16 +1335,70 @@ format_difference_CIs_df <- function(x, digits = 2, colnames = NULL, non_empty =
 #' @param reference Vector with references.
 #' @keywords internal
 format_vs <- function(level, reference){
-  
+
   output <- paste0(level, " vs ", reference)
-  
+
   output[level == "" & reference == ""] <- ""
   output[level == 0 & reference == 0] <- ""
   output[is.na(level) & is.na(reference)] <- ""
-  
-  
+
+
   return(output)
-  
+
+}
+
+
+
+#' Check that the data do not contain a reserved 'weights' column
+#'
+#' `glm()`, `coxph()`, `survfit()` and `svytable()` all resolve their `weights` argument inside
+#' `data` before looking anywhere else. A column of the data called 'weights' therefore silently
+#' overrides the weights used for the regression and for the weighted counts, which produces wrong
+#' estimates, confidence intervals and p-values without any warning. The name is safe only when it
+#' is the column that was requested through `weights_var`.
+#'
+#' @param data Data frame.
+#' @param weights_var Name of the variable with weights, or NULL.
+#' @keywords internal
+check_weights_column <- function(data, weights_var = NULL){
+
+  if("weights" %in% colnames(data) && !identical(as.character(weights_var), "weights")){
+
+    stop("`data` contains a column called 'weights'. This name is reserved because it silently overrides the weights used by the regression. Please rename this column, or pass it as `weights_var`.", call. = FALSE)
+
+  }
+
+  invisible(TRUE)
+
+}
+
+
+
+#' Subgroup and reference labels for a placeholder interaction row
+#'
+#' Used by the interaction wrappers when an interaction variable is a factor with a single level.
+#' No interaction contrast exists in that case, but a placeholder row is still added to the output
+#' so that the variable is listed in the table. A variable that does have at least two levels keeps
+#' its usual labels; a numeric or single-level variable gets an empty label.
+#'
+#' @param x Vector with the values of an interaction variable.
+#' @param return Either `"subgroup"` or `"reference"`.
+#' @keywords internal
+format_interaction_placeholder <- function(x, return = "subgroup"){
+
+  stopifnot(length(return) == 1)
+  stopifnot(return %in% c("subgroup", "reference"))
+
+  if(!is.factor(x) || nlevels(x) < 2){
+    return("")
+  }
+
+  if(return == "subgroup"){
+    return(levels(x)[2])
+  }
+
+  return(levels(x)[1])
+
 }
 
 

@@ -78,12 +78,12 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1, NA)))
   
   
-  covariate_class <- sapply(data[, covariate_vars], class)
+  covariate_class <- sapply(data[, covariate_vars, drop = FALSE], class)
   stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
   
   
   if(!is.null(strata_vars)){
-    strata_class <- sapply(data[, strata_vars], class)
+    strata_class <- sapply(data[, strata_vars, drop = FALSE], class)
     stopifnot(all(strata_class %in% c("factor")))
   }
   
@@ -93,12 +93,14 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
   
   ### Keep non-missing data
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   # By introducing keep_obs we are able to display empty results in the output tables for empty subgroups
-  data <- data[keep_obs, , drop = FALSE] 
-  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strata_vars)]), , drop = FALSE]
-  
+  data <- data[keep_obs, , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, covariate_vars, strata_vars, weights_var)]), , drop = FALSE]
+
   # stopifnot(nrow(data) > 0)
-  
+
   weights <- NULL
   if(!is.null(weights_var) & nrow(data) > 0){
     weights <- data[, weights_var]
@@ -122,7 +124,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     
     if(covariate_class[i] %in% c("numeric", "integer")){
       
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = "", reference = "", reference_indx = 0, n = NA, nevent = NA, propevent = NA, MST = NA, MST_CI95_lower = NA, MST_CI95_upper = NA, HR_non_empty = TRUE,
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = unname(covariate_class[i]), subgroup = "", reference = "", reference_indx = 0, n = NA, nevent = NA, propevent = NA, MST = NA, MST_CI95_lower = NA, MST_CI95_upper = NA, HR_non_empty = TRUE,
         stringsAsFactors = FALSE)
       
     }else{
@@ -146,7 +148,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       
       
       if(!is.null(weights)){
-        
+
         survey_design <- survey::svydesign(ids = ~1, weights = weights, data = mutate_at(data, censor_var, factor, levels = c(0, 1)))
         
         tbl <- survey::svytable(as.formula(paste0("~ ", covariate_vars[i])), design = survey_design)
@@ -174,7 +176,7 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       }
       
       
-      out <- data.frame(covariate = covariate_vars[i], covariate_class = covariate_class[i], subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event[, "1"]), propevent = as.numeric(prop_event[, "1"]),
+      out <- data.frame(covariate = covariate_vars[i], covariate_class = unname(covariate_class[i]), subgroup = levels(data[, covariate_vars[i]]), reference = names(reference_indx), reference_indx = as.numeric(reference_indx), n = as.numeric(tbl), nevent = as.numeric(tbl_event[, "1"]), propevent = as.numeric(prop_event[, "1"]),
         stringsAsFactors = FALSE)
       
       out$HR_non_empty <- c(FALSE, rep(TRUE, nrow(out) - 1))
@@ -194,7 +196,12 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
         
         f <- stats::as.formula(paste0("Surv(", tte_var, ", ", censor_var, ") ~ ", covariate_vars[i]))
         
-        survfit_fit <- survival::survfit(f, data, conf.type = "plain", weights = weights)
+        if(!is.null(weights)){
+          survfit_fit <- survival::survfit(f, data, conf.type = "plain", weights = weights)
+        }else{
+          survfit_fit <- survival::survfit(f, data, conf.type = "plain")
+        }
+        
         survfit_summ <- summary(survfit_fit)
         
         # ---------
@@ -303,13 +310,13 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
     
     
     if(!is.null(weights)){
-      
+
       # survival::coxph(..., weights = weights)
       # This function treats weights as "frequency" or "case" weights. It assumes each weight is a fixed, known integer telling the model how many times that observation occurred. It correctly calculates the hazard ratios, but it underestimates the standard errors because it doesn't account for the fact that your IPW weights were estimated from the data. This leads to overly narrow confidence intervals and artificially low p-values.
       # 
       # survey::svycoxph(...)
       # This function is built for survey statistics and correctly treats weights as part of a sampling design. It uses a robust sandwich variance estimator, which properly accounts for the variability introduced by the weights. This results in more accurate and reliable standard errors, confidence intervals, and p-values, which are essential for valid statistical inference.
-      
+
       # Create a survey design object
       survey_design <- survey::svydesign(ids = ~1, weights = weights, data = data)
       
@@ -317,23 +324,26 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
       regression_fit <- NULL
       
       try(regression_fit <- survey::svycoxph(formula = f, design = survey_design), silent = TRUE)
-      
+
       if(is.null(regression_fit)){
         regression_summ <- NULL
       }else{
-        regression_summ <- summary(regression_fit)
+        ## summary() of a svycoxph object prints the survey design to the console as a side
+        ## effect. capture.output() discards that printout. invisible() alone would not help
+        ## here because the printing happens inside summary(), not when the result is returned.
+        invisible(utils::capture.output(regression_summ <- summary(regression_fit)))
       }
-      
+
       # regression_summ$coefficients
-      
-      
+
+
     }else{
       
       
       ## Fit the Cox model
       regression_fit <- NULL
       
-      try(regression_fit <- survival::coxph(f, data, weights = weights), silent = TRUE)
+      try(regression_fit <- survival::coxph(f, data), silent = TRUE)
       
       if(is.null(regression_fit)){
         regression_summ <- NULL
@@ -603,6 +613,8 @@ wrapper_cox_regression_core_simple <- function(data, tte_var, censor_var, covari
 #' @export
 wrapper_cox_regression_core_simple_strat <- function(data, tte_var, censor_var, covariate_vars, strata_vars = NULL, return_vars = covariate_vars, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", force_empty_cols = FALSE, sr_times = NULL, print_nevent = TRUE, print_mst = TRUE, print_total = TRUE, print_pvalues = TRUE, print_adjpvalues = TRUE, print_hr = TRUE, print_sr_cis = FALSE){
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
@@ -922,7 +934,7 @@ wrapper_cox_regression_treatment <- function(data, tte_var, censor_var, treatmen
   }
   
   
-  vars_class <- sapply(data[, c(treatment_var, biomarker_vars)], class)
+  vars_class <- sapply(data[, c(treatment_var, biomarker_vars), drop = FALSE], class)
   stopifnot(all(vars_class == "factor"))
   
   
@@ -1106,20 +1118,22 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
   stopifnot(is.numeric(data[, censor_var]) && all(data[, censor_var] %in% c(0, 1, NA)))
   
   
-  covariate_class <- sapply(data[, c(interaction1_vars, interaction2_var, covariate_vars)], class)
+  covariate_class <- sapply(data[, c(interaction1_vars, interaction2_var, covariate_vars), drop = FALSE], class)
   stopifnot(all(covariate_class %in% c("factor", "numeric", "integer")))
   
   
   if(!is.null(strata_vars)){
-    strata_class <- sapply(data[, strata_vars], class)
+    strata_class <- sapply(data[, strata_vars, drop = FALSE], class)
     stopifnot(all(strata_class %in% c("factor")))
   }
   
   
   ### Keep non-missing data
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   data <- data[keep_obs, , drop = FALSE]
-  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_vars, interaction2_var, covariate_vars, strata_vars)]), , drop = FALSE]
+  data <- data[stats::complete.cases(data[, c(tte_var, censor_var, interaction1_vars, interaction2_var, covariate_vars, strata_vars, weights_var)]), , drop = FALSE]
   
   weights <- NULL
   if(!is.null(weights_var)){
@@ -1236,13 +1250,29 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
       coeff_var2 <- factor(coeff_var2, levels = coeff_var2)
       
       out <- out[out$coefficient %in% interaction(coeff_var1, coeff_var2, sep = ":", lex.order = TRUE), , drop = FALSE]
-      
-      
+
+
     }
-    
-    
+
+
+    ## When one of the interaction variables is a factor with a single level, no interaction
+    ## contrast exists and the filtering above leaves no rows. We keep one placeholder row so that
+    ## the variable is still listed in the output table. The model cannot be fitted in that case,
+    ## so all the statistics end up being NA.
+
+    if(nrow(out) == 0){
+
+      out <- data.frame(covariate1 = interaction1_var, subgroup1 = format_interaction_placeholder(data[, interaction1_var], "subgroup"), reference1 = format_interaction_placeholder(data[, interaction1_var], "reference"), reference1_indx = 0,
+        covariate2 = interaction2_var, subgroup2 = format_interaction_placeholder(data[, interaction2_var], "subgroup"), reference2 = format_interaction_placeholder(data[, interaction2_var], "reference"), reference2_indx = 0,
+        stringsAsFactors = FALSE)
+
+      out$coefficient <- paste0(out$covariate1, out$subgroup1, ":", out$covariate2, out$subgroup2)
+
+    }
+
+
     return(out)
-    
+
   })
   
   
@@ -1291,39 +1321,45 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
       regression_fit <- NULL
       
       try(regression_fit <- survey::svycoxph(formula = f, design = survey_design), silent = TRUE)
-      
+
       if(is.null(regression_fit)){
         regression_summ <- NULL
       }else{
-        regression_summ <- summary(regression_fit)
+        ## summary() of a svycoxph object prints the survey design to the console as a side
+        ## effect. capture.output() discards that printout. invisible() alone would not help
+        ## here because the printing happens inside summary(), not when the result is returned.
+        invisible(utils::capture.output(regression_summ <- summary(regression_fit)))
       }
-      
+
       # regression_summ$coefficients
-      
-      
+
+
     }else{
       
       
       ## Fit the Cox model
       regression_fit <- NULL
-      
-      try(regression_fit <- survival::coxph(f, data, weights = weights), silent = TRUE)
-      
+
+      ## Note: `weights` is NULL in this branch. It must not be passed to coxph() because coxph()
+      ## resolves it in `data` first, so a column of the data called 'weights' would be used
+      ## as case weights without any warning.
+      try(regression_fit <- survival::coxph(f, data), silent = TRUE)
+
       if(is.null(regression_fit)){
         regression_summ <- NULL
       }else{
         regression_summ <- summary(regression_fit)
       }
-      
-      
+
+
     }
-    
-    
+
+
   }else{
-    
+
     regression_fit <- NULL
     regression_summ <- NULL
-    
+
   }
   
   
@@ -1409,19 +1445,28 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
     out$`P-value` <- NULL
     out$`Adj. P-value` <- NULL
   }
-  
+
   if(!print_adjpvalues){
     out$`Adj. P-value` <- NULL
   }
-  
-  
-  
+
+
+  ### For all numerical covariates Effect1 and Effect2 are empty and we do not display them.
+  if(all(out$Effect1 == "")){
+    out$Effect1 <- NULL
+  }
+
+  if(all(out$Effect2 == "")){
+    out$Effect2 <- NULL
+  }
+
+
   # --------------------------------------------------------------------------
   # Generate caption
   # --------------------------------------------------------------------------
-  
+
   if(is.null(caption)){
-    
+
     caption <- paste0("Effect of interaction between ", paste0(variable_names[interaction1_vars], collapse = ", "), " and ", variable_names[interaction2_var], " on ", variable_names[tte_var], ". ")
     
     if(is.null(covariate_vars) && is.null(strata_vars)){
@@ -1472,6 +1517,8 @@ wrapper_cox_regression_core_interaction <- function(data, tte_var, censor_var, i
 #' @export
 wrapper_cox_regression_core_interaction_strat <- function(data, tte_var, censor_var, interaction1_vars, interaction2_var, covariate_vars = NULL, strata_vars = NULL, strat1_var = NULL, strat2_var = NULL, strat1_dummy = FALSE, strat2_dummy = FALSE, weights_var = NULL, variable_names = NULL, caption = NULL, strat1_levels = "fixed", print_pvalues = TRUE, print_adjpvalues = TRUE){
   
+  check_weights_column(data = data, weights_var = weights_var)
+
   # --------------------------------------------------------------------------
   # Check on strat vars
   # --------------------------------------------------------------------------
@@ -1632,7 +1679,7 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   stopifnot(length(intersect(c(treatment_var, biomarker_vars, adjustment_vars, strata_vars), c(strat1_var, strat2_var))) == 0)
   
   
-  vars_class <- sapply(data[, c(treatment_var)], class)
+  vars_class <- sapply(data[, c(treatment_var), drop = FALSE], class)
   stopifnot(all(vars_class == "factor"))
   
   
@@ -1687,8 +1734,27 @@ wrapper_cox_regression_interaction <- function(data, tte_var, censor_var, treatm
   if("Biomarker Effect" %in% colnames(out)){
     out$`Biomarker Effect`[is.na(out$`Biomarker Effect`)] <- ""
   }
-  
-  
+
+  if("Treatment Effect" %in% colnames(out)){
+    out$`Treatment Effect`[is.na(out$`Treatment Effect`)] <- ""
+  }
+
+
+  ### When biomarkers of mixed class are analysed together, `rbind.fill` appends the effect
+  ### columns at the end. Move them back next to the 'Biomarker' column.
+
+  effect_cols <- intersect(c("Biomarker Effect", "Treatment Effect"), colnames(out))
+
+  if(length(effect_cols) > 0 && "Biomarker" %in% colnames(out)){
+
+    other_cols <- setdiff(colnames(out), effect_cols)
+    biomarker_indx <- which(other_cols == "Biomarker")
+
+    out <- out[, c(other_cols[seq_len(biomarker_indx)], effect_cols, other_cols[-seq_len(biomarker_indx)]), drop = FALSE]
+
+  }
+
+
   
   
   ### Generate caption
